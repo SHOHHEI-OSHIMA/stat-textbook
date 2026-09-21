@@ -3,13 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- ホーム画面のアイコンから枠なしで開かせるための宣言。これが本題 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="道具箱">
 <meta name="theme-color" content="#11161C">
-<!-- 検索には出さない (公開はするが、探されたいものではない) -->
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -44,7 +42,6 @@ h1{font-family:var(--mincho);font-size:1.5rem;margin:0;line-height:1.4}
 header p{margin:.5rem 0 0;color:var(--muted);font-size:.85rem}
 h2{font-family:var(--mincho);font-size:.95rem;margin:0 0 .7rem;padding-bottom:.4rem;
   border-bottom:1px solid var(--line);color:var(--muted);letter-spacing:.04em}
-/* 携帯の幅では 1 列。2 列にすると見出しが 2〜3 行に折れて読みにくい (実測) */
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
 .tile{display:flex;align-items:flex-start;gap:.6rem;padding:.85rem .8rem;
   background:var(--surface);border:1px solid var(--line);border-radius:12px;
@@ -70,6 +67,7 @@ h2 .h{font-weight:400;letter-spacing:0;margin-left:.5rem;font-size:.8rem}
     <h2>この中で開く<span class="h">タブは増えません</span></h2>
     <div class="tiles">
       <a class="tile" href="textbook/"><span class="ico">📘</span><span class="t">統計学 自分用教科書<span class="s">序章+14 章・解答 192 問</span></span></a>
+      <a class="tile" href="textbook/easy.html"><span class="ico">🧠</span><span class="t">統計学・行間補足版<span class="s">式の出どころ・途中式・直感を補足</span></span></a>
       <a class="tile" href="prob/"><span class="ico">🧮</span><span class="t">確率論 自習書<span class="s">Stat 110 の第1〜2章を自習書に</span></span></a>
       <a class="tile" href="map/"><span class="ico">🗺️</span><span class="t">確率から最適化まで<span class="s">何をどの順で学ぶかの地図</span></span></a>
       <a class="tile" href="stat110/"><span class="ico">🎲</span><span class="t">Stat 110 の骨格<span class="s">外部教科書の読み方</span></span></a>
