@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#11161C">
 <title>統計学 自分用教科書｜行間補足版</title>
-<meta name="easy-version" content="20260921-mathfix-1">
+<meta name="easy-version" content="20260921-askchatgpt-1">
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#11161C}
 #book{display:block;border:0;width:100%;height:100%;background:#11161C}
@@ -69,6 +69,41 @@ function installStyle(doc){
     .deep-chapter .MathJax, .deep-chapter mjx-container{
       font-size:100% !important;
     }
+
+    .deep-ask-row{
+      display:flex;justify-content:flex-end;margin:-.65rem 0 1.35rem;
+    }
+    .deep-ask-btn{
+      appearance:none;border:1px solid var(--line,#DEDBD3);
+      background:var(--surface,#fff);color:var(--accent,#2A4A7B);
+      border-radius:999px;padding:.52rem .8rem;
+      font:700 .78rem/1.2 var(--gothic,system-ui,sans-serif);
+      cursor:pointer;
+    }
+    .deep-ask-btn:active{transform:scale(.98)}
+    .deep-ask-fab{
+      position:fixed;z-index:9998;
+      left:max(14px,env(safe-area-inset-left));
+      bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px));
+      border:0;border-radius:999px;
+      padding:.78rem .95rem;
+      background:var(--accent,#2A4A7B);color:#fff;
+      box-shadow:0 5px 18px rgba(0,0,0,.24);
+      font:700 .82rem/1.2 var(--gothic,system-ui,sans-serif);
+      cursor:pointer;
+    }
+    .deep-ask-toast{
+      position:fixed;z-index:10020;
+      left:50%;bottom:max(82px,calc(env(safe-area-inset-bottom) + 76px));
+      transform:translateX(-50%) translateY(8px);
+      max-width:min(88vw,32rem);padding:.72rem .9rem;border-radius:10px;
+      background:rgba(20,25,30,.94);color:#fff;
+      font:600 .78rem/1.55 var(--gothic,system-ui,sans-serif);
+      box-shadow:0 4px 18px rgba(0,0,0,.28);
+      opacity:0;pointer-events:none;transition:.18s ease;
+      text-align:center;
+    }
+    .deep-ask-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   `;
   doc.head.appendChild(st);
 }
@@ -99,6 +134,166 @@ function typeset(win, root){
   }catch(e){}
 }
 
+
+function noteKeyFromHeading(h){
+  const m=norm(h.textContent).match(/^(\d+(?:\.\d+){1,2})\b/);
+  return m ? m[1] : null;
+}
+
+function plainFromHTML(doc, html){
+  const box=doc.createElement('div');
+  box.innerHTML=html||'';
+  return (box.innerText||box.textContent||'').replace(/\n{3,}/g,'\n\n').trim();
+}
+
+function extractSectionText(h){
+  const level=Number((h.tagName||'H6').slice(1))||6;
+  const chunks=[];
+  let n=h.nextElementSibling;
+  while(n){
+    if(/^H[1-6]$/.test(n.tagName||'') && Number(n.tagName.slice(1))<=level) break;
+    if(n.classList && (
+      n.classList.contains('deep-note') ||
+      n.classList.contains('deep-ask-row') ||
+      n.classList.contains('deep-chapter') ||
+      n.classList.contains('deep-edition-mark')
+    )){
+      n=n.nextElementSibling; continue;
+    }
+    const t=(n.innerText||n.textContent||'').replace(/\s+/g,' ').trim();
+    if(t) chunks.push(t);
+    if(chunks.join('\n').length>6500) break;
+    n=n.nextElementSibling;
+  }
+  let out=chunks.join('\n').trim();
+  if(!out){
+    const blk=h.closest && h.closest('.blk');
+    if(blk) out=(blk.innerText||blk.textContent||'').replace(/\s+/g,' ').trim();
+  }
+  return out.slice(0,6500);
+}
+
+function currentHeading(doc, win){
+  const hs=[...doc.querySelectorAll('#view h2,#view h3,#view h4')];
+  if(!hs.length) return null;
+  const y=Math.min(win.innerHeight*.42,320);
+  let best=hs[0];
+  for(const h of hs){
+    const r=h.getBoundingClientRect();
+    if(r.top<=y) best=h;
+    else break;
+  }
+  return best;
+}
+
+function buildStudyPrompt(doc, win, h, obj, userQuestion){
+  const title=norm(h ? h.textContent : '現在の箇所');
+  const original=h ? extractSectionText(h) : '';
+  const supplement=obj ? plainFromHTML(doc,obj.html) : '';
+  const selected=(win.getSelection && win.getSelection().toString()||'').trim().slice(0,2500);
+
+  return [
+    '私は統計学をこの教材で勉強しています。以下の箇所について質問します。',
+    '',
+    '【回答のしかた】',
+    '・内容を簡略化して終わらせず、原文と同等以上の深さを保ってください。',
+    '・式は途中を飛ばさず、必要なら1行ずつ変形してください。',
+    '・新しい記号が出たら、その記号が何を表すか説明してください。',
+    '・「なぜ今この式を考えるのか」「どの定義・定理を使ったのか」も説明してください。',
+    '・前提知識が不足していそうなら、その前提まで遡って説明してください。',
+    '・直感だけでなく、数式上の理由も示してください。',
+    '・できれば小さな数値例も使ってください。',
+    '',
+    '【読んでいる節】',
+    title,
+    original ? '\n【原文の周辺】\n'+original : '',
+    supplement ? '\n【教材内の行間補足】\n'+supplement : '',
+    selected ? '\n【いま選択している箇所】\n'+selected : '',
+    '',
+    '【私の質問】',
+    (userQuestion||'この箇所を、何が起きているのかから丁寧に説明してください。')
+  ].filter(Boolean).join('\n');
+}
+
+function copyText(doc, text){
+  const ta=doc.createElement('textarea');
+  ta.value=text;
+  ta.setAttribute('readonly','');
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  ta.style.top='0';
+  doc.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  ta.setSelectionRange(0,ta.value.length);
+  let ok=false;
+  try{ ok=doc.execCommand('copy'); }catch(e){}
+  ta.remove();
+  if(!ok && navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(()=>{});
+    ok=true;
+  }
+  return ok;
+}
+
+function toast(doc, msg){
+  let t=doc.getElementById('deep-ask-toast');
+  if(!t){
+    t=doc.createElement('div');
+    t.id='deep-ask-toast';
+    t.className='deep-ask-toast';
+    doc.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function askChatGPT(doc, win, h, obj){
+  const q=win.prompt('ChatGPTに何を聞きたいですか？\n（空欄でも、その箇所の丁寧な説明を依頼できます）','');
+  if(q===null) return;
+  const prompt=buildStudyPrompt(doc,win,h,obj,q.trim());
+  const ok=copyText(doc,prompt);
+  toast(doc, ok
+    ? '質問文をコピーしました。ChatGPTが開いたら貼り付けて送信してください。'
+    : '質問文のコピーに失敗しました。もう一度押してください。');
+  // APIは使わず、通常のChatGPTを開く。iOSでは端末設定によりアプリ/ブラウザのどちらかで開く。
+  setTimeout(()=>{
+    try{ win.top.location.href='https://chatgpt.com/'; }
+    catch(e){ win.open('https://chatgpt.com/','_blank'); }
+  },180);
+}
+
+function addAskRow(doc, win, h, obj, afterNode){
+  if(h.dataset.deepAskDone) return;
+  h.dataset.deepAskDone='1';
+  const row=doc.createElement('div');
+  row.className='deep-ask-row';
+  const b=doc.createElement('button');
+  b.type='button';
+  b.className='deep-ask-btn';
+  b.textContent='💬 この節をChatGPTに聞く';
+  b.onclick=()=>askChatGPT(doc,win,h,obj);
+  row.appendChild(b);
+  afterNode.insertAdjacentElement('afterend',row);
+}
+
+function ensureAskFab(doc, win){
+  if(doc.getElementById('deep-ask-fab')) return;
+  const b=doc.createElement('button');
+  b.id='deep-ask-fab';
+  b.className='deep-ask-fab';
+  b.type='button';
+  b.textContent='💬 今ここを質問';
+  b.onclick=()=>{
+    const h=currentHeading(doc,win);
+    const k=h ? noteKeyFromHeading(h) : null;
+    askChatGPT(doc,win,h,k ? NOTES[k] : null);
+  };
+  doc.body.appendChild(b);
+}
+
 let busy=false;
 function inject(){
   if(busy)return;
@@ -110,6 +305,7 @@ function inject(){
     installStyle(doc);
     const view=doc.getElementById('view');
     if(!view)return;
+    ensureAskFab(doc,win);
 
     const h1=view.querySelector('h1');
     if(h1 && !h1.dataset.deepDone){
@@ -143,6 +339,7 @@ function inject(){
       if(!obj)return;
       const d=makeDetails(doc,obj);
       h.insertAdjacentElement('afterend',d);
+      addAskRow(doc,win,h,obj,d);
       typeset(win,d);
     });
   } finally {
