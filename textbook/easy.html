@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>統計学 自分用教科書｜行間補足版</title>
+<style>
+:root{--bar:48px}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+#top{height:var(--bar);display:flex;align-items:center;gap:8px;padding:6px 10px;background:#17191c;color:#fff;border-bottom:1px solid #333}
+#top b{font-size:14px;white-space:nowrap}
+#top .spacer{flex:1}
+button,select{font:inherit}
+#notesBtn,#closeBtn{border:1px solid #666;background:#26292e;color:#fff;border-radius:999px;padding:7px 11px;font-weight:700}
+#book{border:0;width:100%;height:calc(100% - var(--bar));display:block;background:#111}
+#drawer{position:fixed;z-index:999999;left:0;right:0;bottom:0;max-height:68vh;background:#fafafa;color:#171717;border-radius:18px 18px 0 0;box-shadow:0 -8px 30px #0008;transform:translateY(105%);transition:.22s ease;display:flex;flex-direction:column}
+#drawer.open{transform:translateY(0)}
+#drawerHead{display:flex;gap:8px;align-items:center;padding:12px;border-bottom:1px solid #ddd;position:sticky;top:0;background:#fafafa}
+#noteSelect{min-width:0;flex:1;border:1px solid #bbb;border-radius:9px;padding:8px;background:#fff;color:#111}
+#noteBody{overflow:auto;padding:14px 16px 24px;line-height:1.8;font-size:15px}
+#noteBody p{margin:.55em 0}
+#noteBody ul{padding-left:1.35em}
+#hint{font-size:11px;opacity:.72;white-space:nowrap}
+@media (max-width:520px){
+ #hint{display:none}
+ #top b{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div id="top">
+  <b>統計学・行間補足版</b>
+  <span id="hint">直接表示では補足パネル／GitHub配置後は本文へ自動挿入</span>
+  <span class="spacer"></span>
+  <button id="notesBtn">補足を見る</button>
+</div>
+<iframe id="book" src="https://shohhei-oshima.github.io/stat-textbook/textbook/" title="統計学 自分用教科書"></iframe>
+
+<div id="drawer">
+  <div id="drawerHead">
+    <select id="noteSelect"></select>
+    <button id="closeBtn">閉じる</button>
+  </div>
+  <div id="noteBody"></div>
+</div>
+
+<script>
+const CHAPTER={"0": "統計学は、①手元のデータを要約する、②データを生んだ仕組みを推測する、③未来を予測する、という流れで見ると整理しやすいです。式を見るたびに「固定された値」と「標本を取り直すと変わる値」を区別してください。", "1": "第1章は「いま手元にあるデータをどう短く要約するか」です。まずは平均・分散・相関を、データの位置・散らばり・一緒に動く向きを表す道具として理解すれば十分です。", "2": "ここから大文字 X が本格的に登場します。X は「まだ値が決まっていない数」。同じ観測をやり直すと別の値になり得るので、その散らばり方を確率で表します。", "3": "第3章は「未知の固定値を、ランダムな標本からどう当てるか」です。母平均 μ や母分散 σ² は未知でも固定、推定量は標本を取り直すと変わる確率変数です。", "4": "検定は「仮説が正しい確率」を直接求める手続きではありません。まず仮説が正しい世界を仮定し、その世界で今のデータがどれだけ珍しいかを測ります。", "5": "回帰は「X が変わると Y の平均がどう変わるか」をモデル化する方法です。直線そのものと、そこからのばらつき（誤差）を分けて考えます。", "6": "ANOVAは平均を比較するのに分散を使います。群どうしの差が本当にあるなら、群間のばらつきが群内の自然なばらつきより大きくなるはず、という発想です。", "7": "多変量解析は、変数を1個ずつではなく「組」として扱います。行列は難しい概念を増やすためではなく、多数の平均・分散・相関をまとめて書く省略記法です。", "8": "ベイズ統計では、未知パラメータについての不確実さ自体を分布で表します。事前分布 → 尤度 → 事後分布、という更新の流れが中心です。", "9": "時系列では「並び順」が情報です。普通の統計でよく使う独立性が崩れるため、過去の値との関係を自己相関として扱います。", "10": "この章では「起こるか」だけでなく「いつ起こるか」「どれくらい極端な値が起こるか」を扱います。寿命・破壊・最大荷重などに直結します。", "11": "因果推論の基本問題は、同じ対象について「処置した結果」と「処置しなかった結果」を同時には観測できないことです。その欠けた世界をどう補うかを考えます。", "12": "機械学習では、係数をきれいに解釈することより、未知データでよく当たることを重視する場面が増えます。過学習と汎化が中心テーマです。", "13": "計算統計は、解析式で解きにくい問題を乱数と計算で近似する章です。期待値と大数の法則が、ここで実際のアルゴリズムになります。", "14": "ここでは、きれいな教科書データではなく、外れ値・欠測・打切り・時系列変化を含む現実のデータを扱います。モデルを使う前にデータを疑う練習です。"};
+const NOTES={"0.5": "<p><b>記号は「役割」で分けると楽です。</b></p>\n<ul>\n<li><b>X</b>：まだ観測前で値が決まっていない確率変数</li>\n<li><b>x</b>：観測後に値が決まった数</li>\n<li><b>μ, σ², θ</b>：母集団側の未知だが固定された値</li>\n<li><b>X̄, S², θ̂</b>：標本から作るので、標本を取り直すと変わる確率変数</li>\n<li><b>E[ ]</b>：同じ仕組みを何度も繰り返したときの平均を取る演算</li>\n</ul>\n<p>特に「μ は未知でも固定」「X̄ はデータを取る前には確率変数」という区別が、第2〜3章の理解の鍵です。</p>", "1.5.1": "<p><b>ここは最重要の行間です。まず「なぜ期待値を取るのか」から。</b></p>\n<p>実際に計算した標本分散 s² は1個の数です。でも標本を取る前の S² は、どの標本が当たるかによって値が変わります。つまり S² は確率変数です。</p>\n<p>そこで「同じ母集団から標本を何度も取り直したら、S² は平均的に母分散 σ² を当てられるか？」を見るために E[S²] を考えます。</p>\n\n<p><b>① まず μ をわざと入れます。</b></p>\n<p>Xi − X̄ = (Xi − μ) − (X̄ − μ)</p>\n<p>これは同じ μ を足して引いただけです。</p>\n\n<p><b>② 二乗して全部足します。</b></p>\n<p>Σ(Xi−X̄)² = Σ[(Xi−μ) − (X̄−μ)]²</p>\n<p>= Σ(Xi−μ)² − 2(X̄−μ)Σ(Xi−μ) + n(X̄−μ)²</p>\n\n<p>ここで</p>\n<p>Σ(Xi−μ) = ΣXi − nμ = nX̄ − nμ = n(X̄−μ)</p>\n<p>なので、真ん中の項は</p>\n<p>−2(X̄−μ)·n(X̄−μ) = −2n(X̄−μ)²</p>\n<p>となります。</p>\n\n<p>したがって</p>\n<p>Σ(Xi−X̄)² = Σ(Xi−μ)² − n(X̄−μ)²</p>\n<p>が得られます。</p>\n\n<p><b>③ ここで期待値を取ります。</b></p>\n<p>E[(Xi−μ)²] = σ²</p>\n<p>は分散の定義そのものなので、n個足せば nσ² です。</p>\n\n<p>また、E[X̄]=μ なので</p>\n<p>E[(X̄−μ)²] = V(X̄)</p>\n<p>です。</p>\n\n<p>独立同分布なら</p>\n<p>V(X̄) = V((X1+…+Xn)/n)</p>\n<p>= (1/n²){V(X1)+…+V(Xn)}</p>\n<p>= (1/n²)·nσ² = σ²/n</p>\n<p>となります。</p>\n\n<p>よって</p>\n<p>E[Σ(Xi−X̄)²] = nσ² − n(σ²/n) = (n−1)σ²</p>\n<p>です。</p>\n\n<p>だから n−1 で割れば</p>\n<p>E[S²] = σ²</p>\n<p>となります。<b>「自由度が1減る」はこの計算結果を直感的に言い換えた説明で、証明そのものは上の期待値計算です。</b></p>", "1.7.1": "<p><b>共分散は「2つの量が同じ向きに動くか」を測る量です。</b></p>\n<p>(X−μx)(Y−μy) は、両方が平均より上・両方が下なら正、片方だけ上なら負になります。それを平均したものが共分散です。</p>\n<p>相関係数は共分散を標準偏差で割り、単位を消して −1〜1 に尺度をそろえたものです。</p>", "2.2.1": "<p><b>標本空間 Ω は「起こり得る結果の一覧」、事象 A はその一部です。</b></p>\n<p>サイコロなら Ω={1,2,3,4,5,6}。偶数が出る事象は A={2,4,6}。確率 P は、こうした事象に0〜1の数字を割り当てる規則です。</p>", "2.3.1": "<p><b>条件付き確率は「世界を絞り込んでから、割合を計算し直す」だけです。</b></p>\n<p>B が起きたと分かったら、考える世界を B の中に絞ります。その中で A も起きている割合が P(A|B) です。</p>\n<p>だから P(A|B)=P(A∩B)/P(B) になります。</p>", "2.4.1": "<p><b>「確率変数」という名前がややこしいだけです。X 自体が確率なのではありません。</b></p>\n<p>厳密には、X は起きた結果 ω を実数に変換する関数です。</p>\n<p>ただし統計を学ぶ最初の段階では、<b>「まだ観測前で、何が出るか決まっていない数」</b>と考えて構いません。</p>\n<p>観測前は X。実際に5が出た後は x=5。</p>\n<p>分布関数 F(x)=P(X≤x) は、「X が x 以下になる確率」を x を動かしながら並べた関数です。</p>", "2.5.1": "<p><b>期待値 E[X] は「次に出る値の予言」ではなく、同じ仕組みを何度も繰り返したときの長期平均です。</b></p>\n<p>公平なサイコロでは E[X]=3.5 ですが、3.5の目はありません。それでも何万回も振った平均は3.5付近に近づきます。</p>\n<p>統計で期待値が頻繁に出る最大の理由は、X̄ や S² のような<b>推定量も確率変数</b>だからです。</p>\n<p>「標本を取り直したら、その推定量は平均的にどこに来るか？」を E[θ̂] で調べます。</p>", "2.5.2": "<p><b>分散は「平均からのズレの二乗の平均」です。</b></p>\n<p>V[X]=E[(X−E[X])²]</p>\n<p>二乗するのは、正負のズレが打ち消し合わないようにするためです。標準偏差は平方根を取り、元の量と同じ単位に戻したものです。</p>\n<p>V[X]=E[X²]−E[X]² は計算に便利な変形式です。意味を考えるときは最初の定義に戻ると分かりやすいです。</p>", "2.7.3": "<p><b>条件付き期待値 E[X|Y] は「Y が分かった後での X の平均」です。</b></p>\n<p>Y の値によって答えが変わるので、通常これは1個の数ではなく Y の関数です。</p>\n<p>E[X]=E[E[X|Y]] は、「まずグループごとに平均し、そのグループ平均をさらに平均すれば全体平均になる」ということです。</p>", "2.10": "<p><b>大数の法則は「平均をたくさん取れば真の平均へ近づく」という定理です。</b></p>\n<p>個々の Xi が μ に近づくわけではありません。X̄n=(X1+…+Xn)/n という平均が、n を増やすと μ に近づきます。</p>", "2.11": "<p><b>中心極限定理は「平均の誤差の形が正規分布に近づく」という定理です。</b></p>\n<p>元データそのものが正規分布になるわけではありません。</p>\n<p>√n(X̄−μ) を適切に尺度調整すると正規分布へ近づく、という話です。ここから標準誤差・信頼区間・z検定がつながります。</p>", "3.2.1": "<p><b>ここでは4語を分けてください。</b></p>\n<ul>\n<li><b>母数</b>：μ, σ², θ。知りたいが未知。頻度論では固定値。</li>\n<li><b>標本</b>：X1,…,Xn。取り直すと値が変わる。</li>\n<li><b>統計量</b>：標本だけから計算する式。例 X̄。</li>\n<li><b>推定量</b>：母数を当てる目的で使う統計量。</li>\n</ul>\n<p>実際のデータを式に入れて得た具体的な数字が「推定値」です。</p>", "3.2.2": "<p><b>標本分布は「元データの分布」ではなく「統計量の分布」です。</b></p>\n<p>例えば毎回10人を無作為抽出して平均身長 X̄ を計算する操作を1万回繰り返すと、1万個の X̄ ができます。その散らばりが「標本平均の標本分布」です。</p>\n<p>標準誤差は、この標本分布の標準偏差です。</p>", "3.3.1": "<p><b>不偏性は「今回の推定値が真値に近い」という意味ではありません。</b></p>\n<p>同じ条件で標本抽出を何度も繰り返し、そのたびの推定値を平均したら真値になる、という性質です。</p>\n<p><b>一致性</b>は「標本数 n を増やすと真値へ近づく」。</p>\n<p><b>有効性</b>は「同じ条件を満たす候補の中でブレが小さい」。</p>\n<p>3つは別の評価軸です。</p>", "3.4": "<p><b>モーメント法は「理論上の平均・分散」と「データの平均・分散」を同じだと置いて、未知パラメータを逆算する方法です。</b></p>\n<p>理論の特徴量と、標本から計算した特徴量を対応させる、と考えると分かりやすいです。</p>", "3.5.1": "<p><b>尤度は「観測済みデータを固定して、パラメータ θ を動かす」関数です。</b></p>\n<p>「どの θ なら、このデータが最も自然に見えるか」を比べます。</p>\n<p>確率 P(X=x|θ) では θ を固定して X を動かしますが、尤度 L(θ;x) では x を固定して θ を動かします。同じ数式を逆向きから見ています。</p>", "3.5.2": "<p><b>スコアは「対数尤度の坂の傾き」、Fisher情報量は「その山がどれくらい鋭いか」を表す量です。</b></p>\n<p>尤度の山が鋭いほど、少し θ をずらすだけでデータとの整合性が落ちるので、θ を精密に特定しやすいと考えられます。</p>", "3.8.1": "<p><b>95%信頼区間の95%は、「真値が95%の確率でこの区間に入る」という頻度論の意味ではありません。</b></p>\n<p>同じ方法で標本抽出と区間計算を何度も繰り返すと、その区間の約95%が固定された真値を覆う、という手続きの成功率です。</p>", "3.9.1": "<p><b>ブートストラップは「手元の標本を、母集団の代用品として使う」方法です。</b></p>\n<p>観測データから復元抽出を何度も行い、そのたびに統計量を計算して、統計量の標本分布を近似します。</p>", "4.2.1": "<p><b>帰無仮説 H0 は、いったん正しいと仮定して「その世界で今のデータはどれほど珍しいか」を測るための基準です。</b></p>\n<p>データから直接 P(H0|data) を計算しているわけではありません。</p>", "4.2.2": "<p><b>第I種過誤と第II種過誤は、現実×判定の2×2表で考えると整理できます。</b></p>\n<p>本当は H0 が正しいのに棄却するのが第I種過誤（偽陽性）。本当は H1 側なのに棄却できないのが第II種過誤（偽陰性）です。</p>", "4.3.1": "<p><b>p値は P(H0が正しい|データ) ではありません。</b></p>\n<p>正しくは「H0 が正しいと仮定したとき、今観測したもの以上に極端な結果が出る確率」です。</p>\n<p>条件の向きが逆です。</p>", "4.10": "<p><b>検出力は「本当に差があるとき、それを検定が見つけられる確率」です。</b></p>\n<p>標本数を増やす、ノイズを減らす、効果が大きくなる、のいずれでも一般に検出力は高くなります。</p>", "5.2": "<p><b>単回帰 Y=β0+β1X+ε は「平均的な関係」と「個々のズレ」を分けた式です。</b></p>\n<p>β0+β1X が X を与えたときの平均的な Y、ε がそこからのばらつきです。</p>", "5.3": "<p><b>行列表現 y=Xβ+ε は、回帰式を観測数と説明変数の数だけまとめて書いただけです。</b></p>\n<p>新しい概念というより、連立した式を一度に扱うための圧縮表現です。</p>", "5.4": "<p><b>Gauss–Markov定理は「OLSが何でも最良」と言っているわけではありません。</b></p>\n<p>所定の条件の下で、線形かつ不偏な推定量の中で分散が最小（BLUE）という主張です。</p>", "5.5": "<p><b>回帰係数 β̂ も、標本を取り直せば変わる確率変数です。</b></p>\n<p>その標本分布の散らばりを表したものが標準誤差で、そこから信頼区間や検定につながります。</p>", "5.9": "<p><b>一般化線形モデルは3部品で見ると整理しやすいです。</b></p>\n<ul><li>応答変数の分布</li><li>線形予測子 Xβ</li><li>平均と線形予測子を結ぶリンク関数</li></ul>\n<p>ロジスティック回帰なら「二項分布＋logitリンク」です。</p>", "6.2": "<p><b>一元配置ANOVAの分解は「全体のズレ＝群平均どうしのズレ＋群内のズレ」です。</b></p>\n<p>群間のばらつきと群内のばらつきの比を取ったものが F 統計量です。</p>", "6.4": "<p><b>交互作用は「Aの効果が、Bの水準によって変わる」ことです。</b></p>\n<p>単に A も B も効くという主効果の足し算とは別物です。グラフで線が平行でないときは交互作用を疑います。</p>", "7.4": "<p><b>PCAは「データの散らばりが最も大きく見える向き」を探し、それを新しい軸にする方法です。</b></p>\n<p>固有ベクトルが方向、固有値がその方向の分散量に対応します。</p>", "8.2": "<p><b>ベイズの3つの分布を混ぜないこと。</b></p>\n<ul><li>事前分布：データを見る前の θ の不確実さ</li><li>尤度：各 θ の下でデータがどれくらい整合するか</li><li>事後分布：データを見た後に更新された θ の不確実さ</li></ul>", "8.3": "<p><b>共役事前分布は「更新後も同じ分布族に戻ってくる」組合せです。</b></p>\n<p>計算が閉じるので手計算しやすい、というのが主な利点です。</p>", "9.3": "<p><b>定常性は「時系列の統計的性質が時間によって大きく変わらない」という前提です。</b></p>\n<p>平均や分散、自己共分散が時間位置そのものに依存しないと、過去で推定した関係を未来へ持ち出しやすくなります。</p>", "9.4": "<p><b>自己相関は「今の値と、何期前かの自分自身との相関」です。</b></p>\n<p>ラグ1なら Xt と Xt−1、ラグ2なら Xt と Xt−2 の関係を見ます。</p>", "10.2": "<p><b>生存関数 S(t)=P(T&gt;t) は「時刻 t まで生き残る確率」です。</b></p>\n<p>ハザード h(t) は「そこまで生き残った条件のもと、直後にイベントが起こる瞬間的な率」です。確率そのものではありません。</p>", "10.8": "<p><b>信頼性工学では、限界状態関数 g(X) を使うと「安全／破壊」を1つの確率問題にできます。</b></p>\n<p>g(X)&gt;0 を安全、g(X)≤0 を破壊と定義すれば、知りたいのは Pf=P(g(X)≤0) です。</p>", "11.3": "<p><b>潜在結果 Y(1),Y(0) は「同じ対象を処置した世界／しなかった世界」の2つの結果です。</b></p>\n<p>同じ対象で両方を同時観測できないことが、因果推論の根本的な難しさです。</p>", "11.5": "<p><b>DAGは、因果関係についての仮定を図にしたものです。</b></p>\n<p>調整すべき交絡因子と、逆に調整するとバイアスを生むコライダーを見分けるために使います。</p>", "12.3": "<p><b>バイアス–分散のトレードオフは「単純すぎるモデル」と「データに合わせすぎるモデル」の間の問題です。</b></p>\n<p>柔軟にしすぎると訓練データには合っても、標本ごとの推定結果が不安定になり、未知データで悪化することがあります。</p>", "12.4": "<p><b>交差検証は「未知データでの成績」を、手元のデータを分割して疑似的に測る方法です。</b></p>\n<p>学習に使っていない部分で評価することがポイントです。</p>", "13.4": "<p><b>モンテカルロ積分の核は「積分を期待値に書き換え、その期待値を標本平均で近似する」ことです。</b></p>\n<p>第2章の期待値と大数の法則が、そのまま計算アルゴリズムになります。</p>", "13.5": "<p><b>LHSは各変数の範囲を層に分け、各層から必ず1回ずつ取ることで入力空間を均等に覆う標本化です。</b></p>\n<p>同じ標本数の単純乱数より、空間に大きな穴ができにくいのが利点です。</p>", "14.2": "<p><b>ここでは平均強度を出して終わりではありません。</b></p>\n<p>ばらつきと標本数を踏まえて「下側のどの値までを信頼してよいか」を考えます。第3章の推定を現実の判断へ接続する例です。</p>"};
+const REMOTE="https://shohhei-oshima.github.io/stat-textbook/textbook/";
+const frame=document.getElementById('book');
+const drawer=document.getElementById('drawer');
+const select=document.getElementById('noteSelect');
+const body=document.getElementById('noteBody');
+
+const labels={
+"0.5":"0.5 記法",
+"1.5.1":"1.5.1 分散と標準偏差",
+"1.7.1":"1.7.1 共分散と相関",
+"2.2.1":"2.2.1 標本空間と事象",
+"2.3.1":"2.3.1 条件付き確率",
+"2.4.1":"2.4.1 確率変数と分布関数",
+"2.5.1":"2.5.1 期待値",
+"2.5.2":"2.5.2 分散とモーメント",
+"2.7.3":"2.7.3 条件付き期待値",
+"2.10":"2.10 大数の法則",
+"2.11":"2.11 中心極限定理",
+"3.2.1":"3.2.1 母集団・標本・統計量",
+"3.2.2":"3.2.2 標本平均の標本分布",
+"3.3.1":"3.3.1 不偏性・一致性・有効性",
+"3.4":"3.4 モーメント法",
+"3.5.1":"3.5.1 尤度と最尤推定量",
+"3.5.2":"3.5.2 スコアとFisher情報量",
+"3.8.1":"3.8.1 信頼区間とピボット法",
+"3.9.1":"3.9.1 ブートストラップ",
+"4.2.1":"4.2.1 帰無仮説と対立仮説",
+"4.2.2":"4.2.2 二種類の過誤",
+"4.3.1":"4.3.1 p値",
+"4.10":"4.10 検出力",
+"5.2":"5.2 単回帰",
+"5.3":"5.3 重回帰の行列表現",
+"5.4":"5.4 Gauss–Markov",
+"5.5":"5.5 係数の分布と推測",
+"5.9":"5.9 一般化線形モデル",
+"6.2":"6.2 一元配置分散分析",
+"6.4":"6.4 交互作用",
+"7.4":"7.4 PCA",
+"8.2":"8.2 ベイズの三つの分布",
+"8.3":"8.3 共役事前分布",
+"9.3":"9.3 定常性",
+"9.4":"9.4 自己相関",
+"10.2":"10.2 生存関数・ハザード",
+"10.8":"10.8 信頼性工学",
+"11.3":"11.3 潜在結果",
+"11.5":"11.5 DAG",
+"12.3":"12.3 バイアス–分散",
+"12.4":"12.4 交差検証",
+"13.4":"13.4 モンテカルロ積分",
+"13.5":"13.5 LHS",
+"14.2":"14.2 コンクリート受入検査"
+};
+
+Object.keys(NOTES).sort((a,b)=>{
+ const aa=a.split('.').map(Number), bb=b.split('.').map(Number);
+ for(let i=0;i<Math.max(aa.length,bb.length);i++){const d=(aa[i]||0)-(bb[i]||0);if(d)return d}
+ return 0;
+}).forEach(k=>{
+ const o=document.createElement('option');o.value=k;o.textContent=labels[k]||k;select.appendChild(o);
+});
+
+function showNote(){
+ const k=select.value;
+ body.innerHTML='<h3 style="margin-top:0">'+(labels[k]||k)+'</h3>'+NOTES[k];
+}
+select.onchange=showNote;
+document.getElementById('notesBtn').onclick=()=>{drawer.classList.add('open');showNote()};
+document.getElementById('closeBtn').onclick=()=>drawer.classList.remove('open');
+showNote();
+
+// When this same file is actually placed under the GitHub Pages /textbook/ folder,
+// switch the iframe to same-origin ./index.html and inject the notes beside headings.
+if(location.protocol.startsWith('http') && location.hostname==='shohhei-oshima.github.io'){
+  frame.src='./index.html';
+  const norm=s=>(s||'').replace(/\s+/g,' ').trim();
+
+  function addStyle(doc){
+    if(doc.getElementById('easy-style')) return;
+    const st=doc.createElement('style'); st.id='easy-style';
+    st.textContent=`
+      .easy-note{margin:14px 0 20px;border:1px solid rgba(128,128,128,.32);border-left:4px solid #b88a2d;border-radius:10px;background:rgba(184,138,45,.08);overflow:hidden}
+      .easy-note summary{cursor:pointer;padding:11px 14px;font-weight:750;list-style:none}
+      .easy-note summary::-webkit-details-marker{display:none}
+      .easy-note summary:before{content:"＋";display:inline-block;width:1.4em}
+      .easy-note[open] summary:before{content:"−"}
+      .easy-body{padding:0 14px 13px;line-height:1.85}
+      .easy-body p{margin:.55em 0}
+      .easy-body ul{margin:.55em 0 .55em 1.25em}
+    `;
+    doc.head.appendChild(st);
+  }
+
+  function makeNote(doc,html,label){
+    const d=doc.createElement('details');d.className='easy-note';d.open=true;
+    const s=doc.createElement('summary');s.textContent=label;
+    const b=doc.createElement('div');b.className='easy-body';b.innerHTML=html;
+    d.append(s,b);return d;
+  }
+
+  function inject(){
+    let doc;
+    try{doc=frame.contentDocument}catch(e){return}
+    if(!doc)return;
+    addStyle(doc);
+    const view=doc.getElementById('view'); if(!view)return;
+
+    const h1=view.querySelector('h1');
+    if(h1&&!h1.dataset.easyDone){
+      h1.dataset.easyDone='1';
+      const t=norm(h1.textContent);
+      let key=null;
+      if(/^序章/.test(t)) key='0';
+      else{const m=t.match(/^第(\d+)章/);if(m)key=m[1]}
+      if(key&&CHAPTER[key]) h1.insertAdjacentElement('afterend',makeNote(doc,'<p>'+CHAPTER[key]+'</p>','この章を読む前に'));
+    }
+
+    view.querySelectorAll('h2,h3,h4').forEach(h=>{
+      if(h.dataset.easyDone)return;
+      h.dataset.easyDone='1';
+      const m=norm(h.textContent).match(/^(\d+(?:\.\d+){1,2})\b/);
+      if(!m)return;
+      if(NOTES[m[1]]) h.insertAdjacentElement('afterend',makeNote(doc,NOTES[m[1]],'ここでの行間補足'));
+    });
+  }
+
+  frame.addEventListener('load',()=>{
+    try{
+      const doc=frame.contentDocument;
+      const view=doc&&doc.getElementById('view');
+      if(view)new MutationObserver(()=>setTimeout(inject,0)).observe(view,{childList:true,subtree:true});
+      inject();
+    }catch(e){}
+  });
+}
+</script>
+</body>
+</html>
