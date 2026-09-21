@@ -1,0 +1,583 @@
+<!doctype html><html><head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<div style="height:env(safe-area-inset-top)"></div>
+<style>
+.__home{position:fixed;z-index:60;left:max(10px,env(safe-area-inset-left));
+  top:calc(8px + env(safe-area-inset-top));
+  font:500 .78rem/1 system-ui,sans-serif;text-decoration:none;
+  padding:.5rem .7rem;border-radius:9px;
+  color:#1B2430;background:#FFFFFFE6;border:1px solid #0002;
+  backdrop-filter:blur(6px)}
+@media (prefers-color-scheme:dark){
+  .__home{color:#DDE3EA;background:#171F27E6;border-color:#FFF2}
+}
+</style>
+<a class="__home" href="../">← 道具箱</a>
+<script>
+if('serviceWorker' in navigator){
+  addEventListener('load', ()=>navigator.serviceWorker.register('../sw.js').catch(()=>{}));
+}
+</script>
+
+<title>確率から最適化まで</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Zen+Old+Mincho:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root {
+  --ground:#EDEFF3; --surface:#FFFFFF; --surface-sunk:#E4E7ED;
+  --text:#171A21; --text-mid:#414857; --text-mute:#656D7E;
+  --rule:#D3D7E0; --rule-soft:#E2E5EC;
+  --ink:#2B4693; --ink-tint:#E8ECF8;
+  --oxide:#94401F; --oxide-tint:#F7EAE3;
+  --sage:#38624B; --sage-tint:#E5EEE8;
+  --f-display:"Newsreader","Zen Old Mincho",Georgia,"Yu Mincho",serif;
+  --f-body:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --measure:68ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:#0F1218; --surface:#161A22; --surface-sunk:#1D222C;
+    --text:#E3E7EF; --text-mid:#B6BDCB; --text-mute:#8B93A4;
+    --rule:#2A3140; --rule-soft:#222835;
+    --ink:#8FA9EF; --ink-tint:#1A2138;
+    --oxide:#DE9C79; --oxide-tint:#2A1D16;
+    --sage:#8FC1A5; --sage-tint:#16241C;
+  }
+}
+:root[data-theme="dark"] {
+  --ground:#0F1218; --surface:#161A22; --surface-sunk:#1D222C;
+  --text:#E3E7EF; --text-mid:#B6BDCB; --text-mute:#8B93A4;
+  --rule:#2A3140; --rule-soft:#222835;
+  --ink:#8FA9EF; --ink-tint:#1A2138;
+  --oxide:#DE9C79; --oxide-tint:#2A1D16;
+  --sage:#8FC1A5; --sage-tint:#16241C;
+}
+* { box-sizing:border-box; }
+body { background:var(--ground); color:var(--text); font-family:var(--f-body); font-size:16px; line-height:1.85; font-feature-settings:"palt" 1; -webkit-font-smoothing:antialiased; }
+.shell { display:grid; grid-template-columns:1fr; max-width:1400px; margin:0 auto; padding:0 22px 120px; }
+@media (min-width:1140px) { .shell { grid-template-columns:230px minmax(0,1fr); gap:56px; padding:0 40px 140px; } }
+
+.masthead { grid-column:1/-1; border-bottom:1px solid var(--rule); padding:68px 0 40px; margin-bottom:56px; }
+.eyebrow { font-family:var(--f-mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-mute); margin-bottom:20px; }
+h1 { font-family:var(--f-display); font-weight:600; font-size:clamp(2.5rem,6vw,3.9rem); line-height:1.1; letter-spacing:-.015em; text-wrap:balance; margin:0 0 22px; }
+.standfirst { font-size:17.5px; line-height:1.9; color:var(--text-mid); max-width:62ch; margin:0; }
+.masthead-meta { display:flex; flex-wrap:wrap; gap:8px 32px; margin-top:34px; font-family:var(--f-mono); font-size:12px; color:var(--text-mute); }
+.masthead-meta b { color:var(--text-mid); font-weight:500; }
+
+nav.toc { display:none; }
+@media (min-width:1140px) {
+  nav.toc { display:block; position:sticky; top:32px; align-self:start; max-height:calc(100vh - 64px); overflow-y:auto; padding-bottom:40px; }
+  nav.toc ol { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px; }
+  nav.toc a { display:block; padding:5px 0 5px 12px; font-size:13px; line-height:1.5; color:var(--text-mute); text-decoration:none; border-left:2px solid transparent; transition:color .14s,border-color .14s; }
+  nav.toc a:hover, nav.toc a:focus-visible { color:var(--ink); border-left-color:var(--ink); }
+  nav.toc .toc-head { font-family:var(--f-mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-mute); padding:22px 0 8px 12px; border-bottom:1px solid var(--rule-soft); margin-bottom:6px; }
+  nav.toc .toc-head:first-child { padding-top:0; }
+}
+main { grid-column:1/-1; min-width:0; }
+@media (min-width:1140px) { main { grid-column:2; } }
+
+section { margin-bottom:78px; scroll-margin-top:24px; }
+h2 { font-family:var(--f-display); font-weight:600; font-size:clamp(1.6rem,3.2vw,2.15rem); line-height:1.25; letter-spacing:-.01em; text-wrap:balance; margin:0 0 8px; padding-bottom:14px; border-bottom:2px solid var(--text); }
+.sec-note { font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-mute); margin:14px 0 30px; }
+h3 { font-family:var(--f-display); font-weight:600; font-size:1.28rem; line-height:1.4; text-wrap:balance; margin:44px 0 12px; }
+h4 { font-family:var(--f-body); font-weight:700; font-size:1.02rem; line-height:1.6; margin:30px 0 10px; }
+p { max-width:var(--measure); margin:0 0 18px; }
+p.lead { font-size:17px; color:var(--text-mid); }
+a { color:var(--ink); text-decoration-thickness:1px; text-underline-offset:2.5px; }
+:focus-visible { outline:2px solid var(--ink); outline-offset:3px; border-radius:2px; }
+ul.plain, ol.plain { max-width:var(--measure); margin:0 0 18px; padding-left:1.3em; }
+ul.plain li, ol.plain li { margin-bottom:8px; }
+
+.fml { font-family:var(--f-mono); font-size:14.5px; background:var(--surface-sunk); padding:1px 6px; border-radius:2px; }
+pre.fml-block { font-family:var(--f-mono); font-size:14.5px; line-height:2.1; white-space:pre; background:var(--surface); border-left:2px solid var(--ink); padding:18px 22px; margin:0 0 24px; max-width:var(--measure); overflow-x:auto; }
+pre.fml-block .why { color:var(--text-mute); font-family:var(--f-body); font-size:13px; }
+
+.callout { max-width:var(--measure); padding:22px 26px; margin:0 0 22px; background:var(--surface); border:1px solid var(--rule-soft); border-left-width:3px; }
+.callout h3, .callout h4 { margin:0 0 10px; font-size:1.08rem; }
+.callout p:last-child, .callout pre:last-child, .callout ul:last-child { margin-bottom:0; }
+.callout.bridge { border-left-color:var(--sage); }
+.callout.bridge h3, .callout.bridge h4 { color:var(--sage); }
+.callout.warn { border-left-color:var(--oxide); }
+.callout.warn h3, .callout.warn h4 { color:var(--oxide); }
+
+.tw { overflow-x:auto; margin:0 0 26px; border:1px solid var(--rule-soft); background:var(--surface); }
+table { border-collapse:collapse; width:100%; min-width:560px; font-size:14.5px; }
+th, td { text-align:left; padding:11px 16px; border-bottom:1px solid var(--rule-soft); vertical-align:top; line-height:1.65; }
+th { font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-mute); font-weight:500; background:var(--surface-sunk); white-space:nowrap; }
+tr:last-child td { border-bottom:none; }
+td code, th code { font-family:var(--f-mono); font-size:13.5px; }
+td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+
+figure { margin:0 0 30px; max-width:var(--measure); }
+figure.wide { max-width:none; }
+.figscroll { overflow-x:auto; background:var(--surface); border:1px solid var(--rule-soft); padding:24px 20px; }
+.figscroll svg { display:block; width:100%; height:auto; margin:0 auto; color:var(--text-mid); }
+figcaption { font-size:13.5px; color:var(--text-mute); margin-top:12px; max-width:var(--measure); line-height:1.75; }
+
+.stage { display:grid; grid-template-columns:96px minmax(0,1fr); gap:0 20px; border-top:1px solid var(--rule); padding:24px 0; }
+.stage:last-of-type { border-bottom:1px solid var(--rule); }
+.stage .mo { font-family:var(--f-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink); padding-top:4px; }
+.stage h4 { margin:0 0 8px; }
+.stage p:last-child { margin-bottom:0; }
+
+.close { border-top:2px solid var(--text); padding-top:34px; margin-top:12px; }
+.close p { font-size:17px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
+@media print {
+  :root { --ground:#fff; --surface:#fff; --surface-sunk:#f3f3f3; --text:#000; --text-mid:#1c1c1c; --text-mute:#555; --rule:#888; --rule-soft:#c4c4c4; --ink:#16306e; --ink-tint:#eef1f9; --oxide:#6d2f14; --oxide-tint:#f8efe9; --sage:#224834; --sage-tint:#eaf2ec; }
+  nav.toc { display:none; }
+  .shell { display:block; max-width:none; padding:0; }
+  body { font-size:10.5pt; line-height:1.7; }
+  .masthead { padding-top:0; }
+  h2 { page-break-before:always; page-break-after:avoid; }
+  h3, h4 { page-break-after:avoid; }
+  figure, .callout, pre, .tw, .stage { page-break-inside:avoid; }
+  a { color:#000; text-decoration:none; }
+  .figscroll { overflow:visible; }
+  p, ul.plain, ol.plain, figcaption { max-width:none; }
+}
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">Probability · Statistics · Optimization</div>
+    <h1>確率から最適化まで</h1>
+    <p class="standfirst">確率論・統計学・最適化を体系として学ぶための道筋。この3つは別々の科目に見えて、<strong>統計は確率と最適化の合流点</strong>です。そしてクオンツも機械学習も、その合流点の先にあります。あなたのFEMの経験がどこで効くかも、正直に棚卸ししました。</p>
+    <div class="masthead-meta">
+      <span>3 本の道</span>
+      <span>実用到達 <b>約12か月</b></span>
+      <span>クオンツ水準 <b>2〜3年</b></span>
+      <span>無料教材 <b>多数</b></span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="目次">
+    <ol>
+      <li><div class="toc-head">全体像</div></li>
+      <li><a href="#shape">統計は合流点である</a></li>
+      <li><a href="#map">依存関係の地図</a></li>
+      <li><div class="toc-head">現在地</div></li>
+      <li><a href="#assets">あなたが既に持っているもの</a></li>
+      <li><div class="toc-head">三本の道</div></li>
+      <li><a href="#prob">確率の道</a></li>
+      <li><a href="#stat">統計の道</a></li>
+      <li><a href="#opt">最適化の道</a></li>
+      <li><div class="toc-head">合流</div></li>
+      <li><a href="#converge">同じ式が別の名前で</a></li>
+      <li><div class="toc-head">実行</div></li>
+      <li><a href="#schedule">18か月の順序</a></li>
+      <li><a href="#build">書きながら学ぶ</a></li>
+      <li><a href="#honest">正直な見積り</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ============ SHAPE ============ -->
+    <section id="shape">
+      <h2>統計は合流点である</h2>
+      <p class="sec-note">3科目ではなく、2つの土台と1つの合流</p>
+
+      <p class="lead">確率・統計・最適化を「3つの別々の科目」として並べると、道に迷います。実際の構造はこうです。</p>
+
+      <pre class="fml-block"><b>確率</b>    …  不確実なものを記述する言語
+<b>最適化</b>  …  「最も良いもの」を見つける方法
+
+<b>統計</b>    …  その2つの合流点
+             「観測から、最ももっともらしいモデルを<u>見つける</u>」</pre>
+
+      <p>最尤推定は<strong>尤度という関数の最大化</strong>です。最小二乗法は<strong>二次形式の最小化</strong>。正則化は<strong>制約付き最適化</strong>。ベイズの MAP 推定は<strong>事後確率の最大化</strong>。統計の主要な手法は、ほぼ例外なく「確率で目的関数を書き、最適化で解く」という形をしています。</p>
+
+      <p>だから <strong>確率と最適化は並行して学べます</strong>。互いに前提ではないので、片方に飽きたらもう片方へ移れる。独学の継続にはこれが効きます。</p>
+    </section>
+
+    <!-- ============ MAP ============ -->
+    <section id="map">
+      <h2>依存関係の地図</h2>
+      <p class="sec-note">何が何の前提か</p>
+
+      <figure class="wide">
+        <div class="figscroll">
+          <svg viewBox="0 0 1020 620" style="min-width:760px;max-width:1020px" role="img" aria-label="確率・統計・最適化の依存関係図。土台は線形代数と多変数微積分。左列が確率の道（確率論、測度論的確率、確率解析）、中央が統計の道（数理統計、ベイズ統計とMCMC、統計的学習と時系列）、右列が最適化の道（凸最適化、数値最適化、確率最適化）。確率論から数理統計へ、凸最適化から統計的学習へ矢印が伸び、統計が合流点になっている。下部に3つの到達点（ベイズモデル更新、クオンツ、機械学習と最適化実務）。">
+            <defs>
+              <marker id="m-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor"/>
+              </marker>
+              <marker id="m-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--ink)"/>
+              </marker>
+            </defs>
+
+            <!-- foundation -->
+            <rect x="60" y="24" width="900" height="46" fill="var(--surface-sunk)" stroke="currentColor" stroke-width="1" opacity="0.9"/>
+            <text x="510" y="53" font-family="IBM Plex Mono, monospace" font-size="14.5" fill="currentColor" text-anchor="middle">土台 —— 線形代数（理論）・多変数微積分</text>
+
+            <!-- column headers -->
+            <text x="170" y="102" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.6" fill="currentColor" opacity="0.6" text-anchor="middle">確率</text>
+            <text x="510" y="102" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.6" fill="var(--ink)" text-anchor="middle">統計 — 合流点</text>
+            <text x="850" y="102" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.6" fill="currentColor" opacity="0.6" text-anchor="middle">最適化</text>
+
+            <!-- boxes: probability column -->
+            <g fill="none" stroke="currentColor" stroke-width="1.1" opacity="0.5">
+              <rect x="60" y="118" width="220" height="54"/>
+              <rect x="60" y="222" width="220" height="54"/>
+              <rect x="60" y="326" width="220" height="54"/>
+              <rect x="740" y="118" width="220" height="54"/>
+              <rect x="740" y="222" width="220" height="54"/>
+              <rect x="740" y="326" width="220" height="54"/>
+            </g>
+            <!-- statistics column emphasised -->
+            <g fill="var(--ink-tint)" stroke="var(--ink)" stroke-width="1.4">
+              <rect x="400" y="118" width="220" height="54"/>
+              <rect x="400" y="222" width="220" height="54"/>
+              <rect x="400" y="326" width="220" height="54"/>
+            </g>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="13.5" text-anchor="middle">
+              <text x="170" y="142" fill="currentColor">確率論</text>
+              <text x="170" y="161" fill="currentColor" opacity="0.65" font-size="12">Stat 110 · 現在地</text>
+              <text x="170" y="246" fill="currentColor">測度論的確率</text>
+              <text x="170" y="265" fill="currentColor" opacity="0.65" font-size="12">Durrett / Williams</text>
+              <text x="170" y="350" fill="currentColor">確率解析（伊藤）</text>
+              <text x="170" y="369" fill="currentColor" opacity="0.65" font-size="12">Shreve</text>
+
+              <text x="510" y="142" fill="var(--ink)">数理統計</text>
+              <text x="510" y="161" fill="var(--ink)" opacity="0.75" font-size="12">久保川 / Casella–Berger</text>
+              <text x="510" y="246" fill="var(--ink)">ベイズ統計・MCMC</text>
+              <text x="510" y="265" fill="var(--ink)" opacity="0.75" font-size="12">Rethinking → BDA3</text>
+              <text x="510" y="350" fill="var(--ink)">統計的学習・時系列</text>
+              <text x="510" y="369" fill="var(--ink)" opacity="0.75" font-size="12">ESL / Hamilton</text>
+
+              <text x="850" y="142" fill="currentColor">凸最適化</text>
+              <text x="850" y="161" fill="currentColor" opacity="0.65" font-size="12">Boyd（無料）</text>
+              <text x="850" y="246" fill="currentColor">数値最適化</text>
+              <text x="850" y="265" fill="currentColor" opacity="0.65" font-size="12">Nocedal–Wright</text>
+              <text x="850" y="350" fill="currentColor">確率最適化・強化学習</text>
+            </g>
+
+            <!-- foundation down-arrows -->
+            <g stroke="currentColor" stroke-width="1.2" opacity="0.5" fill="none" marker-end="url(#m-ar)">
+              <line x1="170" y1="70" x2="170" y2="114"/>
+              <line x1="850" y1="70" x2="850" y2="114"/>
+            </g>
+
+            <!-- vertical within columns -->
+            <g stroke="currentColor" stroke-width="1.2" opacity="0.5" fill="none" marker-end="url(#m-ar)">
+              <line x1="170" y1="172" x2="170" y2="218"/>
+              <line x1="170" y1="276" x2="170" y2="322"/>
+              <line x1="850" y1="172" x2="850" y2="218"/>
+              <line x1="850" y1="276" x2="850" y2="322"/>
+            </g>
+            <g stroke="var(--ink)" stroke-width="1.3" opacity="0.75" fill="none" marker-end="url(#m-ink)">
+              <line x1="510" y1="172" x2="510" y2="218"/>
+              <line x1="510" y1="276" x2="510" y2="322"/>
+            </g>
+
+            <!-- cross: probability -> statistics -->
+            <line x1="280" y1="145" x2="396" y2="145" stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#m-ink)"/>
+            <text x="338" y="136" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--ink)" text-anchor="middle">前提</text>
+
+            <!-- cross: convex opt -> statistical learning -->
+            <path d="M 740 145 L 690 145 L 690 353 L 624 353" stroke="var(--sage)" stroke-width="1.5" fill="none" marker-end="url(#m-ar)" stroke-dasharray="6 4"/>
+            <text x="700" y="252" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--sage)" text-anchor="start">正則化・</text>
+            <text x="700" y="270" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="var(--sage)" text-anchor="start">学習は最適化</text>
+
+            <!-- destinations -->
+            <line x1="60" y1="424" x2="960" y2="424" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+            <text x="60" y="452" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.6" fill="currentColor" opacity="0.6">到達点</text>
+
+            <g fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="60" y="470" width="280" height="66"/>
+              <rect x="370" y="470" width="280" height="66"/>
+              <rect x="680" y="470" width="280" height="66"/>
+            </g>
+            <g font-family="IBM Plex Mono, monospace" font-size="13.5" text-anchor="middle">
+              <text x="200" y="498" fill="var(--sage)">ベイズ的モデル更新</text>
+              <text x="200" y="519" fill="currentColor" opacity="0.65" font-size="12">免震の理論と計測の乖離</text>
+              <text x="510" y="498" fill="currentColor">クオンツ</text>
+              <text x="510" y="519" fill="currentColor" opacity="0.65" font-size="12">確率解析 + 時系列 + 最適化</text>
+              <text x="820" y="498" fill="currentColor">機械学習・最適化実務</text>
+              <text x="820" y="519" fill="currentColor" opacity="0.65" font-size="12">統計的学習 + 凸最適化</text>
+            </g>
+
+            <g stroke="currentColor" stroke-width="1.1" opacity="0.45" fill="none" marker-end="url(#m-ar)">
+              <path d="M 440 280 L 200 280 L 200 466"/>
+              <path d="M 170 380 L 170 404 L 510 404 L 510 466"/>
+              <path d="M 620 353 L 700 353 L 700 404 L 820 404 L 820 466"/>
+            </g>
+
+            <text x="60" y="580" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor" opacity="0.6">実線 = 前提関係　　破線 = 手法上の依存（統計の解法が最適化である、という関係）</text>
+            <text x="60" y="602" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--oxide)">確率と最適化は互いに前提ではない —— 並行して走れる</text>
+          </svg>
+        </div>
+        <figcaption>確率と最適化はどちらも土台から直接始められ、<b>互いに前提ではありません</b>。統計はその両方を必要とする合流点で、そこから3つの到達点が分岐します。クオンツだけが目的地ではない、という構造がここに見えます。</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ ASSETS ============ -->
+    <section id="assets">
+      <h2>あなたが既に持っているもの</h2>
+      <p class="sec-note">FEM の経験の棚卸し · とくに最適化で効く</p>
+
+      <p class="lead">ゼロからではありません。<strong>非線形FEMのソルバは、実は最適化アルゴリズムそのもの</strong>です。名前が違うだけで、同じ数学を既に触っています。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>あなたが知っているもの</th><th>統計・最適化での名前</th><th>効き方</th></tr></thead>
+          <tbody>
+            <tr><td>剛性行列（対称正定値）</td><td>共分散行列</td><td><b>同じ対象。</b>Cholesky 分解も両方で使う</td></tr>
+            <tr><td>固有値解析・モード分解</td><td>スペクトル定理・主成分分析</td><td>PCA は共分散行列の固有値問題そのもの</td></tr>
+            <tr><td>ひずみエネルギー <span class="fml">½uᵀKu</span></td><td>二次形式・ポートフォリオ分散 <span class="fml">wᵀΣw</span></td><td><b>同じ式。</b>最適化の主役</td></tr>
+            <tr><td>最小ポテンシャルエネルギー原理</td><td>凸最適化問題</td><td><b>FEM は最適化の解</b>だと既に知っている</td></tr>
+            <tr><td>Newton–Raphson 反復</td><td>ニュートン法</td><td>Boyd の第9〜10章がそのまま読める</td></tr>
+            <tr><td>収束判定・線形探索</td><td>停止条件・ライン サーチ</td><td>実装の勘がそのまま移る</td></tr>
+            <tr><td>疎行列直接法・条件数</td><td>数値線形代数</td><td>大規模最適化の実装で直結</td></tr>
+            <tr><td>SRSS / CQC</td><td>分散の合成・分散共分散行列</td><td>下の合流点の節を参照</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout bridge">
+        <h4>最適化は、あなたにとって最も入りやすい入口かもしれません</h4>
+        <p>Boyd の『Convex Optimization』は多くの人にとって抽象的で辛い本ですが、<strong>変分原理とニュートン法を実装した経験がある人には具体的に読めます</strong>。「なぜ凸性が効くのか」は、剛性行列が正定値なら解が一意で安定であることと同じ話です。</p>
+        <p>そして最適化は確率を前提としません。<strong>Stat 110 と並行して今すぐ始められます。</strong></p>
+      </div>
+
+      <h4>足りない可能性があるもの</h4>
+      <ul class="plain">
+        <li><b>理論的な線形代数。</b>使えることと、証明できることは別です。ベクトル空間・双対・射影・スペクトル定理を定義から追えるか。不安なら Strang（MIT 18.06、動画無料）で3週間</li>
+        <li><b>解析学の作法。</b>ε-δ、収束、一様収束。測度論に進むなら必須。当面は後回しでよい</li>
+        <li><b>証明を書く訓練。</b>工学部では書く機会が少ない。数理統計の演習で自然に鍛えられます</li>
+      </ul>
+    </section>
+
+    <!-- ============ PROB ============ -->
+    <section id="prob">
+      <h2>確率の道</h2>
+      <p class="sec-note">記述の言語</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>段階</th><th>教材</th><th>目安</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. 微積分レベルの確率</b></td><td>Blitzstein &amp; Hwang『Introduction to Probability』<br><span style="font-size:13px;color:var(--text-mute)">著者が第2版を無料公開。講義動画34回も公開</span></td><td class="num">2〜3か月</td></tr>
+            <tr><td><b>2. 測度論的確率</b></td><td>Williams『Probability with Martingales』（薄くて名著）<br>Durrett『Probability: Theory and Examples』（標準・重い）</td><td class="num">4〜6か月</td></tr>
+            <tr><td><b>3. 確率解析</b></td><td>Shreve『Stochastic Calculus for Finance』I, II<br><span style="font-size:13px;color:var(--text-mute)">I は離散時間で入門的、II が本番</span></td><td class="num">4〜6か月</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>2 と 3 が必要なのはクオンツ（特にデリバティブ側）を狙う場合だけ</strong>です。統計・機械学習・ベイズモデル更新が目的なら、1 のあと統計の道へ直接進んで構いません。測度論は「いつか戻ってくる場所」として置いておけばよい。</p>
+    </section>
+
+    <!-- ============ STAT ============ -->
+    <section id="stat">
+      <h2>統計の道</h2>
+      <p class="sec-note">合流点 · ここが本体</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>段階</th><th>教材</th><th>目安</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. 数理統計</b><br><span style="font-size:13px;color:var(--text-mute)">推定・十分統計量・尤度・検定・漸近論</span></td><td>久保川達也『現代数理統計学の基礎』（共立出版）<br>Casella &amp; Berger『Statistical Inference』（英語の標準）<br>Wasserman『All of Statistics』（速い・広い）</td><td class="num">4〜6か月</td></tr>
+            <tr><td><b>2. ベイズ統計</b></td><td>McElreath『Statistical Rethinking』（直感重視・動画あり）<br>→ Gelman et al.『Bayesian Data Analysis』（BDA3・無料公開）</td><td class="num">3〜4か月</td></tr>
+            <tr><td><b>3. 統計的学習</b></td><td>Hastie, Tibshirani &amp; Friedman『The Elements of Statistical Learning』<br><span style="font-size:13px;color:var(--text-mute)">著者サイトで無料公開。ESL の通称で通る</span></td><td class="num">3〜4か月</td></tr>
+            <tr><td><b>4. 時系列</b><br><span style="font-size:13px;color:var(--text-mute)">クオンツなら必須</span></td><td>Hamilton『Time Series Analysis』<br>Shumway &amp; Stoffer（実践寄り）</td><td class="num">3〜4か月</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout bridge">
+        <h4>日本語で始めてよい唯一の場所</h4>
+        <p>数理統計は<strong>日本語の教科書が充実している数少ない領域</strong>です。久保川は現代的で記述も明快なので、ここは日本語で入って構いません。確率論（Blitzstein）と統計的学習（ESL）は英語のほうが良い教材が揃っているので、そちらで英語を鍛えるバランスが現実的です。</p>
+      </div>
+    </section>
+
+    <!-- ============ OPT ============ -->
+    <section id="opt">
+      <h2>最適化の道</h2>
+      <p class="sec-note">今すぐ並行して始められる</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>段階</th><th>教材</th><th>目安</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. 凸最適化</b><br><span style="font-size:13px;color:var(--text-mute)">凸集合・凸関数・双対性・KKT・内点法</span></td><td>Boyd &amp; Vandenberghe『Convex Optimization』<br><span style="font-size:13px;color:var(--text-mute)"><b>著者サイトで無料公開。</b>Stanford EE364a の講義動画も無料</span></td><td class="num">3〜4か月</td></tr>
+            <tr><td><b>2. 数値最適化</b><br><span style="font-size:13px;color:var(--text-mute)">非凸・準ニュートン・信頼領域・制約付き</span></td><td>Nocedal &amp; Wright『Numerical Optimization』</td><td class="num">3〜4か月</td></tr>
+            <tr><td><b>3. 確率的最適化</b></td><td>確率的勾配法、オンライン学習、強化学習へ</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Boyd を最初の3か月に入れることを強く勧めます。</strong> 理由が3つあります。</p>
+      <ul class="plain">
+        <li>確率を前提としないので、<strong>Stat 110 と完全に並行できる</strong>。片方に飽きたら切り替えられる</li>
+        <li>あなたのFEM経験が最も直接効く場所。双対性以外はほぼ既知の概念の言い換えです</li>
+        <li>統計の第3段階（統計的学習）に入る前に済ませておくと、正則化・SVM・スパース推定が「最適化問題を解いているだけ」に見える</li>
+      </ul>
+    </section>
+
+    <!-- ============ CONVERGE ============ -->
+    <section id="converge">
+      <h2>同じ式が別の名前で</h2>
+      <p class="sec-note">合流点は抽象論ではなく、具体的な式の一致として現れる</p>
+
+      <h3>CQC とポートフォリオ分散は同じ式です</h3>
+
+      <pre class="fml-block"><b>CQC（構造）</b>      R²  =  Σᵢ Σⱼ  ρᵢⱼ · Rᵢ · Rⱼ
+
+<b>Markowitz（金融）</b>  σₚ² =  Σᵢ Σⱼ  ρᵢⱼ · σᵢwᵢ · σⱼwⱼ   =  wᵀ Σ w
+
+同じ二次形式。相関行列を挟んで重みつきで足しているだけ。</pre>
+
+      <p>そして<strong>分散投資の効果は SRSS そのもの</strong>です。資産が無相関なら、リスクは <span class="fml">n</span> ではなく <span class="fml">√n</span> でしか増えない —— モード応答が無相関なら合成応答が <span class="fml">√(Σσᵢ²)</span> になるのと、まったく同じ現象です。</p>
+
+      <p>Markowitz のポートフォリオ最適化は「<span class="fml">wᵀΣw</span> を制約下で最小化する」二次計画問題。<strong>あなたはこの二次形式を、剛性行列とひずみエネルギーの形で既に何百回も扱っています。</strong></p>
+
+      <h3>ほかの一致</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>構造工学での姿</th><th>統計・最適化での姿</th></tr></thead>
+          <tbody>
+            <tr><td>最小ポテンシャルエネルギー原理</td><td>凸関数の最小化。解の一意性は正定値性から</td></tr>
+            <tr><td>Newton–Raphson の反復</td><td>ニュートン法。Hessian は接線剛性行列</td></tr>
+            <tr><td>モード分解</td><td>主成分分析（PCA）</td></tr>
+            <tr><td>モデル更新・逆解析</td><td>ベイズ推論 + MAP 推定（最適化）</td></tr>
+            <tr><td>カルマンフィルタ（SHM で使う）</td><td>逐次ベイズ更新 + 線形射影</td></tr>
+            <tr><td>感度解析</td><td>勾配・随伴法（adjoint）</td></tr>
+            <tr><td>信頼性指標 β</td><td>制約付き最小化（FORM は最適化問題）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout bridge">
+        <h4>この一致が意味すること</h4>
+        <p>あなたは3つの分野をゼロから学ぶのではなく、<strong>既に知っている数学に、別の分野での名前と解釈を追加していく</strong>作業をすることになります。これは独学の速度に決定的に効きます。</p>
+        <p>そしてこの「同じ式が別の名前で現れる」経験そのものが、あなたが第1章で学ぶ<em>story proof</em> の精神 —— 同じものを二通りに見る —— の大きい版です。</p>
+      </div>
+    </section>
+
+    <!-- ============ SCHEDULE ============ -->
+    <section id="schedule">
+      <h2>18か月の順序</h2>
+      <p class="sec-note">週 8〜10 時間を想定 · 2本を並行させる</p>
+
+      <div class="stage">
+        <div class="mo">Month 1–3</div>
+        <div>
+          <h4>確率論 ＋ 凸最適化（並行）</h4>
+          <p>Blitzstein を進めながら、Boyd の第1〜5章（凸集合・凸関数・凸問題・双対性）。<strong>2本走らせるのは負荷ではなく保険</strong>です。片方で詰まったときに手が止まらない。</p>
+          <p>Boyd は EE364a の講義動画が無料で、こちらも英語の練習になります。</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="mo">Month 4–9</div>
+        <div>
+          <h4>数理統計 ＋ 最適化アルゴリズム</h4>
+          <p>久保川（または Casella–Berger）で推定・検定・漸近論。並行して Boyd の後半（内点法）と Nocedal–Wright。<strong>ここが最も重い6か月</strong>で、しかしいちばん報われる区間です。</p>
+          <p>この時点で「データからモデルを推定する」を原理から理解した状態になります。</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="mo">Month 10–14</div>
+        <div>
+          <h4>ベイズ統計と MCMC</h4>
+          <p>McElreath で直感を作り、BDA3 へ。<strong>MCMC は自分で実装してください</strong>（Metropolis–Hastings なら50行）。</p>
+          <p>ここが<strong>あなたの目的地のひとつ</strong>です。免震の実測データでベイズ的モデル更新をやれるのはこの段階から。</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="mo">Month 15–18</div>
+        <div>
+          <h4>分岐 — 目的で選ぶ</h4>
+          <p><b>構造・研究に寄せるなら：</b>統計的学習（ESL）＋ 不確実性定量化。カルマンフィルタと状態空間モデル。</p>
+          <p><b>クオンツに寄せるなら：</b>時系列（Hamilton）＋ 測度論的確率 → Shreve。ここから更に12〜18か月。</p>
+          <p><b>どちらも保留なら：</b>ESL を進めるのが最も潰しが効きます。統計と最適化の両方を使うので、どちらの方向にも接続します。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BUILD ============ -->
+    <section id="build">
+      <h2>書きながら学ぶ</h2>
+      <p class="sec-note">あなたの最短路 · 読むだけにしない</p>
+
+      <p>あなたは実装で理解する型の人です。各段階に実装課題を紐づけてください。<strong>理解していないものは実装できない</strong>ので、進捗の判定が自動化されます。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>学ぶもの</th><th>書くもの</th></tr></thead>
+          <tbody>
+            <tr><td>確率論</td><td>各章の解析解を検証するモンテカルロ（すでに開始済み）</td></tr>
+            <tr><td>凸最適化</td><td>勾配降下法・ニュートン法・対数バリア内点法をゼロから</td></tr>
+            <tr><td>数理統計</td><td>最尤推定を数値最適化で解く。ブートストラップで信頼区間</td></tr>
+            <tr><td>ベイズ統計</td><td><b>Metropolis–Hastings を自分で書く</b>（約50行）</td></tr>
+            <tr><td>統計的学習</td><td>Ridge / Lasso を自分の最適化ソルバで解く</td></tr>
+            <tr><td>時系列</td><td>カルマンフィルタ。状態空間モデルの尤度を書く</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout bridge">
+        <h4>最終課題として置いておくもの</h4>
+        <p><strong>自分の免震の実測データで、ベイズ的モデル更新をやる。</strong></p>
+        <p>剛性・減衰・デバイス特性を事前分布で置き、計測を尤度として、MCMC で事後分布を得る。「理論と計測の乖離」が、パラメータの不確かさとモデル誤差に分解されて出てきます。</p>
+        <p>これに必要なのは 確率論・数理統計・ベイズ・MCMC・数値最適化 —— <strong>上の道筋のほぼ全部</strong>です。目的地を先に決めておくと、途中の科目が「なぜ要るのか」で迷わなくなります。そして完成すれば、それは論文にも社内の技術資料にもなる実物です。</p>
+      </div>
+    </section>
+
+    <!-- ============ HONEST ============ -->
+    <section id="honest">
+      <h2>正直な見積り</h2>
+      <p class="sec-note">期待値の調整</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>到達点</th><th>期間（週8〜10時間）</th></tr></thead>
+          <tbody>
+            <tr><td>確率が「使える」状態</td><td class="num">3か月</td></tr>
+            <tr><td><b>実用水準</b> — 統計と最適化を原理から使える</td><td class="num"><b>約12か月</b></td></tr>
+            <tr><td>ベイズモデル更新を自力で回せる</td><td class="num">14か月</td></tr>
+            <tr><td>クオンツ面接の数学に耐える</td><td class="num">18〜24か月</td></tr>
+            <tr><td>確率解析まで含めた本格水準</td><td class="num">2〜3年</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="plain">
+        <li><b>価値は12か月で来ます。</b>3年待つ必要はない。統計と最適化を原理から使えるだけで、できることは大きく変わります</li>
+        <li><b>測度論と確率解析は後回しでよい。</b>クオンツのデリバティブ側を狙わない限り、優先度は低い</li>
+        <li><b>脱落の主因は難易度ではなく孤独です。</b>2本並行、実装課題、そして到達点（免震のモデル更新）を先に決めておくのは、いずれも継続のための設計です</li>
+      </ul>
+
+      <div class="callout warn">
+        <h4>ひとつだけ注意</h4>
+        <p>この道筋は<strong>年収に直結しません</strong>。数学は土台であって、換金できる技能ではない。もし年収が主目的なら、別の設計になります。</p>
+        <p>ただしあなたは「クオンツ関係なく興味がある」と言いました。<strong>それが本当なら、この道筋は最も費用対効果が高い投資</strong>です。興味だけが、18か月を完走させる唯一の燃料なので。</p>
+      </div>
+    </section>
+
+    <section class="close">
+      <p>最初の一手は決まっています —— <strong>Stat 110 を続けながら、Boyd の第1章を開く。</strong> 確率と最適化は互いに前提ではないので、今日から2本走らせられます。</p>
+      <p>どちらの道でも、詰まった箇所は日本語で解説します。</p>
+    </section>
+
+  </main>
+</div>
+
+</body></html>

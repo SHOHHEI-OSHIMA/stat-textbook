@@ -1,8 +1,8 @@
 {
- "name": "統計学 自分用教科書",
- "short_name": "統計学",
- "start_url": ".",
- "scope": ".",
+ "name": "道具箱",
+ "short_name": "道具箱",
+ "start_url": "./",
+ "scope": "./",
  "display": "standalone",
  "background_color": "#11161C",
  "theme_color": "#11161C",

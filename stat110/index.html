@@ -1,0 +1,1484 @@
+<!doctype html><html><head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<div style="height:env(safe-area-inset-top)"></div>
+<style>
+.__home{position:fixed;z-index:60;left:max(10px,env(safe-area-inset-left));
+  top:calc(8px + env(safe-area-inset-top));
+  font:500 .78rem/1 system-ui,sans-serif;text-decoration:none;
+  padding:.5rem .7rem;border-radius:9px;
+  color:#1B2430;background:#FFFFFFE6;border:1px solid #0002;
+  backdrop-filter:blur(6px)}
+@media (prefers-color-scheme:dark){
+  .__home{color:#DDE3EA;background:#171F27E6;border-color:#FFF2}
+}
+</style>
+<a class="__home" href="../">← 道具箱</a>
+<script>
+if('serviceWorker' in navigator){
+  addEventListener('load', ()=>navigator.serviceWorker.register('../sw.js').catch(()=>{}));
+}
+</script>
+
+<title>Stat 110 の骨格</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Zen+Old+Mincho:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root {
+  --ground:      #EDEFF3;
+  --surface:     #FFFFFF;
+  --surface-sunk:#E4E7ED;
+  --text:        #171A21;
+  --text-mid:    #414857;
+  --text-mute:   #656D7E;
+  --rule:        #D3D7E0;
+  --rule-soft:   #E2E5EC;
+  --ink:         #2B4693;
+  --ink-tint:    #E8ECF8;
+  --oxide:       #94401F;
+  --oxide-tint:  #F7EAE3;
+  --sage:        #38624B;
+  --sage-tint:   #E5EEE8;
+
+  --f-display: "Newsreader", "Zen Old Mincho", Georgia, "Yu Mincho", serif;
+  --f-body: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --measure: 68ch;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #0F1218;
+    --surface:     #161A22;
+    --surface-sunk:#1D222C;
+    --text:        #E3E7EF;
+    --text-mid:    #B6BDCB;
+    --text-mute:   #8B93A4;
+    --rule:        #2A3140;
+    --rule-soft:   #222835;
+    --ink:         #8FA9EF;
+    --ink-tint:    #1A2138;
+    --oxide:       #DE9C79;
+    --oxide-tint:  #2A1D16;
+    --sage:        #8FC1A5;
+    --sage-tint:   #16241C;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:      #0F1218;
+  --surface:     #161A22;
+  --surface-sunk:#1D222C;
+  --text:        #E3E7EF;
+  --text-mid:    #B6BDCB;
+  --text-mute:   #8B93A4;
+  --rule:        #2A3140;
+  --rule-soft:   #222835;
+  --ink:         #8FA9EF;
+  --ink-tint:    #1A2138;
+  --oxide:       #DE9C79;
+  --oxide-tint:  #2A1D16;
+  --sage:        #8FC1A5;
+  --sage-tint:   #16241C;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.85;
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 22px 120px;
+}
+
+@media (min-width: 1120px) {
+  .shell {
+    grid-template-columns: 226px minmax(0, 1fr);
+    gap: 56px;
+    padding: 0 40px 140px;
+  }
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  grid-column: 1 / -1;
+  border-bottom: 1px solid var(--rule);
+  padding: 68px 0 40px;
+  margin-bottom: 56px;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 6vw, 3.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0 0 22px;
+}
+
+.standfirst {
+  font-size: 17.5px;
+  line-height: 1.9;
+  color: var(--text-mid);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.masthead-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin-top: 34px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--text-mute);
+}
+.masthead-meta b { color: var(--text-mid); font-weight: 500; }
+
+/* ---------- nav ---------- */
+
+nav.toc { display: none; }
+
+@media (min-width: 1120px) {
+  nav.toc {
+    display: block;
+    position: sticky;
+    top: 32px;
+    align-self: start;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    padding-bottom: 40px;
+  }
+  nav.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+  nav.toc a {
+    display: block;
+    padding: 5px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-mute);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    padding-left: 12px;
+    transition: color .14s, border-color .14s;
+  }
+  nav.toc a:hover, nav.toc a:focus-visible { color: var(--ink); border-left-color: var(--ink); }
+  nav.toc .toc-head {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+    padding: 22px 0 8px 12px;
+    border-bottom: 1px solid var(--rule-soft);
+    margin-bottom: 6px;
+  }
+  nav.toc .toc-head:first-child { padding-top: 0; }
+}
+
+main { grid-column: 1 / -1; min-width: 0; }
+@media (min-width: 1120px) { main { grid-column: 2; } }
+
+/* ---------- sections ---------- */
+
+section { margin-bottom: 78px; scroll-margin-top: 24px; }
+
+h2 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.2vw, 2.15rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0 0 8px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--text);
+}
+
+.sec-note {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin: 14px 0 30px;
+}
+
+h3 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.28rem;
+  line-height: 1.4;
+  text-wrap: balance;
+  margin: 44px 0 12px;
+}
+
+p { max-width: var(--measure); margin: 0 0 18px; }
+p.lead { font-size: 17px; color: var(--text-mid); }
+
+a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: 2.5px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+ul.plain { max-width: var(--measure); margin: 0 0 18px; padding-left: 1.15em; }
+ul.plain li { margin-bottom: 7px; }
+
+ol.steps { max-width: var(--measure); margin: 0 0 18px; padding-left: 0; list-style: none; counter-reset: st; }
+ol.steps li {
+  counter-increment: st;
+  position: relative;
+  padding-left: 34px;
+  margin-bottom: 12px;
+}
+ol.steps li::before {
+  content: counter(st);
+  position: absolute;
+  left: 0;
+  top: 0.28em;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  line-height: 1;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+pre.code {
+  font-family: var(--f-mono);
+  font-size: 13.5px;
+  line-height: 1.75;
+  white-space: pre;
+  background: var(--surface);
+  border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--sage);
+  padding: 16px 20px;
+  margin: 0 0 20px;
+  max-width: var(--measure);
+  overflow-x: auto;
+}
+pre.code .cm { color: var(--text-mute); }
+
+/* ---------- formula ---------- */
+
+.fml {
+  font-family: var(--f-mono);
+  font-size: 14.5px;
+  background: var(--surface-sunk);
+  padding: 1px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.fml-block {
+  font-family: var(--f-mono);
+  font-size: 14.5px;
+  line-height: 2.1;
+  white-space: pre;
+  tab-size: 2;
+  background: var(--surface);
+  border-left: 2px solid var(--ink);
+  padding: 18px 22px;
+  margin: 0 0 24px;
+  max-width: var(--measure);
+  overflow-x: auto;
+}
+.fml-block .why { color: var(--text-mute); font-family: var(--f-body); font-size: 13px; }
+
+/* ---------- idea blocks ---------- */
+
+.ideas { display: flex; flex-direction: column; gap: 0; max-width: var(--measure); }
+
+.idea {
+  border-top: 1px solid var(--rule);
+  padding: 26px 0;
+}
+.idea:last-child { border-bottom: 1px solid var(--rule); }
+.idea h3 { margin: 0 0 4px; font-size: 1.18rem; }
+.idea .en {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--text-mute);
+  margin-bottom: 14px;
+}
+.idea p:last-child { margin-bottom: 0; }
+
+/* ---------- chapters ---------- */
+
+.chapters { display: flex; flex-direction: column; gap: 0; }
+
+.ch {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 0 20px;
+  border-top: 1px solid var(--rule-soft);
+  padding: 26px 0;
+}
+.ch:last-child { border-bottom: 1px solid var(--rule-soft); }
+
+.ch-num {
+  font-family: var(--f-mono);
+  font-size: 13px;
+  color: var(--text-mute);
+  padding-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.ch h3 { margin: 0 0 10px; font-size: 1.16rem; }
+.ch h3 .sub {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-mute);
+  margin-top: 3px;
+}
+.ch p { margin-bottom: 12px; }
+.ch p:last-child { margin-bottom: 0; }
+
+.tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+.tag.trap { background: var(--oxide-tint); color: var(--oxide); }
+.tag.key  { background: var(--ink-tint);  color: var(--ink); }
+
+/* ---------- callouts ---------- */
+
+.callout {
+  max-width: var(--measure);
+  padding: 22px 26px;
+  margin: 0 0 22px;
+  background: var(--surface);
+  border: 1px solid var(--rule-soft);
+  border-left-width: 3px;
+}
+.callout h3 { margin: 0 0 10px; font-size: 1.1rem; }
+.callout p:last-child, .callout .fml-block:last-child { margin-bottom: 0; }
+.callout .fml-block { background: var(--surface-sunk); border-left: none; padding: 14px 18px; }
+
+.callout.bridge { border-left-color: var(--sage); }
+.callout.bridge h3 { color: var(--sage); }
+.callout.warn { border-left-color: var(--oxide); }
+.callout.warn h3 { color: var(--oxide); }
+
+/* ---------- tables ---------- */
+
+.tw { overflow-x: auto; margin: 0 0 26px; border: 1px solid var(--rule-soft); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14.5px; }
+th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; line-height: 1.65; }
+th {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  font-weight: 500;
+  background: var(--surface-sunk);
+  white-space: nowrap;
+}
+tr:last-child td { border-bottom: none; }
+td code, th code { font-family: var(--f-mono); font-size: 13.5px; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- figure ---------- */
+
+figure { margin: 0 0 30px; }
+.figscroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule-soft); padding: 26px 20px; }
+.figscroll svg { display: block; width: 100%; min-width: 780px; max-width: 1040px; height: auto; margin: 0 auto; color: var(--text-mid); }
+figcaption { font-size: 13.5px; color: var(--text-mute); margin-top: 12px; max-width: var(--measure); line-height: 1.75; }
+
+/* ---------- plan ---------- */
+
+.week {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 0 20px;
+  border-top: 1px solid var(--rule);
+  padding: 24px 0;
+}
+.week:last-of-type { border-bottom: 1px solid var(--rule); }
+.week .wk {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding-top: 4px;
+}
+.week h3 { margin: 0 0 8px; font-size: 1.1rem; }
+.week p { margin-bottom: 8px; }
+.week p:last-child { margin-bottom: 0; }
+
+/* ---------- close ---------- */
+
+.close {
+  border-top: 2px solid var(--text);
+  padding-top: 34px;
+  margin-top: 12px;
+}
+.close p { font-size: 17px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">Blitzstein &amp; Hwang · Introduction to Probability</div>
+    <h1>Stat 110 の骨格</h1>
+    <p class="standfirst">ハーバード Stat 110 の全13章を、構造動力学から橋を架けながら地図にしたもの。名前つき分布の暗記表ではなく、講義を貫く少数の考えのほうを中心に置いています。</p>
+    <div class="masthead-meta">
+      <span><b>13</b> 章</span>
+      <span><b>8</b> つの中心的な考え</span>
+      <span><b>5</b> 本の構造工学からの橋</span>
+      <span><b>4</b> 週間の計画</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="目次">
+    <ol>
+      <li><div class="toc-head">はじめに</div></li>
+      <li><a href="#use">この地図の使い方</a></li>
+      <li><a href="#start">始め方</a></li>
+      <li><a href="#onesentence">講義全体をひとつの文で</a></li>
+      <li><div class="toc-head">中心</div></li>
+      <li><a href="#ideas">8つの考え</a></li>
+      <li><a href="#family">分布の家系図</a></li>
+      <li><div class="toc-head">全13章</div></li>
+      <li><a href="#chapters">章ごとの地図</a></li>
+      <li><div class="toc-head">接続</div></li>
+      <li><a href="#bridges">構造工学からの5本の橋</a></li>
+      <li><div class="toc-head">作法</div></li>
+      <li><a href="#traps">落とし穴</a></li>
+      <li><a href="#sanity">検算の作法</a></li>
+      <li><div class="toc-head">実行</div></li>
+      <li><a href="#plan">4週間の計画</a></li>
+      <li><div class="toc-head">付録</div></li>
+      <li><a href="#english">数学英語の定型表現</a></li>
+      <li><a href="#reading">数式の読み上げ方</a></li>
+      <li><a href="#glossary">章別 用語対訳</a></li>
+      <li><a href="#materials">教材</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ============ USE ============ -->
+    <section id="use">
+      <h2>この地図の使い方</h2>
+      <p class="sec-note">先に読むべき注意</p>
+
+      <p class="lead">これは<strong>地図であって、territory ではありません</strong>。この文書を読み終えても、確率が得意にはならないし、確率が面白いかどうかも分かりません。</p>
+
+      <p>あなたがやろうとしているのは「確率論があなたを掴むかどうか」を測ることでした。それを判定できるのは<strong>演習問題を自分で解いている最中の感触だけ</strong>です。地図を読んでいる間の感触ではない。ここは地形の起伏を先に見せて、歩く速度を上げるためだけのものです。</p>
+
+      <p>使い方としては、</p>
+      <ul class="plain">
+        <li>各章に入る<em>前</em>に、その章の欄を読んで「何のための章か」を先に持っておく</li>
+        <li>各章を終えた<em>後</em>に、もう一度読んで自分の理解と突き合わせる</li>
+        <li>「8つの考え」は、13章のどこにいても戻ってくる場所です。詰まったら、いまどの考えを使うべき場面かを問う</li>
+        <li><strong>橋の節は、他のどこよりも先に読んでいい</strong>。あなたが既に持っている直感に接続している唯一の部分です</li>
+      </ul>
+
+      <div class="callout warn">
+        <h3>AIを使わずに解くこと</h3>
+        <p>演習を AI に解かせると、このテストは意味を失います。測ろうとしているのはあなたの理解であって、あなたが監督したAIの出力ではありません。詰まって30分止まる経験そのものが測定値です。</p>
+      </div>
+    </section>
+
+    <!-- ============ START ============ -->
+    <section id="start">
+      <h2>始め方</h2>
+      <p class="sec-note">教材の入手から最初の3日まで</p>
+
+      <h3>揃えるもの（15分）</h3>
+      <p>教科書も講義も演習も、すべて公式に無料公開されています。買う必要があるのは面接問題集だけで、それも第3週まで不要です。</p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>教材</th><th>入手先</th><th>役割</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>教科書（第2版）</b></td>
+              <td><a href="http://probabilitybook.net">probabilitybook.net</a></td>
+              <td>主軸。演習がこの本の価値の大半</td>
+            </tr>
+            <tr>
+              <td><b>講義動画 全34回</b></td>
+              <td><a href="https://www.youtube.com/playlist?list=PLLVplP8OIVc8EktkrD3Q8td0GmId7DjW0">YouTube 公式プレイリスト</a></td>
+              <td>詰まった章の補助。全部見る必要はない</td>
+            </tr>
+            <tr>
+              <td><b>演習・過去問・要約</b></td>
+              <td><a href="https://stat110.hsites.harvard.edu/handouts">stat110 handouts</a></td>
+              <td>Strategic Practice と解答、試験問題</td>
+            </tr>
+            <tr>
+              <td><b>公式サイト</b></td>
+              <td><a href="https://stat110.hsites.harvard.edu/">stat110.hsites.harvard.edu</a></td>
+              <td>上記すべての入口</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <h3>動画を全部見ようとしないこと</h3>
+        <p>34回 × 約50分 = <strong>28時間</strong>。これだけで4週間の予算を食い尽くします。この計画の背骨は<strong>本と演習</strong>で、動画は詰まった章にだけ使う補助です。全回を見たいなら期間を8週間に倍にしてください。</p>
+      </div>
+
+      <h3>最初の3日</h3>
+
+      <div class="week">
+        <div class="wk">Day 1 · 2h</div>
+        <div>
+          <h3>第1講を見て、1.1〜1.4 を読む</h3>
+          <p>初日だけは動画から入ります。Blitzstein の語りの調子が自分に合うかどうかが、ここで分かるからです。合わなければ以後は本だけで進めればいい。</p>
+          <p>そのあと第1章の 1.1〜1.4（標本空間・素朴な定義・数え上げ・二項係数）を読む。演習はまだしなくていい。</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="wk">Day 2 · 1h</div>
+        <div>
+          <h3>物語による証明。そして初めて問題を解く</h3>
+          <p>1.4〜1.5 を読み、<strong>章末問題を5問</strong>。まだ準備ができていないと感じる段階で解き始めるのが正解です。読み終えてから解き始めると、読んだ内容が残っていないことに3章分あとで気づきます。</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="wk">Day 3 · 1h</div>
+        <div>
+          <h3>公理的な定義、包除原理、そして最初の検算</h3>
+          <p>1.6 まで読んで章末問題を5問。うち<strong>1問はモンテカルロで検算する</strong>（下記）。ここで解析解とシミュレーションが一致する経験を1回作っておくと、以後の学習の速度が変わります。</p>
+        </div>
+      </div>
+
+      <h3>1セクションあたりのループ</h3>
+      <ol class="steps">
+        <li><b>読む</b>（20〜30分）。動画ではなく本から。本のほうが単位時間あたりの情報が多い</li>
+        <li><b>本を閉じて、何が主張されていたかを書き出す</b>（3分）。これは想起練習で、再読より効率が高い</li>
+        <li><b>問題を解く</b>。ここが本体。読む時間より解く時間のほうが長くなるのが正常です</li>
+        <li><b>詰まった箇所だけ動画を見る</b>。Blitzstein の直感的な説明が効くのは、既に自分で詰まった後です</li>
+      </ol>
+
+      <h3>問題を解くときの3つの規則</h3>
+      <ol class="steps">
+        <li><b>20分は何も見ずに粘る。</b> 手が止まっている20分が、この4週間で最も情報量の多い時間です</li>
+        <li><b>詰まったら、解答ではなく該当節に戻る。</b> 解答は最後の手段</li>
+        <li><b>解答を読んだ問題には印をつけ、翌日ゼロから解き直す。</b> 解答を読むことは、解けるようになることではありません。この規則を守るかどうかが、4週間が機能するかどうかを決めます</li>
+      </ol>
+
+      <div class="callout bridge">
+        <h3>すべての答えをモンテカルロで検算する</h3>
+        <p>これはあなたに固有の推奨です。解析的に答えを出したら、毎回15行のシミュレーションで確かめてください。単一の Python ファイルに積んでいく。</p>
+        <p>たとえば第4章の一致問題 —— n 枚のカードをシャッフルして元の位置に戻る枚数の期待値は、n によらず 1 になります。</p>
+<pre class="code">import numpy as np
+rng = np.random.default_rng(0)
+n, trials = 10, 200_000
+
+perm    = np.argsort(rng.random((trials, n)), axis=1)
+matches = (perm == np.arange(n)).sum(axis=1)
+
+print(matches.mean())   <span class="cm"># → 1.00 前後。n を変えても 1</span></pre>
+        <p>これが効く理由は三つあります。<strong>①検算になる</strong> ②<strong>理解していない問題はシミュレートできない</strong>ので、理解の有無が自動的に判定される ③あなたが既に得意なやり方で確率に触れることになるので、初速が上がる。</p>
+        <p>「剛性の取り違えは反力では出ない」を書いた人にとって、解析解と数値実験を突き合わせる作業は新しい習慣ではないはずです。</p>
+      </div>
+
+      <h3>AI をどこで使い、どこで使わないか</h3>
+      <p>全面禁止は非現実的なので、線を1本だけ引きます。</p>
+      <ul class="plain">
+        <li><b>使わない：</b>問題を解かせる。ヒントをもらう。方針を相談する。<strong>ここが測定対象そのもの</strong>です</li>
+        <li><b>使ってよい：</b>本を読んでもなお分からない概念の説明。これは足場であって、測定対象ではありません</li>
+      </ul>
+
+      <h3>記録をつける</h3>
+      <p>これは学習であると同時に測定なので、記録がないと4週後に自分を騙します。1行でいい。</p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>日付</th><th>範囲</th><th>解いた</th><th>自力で</th><th>体感（1行）</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="num">8/25</td><td>1.1–1.4</td><td class="num">5</td><td class="num">3</td><td>数え上げは退屈。story proof は面白かった</td>
+            </tr>
+            <tr><td class="num">8/26</td><td>1.5–1.6</td><td class="num">5</td><td class="num">2</td><td>包除原理で1時間溶かした。悔しいが嫌ではない</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>最後の列がいちばん重要です。<strong>4週後に効いてくるのは正答率ではなく、この列に何が並んだか</strong>。感情の記憶は不正確なので、その日のうちに書く。</p>
+
+      <div class="callout warn">
+        <h3>10日目のチェックポイント</h3>
+        <p>4週間を待たずに、第4章を終えた時点（およそ10日目）で一度止まってください。問うのは <strong>「自分を無理に机に向かわせているか」</strong> の一点だけ。</p>
+        <p>そうなっていたら、そこで終わってよい。残り18日を消化しても答えは変わりません。<strong>10日で判明したことは、18か月を投じてから判明するより圧倒的に良い結果</strong>です。</p>
+      </div>
+    </section>
+
+    <!-- ============ ONE SENTENCE ============ -->
+    <section id="onesentence">
+      <h2>講義全体をひとつの文で</h2>
+      <p class="sec-note">Stat 110 は何をする科目か</p>
+
+      <p class="lead">不確実なものについて、<strong>足す・条件をつける・極限をとる</strong>という三つの操作を、間違えずに実行できるようにする科目です。</p>
+
+      <p>大半の内容はこの三つのどれかです。期待値の線形性は「足す」。条件付き確率・ベイズ・Adam の法則は「条件をつける」。大数の法則・中心極限定理・ポアソン近似は「極限をとる」。名前つき分布は、これらの操作の下で閉じていたり互いに移り合ったりするので名前が付いているだけで、暗記対象ではありません。</p>
+
+      <p>Blitzstein がこの科目について繰り返す一文があります —— <em>conditioning is the soul of statistics</em>（条件づけこそが統計の魂である）。詰まったときの最初の一手は、ほぼ常に「<strong>知っていたらよかったのに、と思うものは何か。それで条件づけよ</strong>」です。</p>
+    </section>
+
+    <!-- ============ IDEAS ============ -->
+    <section id="ideas">
+      <h2>8つの考え</h2>
+      <p class="sec-note">全13章を貫くもの · 順序に意味はない</p>
+
+      <p>名前つき分布を全部忘れても、この8つが残っていれば復元できます。逆は成り立ちません。</p>
+
+      <div class="ideas">
+
+        <div class="idea">
+          <h3>物語による証明</h3>
+          <div class="en">Story proof</div>
+          <p>恒等式を、記号操作ではなく「同じものを二通りに数える」ことで示す。<span class="fml">C(n,k) = C(n,n−k)</span> は、選ぶ k 個を指定するのと、外す n−k 個を指定するのが同じ行為だから成り立つ —— 階乗を約分する必要はありません。</p>
+          <p>この習慣が身につくと、式を見たときに「<strong>この量は何を数えているのか</strong>」を先に問うようになります。それが確率の問題を解く速度をいちばん上げます。</p>
+        </div>
+
+        <div class="idea">
+          <h3>期待値の線形性</h3>
+          <div class="en">Linearity of expectation</div>
+          <p><span class="fml">E(X + Y) = E(X) + E(Y)</span> は<strong>独立でなくても、どんな依存があっても、常に成り立ちます</strong>。これが講義中で最も強力な道具で、同時に最も過小評価される道具です。</p>
+          <p>分散にはこの性質がありません（<span class="fml">Var(X+Y) ≠ Var(X)+Var(Y)</span> が一般）。この非対称性が、後で共分散が出てくる理由です。</p>
+        </div>
+
+        <div class="idea">
+          <h3>指示確率変数と基本の橋</h3>
+          <div class="en">Indicator RVs &amp; the fundamental bridge</div>
+          <p>事象 A に対して <span class="fml">I<sub>A</sub></span> を「A が起きたら 1、起きなければ 0」とすると <span class="fml">E(I<sub>A</sub>) = P(A)</span>。これが確率の問いを期待値の問いに変換する橋です。</p>
+          <p>線形性と組み合わせると、独立性が一切なくても答えが出ます。例：n 枚のカードをシャッフルして、i 番目のカードが元の位置に戻る枚数の期待値は <span class="fml">n × (1/n) = 1</span>。n によらず 1。位置どうしは明らかに独立でないのに、答えが一行で出る。</p>
+        </div>
+
+        <div class="idea">
+          <h3>LOTUS</h3>
+          <div class="en">Law of the Unconscious Statistician</div>
+          <p><span class="fml">E(g(X)) = Σ g(x)·P(X=x)</span>（連続なら <span class="fml">∫ g(x)·f(x) dx</span>）。<strong>g(X) の分布を求める必要はありません</strong>。X の分布のまま重みをかけて足せばよい。</p>
+          <p>ここに最頻出の罠が同居しています。<span class="fml">E(g(X)) ≠ g(E(X))</span>。この差を定量化するのが第10章の Jensen の不等式です。</p>
+        </div>
+
+        <div class="idea">
+          <h3>条件づけこそが魂である</h3>
+          <div class="en">Conditioning is the soul of statistics</div>
+          <p>知りたいことが直接計算できないとき、<strong>知っていたら簡単になるもので場合分けする</strong>。全確率の法則 <span class="fml">P(A) = Σ P(A|B<sub>i</sub>)·P(B<sub>i</sub>)</span> がその形式化です。</p>
+          <p>ベイズの定理 <span class="fml">P(A|B) = P(B|A)·P(A)/P(B)</span> は、条件づけの向きを反転させる装置。実務で危険なのは、この二つを取り違えることです（第2章の罠を参照）。</p>
+        </div>
+
+        <div class="idea">
+          <h3>一様分布の普遍性</h3>
+          <div class="en">Universality of the Uniform</div>
+          <p>連続な CDF <span class="fml">F</span> を持つ X について、<span class="fml">F(X) ~ Unif(0,1)</span>。逆に <span class="fml">F⁻¹(U) ~ X</span>。</p>
+          <p>つまり <strong>一様乱数さえあれば任意の分布が生成できる</strong>。モンテカルロ法の基礎はこの一行です。あなたが応答のばらつき評価で乱数を使ったとき、裏で働いていたのはこれです。</p>
+        </div>
+
+        <div class="idea">
+          <h3>Adam の法則と Eve の法則</h3>
+          <div class="en">Tower property &amp; law of total variance</div>
+          <p>Adam: <span class="fml">E(Y) = E(E(Y|X))</span>。Eve: <span class="fml">Var(Y) = E(Var(Y|X)) + Var(E(Y|X))</span>。</p>
+          <p>Eve の法則は「<strong>群内のばらつき + 群間のばらつき</strong>」の分解で、分散分析も、地震ハザードの偶然的不確定性と認識論的不確定性の分離も、すべてこの一本の式です。第9章の核心。</p>
+        </div>
+
+        <div class="idea">
+          <h3>対称性</h3>
+          <div class="en">Symmetry</div>
+          <p>問題が入れ替えに対して不変なら、それを使う。ランダムな並べ替えにおいて「カード i が位置 j に来る確率」は、i と j が何であれ <span class="fml">1/n</span>。数え上げをせずに答えが出ます。</p>
+          <p>対称性は<strong>検算にも使えます</strong>。得られた答えが問題の対称性を壊していたら、それは間違いです。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ FAMILY ============ -->
+    <section id="family">
+      <h2>分布の家系図</h2>
+      <p class="sec-note">名前つき分布は暗記項目ではなく、操作で移り合う一つの族</p>
+
+      <p>Stat 110 でいちばん誤解されやすいのが、名前つき分布を独立した暗記カードの束だと思うことです。実際には、<strong>「和をとる」「極限をとる」「比をとる」という少数の操作</strong>で互いに移り合います。矢印のラベル（操作）のほうが、箱（分布名）より重要です。</p>
+
+      <figure>
+        <div class="figscroll">
+          <svg viewBox="0 0 1040 520" role="img" aria-label="名前つき分布の関係図。ベルヌーイの和が二項分布に、二項分布の極限がポアソン分布と正規分布に、ポアソン過程の到着間隔が指数分布に、指数分布の和がガンマ分布に、ガンマ分布の比がベータ分布に、正規分布の二乗和がカイ二乗分布に、正規とカイ二乗の比が t 分布になることを示す。">
+            <defs>
+              <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor"/>
+              </marker>
+              <marker id="ahs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--sage)"/>
+              </marker>
+            </defs>
+
+            <!-- column headings -->
+            <text x="60" y="18" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1.4" fill="currentColor" opacity="0.55">離散</text>
+            <text x="430" y="18" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1.4" fill="currentColor" opacity="0.55">連続</text>
+            <text x="800" y="18" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1.4" fill="currentColor" opacity="0.55">標本分布</text>
+
+            <!-- nodes: left column -->
+            <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.42">
+              <rect x="60"  y="40"  width="170" height="46"/>
+              <rect x="60"  y="150" width="170" height="46"/>
+              <rect x="60"  y="260" width="170" height="46"/>
+              <rect x="60"  y="380" width="170" height="46"/>
+              <rect x="60"  y="452" width="170" height="46"/>
+              <rect x="430" y="40"  width="170" height="46"/>
+              <rect x="430" y="150" width="170" height="46"/>
+              <rect x="430" y="260" width="170" height="46"/>
+              <rect x="430" y="350" width="170" height="46"/>
+              <rect x="430" y="452" width="170" height="46"/>
+              <rect x="800" y="150" width="170" height="46"/>
+              <rect x="800" y="260" width="170" height="46"/>
+            </g>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="15" fill="currentColor" text-anchor="middle">
+              <text x="145" y="69">Bernoulli(p)</text>
+              <text x="145" y="179">Binomial(n,p)</text>
+              <text x="145" y="289">Poisson(λ)</text>
+              <text x="145" y="409">Geometric(p)</text>
+              <text x="145" y="481">NegBinom(r,p)</text>
+              <text x="515" y="69">Uniform(0,1)</text>
+              <text x="515" y="179">Normal(μ,σ²)</text>
+              <text x="515" y="289">Expo(λ)</text>
+              <text x="515" y="379">Gamma(a,λ)</text>
+              <text x="515" y="481">Beta(a,b)</text>
+              <text x="885" y="179">χ²(n)</text>
+              <text x="885" y="289">t(n)</text>
+            </g>
+
+            <!-- edges -->
+            <g stroke="currentColor" stroke-width="1.3" opacity="0.6" fill="none" marker-end="url(#ah)">
+              <line x1="145" y1="86"  x2="145" y2="146"/>
+              <line x1="145" y1="196" x2="145" y2="256"/>
+              <line x1="145" y1="426" x2="145" y2="448"/>
+              <line x1="230" y1="173" x2="426" y2="173"/>
+              <line x1="230" y1="283" x2="426" y2="283"/>
+              <line x1="515" y1="306" x2="515" y2="346"/>
+              <line x1="515" y1="396" x2="515" y2="448"/>
+              <line x1="600" y1="173" x2="796" y2="173"/>
+              <line x1="885" y1="196" x2="885" y2="256"/>
+            </g>
+
+            <!-- universality edge (sage, dashed) -->
+            <path d="M 600 63 L 700 63 L 700 470 L 604 470" stroke="var(--sage)" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#ahs)"/>
+
+            <!-- edge labels -->
+            <g font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--ink)">
+              <text x="156" y="120">n 個の和</text>
+              <text x="156" y="224">n→∞, np→λ</text>
+              <text x="156" y="444">r 個の和</text>
+              <text x="252" y="165">CLT (n 大)</text>
+              <text x="252" y="275">到着間隔</text>
+              <text x="527" y="331">n 個の和</text>
+              <text x="527" y="425">X/(X+Y)</text>
+              <text x="622" y="165">2乗和</text>
+              <text x="897" y="228">Z/√(V/n)</text>
+            </g>
+            <text x="710" y="270" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--sage)">F⁻¹(U)</text>
+            <text x="710" y="290" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--sage)">普遍性</text>
+          </svg>
+        </div>
+        <figcaption>実線は分布どうしを結ぶ操作。破線（緑）は一様分布の普遍性で、これだけは特定の分布間の関係ではなく「一様乱数から任意の分布を作れる」という別種の主張です。ハイパー幾何分布は母集団を無限大にすると二項分布に、負の二項分布は幾何分布の和になります。</figcaption>
+      </figure>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>分布</th><th>物語（何を数えているか）</th><th>E(X)</th><th>Var(X)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>Bern(p)</code></td><td>1回の試行の成否</td><td class="num"><code>p</code></td><td class="num"><code>p(1−p)</code></td></tr>
+            <tr><td><code>Bin(n,p)</code></td><td>n 回の独立試行の成功数</td><td class="num"><code>np</code></td><td class="num"><code>np(1−p)</code></td></tr>
+            <tr><td><code>HGeom</code></td><td>非復元抽出での成功数</td><td class="num"><code>n·w/(w+b)</code></td><td class="num">補正項つき</td></tr>
+            <tr><td><code>Geom(p)</code></td><td>初成功までの失敗回数</td><td class="num"><code>(1−p)/p</code></td><td class="num"><code>(1−p)/p²</code></td></tr>
+            <tr><td><code>NBin(r,p)</code></td><td>r 回成功するまでの失敗回数</td><td class="num"><code>r(1−p)/p</code></td><td class="num"><code>r(1−p)/p²</code></td></tr>
+            <tr><td><code>Pois(λ)</code></td><td>稀な事象の一定期間の発生数</td><td class="num"><code>λ</code></td><td class="num"><code>λ</code></td></tr>
+            <tr><td><code>Unif(a,b)</code></td><td>区間上の無情報</td><td class="num"><code>(a+b)/2</code></td><td class="num"><code>(b−a)²/12</code></td></tr>
+            <tr><td><code>Expo(λ)</code></td><td>次の到着までの待ち時間</td><td class="num"><code>1/λ</code></td><td class="num"><code>1/λ²</code></td></tr>
+            <tr><td><code>Gamma(a,λ)</code></td><td>a 回目の到着までの待ち時間</td><td class="num"><code>a/λ</code></td><td class="num"><code>a/λ²</code></td></tr>
+            <tr><td><code>Beta(a,b)</code></td><td>0〜1 上の確率そのものの分布</td><td class="num"><code>a/(a+b)</code></td><td class="num">下式参照</td></tr>
+            <tr><td><code>N(μ,σ²)</code></td><td>多数の小さな寄与の和</td><td class="num"><code>μ</code></td><td class="num"><code>σ²</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTERS ============ -->
+    <section id="chapters">
+      <h2>章ごとの地図</h2>
+      <p class="sec-note">全13章 · 各章 = 何のための章か / 落とさない要点 / 罠</p>
+
+      <div class="chapters">
+
+        <div class="ch">
+          <div class="ch-num">01</div>
+          <div>
+            <h3>確率と数え上げ<span class="sub">Probability and Counting</span></h3>
+            <p>「同様に確からしい」という素朴な定義から始め、それが破綻する場面を見てから公理的な定義に移る章。数え上げの道具（乗法原理、二項係数、標本抽出の4類型 = 順序あり/なし × 復元あり/なし）を揃えます。</p>
+            <p><span class="tag key">要点</span>物語による証明。Vandermonde の恒等式 <span class="fml">C(m+n,k) = Σ C(m,j)C(n,k−j)</span> を階乗計算ではなく「m 人と n 人から合計 k 人選ぶ」で示せること。包除原理。</p>
+            <p><span class="tag trap">罠</span>「同様に確からしい」を検証せずに仮定すること。順序なし復元ありの場合の数は数えられますが、その各々は<strong>等確率ではありません</strong>。サイコロ2個の目の組を等確率と思うのが典型的な誤り。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">02</div>
+          <div>
+            <h3>条件付き確率<span class="sub">Conditional Probability</span></h3>
+            <p>講義の中心思想が入る章。<span class="fml">P(A|B) = P(A∩B)/P(B)</span>、ベイズの定理、全確率の法則。モンティ・ホール問題とシンプソンのパラドックスで直感を壊しにきます。</p>
+            <p><span class="tag key">要点</span>ベイズのオッズ形式 <span class="fml">事後オッズ = 尤度比 × 事前オッズ</span>。これが実務では最も速い。そして<strong>独立と条件付き独立は互いに含意しない</strong>（どちらの向きも成り立たない）こと。</p>
+            <p><span class="tag trap">罠</span>検察官の誤謬。<span class="fml">P(証拠|無実)</span> が小さいことと <span class="fml">P(無実|証拠)</span> が小さいことは別物です。基準率を無視すると、稀な病気の検査で陽性が出た人の大半が実は健康、という結論を見落とします。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">03</div>
+          <div>
+            <h3>確率変数とその分布<span class="sub">Random Variables and Their Distributions</span></h3>
+            <p>確率変数は<strong>標本空間から実数への関数</strong>であって、数でも分布でもありません。ここが第一の概念的な段差です。PMF、CDF、そして Bernoulli / Binomial / Hypergeometric / 離散一様。</p>
+            <p><span class="tag key">要点</span>指示確率変数の導入。ここで入れておかないと第4章の威力が出ません。</p>
+            <p><span class="tag trap">罠</span>確率変数とその分布の混同。Blitzstein の比喩では、確率変数が<em>家</em>で、分布は<em>設計図</em>です。同じ設計図から建った二軒の家は別の家です。記号でいえば <span class="fml">X = Y</span>（関数として同一）と <span class="fml">X ~ Y</span>（分布が同じ）は全く違う主張。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">04</div>
+          <div>
+            <h3>期待値<span class="sub">Expectation</span></h3>
+            <p>密度がいちばん高い章。線形性、指示変数と基本の橋、LOTUS、分散。Geometric / Negative Binomial / Poisson がここで登場します。</p>
+            <p><span class="tag key">要点</span>ポアソン・パラダイム —— 多数の稀な、ほぼ独立な事象の総数はポアソンで近似できる。クーポン収集問題を線形性だけで解けるようになること。</p>
+            <p><span class="tag trap">罠</span><span class="fml">E(1/X) ≠ 1/E(X)</span>、<span class="fml">E(X²) ≠ E(X)²</span>。後者の差がまさに分散です。関数と期待値は交換できません。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">05</div>
+          <div>
+            <h3>連続確率変数<span class="sub">Continuous Random Variables</span></h3>
+            <p>PDF、CDF、一様分布、正規分布、指数分布。そして一様分布の普遍性。</p>
+            <p><span class="tag key">要点</span>指数分布の<strong>無記憶性</strong> —— <span class="fml">P(X &gt; s+t | X &gt; s) = P(X &gt; t)</span>。連続分布でこの性質を持つのは指数分布<em>だけ</em>です。これは第13章のポアソン過程と地震の発生モデルに直結します。</p>
+            <p><span class="tag trap">罠</span>PDF の値を確率だと思うこと。連続変数では <span class="fml">P(X = x) = 0</span> であり、<span class="fml">f(x)</span> は 1 を超えても構いません。確率は面積です。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">06</div>
+          <div>
+            <h3>モーメント<span class="sub">Moments</span></h3>
+            <p>平均・分散・歪度・尖度が分布の何を要約しているか。そしてモーメント母関数 <span class="fml">M(t) = E(e^tX)</span>。</p>
+            <p><span class="tag key">要点</span>MGF は三つの仕事をします。①モーメントを生成する ②分布を一意に定める ③<strong>独立な和の MGF は積になる</strong>。③のおかげで畳み込み積分を回避できます。</p>
+            <p><span class="tag trap">罠</span>MGF は常に存在するとは限りません（コーシー分布には存在しない）。裾の重い分布では平均や分散すら存在しないことがある —— 金融の収益率分布でも、極値荷重でも、これは実際に効いてきます。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">07</div>
+          <div>
+            <h3>同時分布<span class="sub">Joint Distributions</span></h3>
+            <p>同時分布・周辺分布・条件付き分布、2次元 LOTUS、共分散と相関、多項分布、多変量正規分布。<strong>あなたにとって最も直接的に役立つ章</strong>です（橋①参照）。</p>
+            <p><span class="tag key">要点</span><span class="fml">Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y)</span>。この一本が SRSS と CQC の違いそのものです。</p>
+            <p><span class="tag trap">罠</span><strong>無相関は独立を意味しません</strong>。相関係数が捉えるのは線形関係だけです。例外は同時正規のときで、そのときに限り無相関 ⟺ 独立。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">08</div>
+          <div>
+            <h3>変数変換<span class="sub">Transformations</span></h3>
+            <p>変数変換（ヤコビアン）、和の畳み込み、ベータ分布とガンマ分布、順序統計量。</p>
+            <p><span class="tag key">要点</span>順序統計量 —— n 個の標本の最大値・最小値・第 k 位の分布。<strong>極値の理論であり、ピーク応答や設計荷重の話に直結します</strong>（橋④）。</p>
+            <p><span class="tag trap">罠</span>ヤコビアンの忘却と、<strong>台（support）の変換忘れ</strong>。後者のほうが頻繁で発見しにくい。変換後の変数がどの範囲を動くかを必ず書き出すこと。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">09</div>
+          <div>
+            <h3>条件付き期待値<span class="sub">Conditional Expectation</span></h3>
+            <p>講義中で最大の概念的な段差。<span class="fml">E(Y|X)</span> は<strong>数ではなく確率変数</strong>です（X の関数だから）。ここを乗り越えられるかどうかが、確率論に進めるかどうかの分かれ目になります。</p>
+            <p><span class="tag key">要点</span>Adam の法則 <span class="fml">E(Y) = E(E(Y|X))</span> と Eve の法則 <span class="fml">Var(Y) = E(Var(Y|X)) + Var(E(Y|X))</span>。加えて、<span class="fml">E(Y|X)</span> は二乗誤差の意味で <strong>X に基づく Y の最良予測</strong>であるという射影としての解釈。</p>
+            <p><span class="tag trap">罠</span><span class="fml">E(Y|X)</span> を数だと思うこと。<span class="fml">E(Y|X=3)</span> は数ですが、<span class="fml">E(Y|X)</span> は確率変数です。この区別がつかないと Adam の法則が意味不明になります。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">10</div>
+          <div>
+            <h3>不等式と極限定理<span class="sub">Inequalities and Limit Theorems</span></h3>
+            <p>Cauchy–Schwarz、Jensen、Markov、Chebyshev、Chernoff。そして大数の法則と中心極限定理、χ² 分布と t 分布。</p>
+            <p><span class="tag key">要点</span>Jensen の不等式が第4章の罠を解決します —— 凸関数なら <span class="fml">E(g(X)) ≥ g(E(X))</span>。不等式群は「分布が分からなくても言えること」を与える道具です。</p>
+            <p><span class="tag trap">罠</span>二つあります。①大数の法則を「次の数回で帳尻が合う」と読む（ギャンブラーの誤謬）。②<strong>中心極限定理は裾については何も保証しません</strong>。中心付近の近似であり、極値荷重や金融のテールリスクに CLT を持ち込むのは誤りです。極値には第8章の順序統計量と極値理論を使う。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">11</div>
+          <div>
+            <h3>マルコフ連鎖<span class="sub">Markov Chains</span></h3>
+            <p>マルコフ性（未来は現在にのみ依存する）、推移行列、状態の分類（再帰的・過渡的）、定常分布、可逆性。</p>
+            <p><span class="tag key">要点</span>既約かつ非周期的なら、任意の初期状態から定常分布に収束する。可逆性（詳細釣り合い）が成り立てば、それは定常分布であることの十分条件 —— これが次章の設計原理になります。</p>
+            <p><span class="tag trap">罠</span>定常分布の存在と、長時間後の挙動の収束を同一視すること。周期的な連鎖では定常分布はあるのに収束しません。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">12</div>
+          <div>
+            <h3>マルコフ連鎖モンテカルロ<span class="sub">MCMC</span></h3>
+            <p>Metropolis–Hastings とギブスサンプリング。<strong>正規化定数が分からない分布から標本を得る</strong>ための技術です。ベイズ推論の実務がここで可能になります。</p>
+            <p><span class="tag key">要点</span>「望む分布を定常分布に持つ連鎖を<em>設計する</em>」という発想の転換。前章の可逆性がそのまま設計の道具になります。</p>
+            <p><span class="tag trap">罠</span>収束診断は収束の証明ではありません。トレースプロットが落ち着いて見えることと、連鎖が本当に混合していることは別です。</p>
+          </div>
+        </div>
+
+        <div class="ch">
+          <div class="ch-num">13</div>
+          <div>
+            <h3>ポアソン過程<span class="sub">Poisson Processes</span></h3>
+            <p>強度 λ の点過程。個数と時間の双対性 —— <span class="fml">N(t) ~ Pois(λt)</span> かつ到着間隔 <span class="fml">~ Expo(λ)</span>。重ね合わせ、間引き、条件づけ。</p>
+            <p><span class="tag key">要点</span>間引き（thinning）と重ね合わせ（superposition）で閉じていること。そして <span class="fml">N(t)=n</span> で条件づけると、到着時刻は一様分布の順序統計量になるという美しい結果。</p>
+            <p><span class="tag trap">罠</span>ポアソン仮定は「事象が互いに独立で、集中しない」ことを要求します。余震は明らかにこれを満たしません。モデルの適用範囲を確認せずに使うと、地震の群発性を無視することになります（橋②）。</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ BRIDGES ============ -->
+    <section id="bridges">
+      <h2>構造工学からの5本の橋</h2>
+      <p class="sec-note">あなたが既に使っている確率論 · ここから読み始めてよい</p>
+
+      <p class="lead">あなたは確率論を<strong>応用の形ですでに使っています</strong>。測度論から積み上げていないだけで、直感の土台はある。以下はゼロからの学習ではなく、既に知っていることに名前がつく作業です。</p>
+
+      <div class="callout bridge">
+        <h3>橋① SRSS と CQC は、和の分散の式そのもの</h3>
+        <p>モーダル応答を重ね合わせるとき、全応答は <span class="fml">R = Σ R<sub>i</sub></span>。各モードのピーク応答を確率変数とみなすと、第7章の式がそのまま出てきます。</p>
+        <pre class="fml-block">
+Var(Σ R<sub>i</sub>)  =  Σ<sub>i</sub> σ<sub>i</sub>²  +  2 Σ<sub>i&lt;j</sub> ρ<sub>ij</sub> σ<sub>i</sub> σ<sub>j</sub>
+
+ρ<sub>ij</sub> = 0 と仮定 →  σ = √( Σ σ<sub>i</sub>² )        <span class="why">← SRSS</span>
+ρ<sub>ij</sub> を残す    →  σ = √( ΣΣ ρ<sub>ij</sub> σ<sub>i</sub> σ<sub>j</sub> )   <span class="why">← CQC</span>
+        </pre>
+        <p><strong>SRSS から CQC への移行は「無相関仮定を捨てる」ことそのもの</strong>です。固有周期が近接するとモード応答が相関して <span class="fml">Cov ≠ 0</span> になり、SRSS が危険側になる —— この現象の正体は第7章の「無相関 ≠ 独立」ではなく、そもそも共分散項を落としていたことです。</p>
+      </div>
+
+      <div class="callout bridge">
+        <h3>橋② 再現期間475年は、ポアソン過程の一行</h3>
+        <p>地震の発生を強度 λ のポアソン過程とモデル化すると、50年間に少なくとも1回超過する確率は第13章から直ちに出ます。</p>
+        <pre class="fml-block">
+P(50年間に1回以上)  =  1 − e^(−λ·50)  =  0.10
+
+  λ·50 = −ln(0.90) = 0.10536
+  λ     = 0.0021072 /年
+  T     = 1/λ = <b>475 年</b>
+        </pre>
+        <p>つまり「<strong>50年超過確率10%</strong>」と「<strong>再現期間475年</strong>」は同じ主張の二つの書き方です。あなたが規準で何度も見た数字の出どころがこれです。</p>
+        <p>そして第5章の<strong>無記憶性</strong>が「前回から100年経ったからそろそろ起きやすい」を否定します。地震学ではここが論争点で、特性地震には更新過程（BPT分布など）を使う立場がある —— これは確率モデルの選択が工学的結論を変える、生きた実例です。</p>
+      </div>
+
+      <div class="callout bridge">
+        <h3>橋③ 限界状態設計は P(R &lt; S) の計算</h3>
+        <p>性能関数を <span class="fml">g = R − S</span>（耐力 − 荷重効果）とすると、破壊確率は <span class="fml">p<sub>f</sub> = P(g &lt; 0)</span>。R と S を独立な正規と仮定すれば、第5章と第7章だけで信頼性指標が出ます。</p>
+        <pre class="fml-block">
+g ~ N( μ<sub>R</sub> − μ<sub>S</sub> ,  σ<sub>R</sub>² + σ<sub>S</sub>² )
+
+β  =  (μ<sub>R</sub> − μ<sub>S</sub>) / √( σ<sub>R</sub>² + σ<sub>S</sub>² )
+p<sub>f</sub> =  Φ(−β)
+        </pre>
+        <p>荷重係数と材料係数は、目標 β から逆算されたものです。<strong>規準の数字の背後にあるのは、この二行</strong>。ここを知ってから規準を読むと、係数が「決まりごと」から「導出された量」に変わります。</p>
+      </div>
+
+      <div class="callout bridge">
+        <h3>橋④ ランダム振動論はモーメントとスペクトルの言い換え</h3>
+        <p>定常ランダム過程に対する線形系の応答分散は、パワースペクトル密度の重みつき面積です。</p>
+        <pre class="fml-block">
+σ<sub>response</sub>²  =  ∫ |H(ω)|² · S<sub>input</sub>(ω) dω
+        </pre>
+        <p>これは第6章（モーメント）と第7章（共分散）の連続版で、<span class="fml">S(ω)</span> は自己相関関数のフーリエ変換です。そしてピーク係数（Davenport など）が扱っているのは第8章の<strong>順序統計量と極値</strong>。</p>
+        <p><strong>あなたが免震の防振でやった「理論と計測の突き合わせ」は、この枠組みの中の作業です。</strong> 理論側が <span class="fml">|H(ω)|²·S(ω)</span> の予測で、計測側が実現した1本の標本経路 —— 乖離を議論するには、そもそも「1本の標本と分布の予測を比べている」という構図を自覚する必要があります。それが確率論の言葉です。</p>
+      </div>
+
+      <div class="callout bridge">
+        <h3>橋⑤ Eve の法則は、ばらつきの分解そのもの</h3>
+        <pre class="fml-block">
+Var(Y)  =  E[ Var(Y|X) ]  +  Var( E[Y|X] )
+           <span class="why">群内のばらつき</span>      <span class="why">群間のばらつき</span>
+        </pre>
+        <p>応答のばらつきを「地震動記録ごとのばらつき（偶然的不確定性）」と「モデル・パラメータの不確かさ（認識論的不確定性）」に分けるとき、使っているのはこの式です。地震ハザード解析のロジックツリーも同じ構造。</p>
+        <p>第9章さえ理解すれば、この分解を<strong>自分で導けるようになります</strong>。既存の分類を暗記するのではなく。</p>
+      </div>
+    </section>
+
+    <!-- ============ TRAPS ============ -->
+    <section id="traps">
+      <h2>落とし穴</h2>
+      <p class="sec-note">Blitzstein が教科書で「biohazard」記号を付けている類のもの</p>
+
+      <p>これらは「うっかりミス」ではなく、<strong>正しく見える推論の型</strong>です。だから危険で、だから一覧にする価値があります。</p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>誤り</th><th>正しくは</th><th>章</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>P(A|B)</code> と <code>P(B|A)</code> を同一視</td><td>ベイズで変換する。基準率を必ず入れる</td><td class="num">2</td></tr>
+            <tr><td>独立 ⟹ 条件付き独立（またはその逆）</td><td>どちらも成り立たない。反例を自分で作れること</td><td class="num">2</td></tr>
+            <tr><td>確率変数とその分布の混同</td><td><code>X = Y</code> と <code>X ~ Y</code> は別の主張</td><td class="num">3</td></tr>
+            <tr><td><code>E(g(X)) = g(E(X))</code></td><td>一般に成り立たない。凸なら Jensen で不等号</td><td class="num">4, 10</td></tr>
+            <tr><td>PDF の値を確率とみなす</td><td>確率は面積。<code>f(x)</code> は 1 を超えうる</td><td class="num">5</td></tr>
+            <tr><td>MGF や積率が常に存在すると仮定</td><td>裾が重いと存在しない（コーシーなど）</td><td class="num">6</td></tr>
+            <tr><td>無相関 ⟹ 独立</td><td>同時正規のときだけ成り立つ</td><td class="num">7</td></tr>
+            <tr><td>変換で台（support）を更新し忘れる</td><td>変換後の変域を毎回書き出す</td><td class="num">8</td></tr>
+            <tr><td><code>E(Y|X)</code> を数として扱う</td><td>確率変数。<code>E(Y|X=3)</code> だけが数</td><td class="num">9</td></tr>
+            <tr><td>CLT を裾の評価に使う</td><td>CLT は中心付近の近似。極値には極値の理論を</td><td class="num">10</td></tr>
+            <tr><td>大数の法則で「帳尻が合う」</td><td>平均が収束するだけ。差は発散しうる</td><td class="num">10</td></tr>
+            <tr><td>MCMC の収束診断を証明とみなす</td><td>診断は反証の道具であって保証ではない</td><td class="num">12</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ SANITY ============ -->
+    <section id="sanity">
+      <h2>検算の作法</h2>
+      <p class="sec-note">この科目であなたが最も有利な部分</p>
+
+      <p class="lead">Stat 110 は答え合わせの文化が強い科目です。Blitzstein は解答を出した後の<strong>確認手順</strong>を繰り返し要求します —— そしてこれは、あなたが既に自分の仕事でやっていることと同じです。</p>
+
+      <ul class="plain">
+        <li><strong>0 と 1 の間にあるか。</strong> 確率のはずのものが 1.4 になっていたら、そこで止まる</li>
+        <li><strong>極端な場合を入れる。</strong> <span class="fml">n=1</span>、<span class="fml">n=2</span>、<span class="fml">p=0</span>、<span class="fml">p=1</span>。ほとんどの誤りはここで死にます</li>
+        <li><strong>次元・単位を見る。</strong> 時間の期待値のはずが無次元になっていないか。構造の検算とまったく同じ習慣です</li>
+        <li><strong>極限を取る。</strong> <span class="fml">n→∞</span> で答えは正しく振る舞うか</li>
+        <li><strong>対称性を壊していないか。</strong> 問題が i と j の入れ替えに対して不変なら、答えもそうでなければならない</li>
+        <li><strong>シミュレートする。</strong> 30行の Python が1時間の議論に勝ちます。解析解とモンテカルロが合わなければ、どちらかが間違っている</li>
+      </ul>
+
+      <div class="callout bridge">
+        <h3>あなたの既存の習慣が、そのまま効く</h3>
+        <p>「剛性の取り違えは反力では出ない」——  釣り合いだけを見るチェックは構成則の誤りに対して構造的に盲目である、という気づきは、確率論では次の形で現れます。<strong>期待値だけを合わせても分布は決まらない</strong>。平均が一致していても、分散が、裾が、まったく違う分布はいくらでもあります。</p>
+        <p>問うべきは常に同じです —— <em>この検算が原理的に見られないものは何か</em>。</p>
+      </div>
+    </section>
+
+    <!-- ============ PLAN ============ -->
+    <section id="plan">
+      <h2>4週間の計画</h2>
+      <p class="sec-note">測定としての学習 · 週あたり 8〜12 時間を想定</p>
+
+      <p>週ごとに講義動画・読書・演習を回します。<strong>演習の比率を落とさないこと</strong> —— 読むだけでは、面白いかどうかは分かりません。目安は各週 15〜20 問、AIなしで。</p>
+
+      <div class="week">
+        <div class="wk">Week 1</div>
+        <div>
+          <h3>第1〜4章 — 数え上げ・条件づけ・確率変数・期待値</h3>
+          <p>投資対効果が最も高い週です。ここだけで確率の問題の大半が解けるようになります。第4章の線形性と指示変数に時間を使ってください。</p>
+          <p><strong>到達判定：</strong>クーポン収集問題と、ランダムな並べ替えの一致数の期待値を、独立性を仮定せずに解けること。</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="wk">Week 2</div>
+        <div>
+          <h3>第5〜7章 — 連続分布・モーメント・同時分布</h3>
+          <p>橋①と橋③がここに着地します。第7章に入ったら、SRSS/CQC の節を読み返してください。既知の工学式が確率の言葉で書き直される瞬間が、この科目が面白いかどうかの最初の本当のテストです。</p>
+          <p><strong>到達判定：</strong>無相関だが独立でない確率変数の組を、自分で構成できること。</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="wk">Week 3</div>
+        <div>
+          <h3>第8〜10章 — 変換・条件付き期待値・極限定理</h3>
+          <p>最も難しい週です。第9章の <span class="fml">E(Y|X)</span> が確率変数だという理解が、ここでの唯一の関門。ここを越えられるかどうかが、確率論の適性のいちばん正直な指標になります。</p>
+          <p><strong>到達判定：</strong>Eve の法則を自分で導出し、それを橋⑤のばらつき分解に自力で対応づけられること。</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="wk">Week 4</div>
+        <div>
+          <h3>第11〜13章 — マルコフ連鎖・MCMC・ポアソン過程</h3>
+          <p>応用への出口。第13章で橋②が閉じます。再現期間475年を自分で導出してみてください。規準の数字が導出可能な量に変わる経験は、この4週間で最も報われる瞬間かもしれません。</p>
+          <p><strong>到達判定：</strong>小さなマルコフ連鎖の定常分布を手で求め、Metropolis–Hastings を30行で実装できること。</p>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <h3>4週後に自分に問うこと</h3>
+        <p>「理解できたか」ではありません。それは適性の指標として弱い。問うべきは —— <strong>詰まっている30分は、苦痛だったか、それとも続きが気になったか。</strong></p>
+        <p>後者なら、クオンツ・リサーチへの滑走路は実在します。前者なら、答えは出ています。そしてそれは失敗ではなく、<strong>18か月を投じる前に判明したという成功</strong>です。</p>
+      </div>
+    </section>
+
+    <!-- ============ ENGLISH ============ -->
+    <section id="english">
+      <h2>数学英語の定型表現</h2>
+      <p class="sec-note">付録 · 数学の英語は語彙が狭く、構文が反復する</p>
+
+      <p class="lead">数学の英文は、日常英語よりずっと易しい。<strong>語彙が狭く、同じ構文が何百回も反復する</strong>からです。以下の約40個を覚えると、Blitzstein の地の文はほぼ透明になります。</p>
+
+      <p>実際、教科書を読むときの障壁の大半は「英語が読めない」ではなく「<code>support</code> が『台』だと知らない」「<code>It suffices to show</code> が何の合図か分からない」という<strong>局所的な穴</strong>です。穴を先に塞ぐほうが速い。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>英語</th><th>意味</th><th>出てくる場面</th></tr></thead>
+          <tbody>
+            <tr><td><code>Let X be ...</code></td><td>X を…とする</td><td>定義の導入。証明の第一文はほぼこれ</td></tr>
+            <tr><td><code>Suppose (that) ...</code></td><td>…とする</td><td>仮定の設定</td></tr>
+            <tr><td><code>We have ...</code></td><td>…となる</td><td>「我々は持つ」ではない。単なる結果の提示</td></tr>
+            <tr><td><code>It follows that ...</code></td><td>したがって…</td><td>直前からの帰結</td></tr>
+            <tr><td><code>Hence / Thus / Therefore</code></td><td>ゆえに</td><td>同義。使い分けはほぼない</td></tr>
+            <tr><td><code>Note that ...</code></td><td>…に注意</td><td>見落としやすい事実の指摘</td></tr>
+            <tr><td><code>Observe that ...</code></td><td>…に着目</td><td>これから使う事実の予告</td></tr>
+            <tr><td><code>Recall that ...</code></td><td>…を思い出そう</td><td>既出。忘れていたら戻る合図</td></tr>
+            <tr><td><code>It suffices to show that ...</code></td><td>…を示せば十分</td><td>証明の方針転換。重要な合図</td></tr>
+            <tr><td><code>Without loss of generality (WLOG)</code></td><td>一般性を失わずに</td><td>対称性で場合を減らすとき</td></tr>
+            <tr><td><code>By symmetry, ...</code></td><td>対称性より</td><td>計算を丸ごと省略する魔法の言葉</td></tr>
+            <tr><td><code>By linearity, ...</code></td><td>線形性より</td><td>期待値の章で頻出</td></tr>
+            <tr><td><code>Conditioning on X, ...</code></td><td>X で条件づけると</td><td>この科目で最も多い一手</td></tr>
+            <tr><td><code>Plugging in ...</code></td><td>…を代入すると</td><td>代入。<code>substituting</code> より口語的</td></tr>
+            <tr><td><code>Taking expectations on both sides</code></td><td>両辺の期待値をとると</td><td>Adam の法則の導出で必ず出る</td></tr>
+            <tr><td><code>Summing over all k</code></td><td>すべての k について和をとると</td><td>周辺化の場面</td></tr>
+            <tr><td><code>It can be shown that ...</code></td><td>…が示せる</td><td><b>証明を省略する合図</b>。追う必要はない</td></tr>
+            <tr><td><code>The proof is left as an exercise.</code></td><td>証明は演習とする</td><td>やったほうがいい</td></tr>
+            <tr><td><code>This is a special case of ...</code></td><td>これは…の特別な場合</td><td>一般化への橋</td></tr>
+            <tr><td><code>Conversely, ...</code></td><td>逆に</td><td>必要十分の逆向き</td></tr>
+            <tr><td><code>On the other hand, ...</code></td><td>一方</td><td>対比</td></tr>
+            <tr><td><code>In particular, ...</code></td><td>特に</td><td>一般論から特殊例へ</td></tr>
+            <tr><td><code>That is, ...</code> / <code>i.e.</code></td><td>すなわち</td><td>言い換え</td></tr>
+            <tr><td><code>e.g.</code></td><td>例えば</td><td><b><code>i.e.</code> との取り違えが頻出</b></td></tr>
+            <tr><td><code>if and only if (iff)</code></td><td>必要十分条件</td><td><code>iff</code> は誤字ではない</td></tr>
+            <tr><td><code>with probability 1</code> / <code>almost surely (a.s.)</code></td><td>確率1で / ほとんど確実に</td><td>強法則で出る</td></tr>
+            <tr><td><code>as n → ∞</code></td><td>n が無限大に近づくとき</td><td>極限定理</td></tr>
+            <tr><td><code>for all</code> / <code>for every</code></td><td>任意の</td><td>全称</td></tr>
+            <tr><td><code>there exists</code></td><td>…が存在する</td><td>存在</td></tr>
+            <tr><td><code>respectively</code></td><td>それぞれ</td><td>文末に置く。<code>A and B are X and Y, respectively</code></td></tr>
+            <tr><td><code>analogously</code></td><td>同様に</td><td>同じ議論の繰り返しを省略</td></tr>
+            <tr><td><code>straightforward</code></td><td>直接的な</td><td><b>「簡単」の婉曲表現。実際は面倒なこともある</b></td></tr>
+            <tr><td><code>tedious but straightforward</code></td><td>面倒だが直接的</td><td>＝計算するだけ。方針は考えなくていい</td></tr>
+            <tr><td><code>nontrivial</code></td><td>自明でない</td><td>ここは考える必要がある、の合図</td></tr>
+            <tr><td><code>Intuitively, ...</code></td><td>直感的には</td><td>Blitzstein が最も頻繁に使う語のひとつ</td></tr>
+            <tr><td><code>The key idea is ...</code></td><td>核心となる考えは</td><td>ここだけ読んでもよい</td></tr>
+            <tr><td><code>A common mistake is to ...</code></td><td>よくある誤りは…すること</td><td>罠の予告</td></tr>
+            <tr><td><code>sanity check</code></td><td>妥当性の確認</td><td>この本の重要語。訳語が定着していない</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout bridge">
+        <h3>英語も同時に鍛える4つの習慣</h3>
+        <ul class="plain">
+          <li><b>音読する。</b> クオンツ面接では英語で数学を<em>話す</em>必要があります。黙読だけだと、読めるのに言えない状態になる</li>
+          <li><b>講義は英語字幕で見る。</b> Blitzstein の講義には字幕があります。聴きながら読むと定着が速い</li>
+          <li><b>定型表現をノートに溜める。</b> 上の表に自分で追加していく。40個が80個になれば地の文は読み飛ばせる</li>
+          <li><b>週に1回、解いた問題の解法を英語3文で書く。</b> 上の定型表現を使って。これがそのまま面接の練習になります</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ READING ALOUD ============ -->
+    <section id="reading">
+      <h2>数式の読み上げ方</h2>
+      <p class="sec-note">付録 · 面接で数学を話すために</p>
+
+      <p>日本語で数学を学んだ人が英語圏の面接で最初に詰まるのが、<strong>式を声に出すとき</strong>です。<code>C(n,k)</code> を「n choose k」と言うことを知らないと、聞き取れないし言えません。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>記号</th><th>英語での読み</th><th>注</th></tr></thead>
+          <tbody>
+            <tr><td><code>P(A)</code></td><td>the probability of A</td><td>短く "P of A" でもよい</td></tr>
+            <tr><td><code>P(A|B)</code></td><td>the probability of A <b>given</b> B</td><td><code>|</code> は given</td></tr>
+            <tr><td><code>E(X)</code></td><td>the expected value of X / the expectation of X</td><td>"E of X" も普通</td></tr>
+            <tr><td><code>E(X|Y)</code></td><td>the expected value of X given Y</td><td>第9章で連呼する</td></tr>
+            <tr><td><code>Var(X)</code></td><td>the variance of X</td><td>ヴェアリアンス</td></tr>
+            <tr><td><code>Cov(X,Y)</code></td><td>the covariance of X and Y</td><td>and であって comma ではない</td></tr>
+            <tr><td><code>X ~ Bin(n,p)</code></td><td>X is distributed Binomial with parameters n and p</td><td>口語では "X is Binomial n p"</td></tr>
+            <tr><td><code>C(n,k)</code></td><td><b>n choose k</b></td><td><b>最重要。</b> ₙCₖ と習った人には通じない</td></tr>
+            <tr><td><code>n!</code></td><td>n factorial</td><td></td></tr>
+            <tr><td><code>X²</code></td><td>X squared</td><td>三乗は X cubed</td></tr>
+            <tr><td><code>√x</code></td><td>the square root of x / root x</td><td></td></tr>
+            <tr><td><code>x̄</code></td><td>x bar</td><td>標本平均</td></tr>
+            <tr><td><code>X̂</code></td><td>X hat</td><td>推定量</td></tr>
+            <tr><td><code>Σ</code> (i=1 to n)</td><td>the sum from i equals one to n of ...</td><td></td></tr>
+            <tr><td><code>∫</code> (a to b)</td><td>the integral from a to b of f of x, d x</td><td>dx は "d x"</td></tr>
+            <tr><td><code>f(x)</code></td><td>f of x</td><td>"f x" とは言わない</td></tr>
+            <tr><td><code>{X &gt; 3}</code></td><td>the event that X is greater than three</td><td>集合ではなく event と呼ぶ</td></tr>
+            <tr><td><code>A ∩ B</code></td><td>A intersect B / A and B</td><td></td></tr>
+            <tr><td><code>A ∪ B</code></td><td>A union B / A or B</td><td></td></tr>
+            <tr><td><code>Aᶜ</code></td><td>A complement</td><td>余事象</td></tr>
+            <tr><td><code>→</code></td><td>goes to / tends to</td><td></td></tr>
+            <tr><td><code>⟹</code></td><td>implies</td><td></td></tr>
+            <tr><td><code>i.i.d.</code></td><td>"eye eye dee"（綴りで読む）</td><td>independent and identically distributed</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>ギリシャ文字</h3>
+      <p>日本語の慣用読みと英語の発音がずれるものだけ挙げます。聞き取れないと会話が止まります。</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>文字</th><th>英語の発音</th><th>日本語の慣用</th></tr></thead>
+          <tbody>
+            <tr><td><code>μ</code></td><td>mu（ミュー）</td><td>ミュー — ほぼ同じ</td></tr>
+            <tr><td><code>λ</code></td><td>lambda（<b>ラム</b>ダ、第1音節を強く）</td><td>ラムダ</td></tr>
+            <tr><td><code>θ</code></td><td>theta（<b>シー</b>タ、th音）</td><td>シータ</td></tr>
+            <tr><td><code>χ²</code></td><td>chi-squared（<b>カイ</b>・スクエアド）</td><td>カイ二乗</td></tr>
+            <tr><td><code>φ</code> / <code>Φ</code></td><td>phi（<b>ファイ</b>）/ capital phi</td><td>ファイ — Φ は標準正規のCDF</td></tr>
+            <tr><td><code>ξ</code></td><td>xi（<b>ザイ</b> または クサイ）</td><td>クサイ — ずれが大きい</td></tr>
+            <tr><td><code>ρ</code></td><td>rho（<b>ロウ</b>）</td><td>ロー</td></tr>
+            <tr><td><code>σ</code></td><td>sigma</td><td>シグマ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ GLOSSARY ============ -->
+    <section id="glossary">
+      <h2>章別 用語対訳</h2>
+      <p class="sec-note">付録 · 英語で読み、日本語で考えるための橋</p>
+
+      <h3>第1〜2章 — 数え上げと条件づけ</h3>
+      <div class="tw"><table>
+        <thead><tr><th>英語</th><th>日本語</th><th>注</th></tr></thead>
+        <tbody>
+          <tr><td><code>sample space</code></td><td>標本空間</td><td></td></tr>
+          <tr><td><code>event</code></td><td>事象</td><td>標本空間の部分集合</td></tr>
+          <tr><td><code>equally likely</code></td><td>同様に確からしい</td><td></td></tr>
+          <tr><td><code>naive definition</code></td><td>素朴な定義</td><td>Blitzstein の用語</td></tr>
+          <tr><td><code>multiplication rule</code></td><td>乗法原理</td><td></td></tr>
+          <tr><td><code>sampling with / without replacement</code></td><td>復元 / 非復元抽出</td><td></td></tr>
+          <tr><td><code>binomial coefficient</code></td><td>二項係数</td><td>読みは n choose k</td></tr>
+          <tr><td><code>inclusion-exclusion</code></td><td>包除原理</td><td></td></tr>
+          <tr><td><code>disjoint</code> / <code>mutually exclusive</code></td><td>排反</td><td></td></tr>
+          <tr><td><code>partition</code></td><td>分割</td><td>全確率の法則の前提</td></tr>
+          <tr><td><code>complement</code></td><td>余事象</td><td></td></tr>
+          <tr><td><code>conditional probability</code></td><td>条件付き確率</td><td></td></tr>
+          <tr><td><code>law of total probability (LOTP)</code></td><td>全確率の法則</td><td></td></tr>
+          <tr><td><code>prior</code> / <code>posterior</code></td><td>事前 / 事後（確率）</td><td></td></tr>
+          <tr><td><code>likelihood</code></td><td>尤度</td><td>「ゆうど」</td></tr>
+          <tr><td><code>odds</code></td><td>オッズ</td><td>訳語なし。p/(1−p)</td></tr>
+          <tr><td><code>conditionally independent</code></td><td>条件付き独立</td><td>独立とは互いに独立な概念</td></tr>
+          <tr><td><code>base rate</code></td><td>基準率</td><td>無視すると検察官の誤謬</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>第3〜4章 — 確率変数と期待値</h3>
+      <div class="tw"><table>
+        <thead><tr><th>英語</th><th>日本語</th><th>注</th></tr></thead>
+        <tbody>
+          <tr><td><code>random variable (r.v.)</code></td><td>確率変数</td><td>実は「変数」ではなく関数</td></tr>
+          <tr><td><code>PMF (probability mass function)</code></td><td>確率質量関数</td><td>離散</td></tr>
+          <tr><td><code>CDF (cumulative distribution function)</code></td><td>累積分布関数</td><td>日本語で単に「分布関数」とも</td></tr>
+          <tr><td><code>support</code></td><td><b>台</b>（だい）</td><td><b>知らないと絶対に分からない訳語</b></td></tr>
+          <tr><td><code>indicator random variable</code></td><td>指示確率変数</td><td>定義関数とも</td></tr>
+          <tr><td><code>i.i.d.</code></td><td>独立同分布</td><td></td></tr>
+          <tr><td><code>expectation</code> / <code>expected value</code></td><td>期待値</td><td></td></tr>
+          <tr><td><code>linearity of expectation</code></td><td>期待値の線形性</td><td></td></tr>
+          <tr><td><code>variance</code> / <code>standard deviation</code></td><td>分散 / 標準偏差</td><td></td></tr>
+          <tr><td><code>Bernoulli</code></td><td>ベルヌーイ分布</td><td></td></tr>
+          <tr><td><code>Binomial</code></td><td>二項分布</td><td></td></tr>
+          <tr><td><code>Hypergeometric</code></td><td>超幾何分布</td><td></td></tr>
+          <tr><td><code>Geometric</code></td><td>幾何分布</td><td></td></tr>
+          <tr><td><code>Negative Binomial</code></td><td>負の二項分布</td><td></td></tr>
+          <tr><td><code>Poisson</code></td><td>ポアソン分布</td><td>英語は「ポワッソン」に近い</td></tr>
+          <tr><td><code>coupon collector</code></td><td>クーポン収集問題</td><td></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>第5〜8章 — 連続分布・モーメント・同時分布・変換</h3>
+      <div class="tw"><table>
+        <thead><tr><th>英語</th><th>日本語</th><th>注</th></tr></thead>
+        <tbody>
+          <tr><td><code>PDF (probability density function)</code></td><td>確率密度関数</td><td>値は確率ではない</td></tr>
+          <tr><td><code>Uniform</code></td><td>一様分布</td><td></td></tr>
+          <tr><td><code>Normal</code> / <code>Gaussian</code></td><td>正規分布</td><td>英語では Normal が普通</td></tr>
+          <tr><td><code>standardization</code></td><td>標準化</td><td></td></tr>
+          <tr><td><code>Exponential</code></td><td>指数分布</td><td></td></tr>
+          <tr><td><code>memoryless</code></td><td>無記憶性</td><td>連続では指数分布だけの性質</td></tr>
+          <tr><td><code>moment</code></td><td>積率 / モーメント</td><td><b>日本語で両方使われる</b></td></tr>
+          <tr><td><code>MGF (moment generating function)</code></td><td>積率母関数</td><td>モーメント母関数とも</td></tr>
+          <tr><td><code>skewness</code> / <code>kurtosis</code></td><td>歪度 / 尖度</td><td>「わいど」「せんど」</td></tr>
+          <tr><td><code>quantile</code></td><td>分位点</td><td></td></tr>
+          <tr><td><code>joint / marginal / conditional</code></td><td>同時 / 周辺 / 条件付き（分布）</td><td>marginal＝周辺 は非自明</td></tr>
+          <tr><td><code>covariance</code> / <code>correlation</code></td><td>共分散 / 相関</td><td></td></tr>
+          <tr><td><code>uncorrelated</code></td><td>無相関</td><td>独立とは違う</td></tr>
+          <tr><td><code>Multinomial</code></td><td>多項分布</td><td></td></tr>
+          <tr><td><code>Multivariate Normal (MVN)</code></td><td>多変量正規分布</td><td></td></tr>
+          <tr><td><code>change of variables</code> / <code>Jacobian</code></td><td>変数変換 / ヤコビアン</td><td>ヤコビ行列式</td></tr>
+          <tr><td><code>convolution</code></td><td>畳み込み</td><td>和の分布</td></tr>
+          <tr><td><code>Beta</code> / <code>Gamma</code></td><td>ベータ / ガンマ分布</td><td></td></tr>
+          <tr><td><code>order statistics</code></td><td>順序統計量</td><td>極値の理論</td></tr>
+          <tr><td><code>conjugate prior</code></td><td>共役事前分布</td><td></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>第9〜13章 — 条件付き期待値・極限定理・確率過程</h3>
+      <div class="tw"><table>
+        <thead><tr><th>英語</th><th>日本語</th><th>注</th></tr></thead>
+        <tbody>
+          <tr><td><code>conditional expectation</code></td><td>条件付き期待値</td><td>数ではなく確率変数</td></tr>
+          <tr><td><code>tower property</code></td><td>塔の性質 / 繰り返し期待値の法則</td><td>Blitzstein は Adam's law と呼ぶ</td></tr>
+          <tr><td><code>law of total variance</code></td><td>全分散の法則</td><td>Blitzstein は Eve's law</td></tr>
+          <tr><td><code>projection</code></td><td>射影</td><td>最良予測としての解釈</td></tr>
+          <tr><td><code>MSE (mean squared error)</code></td><td>平均二乗誤差</td><td></td></tr>
+          <tr><td><code>Cauchy-Schwarz</code></td><td>コーシー・シュワルツ</td><td></td></tr>
+          <tr><td><code>Jensen's inequality</code></td><td>イェンセンの不等式</td><td>「ジェンセン」とも</td></tr>
+          <tr><td><code>Markov / Chebyshev / Chernoff</code></td><td>マルコフ / チェビシェフ / チェルノフ</td><td>裾の評価</td></tr>
+          <tr><td><code>LLN (law of large numbers)</code></td><td>大数の法則</td><td>「たいすう」</td></tr>
+          <tr><td><code>CLT (central limit theorem)</code></td><td>中心極限定理</td><td></td></tr>
+          <tr><td><code>convergence in probability</code></td><td>確率収束</td><td>弱法則</td></tr>
+          <tr><td><code>almost surely</code></td><td>概収束 / ほとんど確実に</td><td>強法則</td></tr>
+          <tr><td><code>chi-square</code> / <code>Student's t</code></td><td>カイ二乗分布 / t分布</td><td></td></tr>
+          <tr><td><code>Markov chain</code></td><td>マルコフ連鎖</td><td></td></tr>
+          <tr><td><code>transition matrix</code></td><td>推移行列</td><td>遷移行列とも</td></tr>
+          <tr><td><code>irreducible</code></td><td>既約</td><td>「きやく」</td></tr>
+          <tr><td><code>recurrent</code> / <code>transient</code></td><td>再帰的 / 過渡的</td><td></td></tr>
+          <tr><td><code>stationary distribution</code></td><td>定常分布</td><td></td></tr>
+          <tr><td><code>reversible</code> / <code>detailed balance</code></td><td>可逆 / 詳細釣り合い</td><td>MCMC の設計原理</td></tr>
+          <tr><td><code>proposal distribution</code></td><td>提案分布</td><td></td></tr>
+          <tr><td><code>burn-in</code> / <code>mixing</code></td><td>バーンイン / 混合</td><td>訳語が定着していない</td></tr>
+          <tr><td><code>Poisson process</code></td><td>ポアソン過程</td><td></td></tr>
+          <tr><td><code>rate</code> / <code>intensity</code></td><td>強度</td><td>λ</td></tr>
+          <tr><td><code>interarrival time</code></td><td>到着間隔</td><td></td></tr>
+          <tr><td><code>superposition</code> / <code>thinning</code></td><td>重ね合わせ / 間引き</td><td></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Blitzstein 固有の言い回し</h3>
+      <p>以下はこの本（と講義）の中だけの用語です。<strong>日本語の教科書にも、他の英語の教科書にも出てきません。</strong>逆に言えば、これを知らないまま検索しても何も出ません。</p>
+      <div class="tw"><table>
+        <thead><tr><th>用語</th><th>中身</th></tr></thead>
+        <tbody>
+          <tr><td><code>story proof</code></td><td>同じものを二通りに数えて恒等式を示す方法</td></tr>
+          <tr><td><code>the fundamental bridge</code></td><td><code>E(I<sub>A</sub>) = P(A)</code>。確率と期待値を結ぶ</td></tr>
+          <tr><td><code>LOTUS</code></td><td>Law of the Unconscious Statistician。<code>g(X)</code> の分布を求めずに期待値を出す</td></tr>
+          <tr><td><code>Adam's law</code></td><td>繰り返し期待値の法則（tower property）</td></tr>
+          <tr><td><code>Eve's law</code></td><td>全分散の法則。Adam の次に来るので Eve</td></tr>
+          <tr><td><code>biohazard</code></td><td>教科書中の危険記号。よくある誤りの印</td></tr>
+          <tr><td><code>Conditioning is the soul of statistics.</code></td><td>この科目の標語</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>訳語の罠</h3>
+      <ul class="plain">
+        <li><code>support</code> = <b>台</b>。確率変数が正の確率を持つ範囲。「サポート」ではないし、字面から推測できない</li>
+        <li><code>distribution</code> は「分布」ですが、日本語の <b>「分布関数」は CDF</b> を指すことが多い。英語の <code>distribution</code> は分布そのもの</li>
+        <li><code>moment</code> は日本語で<b>積率とモーメントの両方</b>が使われます。同じもの</li>
+        <li><code>expectation</code> と <code>mean</code> は英語ではほぼ同義ですが、日本語では期待値（理論値）と平均（標本値）が区別されがち。文脈で判断する</li>
+        <li><code>density</code>（密度・連続）と <code>mass</code>（質量・離散）の対比は、日本語だと「密度関数／質量関数」で見えにくい。英語のほうが構造が明快です</li>
+      </ul>
+    </section>
+
+    <!-- ============ MATERIALS ============ -->
+    <section id="materials">
+      <h2>教材</h2>
+      <p class="sec-note">公式に無料公開されているものが中心</p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>教材</th><th>内容</th><th>使いどころ</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Introduction to Probability</b> 第2版<br>Blitzstein &amp; Hwang<br><a href="http://probabilitybook.net">probabilitybook.net</a></td>
+              <td>本体。第2版が著者により無料公開されている。各章に大量の演習</td>
+              <td>主教材。演習がこの本の価値の大半</td>
+            </tr>
+            <tr>
+              <td><b>Statistics 110 講義動画</b> 全34回<br><a href="https://www.youtube.com/playlist?list=PLLVplP8OIVc8EktkrD3Q8td0GmId7DjW0">YouTube 公式プレイリスト</a></td>
+              <td>Blitzstein 本人の講義、全編公開。合計約28時間</td>
+              <td>詰まった章にだけ使う補助。全部見ると予算を食い尽くす</td>
+            </tr>
+            <tr>
+              <td><b>Handouts</b><br><a href="https://stat110.hsites.harvard.edu/handouts">stat110 公式 handouts</a></td>
+              <td>Strategic Practice（章別演習と詳細解答）、過去試験、復習資料</td>
+              <td>教科書の演習より試験形式に近い。週末の総復習に</td>
+            </tr>
+            <tr>
+              <td><b>Probability Cheatsheet</b><br>William Chen（Stat 110 TA）</td>
+              <td>10ページに全13章を凝縮した定評ある要約。公式サイトから辿れる</td>
+              <td>この地図より式に寄った一覧。手元に印刷しておく</td>
+            </tr>
+            <tr>
+              <td><b>Stat110x</b><br>edX</td>
+              <td>採点つき演習、アニメーション、対話的な可視化。無料登録</td>
+              <td>独学の強制力が欲しい場合。本と併走できる</td>
+            </tr>
+            <tr>
+              <td><b>A Practical Guide To<br>Quantitative Finance Interviews</b><br>Xinfeng Zhou（要購入）</td>
+              <td>クオンツ面接の実問題集（通称グリーンブック）</td>
+              <td>第3週以降に並行。出口の形式を知るため。それまで不要</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>すべての入口は <a href="https://stat110.hsites.harvard.edu/">Harvard Stat 110 公式サイト</a>です。有料なのはグリーンブックだけで、それも第3週まで要りません。<strong>今日始めるのに必要な出費はゼロです。</strong></p>
+    </section>
+
+    <!-- ============ CLOSE ============ -->
+    <section class="close">
+      <p>この地図の目的は、あなたが確率論を好きになることではありません。<strong>好きかどうかを、4週間で正直に知ること</strong>です。</p>
+      <p>どちらの答えが出ても、それは次の判断のための一次データになります —— 私の推測ではなく、あなた自身が測った値として。</p>
+    </section>
+
+  </main>
+</div>
+
+</body></html>

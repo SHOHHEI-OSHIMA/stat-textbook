@@ -1,0 +1,1363 @@
+<!doctype html><html><head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<div style="height:env(safe-area-inset-top)"></div>
+<style>
+.__home{position:fixed;z-index:60;left:max(10px,env(safe-area-inset-left));
+  top:calc(8px + env(safe-area-inset-top));
+  font:500 .78rem/1 system-ui,sans-serif;text-decoration:none;
+  padding:.5rem .7rem;border-radius:9px;
+  color:#1B2430;background:#FFFFFFE6;border:1px solid #0002;
+  backdrop-filter:blur(6px)}
+@media (prefers-color-scheme:dark){
+  .__home{color:#DDE3EA;background:#171F27E6;border-color:#FFF2}
+}
+</style>
+<a class="__home" href="../">← 道具箱</a>
+<script>
+if('serviceWorker' in navigator){
+  addEventListener('load', ()=>navigator.serviceWorker.register('../sw.js').catch(()=>{}));
+}
+</script>
+
+<title>確率論 自習書</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Zen+Old+Mincho:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root {
+  --ground:#EDEFF3; --surface:#FFFFFF; --surface-sunk:#E4E7ED;
+  --text:#171A21; --text-mid:#414857; --text-mute:#656D7E;
+  --rule:#D3D7E0; --rule-soft:#E2E5EC;
+  --ink:#2B4693; --ink-tint:#E8ECF8;
+  --oxide:#94401F; --oxide-tint:#F7EAE3;
+  --sage:#38624B; --sage-tint:#E5EEE8;
+  --f-display:"Newsreader","Zen Old Mincho",Georgia,"Yu Mincho",serif;
+  --f-body:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --measure:68ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:#0F1218; --surface:#161A22; --surface-sunk:#1D222C;
+    --text:#E3E7EF; --text-mid:#B6BDCB; --text-mute:#8B93A4;
+    --rule:#2A3140; --rule-soft:#222835;
+    --ink:#8FA9EF; --ink-tint:#1A2138;
+    --oxide:#DE9C79; --oxide-tint:#2A1D16;
+    --sage:#8FC1A5; --sage-tint:#16241C;
+  }
+}
+:root[data-theme="dark"] {
+  --ground:#0F1218; --surface:#161A22; --surface-sunk:#1D222C;
+  --text:#E3E7EF; --text-mid:#B6BDCB; --text-mute:#8B93A4;
+  --rule:#2A3140; --rule-soft:#222835;
+  --ink:#8FA9EF; --ink-tint:#1A2138;
+  --oxide:#DE9C79; --oxide-tint:#2A1D16;
+  --sage:#8FC1A5; --sage-tint:#16241C;
+}
+
+* { box-sizing:border-box; }
+body {
+  background:var(--ground); color:var(--text); font-family:var(--f-body);
+  font-size:16px; line-height:1.85; font-feature-settings:"palt" 1;
+  -webkit-font-smoothing:antialiased;
+}
+.shell { display:grid; grid-template-columns:1fr; max-width:1400px; margin:0 auto; padding:0 22px 120px; }
+@media (min-width:1140px) { .shell { grid-template-columns:238px minmax(0,1fr); gap:56px; padding:0 40px 140px; } }
+
+.masthead { grid-column:1/-1; border-bottom:1px solid var(--rule); padding:68px 0 40px; margin-bottom:56px; }
+.eyebrow { font-family:var(--f-mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-mute); margin-bottom:20px; }
+h1 { font-family:var(--f-display); font-weight:600; font-size:clamp(2.5rem,6vw,3.9rem); line-height:1.1; letter-spacing:-.015em; text-wrap:balance; margin:0 0 22px; }
+.standfirst { font-size:17.5px; line-height:1.9; color:var(--text-mid); max-width:62ch; margin:0; }
+.masthead-meta { display:flex; flex-wrap:wrap; gap:8px 32px; margin-top:34px; font-family:var(--f-mono); font-size:12px; color:var(--text-mute); }
+.masthead-meta b { color:var(--text-mid); font-weight:500; }
+
+nav.toc { display:none; }
+@media (min-width:1140px) {
+  nav.toc { display:block; position:sticky; top:32px; align-self:start; max-height:calc(100vh - 64px); overflow-y:auto; padding-bottom:40px; }
+  nav.toc ol { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px; }
+  nav.toc a { display:block; padding:5px 0 5px 12px; font-size:13px; line-height:1.5; color:var(--text-mute); text-decoration:none; border-left:2px solid transparent; transition:color .14s,border-color .14s; }
+  nav.toc a:hover, nav.toc a:focus-visible { color:var(--ink); border-left-color:var(--ink); }
+  nav.toc a.sub { padding-left:26px; font-size:12.5px; }
+  nav.toc .toc-head { font-family:var(--f-mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-mute); padding:22px 0 8px 12px; border-bottom:1px solid var(--rule-soft); margin-bottom:6px; }
+  nav.toc .toc-head:first-child { padding-top:0; }
+}
+main { grid-column:1/-1; min-width:0; }
+@media (min-width:1140px) { main { grid-column:2; } }
+
+section { margin-bottom:78px; scroll-margin-top:24px; }
+.chapter-open { border-top:3px solid var(--text); padding-top:26px; margin-top:96px; }
+.chapter-open:first-of-type { margin-top:0; }
+.chapter-label { font-family:var(--f-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink); margin-bottom:12px; }
+
+h2 { font-family:var(--f-display); font-weight:600; font-size:clamp(1.6rem,3.2vw,2.15rem); line-height:1.25; letter-spacing:-.01em; text-wrap:balance; margin:0 0 8px; padding-bottom:14px; border-bottom:2px solid var(--text); }
+h2.plainrule { border-bottom:1px solid var(--rule); }
+.sec-note { font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-mute); margin:14px 0 30px; }
+h3 { font-family:var(--f-display); font-weight:600; font-size:1.28rem; line-height:1.4; text-wrap:balance; margin:44px 0 12px; }
+h4 { font-family:var(--f-body); font-weight:700; font-size:1.02rem; line-height:1.6; margin:30px 0 10px; }
+
+p { max-width:var(--measure); margin:0 0 18px; }
+p.lead { font-size:17px; color:var(--text-mid); }
+a { color:var(--ink); text-decoration-thickness:1px; text-underline-offset:2.5px; }
+:focus-visible { outline:2px solid var(--ink); outline-offset:3px; border-radius:2px; }
+ul.plain, ol.plain { max-width:var(--measure); margin:0 0 18px; padding-left:1.3em; }
+ul.plain li, ol.plain li { margin-bottom:8px; }
+
+.fml { font-family:var(--f-mono); font-size:14.5px; background:var(--surface-sunk); padding:1px 6px; border-radius:2px; }
+pre.fml-block { font-family:var(--f-mono); font-size:14.5px; line-height:2.1; white-space:pre; background:var(--surface); border-left:2px solid var(--ink); padding:18px 22px; margin:0 0 24px; max-width:var(--measure); overflow-x:auto; }
+pre.fml-block .why { color:var(--text-mute); font-family:var(--f-body); font-size:13px; }
+pre.code { font-family:var(--f-mono); font-size:13.5px; line-height:1.75; white-space:pre; background:var(--surface); border:1px solid var(--rule-soft); border-left:3px solid var(--sage); padding:16px 20px; margin:0 0 20px; max-width:var(--measure); overflow-x:auto; }
+pre.code .cm { color:var(--text-mute); }
+
+.defbox { max-width:var(--measure); background:var(--surface); border:1px solid var(--rule); border-top:3px solid var(--ink); padding:20px 24px; margin:0 0 24px; }
+.defbox .kind { font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); margin-bottom:10px; }
+.defbox p:last-child, .defbox pre:last-child { margin-bottom:0; }
+
+.callout { max-width:var(--measure); padding:22px 26px; margin:0 0 22px; background:var(--surface); border:1px solid var(--rule-soft); border-left-width:3px; }
+.callout h3, .callout h4 { margin:0 0 10px; font-size:1.08rem; }
+.callout p:last-child, .callout pre:last-child, .callout ul:last-child { margin-bottom:0; }
+.callout.bridge { border-left-color:var(--sage); }
+.callout.bridge h3, .callout.bridge h4 { color:var(--sage); }
+.callout.warn { border-left-color:var(--oxide); }
+.callout.warn h3, .callout.warn h4 { color:var(--oxide); }
+
+.tw { overflow-x:auto; margin:0 0 26px; border:1px solid var(--rule-soft); background:var(--surface); }
+table { border-collapse:collapse; width:100%; min-width:520px; font-size:14.5px; }
+th, td { text-align:left; padding:11px 16px; border-bottom:1px solid var(--rule-soft); vertical-align:top; line-height:1.65; }
+th { font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-mute); font-weight:500; background:var(--surface-sunk); white-space:nowrap; }
+tr:last-child td { border-bottom:none; }
+td code, th code { font-family:var(--f-mono); font-size:13.5px; }
+td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+td.hit { background:var(--oxide-tint); }
+
+figure { margin:0 0 30px; max-width:var(--measure); }
+figure.wide { max-width:none; }
+.figscroll { overflow-x:auto; background:var(--surface); border:1px solid var(--rule-soft); padding:24px 20px; }
+.figscroll svg { display:block; width:100%; height:auto; margin:0 auto; color:var(--text-mid); }
+figcaption { font-size:13.5px; color:var(--text-mute); margin-top:12px; max-width:var(--measure); line-height:1.75; }
+
+.ex { display:grid; grid-template-columns:34px minmax(0,1fr); gap:0 18px; border-top:1px solid var(--rule); padding:24px 0; }
+.ex:last-of-type { border-bottom:1px solid var(--rule); }
+.ex .n { font-family:var(--f-mono); font-size:13px; color:var(--ink); padding-top:3px; font-variant-numeric:tabular-nums; }
+.ex h4 { margin:0 0 8px; }
+.ex p:last-child { margin-bottom:0; }
+
+.close { border-top:2px solid var(--text); padding-top:34px; margin-top:12px; }
+.close p { font-size:17px; }
+
+.status { display:inline-block; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; padding:1px 7px; border:1px solid var(--rule); color:var(--text-mute); margin-left:10px; vertical-align:3px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
+
+@media print {
+  :root { --ground:#fff; --surface:#fff; --surface-sunk:#f3f3f3; --text:#000; --text-mid:#1c1c1c; --text-mute:#555; --rule:#888; --rule-soft:#c4c4c4; --ink:#16306e; --ink-tint:#eef1f9; --oxide:#6d2f14; --oxide-tint:#f8efe9; --sage:#224834; --sage-tint:#eaf2ec; }
+  nav.toc { display:none; }
+  .shell { display:block; max-width:none; padding:0; }
+  body { font-size:10.5pt; line-height:1.7; }
+  .masthead { padding-top:0; }
+  h2 { page-break-before:always; page-break-after:avoid; }
+  .chapter-open { page-break-before:always; margin-top:0; }
+  h3, h4 { page-break-after:avoid; }
+  figure, .defbox, .callout, pre, .tw, .ex { page-break-inside:avoid; }
+  a { color:#000; text-decoration:none; }
+  .figscroll { overflow:visible; }
+  p, ul.plain, ol.plain, figcaption { max-width:none; }
+}
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">Self-contained · 日本語解説 + English</div>
+    <h1>確率論 自習書</h1>
+    <p class="standfirst">Harvard Stat 110 の内容を、<strong>この一冊だけで学べる形</strong>に書き下ろしたもの。教科書を横に置かなくても読めるように、定義・図・例題・演習をすべて自前で用意しています。英語の用語と定型表現を各章に並走させているので、確率と数学英語を同時に進められます。</p>
+    <div class="masthead-meta">
+      <span>収録 <b>第1〜2章</b>（以降 順次）</span>
+      <span>図 <b>6</b> 点</span>
+      <span>検算コード <b>7</b> 本</span>
+      <span>ブラウザの印刷から <b>PDF 化</b>できます</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="目次">
+    <ol>
+      <li><div class="toc-head">序</div></li>
+      <li><a href="#about">この本について</a></li>
+      <li><div class="toc-head">第1章 確率と数え上げ</div></li>
+      <li><a href="#c1-space" class="sub">標本空間と事象</a></li>
+      <li><a href="#c1-pebble" class="sub">小石の世界</a></li>
+      <li><a href="#c1-naive" class="sub">素朴な定義と限界</a></li>
+      <li><a href="#c1-count" class="sub">数え上げ</a></li>
+      <li><a href="#c1-story" class="sub">物語による証明</a></li>
+      <li><a href="#c1-axioms" class="sub">公理と包除原理</a></li>
+      <li><a href="#c1-worked" class="sub">検算つき例題</a></li>
+      <li><a href="#c1-ex" class="sub">演習</a></li>
+      <li><a href="#c1-en" class="sub">この章の英語</a></li>
+      <li><div class="toc-head">第2章 条件付き確率</div></li>
+      <li><a href="#c2-def" class="sub">条件づけとは何か</a></li>
+      <li><a href="#c2-three" class="sub">3つの基本定理</a></li>
+      <li><a href="#c2-odds" class="sub">オッズ形式</a></li>
+      <li><a href="#c2-base" class="sub">基準率と検察官の誤謬</a></li>
+      <li><a href="#c2-indep" class="sub">独立性</a></li>
+      <li><a href="#c2-cindep" class="sub">条件付き独立</a></li>
+      <li><a href="#c2-monty" class="sub">モンティ・ホール</a></li>
+      <li><a href="#c2-simpson" class="sub">シンプソンのパラドックス</a></li>
+      <li><a href="#c2-worked" class="sub">検算つき例題</a></li>
+      <li><a href="#c2-ex" class="sub">演習</a></li>
+      <li><a href="#c2-en" class="sub">この章の英語</a></li>
+      <li><div class="toc-head">これから</div></li>
+      <li><a href="#roadmap">第3章以降の予定</a></li>
+      <li><div class="toc-head">付録</div></li>
+      <li><a href="#a-english">数学英語の定型表現</a></li>
+      <li><a href="#a-reading">数式の読み上げ方</a></li>
+      <li><a href="#a-glossary">用語対訳</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section id="about">
+      <h2>この本について</h2>
+      <p class="sec-note">自己完結 · 英語併走 · 印刷でPDF</p>
+
+      <p class="lead">この本は<strong>単体で完結</strong>しています。定義も、図も、例題も、演習も、すべてここにあります。教科書を並行して読む必要はありません（読めば理解は深まりますが、必須ではない）。</p>
+
+      <h4>3つの方針</h4>
+      <ul class="plain">
+        <li><b>日本語で理解し、英語で名前を覚える。</b> 各章の末尾に「この章の英語」を置き、用語と定型表現をまとめています。付録には全体の対訳表と、数式を英語で読み上げる方法があります</li>
+        <li><b>図で機構を見せる。</b> 言葉で足りるところに図は置きません。逆に、図でしか伝わらないところ（条件づけの再スケール、基準率の効き方）には必ず置いています</li>
+        <li><b>すべての答えを検算する。</b> 解析解を出したら <code>numpy</code> で確かめる。理解していない問題はシミュレートできないので、理解の有無が自動的に判定されます</li>
+      </ul>
+
+      <h4>PDF にするには</h4>
+      <p>ブラウザの印刷（<span class="fml">Ctrl + P</span>）から「PDF に保存」を選んでください。印刷用のレイアウトを別に用意してあるので、目次サイドバーは消え、章ごとにページが分かれ、図や表がページをまたいで切れないようになっています。</p>
+
+      <div class="callout warn">
+        <h4>演習は AI を使わずに解くこと</h4>
+        <p>この学習には「確率が自分に合うか測る」という目的もあるはずです。<strong>問題を解かせると測定値が消えます。</strong> 概念の説明を求めるのは構いません（それは足場）。問題を解かせるのは測定対象そのものの破壊です。</p>
+        <p>20分は何も見ずに粘る。詰まったら解答ではなく該当節に戻る。解答を読んだ問題は印をつけて翌日ゼロから解き直す。この3つを守ってください。</p>
+      </div>
+    </section>
+
+    <!-- ===================== CHAPTER 1 ===================== -->
+    <div class="chapter-open">
+      <div class="chapter-label">Chapter 1 · Probability and Counting</div>
+      <h2 class="plainrule" id="c1">確率と数え上げ</h2>
+      <p class="lead">舞台を作る章です。確率変数も期待値もまだ出てきません。高校の確率の焼き直しに見えますが、決定的に違う点がひとつあります —— <strong>素朴な定義が壊れる場面を先に見せてから、公理へ移る</strong>という構成です。章の順序そのものが議論になっている。</p>
+    </div>
+
+    <section id="c1-space">
+      <h3>1.1　標本空間と事象</h3>
+
+      <div class="defbox">
+        <div class="kind">定義</div>
+        <p><b>実験（experiment）</b>とは、結果が事前に確定していない試行。<br>
+        <b>標本空間（sample space）</b> <span class="fml">S</span> とは、起こりうる結果すべての集合。<br>
+        <b>事象（event）</b>とは、<span class="fml">S</span> の部分集合。</p>
+      </div>
+
+      <p>コインを2回投げるなら <span class="fml">S = {HH, HT, TH, TT}</span>。「少なくとも1回は表」という事象は <span class="fml">{HH, HT, TH}</span> です。</p>
+
+      <p>ここで押さえるべきは、<strong>事象は集合であって、日本語の文ではない</strong>ということ。日本語の文を集合演算に翻訳する作業が、実はこの章の隠れた本体で、ここが雑なままだと第2章で必ず詰まります。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>日本語</th><th>集合</th><th>英語</th></tr></thead>
+          <tbody>
+            <tr><td>A または B（少なくとも一方）</td><td><code>A ∪ B</code></td><td>A or B / A union B</td></tr>
+            <tr><td>A かつ B（両方とも）</td><td><code>A ∩ B</code></td><td>A and B / A intersect B</td></tr>
+            <tr><td>A は起きない</td><td><code>Aᶜ</code></td><td>not A / A complement</td></tr>
+            <tr><td>A は起きるが B は起きない</td><td><code>A ∩ Bᶜ</code></td><td>A but not B</td></tr>
+            <tr><td>A と B のちょうど一方</td><td><code>(A∩Bᶜ) ∪ (Aᶜ∩B)</code></td><td>exactly one of A and B</td></tr>
+            <tr><td>A も B も起きない</td><td><code>Aᶜ ∩ Bᶜ = (A∪B)ᶜ</code></td><td>neither A nor B</td></tr>
+            <tr><td>A ならば B</td><td><code>A ⊆ B</code></td><td>A implies B</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>ド・モルガンの法則（De Morgan's laws）</h4>
+      <pre class="fml-block">(A ∪ B)ᶜ  =  Aᶜ ∩ Bᶜ     <span class="why">「A または B が起きる、ではない」＝「A も起きず B も起きない」</span>
+(A ∩ B)ᶜ  =  Aᶜ ∪ Bᶜ     <span class="why">「両方は起きない」＝「少なくとも一方は起きない」</span></pre>
+
+      <p>これは実務でも効きます。「<strong>少なくとも1つ</strong>」を直接数えるのが難しいとき、余事象の「<strong>1つも起きない</strong>」に置き換えると一気に簡単になる —— この定石はド・モルガンの言い換えです。誕生日問題があとで出てきますが、まさにこれです。</p>
+    </section>
+
+    <section id="c1-pebble">
+      <h3>1.2　小石の世界</h3>
+
+      <p>有限の標本空間を、<strong>小石が並んだ平面</strong>として見ます。この本を通じて何度も戻ってくる絵なので、最初に入れておきます。</p>
+
+      <ul class="plain">
+        <li>結果ひとつ ＝ 小石ひとつ</li>
+        <li>各小石には<strong>質量</strong>（＝確率）がある。全部の質量の合計は 1</li>
+        <li>事象 ＝ 小石の集まり（部分集合）</li>
+        <li>事象の確率 ＝ その集まりの<strong>質量の合計</strong></li>
+      </ul>
+
+      <figure class="wide">
+        <div class="figscroll">
+          <svg viewBox="0 0 900 300" style="min-width:640px;max-width:900px" role="img" aria-label="小石の世界の図。左は全ての小石が同じ大きさで等確率の標本空間、右は小石の大きさがばらばらで等確率でない標本空間。どちらも事象Aが破線で囲まれているが、素朴な定義が使えるのは左だけ。">
+            <defs>
+              <marker id="p-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <text x="20" y="20" font-family="IBM Plex Mono, monospace" font-size="12.5" letter-spacing="1.2" fill="var(--ink)">等確率 — 素朴な定義が使える</text>
+            <text x="480" y="20" font-family="IBM Plex Mono, monospace" font-size="12.5" letter-spacing="1.2" fill="var(--oxide)">等確率でない — 使えない</text>
+
+            <!-- panel A frame -->
+            <rect x="20" y="36" width="400" height="200" fill="none" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+            <text x="30" y="256" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.6">S（8個の小石・各 1/8）</text>
+
+            <!-- event A boundary (panel A) -->
+            <rect x="42" y="58" width="176" height="156" rx="10" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-dasharray="6 4"/>
+            <text x="52" y="78" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink)">A</text>
+
+            <g fill="var(--ink)" opacity="0.75">
+              <circle cx="90"  cy="112" r="17"/>
+              <circle cx="160" cy="112" r="17"/>
+              <circle cx="90"  cy="180" r="17"/>
+            </g>
+            <g fill="currentColor" opacity="0.32">
+              <circle cx="160" cy="180" r="17"/>
+              <circle cx="262" cy="112" r="17"/>
+              <circle cx="332" cy="112" r="17"/>
+              <circle cx="262" cy="180" r="17"/>
+              <circle cx="332" cy="180" r="17"/>
+            </g>
+            <text x="30" y="290" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink)">P(A) = 3/8   ← 個数を数えるだけでよい</text>
+
+            <!-- panel B frame -->
+            <rect x="480" y="36" width="400" height="200" fill="none" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+            <text x="490" y="256" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.6">S（8個の小石・質量はばらばら）</text>
+
+            <rect x="502" y="58" width="176" height="156" rx="10" fill="none" stroke="var(--oxide)" stroke-width="1.4" stroke-dasharray="6 4"/>
+            <text x="512" y="78" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--oxide)">A</text>
+
+            <g fill="var(--oxide)" opacity="0.75">
+              <circle cx="550" cy="112" r="9"/>
+              <circle cx="620" cy="112" r="24"/>
+              <circle cx="550" cy="180" r="14"/>
+            </g>
+            <g fill="currentColor" opacity="0.32">
+              <circle cx="622" cy="182" r="11"/>
+              <circle cx="722" cy="112" r="20"/>
+              <circle cx="792" cy="112" r="8"/>
+              <circle cx="722" cy="182" r="13"/>
+              <circle cx="792" cy="182" r="18"/>
+            </g>
+            <text x="490" y="290" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--oxide)">P(A) ≠ 3/8   ← 質量を足さないと出ない</text>
+          </svg>
+        </div>
+        <figcaption>図 1-1　小石の世界。事象の確率は「小石の質量の合計」。素朴な定義 <span class="fml">|A|/|S|</span> が使えるのは左のように<b>すべての小石が同じ重さのときだけ</b>で、右では個数を数えても意味がありません。第1章の誤りの大半は、右の状況で左の式を使うことから生じます。</figcaption>
+      </figure>
+
+      <div class="callout bridge">
+        <h4>この絵が効いてくる場所</h4>
+        <p>第2章の条件付き確率は、この絵の中では「<strong>B に入らない小石を取り除き、残った小石の質量を合計1になるよう再スケールする</strong>」操作として見えます。<span class="fml">P(A|B) = P(A∩B)/P(B)</span> の分母は、まさにその再スケール係数です。公式を覚える前にこの絵を持っておくと、第2章が「なぜそうなるか」ではなく「そうとしか書けない」に変わります。</p>
+      </div>
+    </section>
+
+    <section id="c1-naive">
+      <h3>1.3　素朴な定義と、その限界</h3>
+
+      <div class="defbox">
+        <div class="kind">定義 — 素朴な確率 naive definition</div>
+        <pre class="fml-block">P<sub>naive</sub>(A)  =  |A| / |S|     <span class="why">A に含まれる結果の個数 ÷ 全結果の個数</span></pre>
+        <p><b>前提が2つあります。</b> ① <span class="fml">S</span> が有限であること　② すべての結果が<strong>同様に確からしい（equally likely）</strong>こと。</p>
+      </div>
+
+      <p>高校で習う確率はほぼこれです。そして<strong>②を確認せずに使うのが、この章で最も多い誤り</strong>です。</p>
+
+      <div class="callout warn">
+        <h4>壊れる例</h4>
+        <ul class="plain">
+          <li>「明日は雨が降るか降らないかのどちらかだから、確率は 1/2」—— 2つの結果が同様に確からしい根拠がどこにもありません</li>
+          <li>「宝くじは当たるか外れるかだから 1/2」—— 同じ誤り。<strong>標本空間の分割の仕方は確率を決めません</strong></li>
+          <li>「サイコロ2個の目の<em>組</em>は21通りだから⋯」—— これは 1.4 節で潰します</li>
+        </ul>
+      </div>
+
+      <p>素朴な定義が正当化されるのは、<strong>対称性が等確率を保証している場合</strong>に限られます。公平なコイン、公平なサイコロ、よく切ったカード、無作為抽出。この4つのどれかに帰着できるかを毎回問うてください。</p>
+
+      <p>そして「等確率でないなら確率とは何なのか」に答えるのが 1.6 節（公理的定義）です。</p>
+    </section>
+
+    <section id="c1-count">
+      <h3>1.4　数え上げ</h3>
+
+      <p>素朴な定義を使うには <span class="fml">|A|</span> と <span class="fml">|S|</span> を数える必要があります。ここが第1章の分量の大半です。</p>
+
+      <h4>乗法原理（the multiplication rule）</h4>
+      <div class="defbox">
+        <div class="kind">定理</div>
+        <p>実験Aに <span class="fml">n₁</span> 通りの結果があり、Aの<strong>それぞれの結果に対して</strong>実験Bに <span class="fml">n₂</span> 通りの結果があるなら、合わせて <span class="fml">n₁n₂</span> 通り。</p>
+      </div>
+
+      <p>大事なのは「それぞれの結果に対して」の部分です。条件は<strong>第2段階の選択肢の個数が一定であること</strong>で、選択肢の中身は第1段階によって変わって構いません。トランプから2枚引くとき、2枚目は「1枚目が何であれ」51通り。中身は依存するが個数は一定なので、掛けてよい。</p>
+
+      <h4>標本抽出の4類型（the sampling table）</h4>
+      <p><span class="fml">n</span> 個から <span class="fml">k</span> 個を選ぶ。「順序を区別するか」×「同じものを2回選べるか」で4通り。<strong>暗記せず、毎回導出できるように</strong>してください。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th></th><th>順序あり ordered</th><th>順序なし unordered</th></tr></thead>
+          <tbody>
+            <tr>
+              <th>復元あり<br>with replacement</th>
+              <td><code>n<sup>k</sup></code><br><span style="font-size:13px;color:var(--text-mute)">毎回 n 通りが k 回</span></td>
+              <td class="hit"><code>C(n+k−1, k)</code><br><span style="font-size:13px;color:var(--text-mute)"><b>等確率ではない</b></span></td>
+            </tr>
+            <tr>
+              <th>復元なし<br>without replacement</th>
+              <td><code>n(n−1)⋯(n−k+1)</code><br><span style="font-size:13px;color:var(--text-mute)">選ぶたびに1つ減る</span></td>
+              <td><code>C(n, k)</code><br><span style="font-size:13px;color:var(--text-mute)">左を k! で割る</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <pre class="fml-block">C(n, k)  =  n(n−1)⋯(n−k+1) / k!  =  n! / ( k! (n−k)! )
+
+英語では <b>n choose k</b> と読む。 ₙCₖ と習った人には聞き取れないので注意。</pre>
+
+      <h4>この表で唯一の罠</h4>
+      <p>順序なし・復元ありのセルは<strong>場合の数としては正しいが、その各々は等確率ではありません</strong>。図で見るのが一番速い。</p>
+
+      <figure class="wide">
+        <div class="figscroll">
+          <svg viewBox="0 0 880 430" style="min-width:660px;max-width:880px" role="img" aria-label="サイコロ2個の36通りの格子。和が7になる6マスが強調されている。順序なしで数えると{1,2}のような組は2マス分、{1,1}のようなゾロ目は1マス分に対応するため、21通りの組は等確率ではないことを示す。">
+            <text x="20" y="18" font-family="IBM Plex Mono, monospace" font-size="12.5" letter-spacing="1.2" fill="currentColor" opacity="0.65">サイコロ2個 — 順序ありの 36 通り（これは等確率）</text>
+
+            <!-- axis labels -->
+            <g font-family="IBM Plex Mono, monospace" font-size="13" fill="currentColor" opacity="0.7">
+              <text x="14" y="52">2個目</text>
+              <text x="196" y="410" text-anchor="middle">1個目</text>
+            </g>
+            <g font-family="IBM Plex Mono, monospace" font-size="13" fill="currentColor" opacity="0.85" text-anchor="middle">
+              <text x="96"  y="80">1</text><text x="146" y="80">2</text><text x="196" y="80">3</text>
+              <text x="246" y="80">4</text><text x="296" y="80">5</text><text x="346" y="80">6</text>
+            </g>
+            <g font-family="IBM Plex Mono, monospace" font-size="13" fill="currentColor" opacity="0.85" text-anchor="end">
+              <text x="66" y="116">1</text><text x="66" y="166">2</text><text x="66" y="216">3</text>
+              <text x="66" y="266">4</text><text x="66" y="316">5</text><text x="66" y="366">6</text>
+            </g>
+
+            <!-- 36 cells: sum=7 cells are the anti-diagonal -->
+            <g stroke="currentColor" stroke-width="1" opacity="0.3" fill="none">
+              <rect x="72" y="88" width="300" height="300"/>
+              <line x1="122" y1="88" x2="122" y2="388"/><line x1="172" y1="88" x2="172" y2="388"/>
+              <line x1="222" y1="88" x2="222" y2="388"/><line x1="272" y1="88" x2="272" y2="388"/>
+              <line x1="322" y1="88" x2="322" y2="388"/>
+              <line x1="72" y1="138" x2="372" y2="138"/><line x1="72" y1="188" x2="372" y2="188"/>
+              <line x1="72" y1="238" x2="372" y2="238"/><line x1="72" y1="288" x2="372" y2="288"/>
+              <line x1="72" y1="338" x2="372" y2="338"/>
+            </g>
+
+            <!-- sum = 7 highlighted -->
+            <g fill="var(--ink)" opacity="0.28">
+              <rect x="72"  y="338" width="50" height="50"/>
+              <rect x="122" y="288" width="50" height="50"/>
+              <rect x="172" y="238" width="50" height="50"/>
+              <rect x="222" y="188" width="50" height="50"/>
+              <rect x="272" y="138" width="50" height="50"/>
+              <rect x="322" y="88"  width="50" height="50"/>
+            </g>
+
+            <!-- the {1,2} pair: two cells -->
+            <g fill="none" stroke="var(--oxide)" stroke-width="2">
+              <rect x="122" y="88"  width="50" height="50"/>
+              <rect x="72"  y="138" width="50" height="50"/>
+            </g>
+            <!-- the {1,1} pair: one cell -->
+            <g fill="none" stroke="var(--sage)" stroke-width="2">
+              <rect x="72" y="88" width="50" height="50"/>
+            </g>
+
+            <!-- annotation panel -->
+            <g font-family="IBM Plex Mono, monospace" font-size="13">
+              <rect x="418" y="96" width="18" height="18" fill="var(--ink)" opacity="0.28"/>
+              <text x="446" y="110" fill="currentColor">和 = 7 の 6 マス → 6/36 = <tspan font-weight="500">1/6</tspan></text>
+
+              <rect x="418" y="156" width="18" height="18" fill="none" stroke="var(--oxide)" stroke-width="2"/>
+              <text x="446" y="170" fill="var(--oxide)">組 {1,2} は <tspan font-weight="500">2 マス分</tspan></text>
+
+              <rect x="418" y="200" width="18" height="18" fill="none" stroke="var(--sage)" stroke-width="2"/>
+              <text x="446" y="214" fill="var(--sage)">組 {1,1} は <tspan font-weight="500">1 マス分</tspan></text>
+            </g>
+            <g font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor" opacity="0.7">
+              <text x="418" y="266">→ 21 個の「組」は大きさが違う。</text>
+              <text x="418" y="290">　 小石の重さが不揃いなので、</text>
+              <text x="418" y="314">　 3/21 = 1/7 は<tspan fill="var(--oxide)" font-weight="500">誤り</tspan>。</text>
+              <text x="418" y="356">迷ったら順序をつけて数える。</text>
+              <text x="418" y="380">順序は後から割って落とせるが、逆はできない。</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>図 1-2　順序ありの 36 マスは等確率なので、素朴な定義がそのまま使えます。一方「目の組」21 通りで数えると、大きさ2のマスと大きさ1のマスを同一視することになり誤ります。<b>これは第1章で最も実害のある落とし穴です。</b></figcaption>
+      </figure>
+
+      <h4>重複の調整（adjusting for overcounting）</h4>
+      <p>数えにくい対象を数えるときの定石。<strong>まず区別をつけて数え、あとで重複度で割る。</strong> <code>MISSISSIPPI</code> の並べ替えなら、11文字を別物として <span class="fml">11!</span> 通り数えてから、I が4つ・S が4つ・P が2つの入れ替えで割る。</p>
+      <pre class="fml-block">11! / ( 1! · 4! · 4! · 2! )  =  34,650</pre>
+      <p>使える条件は<strong>重複度がすべての対象で等しいこと</strong>。<span class="fml">C(n,k)</span> の導出もこの原理の一例です。</p>
+    </section>
+
+    <section id="c1-story">
+      <h3>1.5　物語による証明</h3>
+      <p class="lead">恒等式を、代数計算ではなく「<strong>同じものを二通りに数える</strong>」ことで示す方法。この章の山場です。</p>
+
+      <div class="ex">
+        <div class="n">01</div>
+        <div>
+          <h4><span class="fml">C(n, k) = C(n, n−k)</span></h4>
+          <p><b>物語：</b> n 人から k 人の委員会を作る。左辺は「<em>入る</em> k 人」を指定する数え方。右辺は「<em>入らない</em> n−k 人」を指定する数え方。<strong>どちらも同じ行為</strong>なので場合の数は等しい。階乗の約分は不要です。</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="n">02</div>
+        <div>
+          <h4><span class="fml">n · C(n−1, k−1) = k · C(n, k)</span></h4>
+          <p><b>物語：</b> n 人から「k 人の委員会と、その中のキャプテン1人」を選ぶ。何を先に決めるかを変えると、二通りの数え方になります。</p>
+          <figure>
+            <div class="figscroll">
+              <svg viewBox="0 0 760 260" style="min-width:600px;max-width:760px" role="img" aria-label="委員会とキャプテンを選ぶ二つの経路の図。上はキャプテンを先に選ぶ経路でn掛けるC(n-1,k-1)通り、下は委員会を先に選ぶ経路でC(n,k)掛けるk通り。両方が同じ結果の集合に到達する。">
+                <defs>
+                  <marker id="s-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor"/>
+                  </marker>
+                </defs>
+
+                <!-- start -->
+                <rect x="16" y="104" width="112" height="52" fill="none" stroke="currentColor" stroke-width="1" opacity="0.45"/>
+                <text x="72" y="135" font-family="IBM Plex Mono, monospace" font-size="14" fill="currentColor" text-anchor="middle">n 人</text>
+
+                <!-- upper path -->
+                <g stroke="currentColor" stroke-width="1.3" opacity="0.6" fill="none" marker-end="url(#s-ar)">
+                  <path d="M 128 118 L 176 66 L 236 66"/>
+                  <line x1="368" y1="66" x2="452" y2="66"/>
+                  <path d="M 584 66 L 640 66 L 640 108"/>
+                </g>
+                <rect x="240" y="42" width="128" height="48" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+                <text x="304" y="72" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="var(--ink)" text-anchor="middle">キャプテン</text>
+                <rect x="456" y="42" width="128" height="48" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+                <text x="520" y="72" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="var(--ink)" text-anchor="middle">残り k−1 人</text>
+                <text x="304" y="26" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--ink)" text-anchor="middle">n 通り</text>
+                <text x="520" y="26" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--ink)" text-anchor="middle">C(n−1, k−1) 通り</text>
+
+                <!-- lower path -->
+                <g stroke="currentColor" stroke-width="1.3" opacity="0.6" fill="none" marker-end="url(#s-ar)">
+                  <path d="M 128 142 L 176 194 L 236 194"/>
+                  <line x1="368" y1="194" x2="452" y2="194"/>
+                  <path d="M 584 194 L 640 194 L 640 152"/>
+                </g>
+                <rect x="240" y="170" width="128" height="48" fill="none" stroke="var(--sage)" stroke-width="1.2"/>
+                <text x="304" y="200" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="var(--sage)" text-anchor="middle">委員会 k 人</text>
+                <rect x="456" y="170" width="128" height="48" fill="none" stroke="var(--sage)" stroke-width="1.2"/>
+                <text x="520" y="200" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="var(--sage)" text-anchor="middle">中から1人</text>
+                <text x="304" y="246" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--sage)" text-anchor="middle">C(n, k) 通り</text>
+                <text x="520" y="246" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="var(--sage)" text-anchor="middle">k 通り</text>
+
+                <!-- converge -->
+                <rect x="644" y="106" width="104" height="48" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                <text x="696" y="129" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor" text-anchor="middle">同じ</text>
+                <text x="696" y="146" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor" text-anchor="middle">組合せ</text>
+              </svg>
+            </div>
+            <figcaption>図 1-3　二つの経路は同じ「（委員会, キャプテン）の組」の集合に到達します。したがって <span class="fml">n·C(n−1,k−1) = k·C(n,k)</span>。<b>「先に何を決めるか」を変えるという手つき</b>は、後の章でも繰り返し使います。</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="n">03</div>
+        <div>
+          <h4>Vandermonde の恒等式</h4>
+          <pre class="fml-block">C(m+n, k)  =  Σ<sub>j</sub>  C(m, j) · C(n, k−j)</pre>
+          <p><b>物語：</b> 男性 m 人と女性 n 人、合わせて k 人を選ぶ。全体からまとめて選べば左辺。「男性から何人選ぶか」を <span class="fml">j</span> として場合分けして足せば右辺。</p>
+          <p>代数的に示そうとすると面倒ですが、物語なら一行です。<strong>この恒等式は第3章で超幾何分布の確率が足して1になることの証明に、そのまま再登場します。</strong></p>
+        </div>
+      </div>
+
+      <div class="callout bridge">
+        <h4>なぜこの技法が重要か</h4>
+        <p>身につくのは恒等式の知識ではなく、<strong>式を見たときに「この量は何を数えているのか」を先に問う習慣</strong>です。これが確率の問題を解く速度をいちばん上げます。第4章で一致問題の期待値が n によらず 1 になるのも、物語で見れば一行です。</p>
+      </div>
+    </section>
+
+    <section id="c1-axioms">
+      <h3>1.6　公理と包除原理</h3>
+
+      <p>素朴な定義は等確率を要求するので、一般には使えません。そこで発想を変えます —— <strong>「確率とは何か」に答えるのをやめ、「確率が満たすべき性質」だけを決める。</strong></p>
+
+      <div class="defbox">
+        <div class="kind">定義 — 確率空間</div>
+        <pre class="fml-block">① P(∅) = 0 ,  P(S) = 1
+
+② 可算加法性 —— A₁, A₂, … が互いに排反なら
+     P( ∪ⱼ Aⱼ )  =  Σⱼ P(Aⱼ)</pre>
+        <p><strong>要求はこの2つだけ</strong>です。ここから確率について使うほぼすべてが導かれます。</p>
+      </div>
+
+      <pre class="fml-block">P(Aᶜ)  =  1 − P(A)                        <span class="why">余事象</span>
+A ⊆ B  ⟹  P(A) ≤ P(B)                     <span class="why">単調性</span>
+P(A ∪ B)  =  P(A) + P(B) − P(A ∩ B)       <span class="why">包除原理</span></pre>
+
+      <div class="callout bridge">
+        <h4>公理化が意味していること</h4>
+        <p>確率が「長期的な頻度」なのか「主観的な確信度」なのかという論争は、今も続いています。コルモゴロフの公理化がやったのは、<strong>その論争から数学を切り離したこと</strong>です。解釈が何であれ、上の2条件を満たす限り数学は同一に走る。</p>
+        <p>構造工学に引きつければ、材料モデルの物理的解釈が何であれ、構成則が満たすべき条件（客観性、熱力学的整合性）を満たしていれば定式化は成立する、という関係に近い。<strong>解釈と形式の分離</strong>です。</p>
+      </div>
+
+      <h4>包除原理（inclusion-exclusion）</h4>
+
+      <figure>
+        <div class="figscroll">
+          <svg viewBox="0 0 620 240" style="min-width:480px;max-width:620px" role="img" aria-label="二つの円AとBが重なるベン図。重なり部分が二重に数えられていることを示し、P(A∪B)=P(A)+P(B)−P(A∩B)を説明する。">
+            <rect x="20" y="20" width="380" height="196" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+            <text x="30" y="40" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.55">S</text>
+            <circle cx="170" cy="118" r="76" fill="var(--ink)" opacity="0.18" stroke="var(--ink)" stroke-width="1.3"/>
+            <circle cx="256" cy="118" r="76" fill="var(--sage)" opacity="0.18" stroke="var(--sage)" stroke-width="1.3"/>
+            <path d="M 213 55 A 76 76 0 0 1 213 181 A 76 76 0 0 1 213 55 Z" fill="var(--oxide)" opacity="0.3"/>
+            <text x="126" y="124" font-family="IBM Plex Mono, monospace" font-size="15" fill="var(--ink)" text-anchor="middle">A</text>
+            <text x="300" y="124" font-family="IBM Plex Mono, monospace" font-size="15" fill="var(--sage)" text-anchor="middle">B</text>
+            <text x="213" y="124" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--oxide)" text-anchor="middle">A∩B</text>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="13.5" fill="currentColor">
+              <text x="424" y="88">P(A) + P(B) では</text>
+              <text x="424" y="116" fill="var(--oxide)">A∩B を 2 回数えている</text>
+              <text x="424" y="156">→ 1 回ぶん引く</text>
+              <text x="424" y="184" font-weight="500">P(A∪B) = P(A)+P(B)−P(A∩B)</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>図 1-4　包除原理。3つになると引きすぎるので足し戻し、以下 符号が交互に続きます。</figcaption>
+      </figure>
+
+      <h4>一致問題（the matching problem）</h4>
+      <p><span class="fml">n</span> 人がパーティで帽子を預け、帰りにランダムに1つずつ取る。<strong>少なくとも1人が自分の帽子を取る</strong>確率は？ <span class="fml">A<sub>i</sub></span> を「i 番目の人が自分の帽子を取る」として包除原理を適用し整理すると、</p>
+
+      <pre class="fml-block">P(少なくとも1人一致)  =  1 − 1/2! + 1/3! − 1/4! + ⋯ ± 1/n!
+
+n → ∞ で   →  1 − e⁻¹  ≈  <b>0.632</b></pre>
+
+      <p>直感に反する結果です。<strong>人数を100人にしても1万人にしても、確率は約63%から動きません。</strong> 「大人数なら誰か一致しそう」でも「大人数なら自分のは当たりにくい」でもなく、ちょうど釣り合う。第4章で期待値を使って再訪します。</p>
+    </section>
+
+    <section id="c1-worked">
+      <h3>1.7　検算つき例題</h3>
+      <p>解析的に出した答えを、必ずシミュレーションで確かめてください。<strong>理解していない問題はシミュレートできない</strong>ので、理解の有無が自動的に判定されます。以下は <code>numpy</code> だけで動きます。</p>
+
+      <div class="ex">
+        <div class="n">01</div>
+        <div>
+          <h4>誕生日問題（the birthday problem）</h4>
+          <p><span class="fml">k</span> 人のうち少なくとも2人の誕生日が一致する確率。「少なくとも」なので<strong>余事象を取る</strong>。</p>
+          <pre class="fml-block">P(全員違う)  =  365 · 364 ⋯ (365−k+1) / 365<sup>k</sup>
+P(一致あり)  =  1 − P(全員違う)
+
+k = 23 のとき  →  <b>0.5073</b></pre>
+          <pre class="code">import numpy as np
+rng = np.random.default_rng(0)
+k, trials = 23, 200_000
+
+b   = np.sort(rng.integers(0, 365, size=(trials, k)), axis=1)
+dup = (np.diff(b, axis=1) == 0).any(axis=1)
+
+print(dup.mean())   <span class="cm"># → 0.507 前後</span></pre>
+          <p>23人で50%を超える理由は、比較の回数が人数ではなく <span class="fml">C(23,2) = 253</span> 組だからです。人数の直感と組数の実体がずれている。</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="n">02</div>
+        <div>
+          <h4>一致問題</h4>
+          <pre class="code">n, trials = 10, 200_000
+
+perm = np.argsort(rng.random((trials, n)), axis=1)
+hit  = (perm == np.arange(n)).any(axis=1)
+
+print(hit.mean(), 1 - np.exp(-1))   <span class="cm"># → 0.632 前後、一致</span></pre>
+          <p><code>n</code> を 5, 10, 100, 1000 と変えて、答えが動かないことを自分の目で確かめてください。<strong>解析解を信じる前に「動かない」という事実を先に見る</strong>ほうが記憶に残ります。</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="n">03</div>
+        <div>
+          <h4>サイコロの罠を実測で潰す</h4>
+          <pre class="code">d = rng.integers(1, 7, size=(trials, 2))
+print((d.sum(axis=1) == 7).mean())   <span class="cm"># → 0.1667 = 1/6</span>
+
+<span class="cm"># 誤答の 1/7 ≈ 0.1429 とは明確に違う</span></pre>
+          <p>「順序なし21通り」が誤りであることが、議論ではなく<strong>数値で決着します</strong>。等確率の仮定が破れているか迷ったときは、常にこの方法で判定できます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="c1-ex">
+      <h3>1.8　演習</h3>
+      <p class="sec-note">AIなしで · 各20分は粘る · 解答を読んだら翌日ゼロから解き直す</p>
+
+      <ol class="plain">
+        <li><b>標本抽出の表を、暗記せずに4セルすべて導出せよ。</b> とくに右下（順序なし・復元なし）を、順序ありから割って出す手順を書くこと</li>
+        <li><b>パスカルの関係式を物語で証明せよ：</b> <span class="fml">C(n,k) = C(n−1,k−1) + C(n−1,k)</span>。ヒント —— 特定の1人に注目し、その人が委員会に入るか入らないかで場合分けする</li>
+        <li><b>誕生日問題を解析解とモンテカルロの両方で解け。</b> さらに確率が50%を超える最小の <span class="fml">k</span> を求めよ</li>
+        <li><b>一致問題を包除原理から導出し、</b> <span class="fml">n → ∞</span> で <span class="fml">1 − e⁻¹</span> になることを示せ。指数関数のテイラー展開を使う</li>
+        <li><b>サイコロ2個で和が7になる確率を、正しい数え方と誤った数え方の両方で計算せよ。</b> そのうえで後者がなぜ誤りかを<strong>小石の世界の言葉で</strong>説明せよ</li>
+        <li><b>52枚から5枚引くとき、フルハウスが出る確率を求めよ。</b> 各段階で「順序を区別しているか」を明示すること</li>
+        <li><b>公理だけから単調性を証明せよ：</b> <span class="fml">A ⊆ B ⟹ P(A) ≤ P(B)</span>。ヒント —— <span class="fml">B</span> を排反な2つの事象に分割する</li>
+      </ol>
+
+      <div class="callout warn">
+        <h4>演習6でつまずいたら</h4>
+        <p>それが正常です。組合せの数え上げは、確率の中で<strong>唯一「慣れ」がものを言う領域</strong>で、理解とは別の筋肉を使います。ここで苦戦しても第4章以降の適性とは相関しません。</p>
+        <p>むしろ<strong>「数え上げは退屈だが第2章の条件づけは面白い」となるのが良い兆候</strong>です。この科目の本体は後者のほうなので。</p>
+      </div>
+    </section>
+
+    <section id="c1-en">
+      <h3>1.9　この章の英語</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>English</th><th>日本語</th><th>注</th></tr></thead>
+          <tbody>
+            <tr><td><code>sample space</code></td><td>標本空間</td><td></td></tr>
+            <tr><td><code>event</code></td><td>事象</td><td>S の部分集合</td></tr>
+            <tr><td><code>outcome</code></td><td>結果</td><td>小石1個</td></tr>
+            <tr><td><code>equally likely</code></td><td>同様に確からしい</td><td>素朴な定義の前提</td></tr>
+            <tr><td><code>C(n,k)</code></td><td>二項係数</td><td><b>n choose k</b> と読む</td></tr>
+            <tr><td><code>with / without replacement</code></td><td>復元 / 非復元</td><td></td></tr>
+            <tr><td><code>ordered / unordered</code></td><td>順序あり / 順序なし</td><td></td></tr>
+            <tr><td><code>adjusting for overcounting</code></td><td>重複の調整</td><td></td></tr>
+            <tr><td><code>disjoint</code> / <code>mutually exclusive</code></td><td>排反</td><td>同義</td></tr>
+            <tr><td><code>complement</code></td><td>余事象</td><td>"A complement"</td></tr>
+            <tr><td><code>inclusion-exclusion</code></td><td>包除原理</td><td></td></tr>
+            <tr><td><code>at least one</code></td><td>少なくとも1つ</td><td>余事象を取る合図</td></tr>
+            <tr><td><code>matching problem</code></td><td>一致問題</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4>この章で拾える構文</h4>
+      <ul class="plain">
+        <li><code>Let A be the event that ...</code> — 「…という事象を A とする」。<strong>事象の定義はほぼこの型</strong></li>
+        <li><code>By symmetry, ...</code> — 対称性より</li>
+        <li><code>It is easier to count the complement.</code> — 余事象を数えるほうが易しい</li>
+        <li><code>We are overcounting by a factor of k!</code> — k! 倍だけ重複して数えている</li>
+      </ul>
+    </section>
+
+    <!-- ===================== CHAPTER 2 ===================== -->
+    <div class="chapter-open">
+      <div class="chapter-label">Chapter 2 · Conditional Probability</div>
+      <h2 class="plainrule" id="c2">条件付き確率</h2>
+      <p class="lead">ここから本体が始まります。第1章の確率は「情報が与えられていない状態」のものでした。この章では<strong>情報が入ってきたときに確率がどう更新されるか</strong>を扱います。Blitzstein がこの科目全体について言う一文が、ここで出てきます —— <em>conditioning is the soul of statistics</em>。</p>
+    </div>
+
+    <section id="c2-def">
+      <h3>2.1　条件づけとは何か</h3>
+
+      <div class="defbox">
+        <div class="kind">定義</div>
+        <pre class="fml-block">P(A | B)  =  P(A ∩ B) / P(B)        （ P(B) &gt; 0 のとき ）</pre>
+        <p>英語では <b>the probability of A given B</b>。縦棒は <b>given</b> と読みます。</p>
+      </div>
+
+      <p>公式そのものより、<strong>絵で理解するほうが速い</strong>。小石の世界に戻ります。</p>
+
+      <figure class="wide">
+        <div class="figscroll">
+          <svg viewBox="0 0 900 250" style="min-width:700px;max-width:900px" role="img" aria-label="条件づけの3段階の図。元の標本空間、Bの外の小石を捨てた状態、残りを合計1に再スケールした状態。P(A|B)=P(A∩B)/P(B)の分母が再スケール係数であることを示す。">
+            <defs>
+              <marker id="c-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <!-- panel 1 -->
+            <text x="20" y="18" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.6">① もとの世界</text>
+            <rect x="20" y="30" width="238" height="150" fill="none" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+            <ellipse cx="152" cy="105" rx="86" ry="62" fill="var(--sage)" opacity="0.14" stroke="var(--sage)" stroke-width="1.2"/>
+            <text x="222" y="60" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--sage)">B</text>
+            <ellipse cx="92" cy="105" rx="58" ry="50" fill="var(--ink)" opacity="0.16" stroke="var(--ink)" stroke-width="1.2"/>
+            <text x="46" y="66" font-family="IBM Plex Mono, monospace" font-size="13" fill="var(--ink)">A</text>
+            <g fill="currentColor" opacity="0.55">
+              <circle cx="112" cy="92" r="8"/><circle cx="112" cy="122" r="8"/>
+              <circle cx="72" cy="105" r="8"/>
+              <circle cx="182" cy="92" r="8"/><circle cx="196" cy="126" r="8"/>
+              <circle cx="222" cy="150" r="8"/><circle cx="42" cy="160" r="8"/>
+            </g>
+            <text x="30" y="204" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.7">全体の質量 = 1</text>
+
+            <!-- arrow -->
+            <line x1="272" y1="105" x2="316" y2="105" stroke="currentColor" stroke-width="1.3" opacity="0.6" marker-end="url(#c-ar)"/>
+            <text x="294" y="94" font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor" opacity="0.6" text-anchor="middle">B を知る</text>
+
+            <!-- panel 2 -->
+            <text x="330" y="18" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.6">② B の外を捨てる</text>
+            <rect x="330" y="30" width="238" height="150" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" stroke-dasharray="4 4"/>
+            <ellipse cx="462" cy="105" rx="86" ry="62" fill="var(--sage)" opacity="0.14" stroke="var(--sage)" stroke-width="1.2"/>
+            <ellipse cx="402" cy="105" rx="58" ry="50" fill="none" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="4 3"/>
+            <g fill="currentColor" opacity="0.55">
+              <circle cx="422" cy="92" r="8"/><circle cx="422" cy="122" r="8"/>
+              <circle cx="492" cy="92" r="8"/><circle cx="506" cy="126" r="8"/>
+            </g>
+            <g fill="currentColor" opacity="0.13">
+              <circle cx="382" cy="105" r="8"/><circle cx="532" cy="150" r="8"/><circle cx="352" cy="160" r="8"/>
+            </g>
+            <text x="340" y="204" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" opacity="0.7">残った質量 = P(B) &lt; 1</text>
+
+            <!-- arrow -->
+            <line x1="582" y1="105" x2="626" y2="105" stroke="currentColor" stroke-width="1.3" opacity="0.6" marker-end="url(#c-ar)"/>
+            <text x="604" y="94" font-family="IBM Plex Mono, monospace" font-size="11" fill="currentColor" opacity="0.6" text-anchor="middle">÷ P(B)</text>
+
+            <!-- panel 3 -->
+            <text x="640" y="18" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink)" opacity="0.9">③ 合計1に再スケール</text>
+            <rect x="640" y="30" width="238" height="150" fill="none" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+            <ellipse cx="759" cy="105" rx="110" ry="70" fill="var(--sage)" opacity="0.2" stroke="var(--sage)" stroke-width="1.4"/>
+            <ellipse cx="720" cy="105" rx="62" ry="54" fill="var(--ink)" opacity="0.2" stroke="var(--ink)" stroke-width="1.4"/>
+            <g fill="currentColor" opacity="0.6">
+              <circle cx="704" cy="90" r="10"/><circle cx="704" cy="124" r="10"/>
+              <circle cx="800" cy="90" r="10"/><circle cx="816" cy="126" r="10"/>
+            </g>
+            <text x="650" y="204" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink)">新しい全体の質量 = 1</text>
+            <text x="650" y="232" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="var(--ink)" font-weight="500">P(A|B) = P(A∩B) / P(B)</text>
+          </svg>
+        </div>
+        <figcaption>図 2-1　条件づけの正体は<b>「捨てて、割り戻す」</b>だけです。B を知るとは、B の外の可能性を消すこと。残った質量の合計が <span class="fml">P(B)</span> しかないので、合計1に戻すために <span class="fml">P(B)</span> で割る —— それが分母の意味です。公式を暗記する必要はありません。</figcaption>
+      </figure>
+
+      <p><strong>重要な注意。</strong> <span class="fml">P(A|B)</span> は「A と B の順序」ではなく「B という世界の中での A」です。<span class="fml">P(A|B)</span> と <span class="fml">P(B|A)</span> は<strong>まったく別の量</strong>で、これを混同するのが 2.4 節の検察官の誤謬です。</p>
+    </section>
+
+    <section id="c2-three">
+      <h3>2.2　3つの基本定理</h3>
+
+      <div class="defbox">
+        <div class="kind">定理</div>
+        <pre class="fml-block"><b>乗法法則</b>            P(A ∩ B)  =  P(B)·P(A|B)  =  P(A)·P(B|A)
+
+<b>ベイズの定理</b>        P(A|B)  =  P(B|A)·P(A) / P(B)
+
+<b>全確率の法則</b>        A₁,…,A<sub>n</sub> が S の分割なら
+                     P(B)  =  Σᵢ P(B|Aᵢ)·P(Aᵢ)</pre>
+      </div>
+
+      <p>3つとも、定義から一行で出ます。乗法法則は定義を移項しただけ。ベイズは <span class="fml">P(A∩B)</span> を二通りに書いて等号で結んだだけ。全確率の法則は、B を分割の各片との交わりに分けて足しただけです。</p>
+
+      <p><strong>これらを組み合わせたのが実務形</strong>です。</p>
+      <pre class="fml-block">P(Aᵢ | B)  =  P(B|Aᵢ)·P(Aᵢ)  /  Σⱼ P(B|Aⱼ)·P(Aⱼ)</pre>
+
+      <p>分母の <span class="fml">P(B)</span> は直接分かることが稀なので、全確率の法則で書き下す —— これがベイズを実際に使うときの標準手順です。</p>
+
+      <div class="callout bridge">
+        <h4>この科目でいちばん使う一手</h4>
+        <p><strong>「知っていたらよかったのに、と思うものは何か。それで条件づけよ。」</strong></p>
+        <p>全確率の法則は、この方針の形式化です。<span class="fml">P(B)</span> が直接計算できないとき、<span class="fml">B</span> を「もし <span class="fml">Aᵢ</span> だったら」に分解して足す。詰まったときの第一手は、ほぼ常にこれです。</p>
+      </div>
+    </section>
+
+    <section id="c2-odds">
+      <h3>2.3　オッズ形式</h3>
+
+      <p>ベイズの定理には、暗算に向いた書き方があります。<strong>分母を計算しなくて済む</strong>のが利点です。</p>
+
+      <div class="defbox">
+        <div class="kind">オッズ形式のベイズ</div>
+        <pre class="fml-block">P(A|B)      P(B|A)     P(A)
+────────  =  ────────  ×  ────────
+P(Aᶜ|B)     P(B|Aᶜ)    P(Aᶜ)
+
+<b>事後オッズ  =  尤度比 × 事前オッズ</b>
+posterior odds = likelihood ratio × prior odds</pre>
+      </div>
+
+      <p>オッズ <span class="fml">p/(1−p)</span> と確率は相互に変換できます（<span class="fml">p = odds/(1+odds)</span>）。証拠が積み重なる場面では<strong>尤度比を掛けていくだけ</strong>になるので、この形が圧倒的に速い。次節で実際に使います。</p>
+    </section>
+
+    <section id="c2-base">
+      <h3>2.4　基準率と検察官の誤謬</h3>
+
+      <p class="lead">この章で最も実害のある誤りです。<span class="fml">P(B|A)</span> と <span class="fml">P(A|B)</span> の取り違え —— 具体的には、<strong>基準率（base rate）を無視すること</strong>。</p>
+
+      <h4>設定</h4>
+      <ul class="plain">
+        <li>ある病気の有病率は <b>1%</b>（これが基準率）</li>
+        <li>検査の感度は 95%：病気なら 95% で陽性　<span class="fml">P(+|D) = 0.95</span></li>
+        <li>検査の特異度も 95%：健康なら 95% で陰性　<span class="fml">P(+|Dᶜ) = 0.05</span></li>
+      </ul>
+      <p><b>陽性が出た。病気である確率は？</b> 多くの人が「95%くらい」と答えます。</p>
+
+      <pre class="fml-block">P(D|+)  =  P(+|D)·P(D) / [ P(+|D)·P(D) + P(+|Dᶜ)·P(Dᶜ) ]
+
+        =  0.95 × 0.01 / ( 0.95 × 0.01  +  0.05 × 0.99 )
+
+        =  0.0095 / ( 0.0095 + 0.0495 )  =  0.0095 / 0.059
+
+        ≈  <b>0.161</b>   —— つまり約 16%。陽性の 8 割超は<b>偽陽性</b>。</pre>
+
+      <p>オッズ形式なら暗算できます。事前オッズは <span class="fml">1:99</span>、尤度比は <span class="fml">0.95/0.05 = 19</span>。事後オッズは <span class="fml">19:99</span>、確率に直して <span class="fml">19/118 ≈ 0.161</span>。</p>
+
+      <figure class="wide">
+        <div class="figscroll">
+          <svg viewBox="0 0 880 300" style="min-width:660px;max-width:880px" role="img" aria-label="面積による基準率の図。人口全体の長方形のうち病気は1パーセントの細い帯で、そのほとんどが陽性。健康な99パーセントのうち5パーセントが偽陽性となり、面積として偽陽性のほうが真陽性より大きいことを示す。">
+            <text x="20" y="18" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor" opacity="0.65">人口 10,000 人ぶんの面積で見る</text>
+
+            <!-- whole population rectangle -->
+            <rect x="20" y="34" width="560" height="200" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5"/>
+
+            <!-- diseased strip: 1% of width -->
+            <rect x="20" y="34" width="56" height="200" fill="var(--oxide)" opacity="0.1"/>
+            <line x1="76" y1="34" x2="76" y2="234" stroke="currentColor" stroke-width="1.2" opacity="0.5"/>
+
+            <!-- within diseased: 95% test positive (top portion) -->
+            <rect x="20" y="34" width="56" height="190" fill="var(--oxide)" opacity="0.55"/>
+            <!-- within healthy: 5% test positive -->
+            <rect x="76" y="34" width="504" height="10" fill="var(--ink)" opacity="0.5"/>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="12.5" fill="currentColor">
+              <text x="48" y="256" text-anchor="middle" fill="var(--oxide)">病気 1%</text>
+              <text x="328" y="256" text-anchor="middle">健康 99%</text>
+            </g>
+
+            <!-- callout lines -->
+            <g stroke="currentColor" stroke-width="1" opacity="0.45">
+              <line x1="76" y1="128" x2="640" y2="100"/>
+              <line x1="340" y1="39" x2="640" y2="164"/>
+            </g>
+            <g font-family="IBM Plex Mono, monospace" font-size="13">
+              <text x="650" y="88" fill="var(--oxide)">真陽性　95 人</text>
+              <text x="650" y="110" fill="currentColor" opacity="0.65">（病気 100 人の 95%）</text>
+              <text x="650" y="164" fill="var(--ink)">偽陽性　495 人</text>
+              <text x="650" y="186" fill="currentColor" opacity="0.65">（健康 9,900 人の 5%）</text>
+            </g>
+
+            <line x1="640" y1="208" x2="866" y2="208" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            <text x="650" y="234" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="currentColor" font-weight="500">陽性 590 人中 95 人</text>
+            <text x="650" y="258" font-family="IBM Plex Mono, monospace" font-size="13.5" fill="var(--oxide)" font-weight="500">= 16.1%</text>
+          </svg>
+        </div>
+        <figcaption>図 2-2　なぜ直感が外れるか。<b>健康な人が圧倒的に多いので、たとえ誤検出率が 5% でも、絶対数では偽陽性のほうが真陽性を大きく上回る</b>。感度・特異度という条件付き確率だけを見て、基準率という「面積の横幅」を忘れるのが誤りの正体です。</figcaption>
+      </figure>
+
+      <div class="callout warn">
+        <h4>検察官の誤謬（the prosecutor's fallacy）</h4>
+        <p>法廷で「この DNA が偶然一致する確率は100万分の1です」と言われたとき、それは <span class="fml">P(証拠 | 無実)</span> です。知りたいのは <span class="fml">P(無実 | 証拠)</span> のほう。<strong>容疑者集団が大きければ、後者はまったく小さくならない</strong>ことがあります。</p>
+        <p>同じ構造の誤りは実務にも現れます。「この異常値が正常な計測で出る確率は 0.1% だから、異常に違いない」—— 計測回数が十分多ければ、正常でも普通に出ます。</p>
+      </div>
+    </section>
+
+    <section id="c2-indep">
+      <h3>2.5　独立性</h3>
+
+      <div class="defbox">
+        <div class="kind">定義</div>
+        <pre class="fml-block">A と B が独立  ⟺  P(A ∩ B)  =  P(A)·P(B)
+
+同値な言い方（P(B) &gt; 0 のとき）:  P(A|B) = P(A)
+                              「B を知っても A の確率が変わらない」</pre>
+      </div>
+
+      <div class="callout warn">
+        <h4>独立と排反はまったく別の概念です</h4>
+        <p>初学者が最も混同するのがここです。<strong>排反（disjoint）な2つの事象は、確率が正である限り独立ではありません。</strong> むしろ最大限に依存しています —— 一方が起きたら他方は絶対に起きないのだから、これ以上ないほど情報を持っている。</p>
+        <p>絵で言えば、排反は<b>小石が重ならない</b>という配置の話。独立は<b>割合が保たれる</b>という質量の話です。<span class="fml">A ∩ B = ∅</span> なら <span class="fml">P(A∩B) = 0</span> なので、<span class="fml">P(A)P(B) &gt; 0</span> と一致しません。</p>
+      </div>
+
+      <p><strong>3つ以上の独立</strong>には注意が必要です。「どの2つを取っても独立（pairwise independent）」であっても、3つまとめて独立とは限りません。相互独立（mutually independent）はすべての部分集合について積が成り立つことを要求します。</p>
+    </section>
+
+    <section id="c2-cindep">
+      <h3>2.6　条件付き独立</h3>
+
+      <div class="defbox">
+        <div class="kind">定義</div>
+        <pre class="fml-block">A と B が C のもとで条件付き独立
+   ⟺  P(A ∩ B | C)  =  P(A|C) · P(B|C)</pre>
+      </div>
+
+      <p class="lead"><strong>独立と条件付き独立は、どちらも他方を含意しません。</strong> 両方向とも成り立たない。これは重要なので、反例を両方向とも自分で作れるようにしてください。</p>
+
+      <h4>独立だが、条件付き独立でない</h4>
+      <p>公平なコインを2回投げる。<span class="fml">A</span>＝1回目が表、<span class="fml">B</span>＝2回目が表。これは独立です。ここで <span class="fml">C</span>＝「2回の結果が同じ」で条件づけると、<span class="fml">C</span> のもとでは1回目が表なら2回目も必ず表。<strong>完全に従属します。</strong></p>
+
+      <h4>条件付き独立だが、独立でない</h4>
+      <p>同じ患者に独立な検査を2回行う。<span class="fml">D</span>＝病気であるとして、<span class="fml">D</span> の値を固定すれば2つの検査結果は独立です。しかし <span class="fml">D</span> を知らなければ、<strong>1回目が陽性だと2回目も陽性になりやすい</strong>（どちらも同じ病状を反映するから）。無条件では従属です。</p>
+
+      <div class="callout bridge">
+        <h4>なぜこれが重要か</h4>
+        <p>後者の構造は<strong>あらゆる測定に現れます</strong>。同じ対象を2回測れば、真値を固定すれば誤差は独立でも、真値を知らなければ2つの測定値は相関する。「相関しているから何か関係がある」ではなく「共通の原因で条件づけていないだけ」という場合が非常に多い。</p>
+        <p>この区別は第7章の共分散、そして交絡（confounding）の議論に直結します。</p>
+      </div>
+    </section>
+
+    <section id="c2-monty">
+      <h3>2.7　モンティ・ホール問題</h3>
+
+      <p>3つの扉のうち1つに賞品。あなたが1つ選んだあと、司会者が<strong>残り2つのうちハズレの扉を必ず開けます</strong>。選び直すべきか？</p>
+
+      <p><b>答え：選び直すべき。</b> 勝率は 1/3 から 2/3 に上がります。全確率の法則で確かめます。<span class="fml">S</span>＝選び直して勝つ、として最初の選択で条件づけると、</p>
+
+      <pre class="fml-block">P(S)  =  P(S | 最初が当たり)·(1/3)  +  P(S | 最初がハズレ)·(2/3)
+      =        0        ·(1/3)  +        1        ·(2/3)  =  <b>2/3</b></pre>
+
+      <p>最初がハズレなら（確率 2/3）、司会者はもう一方のハズレを開けるしかないので、残った扉が必ず当たり。<strong>選び直すと「最初にハズレを引く」ことが勝ち条件に変わる</strong>のがこの問題の核心です。</p>
+
+      <div class="callout warn">
+        <h4>前提が効いています</h4>
+        <p>この答えは「司会者は<strong>必ず</strong>ハズレの扉を開ける」「司会者は中身を知っている」という前提に依存します。司会者がランダムに開けてたまたまハズレだった場合、答えは 1/2 になります。<strong>条件付き確率は、条件の与えられ方に敏感です。</strong> 問題文のどこが条件を定めているかを毎回確認してください。</p>
+      </div>
+    </section>
+
+    <section id="c2-simpson">
+      <h3>2.8　シンプソンのパラドックス</h3>
+
+      <p><strong>すべての部分集団で A が B より優れているのに、全体で集計すると B のほうが優れて見える</strong>ことがあります。矛盾ではなく、集計が交絡を持ち込んでいるだけです。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>術式</th><th>軽症</th><th>重症</th><th>合計</th></tr></thead>
+          <tbody>
+            <tr><td><b>A</b></td><td class="num">81/87 = <b>93%</b></td><td class="num">192/263 = <b>73%</b></td><td class="num">273/350 = 78%</td></tr>
+            <tr><td><b>B</b></td><td class="num">234/270 = 87%</td><td class="num">55/80 = 69%</td><td class="num">289/350 = <b>83%</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>術式 A は<strong>軽症でも重症でも B より成功率が高い</strong>のに、合計では B が上回っています。理由は単純で、A は重症例に多く使われているからです。「重症度」で条件づけずに集計したことが原因。</p>
+
+      <p><strong>教訓：</strong> 比較するときは、比較を歪めうる変数で条件づけているかを確認する。これは第9章の条件付き期待値、そして因果推論の入口です。</p>
+    </section>
+
+    <section id="c2-worked">
+      <h3>2.9　検算つき例題</h3>
+
+      <div class="ex">
+        <div class="n">01</div>
+        <div>
+          <h4>基準率をシミュレーションで確かめる</h4>
+          <pre class="code">import numpy as np
+rng = np.random.default_rng(0)
+n = 2_000_000
+
+disease = rng.random(n) &lt; 0.01
+p_pos   = np.where(disease, 0.95, 0.05)
+positive = rng.random(n) &lt; p_pos
+
+print(disease[positive].mean())   <span class="cm"># → 0.161 前後</span></pre>
+          <p>手計算の 0.161 と一致します。<strong>直感（95%）と実測（16%）の差を、自分の画面で見ておく</strong>ことに意味があります。</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="n">02</div>
+        <div>
+          <h4>モンティ・ホール</h4>
+          <pre class="code">n = 500_000
+prize  = rng.integers(0, 3, n)     <span class="cm"># 賞品の扉</span>
+choice = rng.integers(0, 3, n)     <span class="cm"># 最初の選択</span>
+
+<span class="cm"># 選び直すと、最初がハズレのときだけ勝つ</span>
+print("stay  :", (choice == prize).mean())   <span class="cm"># → 0.333</span>
+print("switch:", (choice != prize).mean())   <span class="cm"># → 0.667</span></pre>
+          <p>コードが2行で済むこと自体が、この問題の構造を表しています。<strong>「選び直す＝最初にハズレを引けば勝ち」</strong>と言い換えられた時点で、答えは出ています。</p>
+        </div>
+      </div>
+
+      <div class="ex">
+        <div class="n">03</div>
+        <div>
+          <h4>条件付き独立の反例を作る</h4>
+          <pre class="code">n = 1_000_000
+f1 = rng.integers(0, 2, n)
+f2 = rng.integers(0, 2, n)
+
+<span class="cm"># 無条件では独立</span>
+print(((f1==1)&amp;(f2==1)).mean(), (f1==1).mean()*(f2==1).mean())
+
+<span class="cm"># C = 「2回の結果が同じ」で条件づけると従属になる</span>
+C = (f1 == f2)
+print((f2[C&amp;(f1==1)]==1).mean())   <span class="cm"># → 1.0（完全従属）</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="c2-ex">
+      <h3>2.10　演習</h3>
+      <p class="sec-note">AIなしで · 各20分は粘る</p>
+      <ol class="plain">
+        <li><b>ベイズの定理を定義から2行で導け。</b> 見ずに書けるようになるまで繰り返すこと</li>
+        <li><b>有病率を 0.1% と 10% に変えて</b> <span class="fml">P(D|+)</span> を計算し、基準率が答えをどう支配するか数値で示せ</li>
+        <li><b>オッズ形式で解き直せ。</b> 検査を2回行って両方陽性だった場合の事後確率を、尤度比を2回掛けるだけで求めよ（2回の検査は病状のもとで条件付き独立とする）</li>
+        <li><b>排反な2事象が独立になるのはどんなときか。</b> 定義から示せ</li>
+        <li><b>3つの事象が対ごとに独立だが相互独立でない例を作れ。</b> ヒント —— コイン2枚と「結果が一致する」事象</li>
+        <li><b>モンティ・ホールを、司会者がランダムに扉を開ける設定で解き直せ。</b> なぜ答えが変わるかを説明すること</li>
+        <li><b>シンプソンのパラドックスが起こる数値例を自分で作れ。</b> 上の表とは違う数字で</li>
+      </ol>
+    </section>
+
+    <section id="c2-en">
+      <h3>2.11　この章の英語</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>English</th><th>日本語</th><th>注</th></tr></thead>
+          <tbody>
+            <tr><td><code>conditional probability</code></td><td>条件付き確率</td><td></td></tr>
+            <tr><td><code>given</code></td><td>〜のもとで</td><td><code>P(A|B)</code> の縦棒</td></tr>
+            <tr><td><code>Bayes' rule</code></td><td>ベイズの定理</td><td>"bayz"</td></tr>
+            <tr><td><code>law of total probability (LOTP)</code></td><td>全確率の法則</td><td></td></tr>
+            <tr><td><code>prior</code> / <code>posterior</code></td><td>事前 / 事後</td><td></td></tr>
+            <tr><td><code>likelihood</code> / <code>likelihood ratio</code></td><td>尤度 / 尤度比</td><td>「ゆうど」</td></tr>
+            <tr><td><code>odds</code></td><td>オッズ</td><td>訳語なし。p/(1−p)</td></tr>
+            <tr><td><code>base rate</code></td><td>基準率</td><td>無視すると誤謬</td></tr>
+            <tr><td><code>prosecutor's fallacy</code></td><td>検察官の誤謬</td><td></td></tr>
+            <tr><td><code>independent</code></td><td>独立</td><td>排反とは別</td></tr>
+            <tr><td><code>conditionally independent</code></td><td>条件付き独立</td><td>独立と互いに独立</td></tr>
+            <tr><td><code>pairwise / mutually independent</code></td><td>対ごとに / 相互に独立</td><td></td></tr>
+            <tr><td><code>confounding</code></td><td>交絡</td><td>シンプソンの原因</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4>この章で拾える構文</h4>
+      <ul class="plain">
+        <li><code>Conditioning on the first step, we have ...</code> — 最初の一手で条件づけると</li>
+        <li><code>By the law of total probability, ...</code> — 全確率の法則より</li>
+        <li><code>It is tempting to conclude that ... , but ...</code> — …と結論したくなるが、しかし（罠の予告）</li>
+        <li><code>Note that P(A|B) and P(B|A) are very different.</code> — この文はそのまま暗記してよい</li>
+      </ul>
+    </section>
+
+    <!-- ===================== ROADMAP ===================== -->
+    <section id="roadmap">
+      <h2>第3章以降の予定</h2>
+      <p class="sec-note">同じ形式で順次 · 依頼があれば次を書きます</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>章</th><th>内容</th><th>状態</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>確率と数え上げ</td><td>収録済</td></tr>
+            <tr><td class="num">2</td><td>条件付き確率</td><td>収録済</td></tr>
+            <tr><td class="num">3</td><td>確率変数とその分布</td><td>未</td></tr>
+            <tr><td class="num">4</td><td>期待値 — 線形性・指示変数・ポアソン</td><td>未</td></tr>
+            <tr><td class="num">5</td><td>連続確率変数 — 正規・指数・無記憶性</td><td>未</td></tr>
+            <tr><td class="num">6</td><td>モーメントと積率母関数</td><td>未</td></tr>
+            <tr><td class="num">7</td><td>同時分布・共分散（SRSS/CQC の橋）</td><td>未</td></tr>
+            <tr><td class="num">8</td><td>変数変換・順序統計量</td><td>未</td></tr>
+            <tr><td class="num">9</td><td>条件付き期待値 — Adam と Eve</td><td>未</td></tr>
+            <tr><td class="num">10</td><td>不等式と極限定理</td><td>未</td></tr>
+            <tr><td class="num">11</td><td>マルコフ連鎖</td><td>未</td></tr>
+            <tr><td class="num">12</td><td>MCMC</td><td>未</td></tr>
+            <tr><td class="num">13</td><td>ポアソン過程（再現期間475年の橋）</td><td>未</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>1章あたり、定義・図・例題・検算コード・演習7問・英語の節をこの密度で用意します。第1〜2章がちょうど Week 1 の前半にあたるので、進度に合わせて追加していくのが無駄がありません。</p>
+    </section>
+
+    <!-- ===================== APPENDIX A ===================== -->
+    <section id="a-english">
+      <h2>付録A　数学英語の定型表現</h2>
+      <p class="sec-note">数学の英語は語彙が狭く、構文が反復する</p>
+
+      <p>数学の英文は日常英語よりずっと易しい。<strong>語彙が狭く、同じ構文が何百回も反復する</strong>からです。以下の約40個で地の文はほぼ透明になります。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>英語</th><th>意味</th><th>注</th></tr></thead>
+          <tbody>
+            <tr><td><code>Let X be ...</code></td><td>X を…とする</td><td>証明の第一文はほぼこれ</td></tr>
+            <tr><td><code>Suppose (that) ...</code></td><td>…とする</td><td>仮定の設定</td></tr>
+            <tr><td><code>We have ...</code></td><td>…となる</td><td>「我々は持つ」ではない</td></tr>
+            <tr><td><code>It follows that ...</code></td><td>したがって…</td><td>直前からの帰結</td></tr>
+            <tr><td><code>Hence / Thus / Therefore</code></td><td>ゆえに</td><td>同義。使い分けはない</td></tr>
+            <tr><td><code>Note that ...</code></td><td>…に注意</td><td>見落としやすい事実</td></tr>
+            <tr><td><code>Observe that ...</code></td><td>…に着目</td><td>これから使う事実の予告</td></tr>
+            <tr><td><code>Recall that ...</code></td><td>…を思い出そう</td><td>既出。忘れていたら戻る</td></tr>
+            <tr><td><code>It suffices to show that ...</code></td><td>…を示せば十分</td><td>方針転換の合図</td></tr>
+            <tr><td><code>Without loss of generality (WLOG)</code></td><td>一般性を失わずに</td><td>対称性で場合を減らす</td></tr>
+            <tr><td><code>By symmetry, ...</code></td><td>対称性より</td><td>計算を丸ごと省略する</td></tr>
+            <tr><td><code>By linearity, ...</code></td><td>線形性より</td><td>期待値の章で頻出</td></tr>
+            <tr><td><code>Conditioning on X, ...</code></td><td>X で条件づけると</td><td>最も多い一手</td></tr>
+            <tr><td><code>Plugging in ...</code></td><td>…を代入すると</td><td></td></tr>
+            <tr><td><code>Taking expectations on both sides</code></td><td>両辺の期待値をとると</td><td>第9章で必ず出る</td></tr>
+            <tr><td><code>Summing over all k</code></td><td>すべての k について和をとる</td><td>周辺化</td></tr>
+            <tr><td><code>It can be shown that ...</code></td><td>…が示せる</td><td><b>証明を省略する合図</b></td></tr>
+            <tr><td><code>The proof is left as an exercise.</code></td><td>証明は演習とする</td><td>やったほうがいい</td></tr>
+            <tr><td><code>This is a special case of ...</code></td><td>…の特別な場合</td><td></td></tr>
+            <tr><td><code>Conversely, ...</code></td><td>逆に</td><td></td></tr>
+            <tr><td><code>On the other hand, ...</code></td><td>一方</td><td></td></tr>
+            <tr><td><code>In particular, ...</code></td><td>特に</td><td></td></tr>
+            <tr><td><code>That is, ...</code> / <code>i.e.</code></td><td>すなわち</td><td></td></tr>
+            <tr><td><code>e.g.</code></td><td>例えば</td><td><b><code>i.e.</code> との取り違えが頻出</b></td></tr>
+            <tr><td><code>if and only if (iff)</code></td><td>必要十分条件</td><td><code>iff</code> は誤字ではない</td></tr>
+            <tr><td><code>almost surely (a.s.)</code></td><td>ほとんど確実に</td><td>強法則で出る</td></tr>
+            <tr><td><code>as n → ∞</code></td><td>n が無限大に近づくとき</td><td></td></tr>
+            <tr><td><code>for all</code> / <code>for every</code></td><td>任意の</td><td></td></tr>
+            <tr><td><code>there exists</code></td><td>…が存在する</td><td></td></tr>
+            <tr><td><code>respectively</code></td><td>それぞれ</td><td>文末に置く</td></tr>
+            <tr><td><code>analogously</code></td><td>同様に</td><td></td></tr>
+            <tr><td><code>straightforward</code></td><td>直接的な</td><td><b>「簡単」の婉曲表現</b></td></tr>
+            <tr><td><code>tedious but straightforward</code></td><td>面倒だが直接的</td><td>＝計算するだけ</td></tr>
+            <tr><td><code>nontrivial</code></td><td>自明でない</td><td>考える必要がある合図</td></tr>
+            <tr><td><code>Intuitively, ...</code></td><td>直感的には</td><td>最頻出のひとつ</td></tr>
+            <tr><td><code>The key idea is ...</code></td><td>核心となる考えは</td><td>ここだけ読んでもよい</td></tr>
+            <tr><td><code>A common mistake is to ...</code></td><td>よくある誤りは…</td><td>罠の予告</td></tr>
+            <tr><td><code>sanity check</code></td><td>妥当性の確認</td><td>訳語が定着していない</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout bridge">
+        <h4>英語も同時に鍛える4つの習慣</h4>
+        <ul class="plain">
+          <li><b>音読する。</b> 英語で数学を<em>話す</em>必要がある場面では、黙読だけだと「読めるのに言えない」状態になります</li>
+          <li><b>講義動画は英語字幕で。</b> 聴きながら読むと定着が速い</li>
+          <li><b>定型表現をノートに溜める。</b> 上の表に自分で追加していく</li>
+          <li><b>週1回、解いた問題の解法を英語3文で書く。</b> 上の表現を使って。そのまま面接の練習になります</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== APPENDIX B ===================== -->
+    <section id="a-reading">
+      <h2>付録B　数式の読み上げ方</h2>
+      <p class="sec-note">英語で数学を話すために</p>
+
+      <p>日本語で数学を学んだ人が最初に詰まるのが、<strong>式を声に出すとき</strong>です。<code>C(n,k)</code> を「n choose k」と言うことを知らないと、聞き取れないし言えません。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>記号</th><th>英語での読み</th><th>注</th></tr></thead>
+          <tbody>
+            <tr><td><code>P(A)</code></td><td>the probability of A</td><td>"P of A" でもよい</td></tr>
+            <tr><td><code>P(A|B)</code></td><td>the probability of A <b>given</b> B</td><td><code>|</code> は given</td></tr>
+            <tr><td><code>E(X)</code></td><td>the expected value of X</td><td>"E of X" も普通</td></tr>
+            <tr><td><code>E(X|Y)</code></td><td>the expected value of X given Y</td><td>第9章で連呼</td></tr>
+            <tr><td><code>Var(X)</code></td><td>the variance of X</td><td></td></tr>
+            <tr><td><code>Cov(X,Y)</code></td><td>the covariance of X and Y</td><td>and であって comma ではない</td></tr>
+            <tr><td><code>X ~ Bin(n,p)</code></td><td>X is distributed Binomial with parameters n and p</td><td>口語では "X is Binomial n p"</td></tr>
+            <tr><td><code>C(n,k)</code></td><td><b>n choose k</b></td><td><b>最重要。</b> ₙCₖ と習った人には通じない</td></tr>
+            <tr><td><code>n!</code></td><td>n factorial</td><td></td></tr>
+            <tr><td><code>X²</code></td><td>X squared</td><td>三乗は X cubed</td></tr>
+            <tr><td><code>√x</code></td><td>the square root of x / root x</td><td></td></tr>
+            <tr><td><code>x̄</code> / <code>X̂</code></td><td>x bar / X hat</td><td>標本平均 / 推定量</td></tr>
+            <tr><td><code>Σ</code> (i=1 to n)</td><td>the sum from i equals one to n of ...</td><td></td></tr>
+            <tr><td><code>∫</code> (a to b)</td><td>the integral from a to b of f of x, d x</td><td></td></tr>
+            <tr><td><code>f(x)</code></td><td>f of x</td><td>"f x" とは言わない</td></tr>
+            <tr><td><code>{X &gt; 3}</code></td><td>the event that X is greater than three</td><td>set ではなく event</td></tr>
+            <tr><td><code>A ∩ B</code> / <code>A ∪ B</code></td><td>A intersect B / A union B</td><td>and / or でもよい</td></tr>
+            <tr><td><code>Aᶜ</code></td><td>A complement</td><td></td></tr>
+            <tr><td><code>→</code> / <code>⟹</code></td><td>goes to, tends to / implies</td><td></td></tr>
+            <tr><td><code>i.i.d.</code></td><td>"eye eye dee"（綴りで読む）</td><td>independent and identically distributed</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>ギリシャ文字</h3>
+      <p>日本語の慣用読みと英語の発音がずれるものだけ。聞き取れないと会話が止まります。</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>文字</th><th>英語の発音</th><th>注</th></tr></thead>
+          <tbody>
+            <tr><td><code>λ</code></td><td>lambda（<b>ラム</b>ダ）</td><td>第1音節を強く</td></tr>
+            <tr><td><code>θ</code></td><td>theta（<b>シー</b>タ、th音）</td><td></td></tr>
+            <tr><td><code>χ²</code></td><td>chi-squared（<b>カイ</b>）</td><td></td></tr>
+            <tr><td><code>φ</code> / <code>Φ</code></td><td>phi（ファイ）/ capital phi</td><td>Φ は標準正規のCDF</td></tr>
+            <tr><td><code>ξ</code></td><td>xi（<b>ザイ</b>）</td><td>「クサイ」とずれが大きい</td></tr>
+            <tr><td><code>ρ</code></td><td>rho（<b>ロウ</b>）</td><td></td></tr>
+            <tr><td><code>μ</code> / <code>σ</code></td><td>mu / sigma</td><td>ほぼ日本語通り</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== APPENDIX C ===================== -->
+    <section id="a-glossary">
+      <h2>付録C　用語対訳</h2>
+      <p class="sec-note">全13章ぶん · 先に穴を塞ぐほうが速い</p>
+
+      <p>教科書を読むときの障壁の大半は「英語が読めない」ではなく「<code>support</code> が『台』だと知らない」という<strong>局所的な穴</strong>です。</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>English</th><th>日本語</th><th>章</th></tr></thead>
+          <tbody>
+            <tr><td><code>random variable (r.v.)</code></td><td>確率変数</td><td class="num">3</td></tr>
+            <tr><td><code>PMF (probability mass function)</code></td><td>確率質量関数</td><td class="num">3</td></tr>
+            <tr><td><code>CDF (cumulative distribution function)</code></td><td>累積分布関数</td><td class="num">3</td></tr>
+            <tr><td><code>support</code></td><td><b>台</b>（だい）</td><td class="num">3</td></tr>
+            <tr><td><code>indicator random variable</code></td><td>指示確率変数</td><td class="num">3</td></tr>
+            <tr><td><code>i.i.d.</code></td><td>独立同分布</td><td class="num">3</td></tr>
+            <tr><td><code>Hypergeometric</code></td><td>超幾何分布</td><td class="num">3</td></tr>
+            <tr><td><code>expectation</code> / <code>expected value</code></td><td>期待値</td><td class="num">4</td></tr>
+            <tr><td><code>linearity of expectation</code></td><td>期待値の線形性</td><td class="num">4</td></tr>
+            <tr><td><code>variance</code> / <code>standard deviation</code></td><td>分散 / 標準偏差</td><td class="num">4</td></tr>
+            <tr><td><code>Geometric</code> / <code>Negative Binomial</code></td><td>幾何 / 負の二項分布</td><td class="num">4</td></tr>
+            <tr><td><code>Poisson</code></td><td>ポアソン分布</td><td class="num">4</td></tr>
+            <tr><td><code>PDF (probability density function)</code></td><td>確率密度関数</td><td class="num">5</td></tr>
+            <tr><td><code>Normal</code> / <code>Gaussian</code></td><td>正規分布</td><td class="num">5</td></tr>
+            <tr><td><code>Exponential</code></td><td>指数分布</td><td class="num">5</td></tr>
+            <tr><td><code>memoryless</code></td><td>無記憶性</td><td class="num">5</td></tr>
+            <tr><td><code>moment</code></td><td>積率 / モーメント</td><td class="num">6</td></tr>
+            <tr><td><code>MGF (moment generating function)</code></td><td>積率母関数</td><td class="num">6</td></tr>
+            <tr><td><code>skewness</code> / <code>kurtosis</code></td><td>歪度 / 尖度</td><td class="num">6</td></tr>
+            <tr><td><code>joint / marginal / conditional</code></td><td>同時 / 周辺 / 条件付き</td><td class="num">7</td></tr>
+            <tr><td><code>covariance</code> / <code>correlation</code></td><td>共分散 / 相関</td><td class="num">7</td></tr>
+            <tr><td><code>uncorrelated</code></td><td>無相関</td><td class="num">7</td></tr>
+            <tr><td><code>Multivariate Normal (MVN)</code></td><td>多変量正規分布</td><td class="num">7</td></tr>
+            <tr><td><code>change of variables</code> / <code>Jacobian</code></td><td>変数変換 / ヤコビアン</td><td class="num">8</td></tr>
+            <tr><td><code>convolution</code></td><td>畳み込み</td><td class="num">8</td></tr>
+            <tr><td><code>Beta</code> / <code>Gamma</code></td><td>ベータ / ガンマ分布</td><td class="num">8</td></tr>
+            <tr><td><code>order statistics</code></td><td>順序統計量</td><td class="num">8</td></tr>
+            <tr><td><code>conjugate prior</code></td><td>共役事前分布</td><td class="num">8</td></tr>
+            <tr><td><code>conditional expectation</code></td><td>条件付き期待値</td><td class="num">9</td></tr>
+            <tr><td><code>tower property</code> / <code>Adam's law</code></td><td>繰り返し期待値の法則</td><td class="num">9</td></tr>
+            <tr><td><code>law of total variance</code> / <code>Eve's law</code></td><td>全分散の法則</td><td class="num">9</td></tr>
+            <tr><td><code>Jensen's inequality</code></td><td>イェンセンの不等式</td><td class="num">10</td></tr>
+            <tr><td><code>Markov / Chebyshev / Chernoff</code></td><td>マルコフ / チェビシェフ / チェルノフ</td><td class="num">10</td></tr>
+            <tr><td><code>LLN</code> / <code>CLT</code></td><td>大数の法則 / 中心極限定理</td><td class="num">10</td></tr>
+            <tr><td><code>chi-square</code> / <code>Student's t</code></td><td>カイ二乗 / t 分布</td><td class="num">10</td></tr>
+            <tr><td><code>Markov chain</code></td><td>マルコフ連鎖</td><td class="num">11</td></tr>
+            <tr><td><code>transition matrix</code></td><td>推移行列</td><td class="num">11</td></tr>
+            <tr><td><code>irreducible</code></td><td>既約</td><td class="num">11</td></tr>
+            <tr><td><code>recurrent</code> / <code>transient</code></td><td>再帰的 / 過渡的</td><td class="num">11</td></tr>
+            <tr><td><code>stationary distribution</code></td><td>定常分布</td><td class="num">11</td></tr>
+            <tr><td><code>reversible</code> / <code>detailed balance</code></td><td>可逆 / 詳細釣り合い</td><td class="num">11</td></tr>
+            <tr><td><code>Metropolis-Hastings</code> / <code>Gibbs</code></td><td>メトロポリス・ヘイスティングス / ギブス</td><td class="num">12</td></tr>
+            <tr><td><code>burn-in</code> / <code>mixing</code></td><td>バーンイン / 混合</td><td class="num">12</td></tr>
+            <tr><td><code>Poisson process</code></td><td>ポアソン過程</td><td class="num">13</td></tr>
+            <tr><td><code>interarrival time</code></td><td>到着間隔</td><td class="num">13</td></tr>
+            <tr><td><code>superposition</code> / <code>thinning</code></td><td>重ね合わせ / 間引き</td><td class="num">13</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>訳語の罠</h3>
+      <ul class="plain">
+        <li><code>support</code> = <b>台</b>。確率変数が正の確率を持つ範囲。字面から推測できません</li>
+        <li><code>distribution</code> は「分布」ですが、日本語の<b>「分布関数」は CDF</b> を指すことが多い</li>
+        <li><code>moment</code> は日本語で<b>積率とモーメントの両方</b>が使われます。同じもの</li>
+        <li><code>density</code>（密度・連続）と <code>mass</code>（質量・離散）の対比は、英語のほうが構造が明快です</li>
+      </ul>
+    </section>
+
+    <section class="close">
+      <p>第3章に進む準備ができたら、そう言ってください。同じ密度で書き足します。詰まった節があれば、その番号を指定してもらえれば、そこだけ深く解説します。</p>
+    </section>
+
+  </main>
+</div>
+
+</body></html>
