@@ -13421,7 +13421,7 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 </tbody>
 </table>
 <p><strong>上から下へ「比べられるものの範囲」が広がり、そのぶん幅が広がる。</strong> Scheffé は「$(\bar y_1 + \bar y_2)/2$ と $\bar y_3$ を比べる」のような、データを見てから思いついた任意の組み合わせにも使える。</p>
-<p>ここで Scheffé と Bonferroni がほとんど同じ ($2.60$ と $2.59$) なのは、<strong>群が 3 つしかない</strong>からである。$k$ が増えると差は開く。同じ $n = 5$ のまま群を 6 つにすると (全対比較 15 対、誤差の自由度 24)、臨界値は Bonferroni の $3.26$ に対し Scheffé は $3.62$ になる。逆に言えば、<strong>比較したい対比の数が少ないうちは Bonferroni で十分</strong>で、Scheffé が要るのは「データを見てから対比を決める」場合だけである。</p>
+<p>ここで Scheffé と Bonferroni がほとんど同じ ($2.60$ と $2.59$) なのは、<strong>群が 3 つしかない</strong>からである。$k$ が増えると差は開く。同じ $n = 5$ のまま群を 6 つにすると (全対比較 15 対、誤差の自由度 24)、有意と言える最小の差は Bonferroni の $3.03$ に対し Scheffé は $3.37$ になる (上の表と同じ「最小の差」で揃えた。臨界値そのものは $3.26$ と $3.62$)。逆に言えば、<strong>比較したい対比の数が少ないうちは Bonferroni で十分</strong>で、Scheffé が要るのは「データを見てから対比を決める」場合だけである。</p>
 <p><strong>データを見る前にどの比較をするか決めておけば、いちばん狭い区間が使える。</strong> 4.13.1 項で見たとおり、「データを見てから決める」ことの代償は必ずどこかで払わされる — ここではその代償が区間の幅という形で目に見えている。</p>
 <h2 id="c06-6-4">6.4 二元配置と交互作用</h2>
 <p>6.2〜6.3 節は因子が 1 つだった。<strong>実務では複数の条件を同時に変える</strong> — 水セメント比と養生温度、電流と溶接速度。このとき「片方ずつ調べる」では<strong>原理的に見えないもの</strong>が出てくる。それが交互作用である。</p>
@@ -15529,6 +15529,7 @@ $\Sigma$ は正定値である。定義 2.11 の $n$ を $p$ に読み替えれ�
 </tr>
 </tbody>
 </table>
+<p>組の中の相関も要る。階数と剛性率が $0.830$、最大層間変形角と最大加速度が $0.862$ である (この 6 つで $4\times4$ の相関行列が埋まる)。</p>
 <p>どれも高いが、<strong>「組と組の関係の強さ」を 1 つの数で言うにはどれを使えばよいか分からない。</strong> 正準相関分析は、それぞれの組の中で最も相関が高くなる線形結合を探し</p>
 <p>$$\rho_1 = 0.957, \qquad \rho_2 = 0.171$$</p>
 <p>を返す。<strong>第 1 正準相関 $0.957$ が、どの単純相関よりも高い</strong>ことに注目したい。2 つの幾何量をうまく混ぜると、2 つの応答量をうまく混ぜたものと $0.957$ で対応する、ということである。</p>
@@ -19078,6 +19079,60 @@ print(&quot;問10 両側 p 値 = %.6f — p&lt;0.05 で棄却なのに BF は H0
 <p>最初に、時系列を<strong>目で見て分けられる部分</strong>に切っておく。トレンド・季節・残り、という素朴な分解で、統計を使わずとも実務で最も多く使われている。<strong>この節で分解しきれずに残るもの</strong>が、9.3 節以降の主題になる。</p>
 <h3 id="c09-9-2-1">9.2.1 加法モデルと乗法モデル</h3>
 <p>分解の仕方には 2 通りある。<strong>足し算か掛け算か</strong>で、1.9 節の対数変換がそのまま両者を行き来する道具になる。</p>
+<p><strong>この章で繰り返し使うデータを置く。</strong> ある橋梁の支間中央たわみを毎月 1 回、2 年間測った ($\mathrm{mm}$)。</p>
+<table>
+<thead>
+<tr>
+<th>月</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+<th style="text-align: right;">4</th>
+<th style="text-align: right;">5</th>
+<th style="text-align: right;">6</th>
+<th style="text-align: right;">7</th>
+<th style="text-align: right;">8</th>
+<th style="text-align: right;">9</th>
+<th style="text-align: right;">10</th>
+<th style="text-align: right;">11</th>
+<th style="text-align: right;">12</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 年目</td>
+<td style="text-align: right;">12.4</td>
+<td style="text-align: right;">11.8</td>
+<td style="text-align: right;">13.1</td>
+<td style="text-align: right;">15.2</td>
+<td style="text-align: right;">17.6</td>
+<td style="text-align: right;">19.3</td>
+<td style="text-align: right;">20.5</td>
+<td style="text-align: right;">20.1</td>
+<td style="text-align: right;">18.2</td>
+<td style="text-align: right;">15.8</td>
+<td style="text-align: right;">13.4</td>
+<td style="text-align: right;">12.1</td>
+</tr>
+<tr>
+<td>2 年目</td>
+<td style="text-align: right;">12.9</td>
+<td style="text-align: right;">12.3</td>
+<td style="text-align: right;">13.8</td>
+<td style="text-align: right;">15.9</td>
+<td style="text-align: right;">18.2</td>
+<td style="text-align: right;">19.9</td>
+<td style="text-align: right;">21.2</td>
+<td style="text-align: right;">20.8</td>
+<td style="text-align: right;">18.9</td>
+<td style="text-align: right;">16.4</td>
+<td style="text-align: right;">14.1</td>
+<td style="text-align: right;">12.8</td>
+</tr>
+</tbody>
+</table>
+<p>平均 $16.11$、標準偏差 $3.21$。<strong>この $3.21$ のほとんどは「季節」である</strong> — 夏に大きく冬に小さい、温度によるたわみの変化で、構造の劣化とは関係がない。</p>
+<p><strong>知りたいのは、この季節変動の下にゆるい増加傾向があるかどうか</strong>である。2 年目は 1 年目より各月 $0.5$〜$0.7$ ほど大きい。これが劣化なのか、それとも偶然のばらつきなのか。<strong>季節を取り除かないと、この問いには手が付かない。</strong> それが 9.2 節の目的である。</p>
 <p>古典的な分解は、観測値を</p>
 <p>$$y_t = T_t + S_t + I_t \quad (\text{加法}), \qquad y_t = T_t \cdot S_t \cdot I_t \quad (\text{乗法})$$</p>
 <p>と見る。$T_t$ は<strong>トレンド</strong> (長期的な水準の変化)、$S_t$ は<strong>季節成分</strong> (周期 $s$ で繰り返す)、$I_t$ は<strong>不規則成分</strong> (残り)。乗法モデルは対数をとれば加法モデルになる。季節の振幅が水準に比例して大きくなるデータ (売上、電力需要) は乗法、そうでなければ加法が自然である。</p>
@@ -19087,6 +19142,11 @@ print(&quot;問10 両側 p 値 = %.6f — p&lt;0.05 で棄却なのに BF は H0
 <p>周期 $s$ の季節成分は、$s$ 個の連続する値で平均をとれば消える (1 周期分の季節成分の和が 0 だから)。$s$ が偶数のとき中心を合わせるため両端に重み $1/2$ を置く:</p>
 <p>$$\hat T_t = \frac{1}{s}\left(\tfrac12 y_{t-s/2} + y_{t-s/2+1} + \dots + y_{t+s/2-1} + \tfrac12 y_{t+s/2}\right)$$</p>
 <p>トレンドを除いた $y_t - \hat T_t$ を月ごとに平均すれば季節成分の推定になる (季節指数)。この単純な手続きが古典的分解 (X-11 系の季節調整の原型) である。移動平均は両端 $s/2$ 点で値が得られない、という欠点は状態空間モデル (9.9 節) で解消される。</p>
+<p><strong>9.2.1 項のデータで実際に計算する。</strong> $s = 12$ なので両端に $1/2$ の重みを置いた 12 項移動平均を取ると、$t = 7$ から $t = 18$ 月目まで 12 個の $\hat T_t$ が求まる。</p>
+<p>$$15.81,\ 15.85,\ 15.90,\ 15.96,\ 16.02,\ 16.07,\ 16.12,\ 16.18,\ 16.24,\ 16.29,\ 16.35,\ 16.40$$</p>
+<p><strong>季節変動が完全に消え、なめらかに増加する線だけが残った。</strong> 元の系列は $11.8$ から $21.2$ まで $9.4$ の幅で動いていたのに、移動平均の幅は $0.59$ しかない。<strong>季節を取り除くと、増加傾向が初めて見える。</strong></p>
+<p>$\hat T_t$ の増え方は 11 か月で $0.59$、つまり<strong>年あたり約 $0.64\,\mathrm{mm}$</strong> である。これが劣化かどうかは 2 年のデータでは判断できないが、<strong>少なくとも「見るべき量」は取り出せた。</strong></p>
+<p><strong>代償は両端である。</strong> 12 項移動平均は前後 6 か月を使うので、最初の 6 か月と最後の 6 か月には値が出ない。24 個の観測から 12 個しか得られず、<strong>いちばん知りたい直近の動きが空白になる。</strong> モニタリングで移動平均が使いにくい理由がこれで、9.9 節の状態空間モデルはこの弱点を持たない。</p>
 <h2 id="c09-9-3">9.3 定常性</h2>
 <p>9.2 節の分解は記述的で、予測の誤差を確率で語ることはできない。<strong>確率モデルを載せるには、決定的に重要な仮定が 1 つ要る。</strong> 観測列が 1 本しかないのに母集団の性質を推定できるのは、この仮定があるからである。</p>
 <h3 id="c09-9-3-1">9.3.1 弱定常の定義</h3>
@@ -19168,6 +19228,25 @@ $t$ に依らなければ弱定常でありうる。そこまで縛るのが強�
 <p><strong>定義 9.3 (ホワイトノイズ)</strong> 平均 0、分散 $\sigma^2$、$\gamma(k) = 0$ ($k \ne 0$) の列を (弱) ホワイトノイズといい $\varepsilon_t \sim \mathrm{WN}(0, \sigma^2)$ と書く</p>
 </blockquote>
 <p>「無相関」であって「独立」ではない点に注意する。独立なら iid ノイズ、正規なら Gaussian WN。GARCH 過程 (9.11 節) は無相関だが独立ではない例で、$\varepsilon_t^2$ には自己相関がある。名前は、スペクトルがすべての周波数で平坦 (白色光) なことから来る。</p>
+<p><strong>「構造が無い」が観測ではどう見えるかを、先に数で押さえておく。</strong> ホワイトノイズから $n$ 個を取って標本 ACF をラグ 1〜20 まで計算し、$\pm 1.96/\sqrt n$ の帯を出る割合を 3000 回で測ると</p>
+<table>
+<thead>
+<tr>
+<th>$n$</th>
+<th style="text-align: right;">50</th>
+<th style="text-align: right;">200</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>帯を出るラグの割合</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">0.042</td>
+</tr>
+</tbody>
+</table>
+<p>名目の $0.05$ より<strong>小さい</strong>。標本 ACF は「$\sum \hat\gamma(k)$ が構造的に 0 に近づく」という制約を受けるので、$n$ が小さいほど 0 の側へ縮む傾向がある。</p>
+<p>それでも <strong>20 本のラグを見れば、ホワイトノイズでも平均 1 本近くは帯を出る。</strong> 「ラグ 7 が帯を出たから周期 7 がある」と読むのは、4.12 節の多重比較をそのまま踏んでいる。<strong>ACF は 1 本ずつではなく、全体の形で読む。</strong></p>
 <h3 id="c09-9-4-3">9.4.3 標本自己相関と Bartlett の帯</h3>
 <p>9.4.1〜9.4.2 項は理論上の量だった。<strong>観測から推定すると、必ず 0 からずれる。</strong> どこまでのずれなら「構造なし」と見てよいのかの線を引く。</p>
 <p>観測 $x_1,\dots,x_n$ から</p>
@@ -19456,6 +19535,40 @@ $\theta = -1$ はその端そのものである。だから<strong>差分した�
 <p>周期 $s$ の季節差分 $\nabla_s = 1 - B^s$ を導入し、季節側にも AR/MA 多項式 $\Phi(B^s), \Theta(B^s)$ を持たせたものが $\mathrm{ARIMA}(p,d,q)(P,D,Q)_s$:</p>
 <p>$$\phi(B)\Phi(B^s)\nabla^d\nabla_s^D X_t = \theta(B)\Theta(B^s)\varepsilon_t$$</p>
 <p>Box と Jenkins が航空旅客数に当てはめた $(0,1,1)(0,1,1)_{12}$ (<strong>airline モデル</strong>) は、月次データの既定値として今も広く使われる。展開すると $\nabla\nabla_{12}X_t = (1 + \theta B)(1 + \Theta B^{12})\varepsilon_t$ で、ラグ 1, 12, 13 に ACF が立つ。</p>
+<p><strong>9.2.1 項のデータで差分の効き目を比べる。</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">平均</th>
+<th style="text-align: right;">標準偏差</th>
+<th style="text-align: right;">ラグ 12 の ACF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>元の系列 $y_t$</td>
+<td style="text-align: right;">16.11</td>
+<td style="text-align: right;">3.21</td>
+<td style="text-align: right;"><strong>0.49</strong></td>
+</tr>
+<tr>
+<td>1 階差分 $\nabla y_t$</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">1.76</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>季節差分 $\nabla_{12} y_t$</td>
+<td style="text-align: right;"><strong>0.64</strong></td>
+<td style="text-align: right;"><strong>0.08</strong></td>
+<td style="text-align: right;">—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>季節差分 $y_t - y_{t-12}$ の標準偏差が $0.08$ しかない。</strong> 元の $3.21$ の 1/40 である。つまり「1 年前の同じ月との差」はほぼ一定で、$0.64\,\mathrm{mm}$ ずつ増えている。9.2.2 項の移動平均から読んだ年 $0.64\,\mathrm{mm}$ と<strong>同じ数が別の道から出た。</strong></p>
+<p>1 階差分では標準偏差が $1.76$ までしか下がらない。<strong>隣り合う月の差には季節の動きが残っている</strong>からである (春は上がり、秋は下がる)。<strong>どの差分を取るかは、系列のどの構造を消したいかで決める。</strong></p>
+<p>季節差分後の ACF はラグ 1 が $0.25$、ラグ 2 が $-0.35$ で、$n = 12$ に対する Bartlett の帯 $\pm 1.96/\sqrt{12} = \pm 0.57$ の中に収まっている。<strong>これ以上モデルを足す根拠は無い</strong> — $\mathrm{ARIMA}(0,0,0)(0,1,0)_{12}$ に定数項、つまり「毎年 $0.64$ ずつ増える」だけのモデルで足りる、という診断になる。</p>
 <h2 id="c09-9-7">9.7 Box–Jenkins 法とモデル選択</h2>
 <p>9.5〜9.6 節でモデルの種類は揃った。<strong>目の前のデータにどれを当てるかを決める手順</strong>が要る。Box と Jenkins が整理したのは、図を見て決め、当てはめ、残差で点検する、という反復である。</p>
 <h3 id="c09-9-7-1">9.7.1 同定・推定・診断</h3>
@@ -19467,12 +19580,59 @@ $\theta = -1$ はその端そのものである。だから<strong>差分した�
 <li><strong>診断</strong> (diagnostic checking): 残差がホワイトノイズか (残差 ACF、Ljung–Box 検定)、パラメータ推定値が定常・可逆領域の内側か、を確かめる。不合格なら 1 に戻る</li>
 </ol>
 <p>同定を人手で行うのがこの方法の特徴で、現代では次項の情報量規準で自動化することが多い。ただし残差診断は自動化しても省略しない。</p>
+<p><strong>同定の段階で何を見るのかを、9.2.1 項のデータで具体的に言う。</strong> 元の系列の ACF は</p>
+<p>$$\rho(1) = 0.80,\ \rho(2) = 0.40,\ \rho(3) = -0.08,\ \dots,\ \rho(6) = -0.71,\ \dots,\ \rho(12) = 0.49$$</p>
+<p>と<strong>波打っている。</strong> $n = 24$ に対する Bartlett の帯は $\pm 1.96/\sqrt{24} = \pm 0.40$ なので、ラグ 6 の $-0.71$ とラグ 12 の $0.49$ は帯の外である。</p>
+<p><strong>ACF が減衰せずに波打つのは「定常でない」の典型的な合図</strong>で、ここでは周期 12 の季節性がその原因である。したがって同定の第 1 手は「$p, q$ を選ぶ」ではなく「<strong>季節差分を取る</strong>」になる (9.6.2 項で実行した)。</p>
+<p>残差の診断には Ljung–Box 検定を使う。残差の ACF が $m$ ラグまでまとめて 0 かを調べる統計量で、$H_0$ のもとで $\chi^2_{m-k}$ ($k$ は推定した母数の数) に従う。<strong>「残差がホワイトノイズに見えるか」を 1 つの p 値にまとめる</strong>道具だが、4.8 節の正規性検定と同じ注意が要る — <strong>$n$ が小さければ何も検出しない。</strong> ここでは季節差分後の $n = 12$ なので、Ljung–Box が非有意でも「問題なし」の証拠にはならない。</p>
 <h3 id="c09-9-7-2">9.7.2 AIC によるモデル選択</h3>
 <p>9.7.1 項の「同定」を目で行うのは主観的である。<strong>数値的な基準</strong>があれば自動化できる。5.8.2 項で出た AIC がそのまま使える。</p>
 <p>Akaike (1974) の情報量規準</p>
 <p>$$\mathrm{AIC} = -2\log L(\hat\theta) + 2k$$</p>
 <p>($k$ はパラメータ数) が最小のモデルを選ぶ。第 1 項は当てはまりの良さ、第 2 項は複雑さへの罰金で、真の分布と当てはめた分布の Kullback–Leibler 情報量の (バイアス補正した) 推定量になっている。導出の要点: 最大対数尤度は真の期待対数尤度を平均で $k$ だけ過大評価し、その予測評価もさらに $k$ ずれる。合計 $2k$ の補正である。標本が小さいときは $\mathrm{AICc} = \mathrm{AIC} + 2k(k+1)/(n-k-1)$ を使う。Burnham と Anderson は AIC を単一モデルの選択でなく候補モデル間の<strong>相対的な証拠の重み</strong>として使うことを勧めている<sup id="c09-fnref:2"><a class="footnote-ref" href="#c09-fn:2">2</a></sup>。</p>
 <p>$\mathrm{BIC} = -2\log L + k\log n$ は罰金が重く、真のモデルが候補に含まれるときは一致性 (正しい次数を選ぶ確率が 1 に収束) を持つ。AIC は予測の良さを、BIC は真の構造の発見を重視する、と使い分ける。ARMA の次数選択では<strong>同じ差分次数 $d$、同じ標本区間</strong>のモデル同士でしか AIC は比較できない (尤度の定義が変わるため)。</p>
+<p><strong>数値実験で動かす。</strong> 真に $\mathrm{AR}(1)$ ($\phi = 0.7$) から $n = 200$ を生成し、$\mathrm{AR}(0)$ から $\mathrm{AR}(4)$ まで当てはめて AIC を比べる。</p>
+<table>
+<thead>
+<tr>
+<th>次数 $p$</th>
+<th style="text-align: right;">0</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+<th style="text-align: right;">4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>対数尤度</td>
+<td style="text-align: right;">$-367.47$</td>
+<td style="text-align: right;">$-271.59$</td>
+<td style="text-align: right;">$-271.46$</td>
+<td style="text-align: right;">$-271.37$</td>
+<td style="text-align: right;">$-269.92$</td>
+</tr>
+<tr>
+<td>母数の数 $k$</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td>AIC</td>
+<td style="text-align: right;">736.93</td>
+<td style="text-align: right;"><strong>547.17</strong></td>
+<td style="text-align: right;">548.91</td>
+<td style="text-align: right;">550.73</td>
+<td style="text-align: right;">549.85</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$p = 0$ から $p = 1$ で対数尤度が $96$ も上がるのに、$p = 1$ から先はほとんど上がらない。</strong> 罰則の $2k$ が効いて AIC は $p = 1$ で最小になる。</p>
+<p>300 回繰り返すと、AIC が選ぶ次数は $p=1$ が 219 回、$p=2$ が 47 回、$p=3$ が 21 回、$p=4$ が 13 回だった。<strong>7 割強で正しく当てるが、3 割は過大な次数を選ぶ。</strong> AIC は「真のモデルを当てる」ための基準ではなく「予測誤差を小さくする」ための基準なので、これは欠陥ではなく設計どおりである (真のモデルを当てたいなら罰則の重い BIC を使う)。</p>
+<p><strong>実務上の注意を 1 つ。</strong> 次数の違うモデルの AIC を比べるときは、<strong>すべて同じ観測数で当てはめなければならない。</strong> $\mathrm{AR}(p)$ を条件付き最小二乗で当てると最初の $p$ 個が使えないので、素朴に書くと $p$ ごとに標本数が変わり、対数尤度が比較できなくなる。$p_{\max}$ に合わせて最初の $p_{\max}$ 個を全モデルで捨てる、というのが正しい手順である。</p>
 <h2 id="c09-9-8">9.8 予測と予測区間</h2>
 <p>9.7 節でモデルが決まった。<strong>時系列を扱う目的のほとんどは予測である。</strong> 点予測だけでなく、5.5.4 項と同じく<strong>幅を付けて</strong>答える。</p>
 <h3 id="c09-9-8-1">9.8.1 最小平均二乗誤差予測</h3>
@@ -19533,6 +19693,10 @@ $\hat\phi$ で置き換えて使うときの推定誤差は 1 つも入ってい
 <p>$\boldsymbol\eta_t, \varepsilon_t$ は互いに独立、初期状態 $\boldsymbol\alpha_0 \sim N(\mathbf a_0, \mathbf P_0)$</p>
 </blockquote>
 <p>「見えない状態が Markov 的に動き、それを雑音付きで観測する」という枠組みで、ARIMA はすべてこの形に書ける (状態に過去の値を積む)。逆にトレンド・季節・周期成分を別々の状態として持たせたものが Harvey の<strong>構造時系列モデル</strong>で、成分ごとの解釈が可能になる<sup id="c09-fnref:3"><a class="footnote-ref" href="#c09-fn:3">3</a></sup>。</p>
+<p><strong>既知のモデルをこの形に書き直してみる。</strong> $\mathrm{AR}(1)$ の $X_t = \phi X_{t-1} + \varepsilon_t$ を観測誤差なしで書けば</p>
+<p>$$\mathbf T = \phi,\quad \mathbf Z = 1,\quad \mathbf H = 0,\quad \mathbf Q = \sigma^2$$</p>
+<p>$y_t = \mu + \varepsilon_t$ という「ただの平均」なら $\mathbf T = 1$、$\mathbf Q = 0$ (状態が動かない)、$\mathbf H = \sigma^2$。<strong>回帰も ARIMA も、この 2 本の式の $\mathbf T, \mathbf Z, \mathbf H, \mathbf Q$ の選び方の違いにすぎない。</strong></p>
+<p><strong>何が新しく得られるのか。</strong> $\mathbf H \ne 0$ かつ $\mathbf Q \ne 0$ と置ける — つまり「<strong>本当の値も動いているし、測定にも誤差がある</strong>」という状況を、2 つの分散として分けて書ける。9.2.1 項のたわみで言えば、$\mathbf Q$ が構造の実際の変化、$\mathbf H$ が計測のばらつきにあたる。ARIMA にはこの区別が無い。</p>
 <h3 id="c09-9-9-2">9.9.2 カルマンフィルタ</h3>
 <p>9.9.1 項の枠組みのもとで、<strong>観測が 1 つ来るたびに状態の推定を更新する</strong>手続きが閉じた形で書ける。中身は 8.3.3 項の正規–正規の更新そのもので、<strong>事前分布が前時刻の予測、事後分布が今の推定</strong>にあたる。</p>
 <p>$\mathbf a_{t|s} = E[\boldsymbol\alpha_t\mid y_1,\dots,y_s]$、$\mathbf P_{t|s}$ をその誤差共分散とする。</p>
@@ -19609,6 +19773,40 @@ $\mathbf a$ の側 (7) はもちろん $y_t$ に依存する。</p></div></detai
 <p>「ランダムウォークする水準を雑音付きで観測する」モデルで、フィルタは $a_t = a_{t-1} + K_t(y_t - a_{t-1})$ という<strong>指数平滑</strong>の形になる。$q = \sigma_\eta^2/\sigma_\varepsilon^2$ (信号対雑音比) だけで振る舞いが決まり、$q \to 0$ なら $a_t \to \bar y$ (水準は一定)、$q \to \infty$ なら $a_t \to y_t$ (観測をそのまま信じる)。$P_{t|t-1}$ は Riccati 型の再帰 $P \leftarrow P\sigma_\varepsilon^2/(P + \sigma_\varepsilon^2) + \sigma_\eta^2$ に従い、初期値によらず定常値 $\bar P = \sigma_\varepsilon^2\,(q + \sqrt{q^2 + 4q})/2$ に収束する (二次方程式 $p^2 = qp + q$ の正根)。</p>
 <figure><img loading="lazy" decoding="async" alt="図 9.7 局所レベルモデルのカルマンフィルタ。灰点が観測、細い実線が (実際には見えない) 真のレベル、赤線がフィルタ推定と ±1.96√P の帯。下段: 推定分散は数ステップで Riccati 方程式の定常解に収束する" src="fig/09_kalman.png" /><figcaption>図 9.7 局所レベルモデルのカルマンフィルタ。灰点が観測、細い実線が (実際には見えない) 真のレベル、赤線がフィルタ推定と ±1.96√P の帯。下段: 推定分散は数ステップで Riccati 方程式の定常解に収束する</figcaption></figure>
 <p>局所レベルモデルは ARIMA(0,1,1) と等価である ($\nabla y_t = \eta_t + \varepsilon_t - \varepsilon_{t-1}$ は MA(1))。同じデータに 2 つの見方があり、状態空間の方が「水準」という解釈可能な量を直接推定できる。</p>
+<p><strong>2 つの分散の比だけで振る舞いが決まる。</strong> $q = \sigma^2_\eta/\sigma^2_\varepsilon$ (信号対雑音比) と置くと、定常状態のカルマンゲインは</p>
+<p>$$K = \frac{-q + \sqrt{q^2 + 4q}}{2}$$</p>
+<table>
+<thead>
+<tr>
+<th>$q$</th>
+<th style="text-align: right;">0.01</th>
+<th style="text-align: right;">0.1</th>
+<th style="text-align: right;">1.0</th>
+<th style="text-align: right;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定常ゲイン $K$</td>
+<td style="text-align: right;">0.095</td>
+<td style="text-align: right;">0.270</td>
+<td style="text-align: right;">0.618</td>
+<td style="text-align: right;">0.916</td>
+</tr>
+<tr>
+<td>実質的な平均化の窓 $1/K$</td>
+<td style="text-align: right;">10.5 点</td>
+<td style="text-align: right;">3.7 点</td>
+<td style="text-align: right;">1.6 点</td>
+<td style="text-align: right;">1.1 点</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$K$ は「新しい観測をどれだけ信じるか」である。</strong> 更新式は</p>
+<p>$$\hat\mu_t = \hat\mu_{t-1} + K\,(y_t - \hat\mu_{t-1})$$</p>
+<p>で、$K = 0.095$ なら新しい観測を 1 割しか取り込まず、過去 10 点ぶんを平均したような動きになる。$K = 0.916$ なら過去をほとんど忘れて最新値に飛びつく。</p>
+<p><strong>これは指数平滑そのものである。</strong> 実務で使われる指数移動平均の平滑係数が、ここでは<strong>2 つの分散から導かれている</strong> — 勘で決めるのではなく、データから推定できる。</p>
+<p><strong>9.2.2 項の移動平均との違いもここに出る。</strong> 移動平均は前後を使うので端が空白になるが、カルマンフィルタは過去だけを使うので<strong>最新時点まで値が出る。</strong> モニタリングで使えるのはこちらである。</p>
 <h2 id="c09-9-10">9.10 スペクトル解析</h2>
 <p>9.4〜9.9 節は時間領域の話だった。<strong>同じ情報を周波数の側から見る</strong>と、周期的な構造が一目で分かる。振動計測を扱う分野では、むしろこちらが標準の見方である。</p>
 <h3 id="c09-9-10-1">9.10.1 スペクトル密度と Wiener–Khinchin の関係</h3>
@@ -19691,6 +19889,40 @@ $\gamma(0)$ になる (4)。$f/\gamma(0)$ なら確率密度の形になる。</
 <p>$$\varepsilon_t = \sigma_t z_t, \quad z_t \sim \mathrm{iid}(0,1), \qquad \sigma_t^2 = \omega + \alpha\varepsilon_{t-1}^2 + \beta\sigma_{t-1}^2 \quad (\mathrm{GARCH}(1,1))$$</p>
 <p>性質: $E[\varepsilon_t\mid\mathcal F_{t-1}] = 0$ なので $\varepsilon_t$ はホワイトノイズ (ACF は全部 0)。しかし $\varepsilon_t^2$ は ARMA(1,1) に従い自己相関を持つ。無条件分散は $\omega/(1-\alpha-\beta)$ で、$\alpha + \beta < 1$ が弱定常の条件。$\alpha + \beta$ が 1 に近いほど分散の記憶が長い。尖度は正規より大きく (裾が重い)、これは $\sigma_t$ が変動する混合分布だからである。Engle 自身による入門的な解説が「GARCH 101」として読める<sup id="c09-fnref:4"><a class="footnote-ref" href="#c09-fn:4">4</a></sup>。推定は $z_t$ を正規として最尤法 (擬似最尤)。</p>
 <p>構造工学では、風速の変動成分や地震動の非定常な振幅包絡が「条件付き分散が時間で変わる」過程であり、GARCH 型の考え方と親和性がある。</p>
+<p><strong>数値実験で「何が相関しているのか」を確かめる。</strong> $\mathrm{GARCH}(1,1)$ ($\omega = 0.05$、$\alpha = 0.1$、$\beta = 0.85$) から $T = 5000$ を生成し、2 つの ACF を比べる。</p>
+<table>
+<thead>
+<tr>
+<th>ラグ</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+<th style="text-align: right;">4</th>
+<th style="text-align: right;">5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$r_t$ の ACF</td>
+<td style="text-align: right;">$-0.005$</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">$-0.010$</td>
+<td style="text-align: right;">$-0.029$</td>
+<td style="text-align: right;">0.023</td>
+</tr>
+<tr>
+<td>$r_t^2$ の ACF</td>
+<td style="text-align: right;"><strong>0.179</strong></td>
+<td style="text-align: right;"><strong>0.140</strong></td>
+<td style="text-align: right;"><strong>0.154</strong></td>
+<td style="text-align: right;"><strong>0.150</strong></td>
+<td style="text-align: right;"><strong>0.140</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>$r_t$ 自体はまったく無相関なのに、$r_t^2$ は強く相関している。</strong> 「明日の値は今日から予測できないが、<strong>明日の荒れ具合は今日の荒れ具合から予測できる</strong>」ということである。ARMA は 1 行目しか見ていないので、この構造を素通りする。</p>
+<p>$\alpha + \beta = 0.95$ が 1 に近いほど荒れが長く続く。無条件分散は $\omega/(1-\alpha-\beta) = 1.00$ で、実測 $1.13$ とおおむね合う。</p>
+<p><strong>尖度も自動的に出る。</strong> この系列の尖度は $3.53$ で、正規分布の $3$ より大きい。$z_t$ は正規なのに、<strong>分散が時間とともに変わるだけで裾が重くなる</strong> — 分散の違う正規分布の混合は正規ではないからである。10.2 節で扱う「裾の重さ」が、分布の仮定ではなく時間構造から生じる例になっている。</p>
 <h2 id="c09-9-12">9.12 見せかけの回帰</h2>
 <p>最後に、時系列データに第 5 章の回帰をそのまま当てるとどうなるかを見る。<strong>結論は「まったく無関係な 2 本の系列が、8 割方『有意に関係あり』と出る」</strong>である。時系列を扱う人が定常性にこだわる理由が、ここではっきりする。</p>
 <h3 id="c09-9-12-1">9.12.1 Granger–Newbold の実験</h3>
@@ -19699,6 +19931,38 @@ $\gamma(0)$ になる (4)。$f/\gamma(0)$ なら確率密度の形になる。</
 <figure><img loading="lazy" decoding="async" alt="図 9.9 左: 独立な白色雑音同士の回帰 (青) では t 値は t 分布に従うが、独立なランダムウォーク同士 (赤) では |t| が 1.98 を超える割合が 7 割近くになる。右: 無関係な 2 系列の 1 例と当てはめ直線" src="fig/09_spurious.png" /><figcaption>図 9.9 左: 独立な白色雑音同士の回帰 (青) では t 値は t 分布に従うが、独立なランダムウォーク同士 (赤) では |t| が 1.98 を超える割合が 7 割近くになる。右: 無関係な 2 系列の 1 例と当てはめ直線</figcaption></figure>
 <h3 id="c09-9-12-2">9.12.2 なぜ起きるか</h3>
 <p>9.12.1 項の結果は、5.7.4 項で見た「標準誤差が狂う」現象の極端な場合である。<strong>残差が定常でないと、$t$ 検定の前提が根本から崩れる。</strong></p>
+<p><strong>$n$ を増やすと悪化する</strong>ところが、この現象の最も恐ろしい点である。独立なランダムウォーク 2 本を回帰し、$|t| > 1.96$ になる割合を 3000 回で測ると</p>
+<table>
+<thead>
+<tr>
+<th>$n$</th>
+<th style="text-align: right;">25</th>
+<th style="text-align: right;">50</th>
+<th style="text-align: right;">100</th>
+<th style="text-align: right;">200</th>
+<th style="text-align: right;">500</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\|t\| > 1.96$ の割合</td>
+<td style="text-align: right;">0.558</td>
+<td style="text-align: right;">0.675</td>
+<td style="text-align: right;">0.764</td>
+<td style="text-align: right;">0.826</td>
+<td style="text-align: right;"><strong>0.895</strong></td>
+</tr>
+<tr>
+<td>$\|t\|$ の中央値</td>
+<td style="text-align: right;">2.25</td>
+<td style="text-align: right;">3.25</td>
+<td style="text-align: right;">4.48</td>
+<td style="text-align: right;">6.17</td>
+<td style="text-align: right;"><strong>10.32</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>$n = 500$ では 9 割が「有意」になり、$t$ の中央値は $10$ を超える。</strong> 普通の回帰なら $n$ を増やせば推定が安定するが、ここでは逆に<strong>確信が強まりながら間違い続ける。</strong></p>
 <p>Phillips (1986) が理論的に解明した。$u_t = y_t - a - bx_t$ は 2 つのランダムウォークの線形結合で、それ自体が単位根を持つ。通常の $t$ 検定は $u_t$ が定常 (かつ無相関) であることを前提に $\hat b$ の標準誤差を計算するが、その前提が壊れているため標準誤差を極端に過小評価する。厳密には $\hat b$ は 0 に収束せず、$t$ 統計量は $\sqrt n$ のオーダーで<strong>発散</strong>する。つまり標本を増やすほど「有意」になる。$R^2$ も 0 に収束せず、Durbin–Watson 統計量は 0 に収束する (残差が強く正の自己相関を持つ)。</p>
 <p>対処: (a) 両系列を差分してから回帰する、(b) 2 つの単位根系列の線形結合が定常になる (<strong>共和分</strong>) かを検定する (Engle–Granger)。共和分があれば水準同士の回帰に意味がある。いずれにせよ<strong>回帰の前に各系列の定常性を確認する</strong>のが時系列回帰の作法である。</p>
 <h2 id="c09-9-13">9.13 構造工学への接続</h2>
@@ -20532,6 +20796,7 @@ for (ph, n9, e_mean, e_bias) in ((0.5, 25, 0.3977, -0.1023), (0.5, 100, 0.4751, 
 </ol>
 <p>最後に両者を結ぶ。抵抗 $R$ の分布 (材料強度、寿命) と荷重効果 $S$ の分布 (極値) から破壊確率 $P_f = P(R < S)$ を評価するのが<strong>構造信頼性</strong>であり、設計規準の部分係数はここから導かれる (10.11 節)。第2章の分布、第3章の最尤法、第4章の検定、第5章の回帰、第8章の尤度の扱いを前提にする。</p>
 <h2 id="c10-10-2">10.2 生存関数・ハザード・累積ハザード</h2>
+<p>「いつ壊れるか」を扱うには、第 2 章の分布関数や密度とは<strong>別の言い方</strong>が要る。<strong>「まだ壊れていないものが、次の瞬間に壊れる率」</strong>という見方をすると、初期不良・偶発故障・摩耗という技術者の言葉が、そのまま関数の形に対応する。</p>
 <h3 id="c10-10-2-1">10.2.1 定義</h3>
 <p>非負の連続確率変数 $T$ (寿命、故障時間、生存時間) の分布は、分布関数 $F(t) = P(T \le t)$ でも密度 $f(t)$ でも記述できるが、生存時間解析では次の 2 つが主役になる。</p>
 <blockquote>
@@ -20541,6 +20806,7 @@ for (ph, n9, e_mean, e_bias) in ((0.5, 25, 0.3977, -0.1023), (0.5, 100, 0.4751, 
 </blockquote>
 <p>$h(t)\,\Delta t$ は「時刻 $t$ まで生き残ったものが、次の $\Delta t$ の間に壊れる条件付き確率」である。密度 $f(t)\,\Delta t$ が「最初から見て $t$ 付近で壊れる無条件の確率」なのと対照的で、<strong>ハザードは現時点の危険度</strong>を表す。工学では故障率 (failure rate)、保険では死力 (force of mortality) と呼ぶ。</p>
 <h3 id="c10-10-2-2">10.2.2 4 つの関数の関係</h3>
+<p>10.2.1 項で 4 つの関数を定義した。<strong>どれか 1 つが分かれば残りの 3 つも決まる</strong> — 同じ分布を 4 通りに書いているだけである。その変換の式を押さえておく。</p>
 <blockquote>
 <p><strong>定理 10.1</strong> $T$ が密度をもつとき</p>
 <p>$$h(t) = \frac{f(t)}{S(t)} = -\frac{d}{dt}\log S(t), \qquad S(t) = \exp\{-H(t)\}, \qquad f(t) = h(t)\exp\{-H(t)\}$$</p>
@@ -20579,6 +20845,7 @@ $S$ がそこで 0 になる場合は、その手前でのみ成り立つ式で�
 <p>$$E[T] = \int_0^\infty t f(t)\,dt = \int_0^\infty S(t)\,dt$$</p>
 <p>と書ける (部分積分。$tS(t) \to 0$ が必要)。信頼性工学ではこれを <strong>MTTF</strong> (mean time to failure) と呼ぶ (10.8 節)。</p>
 <h3 id="c10-10-2-3">10.2.3 代表的な分布</h3>
+<p>10.2.2 項の関係を使って、実務で使う分布をハザードの形で並べ直す。<strong>ハザードが増えるか減るか一定か</strong>という 1 点が、分布を選ぶときの最初の判断になる。</p>
 <table>
 <thead>
 <tr>
@@ -20617,7 +20884,9 @@ $S$ がそこで 0 になる場合は、その手前でのみ成り立つ式で�
 </table>
 <p>指数分布は<strong>無記憶</strong>である: 累積ハザードが $\lambda t$ と線形で、$P(T > t + s \mid T > t) = e^{-\lambda(t+s)}/e^{-\lambda t} = e^{-\lambda s}$。使い込んだ部品も新品も同じ危険度、というのは疲労や摩耗には合わないが、偶発故障 (落雷、誤操作) にはよく合う。Weibull 分布は形状パラメータ $k$ でハザードの増減を切り替えられるので、寿命の標準モデルになっている (10.8 節)。</p>
 <h2 id="c10-10-3">10.3 打ち切りと尤度</h2>
+<p>10.2 節で関数は揃ったが、寿命データには他のデータに無い性質がある。<strong>試験を打ち切った時点でまだ壊れていない個体</strong>が必ず残る。これを捨てても「壊れた」と数えても偏るので、扱い方を最初に決めておく必要がある。</p>
 <h3 id="c10-10-3-1">10.3.1 打ち切りの種類</h3>
+<p>まず言葉を分ける。<strong>打ち切り方が違えば尤度の形も変わる</strong>ので、自分のデータがどれに当たるかを判定できなければならない。</p>
 <p>寿命データの特徴は、観測が終わった時点でまだ壊れていない個体があることである。</p>
 <blockquote>
 <p><strong>定義 10.2 (右打ち切り)</strong> 個体 $i$ について真の寿命 $T_i$ と打ち切り時刻 $C_i$ があり、観測されるのは $t_i = \min(T_i, C_i)$ と指示変数 $\delta_i = \mathbb{1}\{T_i \le C_i\}$ の組である。$\delta_i = 1$ ならイベント (故障・死亡) が観測され、$\delta_i = 0$ なら「$t_i$ までは生きていた」ことだけが分かる。</p>
@@ -20629,6 +20898,7 @@ $S$ がそこで 0 になる場合は、その手前でのみ成り立つ式で�
 </ul>
 <p>左打ち切り (開始前に既に故障していたことだけ分かる) や区間打ち切り (検査と検査の間に故障) もあるが、ここでは右打ち切りに絞る。</p>
 <h3 id="c10-10-3-2">10.3.2 打ち切りを含む尤度</h3>
+<p>10.3.1 項で種類が分かった。<strong>それぞれの個体が持っている情報を、そのまま尤度に書く。</strong> 3.5.1 項の尤度の定義に戻るだけで、新しい原理は要らない。</p>
 <p>打ち切られた個体を「壊れなかった」と数えても、「無かったこと」にしても、どちらも偏る。正しい扱いは、各個体が持つ情報をそのまま尤度に書くことである。</p>
 <blockquote>
 <p><strong>定理 10.2 (右打ち切りの尤度)</strong> 打ち切り $C_i$ が $T_i$ と独立で、その分布がパラメータ $\theta$ を含まない (非情報的打ち切り) とき、$\theta$ の尤度は定数倍を除いて</p>
@@ -20665,7 +20935,9 @@ $f, S, h, H$ はすべて $\theta$ に依存する既知の形の関数。個体
 <p>$$\hat\lambda = \frac{d}{\sum_i t_i} = \frac{\text{イベント数}}{\text{総観測時間}}$$</p>
 <p>打ち切られた個体も分母に<strong>観測した時間だけ</strong>寄与する。Fisher 情報は $d/\lambda^2$ なので $\mathrm{SE}(\hat\lambda) \approx \hat\lambda/\sqrt{d}$ となり、精度を決めるのは標本数ではなく<strong>イベント数</strong>である。打ち切り率の高い試験では、いくら供試体を増やしても壊れなければ情報は増えない。</p>
 <h2 id="c10-10-4">10.4 Kaplan–Meier 推定量</h2>
+<p>10.3 節で尤度の書き方は決まったが、<strong>分布形を仮定していた。</strong> 形を仮定せずに生存関数を推定できるか — できる、というのがこの節である。1.4 節の経験分布関数の、打ち切り対応版にあたる。</p>
 <h3 id="c10-10-4-1">10.4.1 導出</h3>
+<p>考え方は 1 行である。<strong>生き延びる確率を、各時点を通過する確率の掛け算に分解する。</strong> 2.3.1 項の乗法公式がそのまま使われている。</p>
 <p>分布形を仮定せずに $S(t)$ を推定したい。打ち切りが無ければ経験生存関数 $1 - F_n(t)$ でよいが、打ち切りがあると使えない。Kaplan と Meier (1958) の積極限推定量は、<strong>生存を短い区間の条件付き生存の積に分解する</strong>という発想による。</p>
 <p>イベントが起きた相異なる時刻を $t_{(1)} < t_{(2)} < \cdots < t_{(m)}$、時刻 $t_{(j)}$ の<strong>直前</strong>にリスク集合にいる (まだ壊れておらず打ち切られてもいない) 個体数を $n_j$、$t_{(j)}$ で起きたイベント数を $d_j$ とする。</p>
 <blockquote>
@@ -20703,6 +20975,7 @@ $1 - d_j/n_j$ を単独で取り出しても意味を持たず、掛け合わせ
 すなわち途中で誰も抜けないときに限った話である。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 10.2 左: 打ち切りを含む Weibull データの Kaplan–Meier 推定と Greenwood の 95% 信頼帯。縦棒は打ち切り時刻で、そこでは階段は下がらずリスク集合が減るだけである。右: 2 群のログランク検定" src="fig/10_km_logrank.png" /><figcaption>図 10.2 左: 打ち切りを含む Weibull データの Kaplan–Meier 推定と Greenwood の 95% 信頼帯。縦棒は打ち切り時刻で、そこでは階段は下がらずリスク集合が減るだけである。右: 2 群のログランク検定</figcaption></figure>
 <h3 id="c10-10-4-2">10.4.2 Greenwood の分散</h3>
+<p>10.4.1 項で点推定は得られた。<strong>幅を付けるには分散が要る。</strong> 掛け算の形なので、対数を取ってデルタ法 (2.8.2 項) を当てる。</p>
 <blockquote>
 <p><strong>定理 10.4 (Greenwood の公式)</strong></p>
 <p>$$\widehat{\mathrm{Var}}[\hat S(t)] = \hat S(t)^2 \sum_{j:\, t_{(j)} \le t} \frac{d_j}{n_j (n_j - d_j)}$$</p>
@@ -20712,10 +20985,12 @@ $1 - d_j/n_j$ を単独で取り出しても意味を持たず、掛け合わせ
 <p>和をとって $\mathrm{Var}[\log\hat S]$ とし、再びデルタ法 $\mathrm{Var}[\hat S] \approx \hat S^2\,\mathrm{Var}[\log \hat S]$。$\square$</p>
 <p>信頼区間 $\hat S \pm 1.96\,\widehat{\mathrm{SE}}$ は $[0,1]$ を飛び出すことがあるので、実務では $\log(-\log \hat S)$ の尺度で区間を作ってから戻す (Kalbfleisch &amp; Prentice)。この変換は次節の Cox モデルの比例性検証と同じ尺度である。</p>
 <h3 id="c10-10-4-3">10.4.3 Nelson–Aalen 推定量</h3>
+<p>10.4.1 項は生存関数を直接推定した。<strong>累積ハザードを推定する道もある。</strong> 10.2.2 項の関係で行き来できるので、どちらから入っても同じ情報にたどり着く。</p>
 <p>累積ハザードを直接推定するなら</p>
 <p>$$\hat H(t) = \sum_{j:\, t_{(j)} \le t} \frac{d_j}{n_j}$$</p>
 <p>これが Nelson–Aalen 推定量で、$\exp\{-\hat H(t)\}$ は Kaplan–Meier に近い ($\log(1-x) \approx -x$)。$\hat H(t)$ を $t$ に対してプロットすると、ハザードが一定なら直線、Weibull なら両対数で直線になるので、<strong>分布形の目視診断</strong>に使える。</p>
 <h2 id="c10-10-5">10.5 ログランク検定</h2>
+<p>10.4 節で 2 群の生存曲線が描けるようになった。<strong>「2 本の曲線は違うと言えるか」</strong>を判定したい。打ち切りがあるので第 4 章の $t$ 検定は使えず、イベントが起きた時点ごとに数え上げる方法を作る。</p>
 <p>2 群 (例: 表面処理あり/なし の疲労寿命) の生存曲線が同じかを検定したい。$t$ 検定は打ち切りのために使えない。</p>
 <p>各イベント時刻 $t_{(j)}$ で、群 A のリスク数 $n_{Aj}$、全リスク数 $n_j$、群 A のイベント数 $d_{Aj}$、全イベント数 $d_j$ を並べた $2 \times 2$ 表を考える。帰無仮説「2 群の生存関数が等しい」のもとでは、$d_j$ 個のイベントが $n_j$ 個の中からランダムに選ばれたのと同じなので、$d_{Aj}$ は超幾何分布に従い</p>
 <p>$$E_{Aj} = d_j \frac{n_{Aj}}{n_j}, \qquad V_{Aj} = d_j \frac{n_{Aj}}{n_j}\left(1 - \frac{n_{Aj}}{n_j}\right)\frac{n_j - d_j}{n_j - 1}$$</p>
@@ -20750,7 +21025,9 @@ $n_{Aj}$ は群 A のリスク数、$n_j$ は両群あわせたリスク数、$d
 差が小さいことと「どの時刻でも差が無い」ことは、この統計量では区別できない。</p></div></details>
 <p>「ログランク」の名は、これが順位に基づく検定 (Mantel 1966、Peto &amp; Peto 1972) だからである。全時刻に等しい重み 1 を置くのがログランク、重み $n_j$ を置くのが Gehan–Wilcoxon (早期の差に敏感)、$\hat S(t_{(j)})$ を置くのが Peto–Prentice である。ログランク検定は<strong>比例ハザードのもとで最も検出力が高い</strong> — 図 10.2 右の 2 曲線が交差するような場合は感度が落ちる。</p>
 <h2 id="c10-10-6">10.6 Cox 比例ハザードモデル</h2>
+<p>10.5 節までは群が 2 つの話だった。<strong>応力振幅・温度・表面処理といった連続量や複数の要因を同時に扱う</strong>には回帰が要る。第 5 章の回帰をハザードに当てるのだが、<strong>ベースラインの形を一切仮定しない</strong>という離れ業が可能になる。</p>
 <h3 id="c10-10-6-1">10.6.1 モデル</h3>
+<p>10.6 節で言ったモデルの形を決める。<strong>共変量は時間に依らずハザードを定数倍する</strong>、という仮定がすべてである。この仮定のおかげでベースラインを消せる。</p>
 <p>共変量 $x$ (応力振幅、温度、表面処理の有無) がハザードに与える影響を回帰したい。Cox (1972) は</p>
 <blockquote>
 <p><strong>定義 10.4 (比例ハザードモデル)</strong></p>
@@ -20759,6 +21036,7 @@ $n_{Aj}$ は群 A のリスク数、$n_j$ は両群あわせたリスク数、$d
 </blockquote>
 <p>2 個体の<strong>ハザード比</strong> $h(t \mid x_1)/h(t \mid x_2) = \exp\{\beta^\top(x_1 - x_2)\}$ が時間によらず一定 — これが「比例」の意味である。$\beta_k$ は「$x_k$ が 1 増えるとハザードが $e^{\beta_k}$ 倍になる」と読む。生存関数では $S(t \mid x) = S_0(t)^{\exp(\beta^\top x)}$ となる (定理 10.1 の $S = e^{-H}$ から)。</p>
 <h3 id="c10-10-6-2">10.6.2 部分尤度</h3>
+<p>10.6.1 項の $h_0(t)$ を指定しないので、<strong>通常の尤度が書けない。</strong> 「いつ壊れたか」を捨てて「<strong>誰が</strong>壊れたか」だけを使う、という発想の転換でこれを回避する。</p>
 <p>$h_0(t)$ を指定しないので、通常の尤度は書けない。Cox のアイデアは、<strong>「いつ」壊れたかではなく「誰が」壊れたかの情報だけを使う</strong>ことである。</p>
 <blockquote>
 <p><strong>定理 10.6 (部分尤度)</strong> 同順位がないとき、イベント時刻 $t_{(j)}$ のリスク集合を $R_j$、そこで壊れた個体を $i_j$ とすると</p>
@@ -20800,6 +21078,7 @@ $\beta$ で微分すると第 1 項から $x_{i_j}$ が出る。第 2 項は $\l
 Cox モデルが答えるのは「どちらが何倍危ないか」であって「何年もつか」ではない。</p></div></details>
 <p>Cox モデルの最尤解は $\beta$ について凹な目的関数の最大化なので Newton 法で安定に解ける。共変量が多いときは $\ell_1$/$\ell_2$ 罰則を加えた正則化版が座標降下法で効率よく解ける<sup id="c10-fnref:6"><a class="footnote-ref" href="#c10-fn:6">6</a></sup>。</p>
 <h3 id="c10-10-6-3">10.6.3 比例性の検証</h3>
+<p>10.6.1 項の比例ハザードは<strong>仮定</strong>である。5.7 節でやったのと同じく、<strong>仮定が成り立っているかを点検する</strong>手順が要る。</p>
 <p>比例ハザードは仮定であって、破れれば $\hat\beta$ は「時間平均したハザード比」のような解釈しにくい量になる。検証法:</p>
 <ol>
 <li><strong>log-log プロット</strong>: $S(t \mid x) = S_0(t)^{e^{\beta x}}$ の両辺に $\log(-\log)$ をとると $\log(-\log S(t \mid x)) = \log(-\log S_0(t)) + \beta x$。群ごとの Kaplan–Meier 推定でこれを描き、<strong>曲線が平行</strong>なら比例性が成り立つ。図 10.3</li>
@@ -20809,11 +21088,14 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <figure><img loading="lazy" decoding="async" alt="図 10.3 log(−log S) プロット。左: 比例ハザードが成り立てば曲線は縦に log HR だけ平行移動する。右: Weibull の形状が群で異なると曲線は交差し、ハザード比が時間で変わる" src="fig/10_cox_loglog.png" /><figcaption>図 10.3 log(−log S) プロット。左: 比例ハザードが成り立てば曲線は縦に log HR だけ平行移動する。右: Weibull の形状が群で異なると曲線は交差し、ハザード比が時間で変わる</figcaption></figure>
 <p>破れの典型は「形状が違う」場合である。図 10.3 右のように 2 群の Weibull 形状 $k$ が違えば、ハザード比 $\propto t^{k_1 - k_2}$ は時間とともに単調に変化する。非比例ハザードへの拡張として、基準ハザードの形状パラメータ自体を共変量で回帰する二重 Cox モデルが提案されており、シミュレーションで推定バイアスと被覆率が調べられている<sup id="c10-fnref:5"><a class="footnote-ref" href="#c10-fn:5">5</a></sup>。</p>
 <h2 id="c10-10-7">10.7 パラメトリック生存モデルと AFT</h2>
+<p>10.6 節の Cox モデルはベースラインを捨てたので、<strong>寿命そのものは予測できない。</strong> 「この部材は何年もつか」に答えるには、捨てたものを取り戻す必要がある。</p>
 <h3 id="c10-10-7-1">10.7.1 パラメトリック回帰</h3>
+<p>素直な道は、<strong>ベースラインの形を指定して 10.3.2 項の尤度を直接最大化する</strong>ことである。仮定が増える代わりに、外挿と予測ができるようになる。</p>
 <p>Cox モデルは $h_0$ を捨てるが、寿命そのものを予測したい (信頼性の設計) なら $h_0$ が要る。$h_0$ を Weibull や対数正規と指定して定理 10.2 の尤度を直接最大化するのがパラメトリック生存回帰である。Weibull ハザード $h_0(t) = (k/\lambda)(t/\lambda)^{k-1}$ に $\exp(\beta^\top x)$ を掛けると</p>
 <p>$$h(t \mid x) = \frac{k}{\lambda}\left(\frac{t}{\lambda}\right)^{k-1} e^{\beta^\top x} = \frac{k}{\lambda^*}\left(\frac{t}{\lambda^*}\right)^{k-1}, \qquad \lambda^* = \lambda\, e^{-\beta^\top x/k}$$</p>
 <p>つまり共変量は尺度パラメータを $e^{-\beta^\top x/k}$ 倍する。</p>
 <h3 id="c10-10-7-2">10.7.2 加速寿命モデル (AFT)</h3>
+<p>10.7.1 項とは<strong>別の書き方</strong>がある。共変量がハザードを倍にするのではなく、<strong>時間そのものを速く進める</strong>と考える。加速試験を行う技術者にとっては、こちらのほうが直感に合う。</p>
 <blockquote>
 <p><strong>定義 10.5 (加速寿命モデル)</strong> $\log T = \mu + \gamma^\top x + \sigma\varepsilon$、$\varepsilon$ は既知の分布 (Gumbel なら $T$ は Weibull、正規なら対数正規、ロジスティックなら対数ロジスティック)。</p>
 </blockquote>
@@ -20824,6 +21106,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p><strong>証明の要点.</strong> AFT で $S(t \mid x) = S_0(t e^{-\gamma x})$、PH で $S(t \mid x) = S_0(t)^{e^{\beta x}}$。両立するには $S_0(ct) = S_0(t)^{\phi(c)}$ がすべての $c$ で成り立つ必要がある。$\psi = \log(-\log S_0)$ とおくと $\psi(ct) = \psi(t) + \log\phi(c)$、すなわち $\psi$ は $\log t$ の線形関数。よって $-\log S_0 = (t/\lambda)^k$ で Weibull。このとき $\beta = -k\gamma$。$\square$</p>
 <p>Weibull 回帰の係数は「ハザード比」とも「加速係数」とも読めるが、符号と尺度が $k$ 倍違うので混同に注意する。</p>
 <h3 id="c10-10-7-3">10.7.3 どれを使うか</h3>
+<p>10.4〜10.7 節で 4 つの道具が揃った。<strong>目的ごとにどれを選ぶか</strong>を表で整理する。</p>
 <table>
 <thead>
 <tr>
@@ -20856,6 +21139,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 </table>
 <p>外挿 (試験範囲外の低応力での寿命) をするなら分布形を仮定するしかない。その代わり分布形の誤りが外挿誤差に直結するので、10.8.3 節の確率紙で形を確かめる。</p>
 <h2 id="c10-10-8">10.8 信頼性工学</h2>
+<p>10.2〜10.7 節は 1 つの品目の寿命の話だった。<strong>実務では、部品が集まった系の信頼度と、保全の計画に答えなければならない。</strong> 使う数学は同じで、<strong>言葉と問いの立て方</strong>が工学の側に寄る。</p>
 <h3 id="c10-10-8-1">10.8.1 バスタブ曲線と Weibull</h3>
 <p>製品全体の故障率を時間に対して描くと、多くの場合バスタブ (浴槽) の形になる。</p>
 <figure><img loading="lazy" decoding="async" alt="図 10.4 左: Weibull ハザードは形状 k の 1 との大小で単調減少/一定/単調増加を切り替える。右: 初期故障 (k&lt;1)・偶発故障 (k≈1)・摩耗故障 (k&gt;1) の 3 つの Weibull ハザードの和がバスタブ曲線になる" src="fig/10_weibull_shape.png" /><figcaption>図 10.4 左: Weibull ハザードは形状 k の 1 との大小で単調減少/一定/単調増加を切り替える。右: 初期故障 (k&lt;1)・偶発故障 (k≈1)・摩耗故障 (k&gt;1) の 3 つの Weibull ハザードの和がバスタブ曲線になる</figcaption></figure>
@@ -20866,6 +21150,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 </ul>
 <p>Weibull 分布のモーメントは $E[T] = \lambda\,\Gamma(1 + 1/k)$、$\mathrm{Var}[T] = \lambda^2\{\Gamma(1 + 2/k) - \Gamma(1 + 1/k)^2\}$。変動係数は $k$ だけで決まり、$k = 1$ で 1、$k = 3.6$ 付近で約 0.3 (ほぼ正規に見える)。$\lambda$ は $F(\lambda) = 1 - e^{-1} = 0.632$ となる寿命 (特性寿命) である。</p>
 <h3 id="c10-10-8-2">10.8.2 MTTF・MTBF・B10 寿命</h3>
+<p>10.8.1 項でハザードの形が分かった。<strong>それを 1 つの数に要約する指標</strong>が実務では要る。ただし<strong>平均寿命は保全計画にはほとんど使えない</strong>、というのがこの項の要点になる。</p>
 <ul>
 <li><strong>MTTF</strong> $= \int_0^\infty S(t)\,dt$: 修理しない品目の平均寿命。指数なら $1/\lambda$</li>
 <li><strong>MTBF</strong>: 修理する品目の平均故障間隔。故障率一定なら $1/\lambda$</li>
@@ -20873,12 +21158,14 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 </ul>
 <p>平均寿命だけで設計してはならない。$k = 1$ (指数) なら MTTF の時点で 63% が壊れているし、$B_{10}$ は MTTF の 10.5% しかない。設計で使うのは常に<strong>分位点</strong> ($B_{10}$、$B_1$) である。これは第3章で扱った材料強度の特性値 (5% 分位) と同じ発想で、平均ではなく下側分位で安全を担保する。</p>
 <h3 id="c10-10-8-3">10.8.3 Weibull 確率紙</h3>
+<p>10.8.1 項で Weibull が中心になることが分かった。<strong>形状母数 $k$ をデータから読み取る</strong>のに、計算機の無い時代から使われてきた手法がある。今でも「当てはまっているか」を目で見る道具として有効である。</p>
 <p>$F(t) = 1 - \exp\{-(t/\lambda)^k\}$ の両辺を 2 回対数変換すると</p>
 <p>$$\log\{-\log(1 - F(t))\} = k \log t - k\log\lambda$$</p>
 <p>縦軸に $\log(-\log(1-F))$、横軸に $\log t$ をとれば Weibull データは直線に乗り、傾きが $k$、$F = 0.632$ との交点が $\lambda$ を与える。$F$ には順序統計量の中央値順位 (Benard の近似 $(i - 0.3)/(n + 0.4)$) を入れる。</p>
 <figure><img loading="lazy" decoding="async" alt="図 10.5 Weibull 確率紙。疲労寿命 30 本のデータが直線に乗り、傾きから形状 k̂、F=63.2% との交点から特性寿命 λ̂ が読める。直線から系統的に外れれば分布形か混合 (2 つの故障モード) を疑う" src="fig/10_weibull_paper.png" /><figcaption>図 10.5 Weibull 確率紙。疲労寿命 30 本のデータが直線に乗り、傾きから形状 k̂、F=63.2% との交点から特性寿命 λ̂ が読める。直線から系統的に外れれば分布形か混合 (2 つの故障モード) を疑う</figcaption></figure>
 <p>確率紙は「分布形の目視検査」と「粗い推定」を同時に行う道具である。正確な推定は最尤法 ($k$ について 1 次元の方程式を数値的に解く) で行い、打ち切りがあっても定理 10.2 で扱える。直線が途中で折れるなら故障モードが 2 つ混じっている (混合 Weibull) 兆候であり、$k < 1$ と $k > 1$ の線分が見えればバスタブそのものである。</p>
 <h3 id="c10-10-8-4">10.8.4 直列系・並列系・$k$-out-of-$n$</h3>
+<p>10.8.3 項までは 1 つの部品だった。<strong>部品を組み合わせた系の信頼度</strong>は、2.2.2 項で見た確率の乗法と加法だけで組める。構造の冗長性 (代替荷重経路) の議論が、ここに対応する。</p>
 <p>部品の信頼度 (時刻 $t$ で生きている確率) $R_i(t) = S_i(t)$ から系の信頼度を組む。</p>
 <blockquote>
 <p><strong>定理 10.8 (系の信頼度)</strong> 部品の寿命が独立なとき</p>
@@ -20892,9 +21179,12 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p>直列系のハザードが<strong>和</strong>になることは重要である。指数部品の直列は指数 (故障率の和) だが、Weibull 部品の直列は同じ $k$ でなければ Weibull にならない。また $n$ 個の同一部品の直列では $R_{\text{sys}} = R^n$ で、部品信頼度 0.99 でも 100 個直列なら 0.366 しかない — 溶接部が多数ある構造の疲労は「最弱リンク」の直列問題であり、これが次節の極値統計 (最小値の分布) と直結する。</p>
 <p>冗長化 (並列) は信頼度を劇的に上げるが、<strong>共通原因故障</strong> (同じ地震・同じ製造ロット・同じ設計ミス) で独立性が破れると効果は幻になる。並列系の解析では部品間の相関を必ず問う。</p>
 <h2 id="c10-10-9">10.9 極値統計 I: 最大値の極限分布</h2>
+<p>10.2〜10.8 節は「いつ壊れるか」だった。<strong>ここから「どれだけ大きな荷重が来るか」に移る。</strong> 2.12 節で理論は済ませてあるので、ここでは<strong>実際に設計値を出す</strong>ところまで持っていく。</p>
 <h3 id="c10-10-9-1">10.9.1 問題設定</h3>
+<p>2.12.1 項の復習から入る。<strong>最大値の分布は厳密に書けるのに、そのままでは使えない。</strong> なぜ極限を考える必要があるのかを確認しておく。</p>
 <p>$X_1, \dots, X_n$ を独立同分布 (分布関数 $F$) とし、$M_n = \max(X_1, \dots, X_n)$ とおく。$P(M_n \le x) = F(x)^n$ は正確だが、$F$ が分からなければ使えない。しかも $n \to \infty$ で $F(x)^n$ は $F(x) < 1$ なら 0 に退化する。中心極限定理が和を $\sqrt n$ で規格化して非退化な極限を得たように、最大値も $(M_n - b_n)/a_n$ と規格化して極限を求める。</p>
 <h3 id="c10-10-9-2">10.9.2 Fisher–Tippett–Gnedenko の定理</h3>
+<p>10.9.1 項の正規化のあとに残る分布は、<strong>たった 3 つの型しかない。</strong> 2.12.2 項で述べた定理を、ここでは設計に使う形 (GEV の 1 つの式) で再掲する。</p>
 <blockquote>
 <p><strong>定理 10.9 (Fisher–Tippett–Gnedenko)</strong> ある定数列 $a_n > 0$, $b_n$ に対して $(M_n - b_n)/a_n$ が非退化な分布 $G$ に収束するなら、$G$ は位置・尺度を除いて次の 3 型のいずれかである:</p>
 <ul>
@@ -20910,6 +21200,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p>3 型を 1 つの式にまとめたのが GEV で (von Mises 1936、Jenkinson 1955)、<strong>データから型を選ばずに $\xi$ を推定できる</strong>のが実用上の利点である。$\xi < 0$ のときは上限 $\mu - \sigma/\xi$ が存在する (これより大きい値は起きない)。$\xi > 0$ では裾がベキ的に重く、$k$ 次モーメントは $k < 1/\xi$ でしか存在しない。</p>
 <figure><img loading="lazy" decoding="async" alt="図 10.6 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである" src="fig/10_gev.png" /><figcaption>図 10.6 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである</figcaption></figure>
 <h3 id="c10-10-9-3">10.9.3 どの分布がどの型に引き寄せられるか</h3>
+<p>10.9.2 項で 3 つの型が出た。<strong>目の前の量がどの型になるのかは、母集団の右裾の減衰だけで決まる。</strong> 風速・流量・地震動それぞれについて、どの型を想定すべきかの根拠になる。</p>
 <p>母集団の分布 $F$ が Gumbel/Fréchet/Weibull のどの型に収束するか (<strong>最大値吸引域</strong>) は、$F$ の<strong>右裾の減衰の速さ</strong>だけで決まる。</p>
 <table>
 <thead>
@@ -20942,6 +21233,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p>で Gumbel。この計算は $(1 - c/n)^n \to e^{-c}$ に帰着し、一般に $n\{1 - F(a_n x + b_n)\} \to -\log G(x)$ が収束の条件である。正規分布も Gumbel に収束するが、$1 - \Phi(x) \sim \phi(x)/x$ の減衰は指数より速く、収束は $1/\log n$ のオーダーで極めて遅い。有限標本では正規の最大値が $\xi < 0$ に見えることが多い。</p>
 <p>材料強度の<strong>最小値</strong> (最弱リンク) は $\min X_i = -\max(-X_i)$ で最大値の理論に帰着する。下限 0 をもつ強度分布の最小値は III 型、すなわち Weibull 分布に収束する — これが Weibull (1939) が材料強度の分布として Weibull 分布を提案した理由であり、脆性材料 (セラミックス・ガラス・コンクリートの引張) の寸法効果 (大きい試験片ほど弱い) は $R_{\text{sys}} = R^n$ の直列系論理そのものである。</p>
 <h2 id="c10-10-10">10.10 極値統計 II: 年最大値法・再現期間・POT</h2>
+<p>10.9 節で「どの分布を当てるか」は決まった。<strong>次は「どのデータを当てるか」と「そこから設計値をどう読むか」</strong>である。データの使い方に 2 つの流儀があり、$\xi$ の推定精度が大きく違う。</p>
 <h3 id="c10-10-10-1">10.10.1 年最大値法と再現期間</h3>
 <p>設計荷重の推定は次の手順による: (i) 各年の最大値 $z_1, \dots, z_N$ をとる (ブロック最大)、(ii) GEV を当てはめる、(iii) 目標の再現期間に対応する分位点を読む。</p>
 <blockquote>
@@ -20980,6 +21272,7 @@ $n$ について単調に減るので、最も起こりやすい $n$ は 1 — �
 <p>Gumbel なら $z_T$ は $-\log y_T \approx \log T$ (大きい $T$ で) に対して線形なので、横軸を $-\log(-\log(1 - 1/T))$ にした <strong>Gumbel 確率紙</strong>上でデータが直線に乗る。$\xi > 0$ なら上に凸に離れ、$\xi < 0$ なら上限に頭打ちになる。</p>
 <figure><img loading="lazy" decoding="async" alt="図 10.7 年最大風速 40 年分への当てはめ。左: GEV と Gumbel の最尤当てはめ。右: 再現レベル曲線。経験値は Gringorten の順位で描いた。50 年・500 年再現レベルの読み取りと、外挿の幅が ξ̂ に敏感なことが分かる" src="fig/10_return_level.png" /><figcaption>図 10.7 年最大風速 40 年分への当てはめ。左: GEV と Gumbel の最尤当てはめ。右: 再現レベル曲線。経験値は Gringorten の順位で描いた。50 年・500 年再現レベルの読み取りと、外挿の幅が ξ̂ に敏感なことが分かる</figcaption></figure>
 <h3 id="c10-10-10-2">10.10.2 推定法</h3>
+<p>10.10.1 項でモデルとデータが決まった。<strong>3 つのパラメータをどう推定するか。</strong> 第 3 章の最尤法が基本だが、$\xi$ の推定は $N = 40$ 程度では驚くほど不安定である。</p>
 <ol>
 <li><strong>最尤法</strong>: GEV の対数尤度を数値最大化。$\xi > -0.5$ なら通常の漸近理論が使える (Smith 1985)。$\xi$ の標準誤差は $N = 40$ 程度では $\pm 0.2$ ほどもあり、再現レベルの信頼区間は $\xi$ の不確かさに支配される。区間はデルタ法よりプロファイル尤度で作る方が非対称性を正しく表す</li>
 <li><strong>確率重み付きモーメント / L-モーメント</strong> (Hosking et al. 1985): 順序統計量の線形結合でパラメータを解く。小標本で最尤より安定で、水文学の標準</li>
@@ -20987,6 +21280,7 @@ $n$ について単調に減るので、最も起こりやすい $n$ は 1 — �
 </ol>
 <p>$\xi$ を 0 に固定する (Gumbel を使う) か推定するかは、統計学的には「分散を減らすためにバイアスを許容するか」の問題である。40 年のデータで 500 年再現レベルを推定するのは $\xi$ に賭けることであり、図 10.7 右の GEV と Gumbel の 500 年での差がその賭けの大きさを示す。物理的な上限がある量 (地形で決まる津波高さ) では $\xi < 0$ の根拠があるが、風速や降水では $\xi \approx 0$ から少し正が経験的に多い。</p>
 <h3 id="c10-10-10-3">10.10.3 POT と一般化パレート分布</h3>
+<p>10.10.1 項の年最大値法は、<strong>1 年に 1 個しかデータを使わない。</strong> 同じ年に起きた 2 番目・3 番目に大きい嵐は捨てられる。その無駄をなくす方法がある。</p>
 <p>年最大値法は 1 年に 1 個しかデータを使わない。2 番目・3 番目に大きい嵐の情報は捨てられる。<strong>閾値超過法 (POT, peaks over threshold)</strong> は高い閾値 $u$ を超えたすべての観測値を使う。</p>
 <blockquote>
 <p><strong>定理 10.11 (Pickands–Balkema–de Haan)</strong> $F$ が GEV (形状 $\xi$) の最大値吸引域にあるとき、閾値 $u$ が $F$ の上端 $x_F$ に近づくにつれ、超過量 $Y = X - u \mid X > u$ の分布は<strong>一般化パレート分布 (GP)</strong></p>
@@ -21025,6 +21319,7 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 閾値選択がつねに綱引きになるのは、片方を良くすると必ずもう片方が悪くなるからである。</p></div></details>
 <p>$\xi > 0$ ならパレート (ベキ裾)、$\xi = 0$ なら指数分布、$\xi < 0$ なら上限 $u - \tilde\sigma/\xi$ をもつ有界分布になる。GP は「裾の<strong>形</strong>は GEV と同じで、裾の<strong>どこから</strong>を見るかで尺度だけ変わる」分布である。この見方を点過程に拡張すると、閾値超過の生起がポアソン過程、超過量が GP という統一的な記述になり、多変量への拡張の出発点にもなる<sup id="c10-fnref:2"><a class="footnote-ref" href="#c10-fn:2">2</a></sup>。</p>
 <h3 id="c10-10-10-4">10.10.4 閾値の選択</h3>
+<p>10.10.3 項の POT には、年最大値法に無い自由度が 1 つある — <strong>閾値をいくつにするか。</strong> 高すぎればデータが減り、低すぎれば近似が崩れる。</p>
 <p>閾値 $u$ は高いほど GP 近似がよいが、超過数が減って分散が増える。選択の道具は 2 つ。</p>
 <blockquote>
 <p><strong>定理 10.12 (平均超過関数)</strong> $Y \sim \mathrm{GP}(\tilde\sigma, \xi)$、$\xi < 1$ のとき、$u_0$ を超える任意の $u$ について</p>
@@ -21039,13 +21334,17 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 </ul>
 <p>どちらも目視判断であり、自動化のために L-モーメント比を用いた選択法などが提案されている<sup id="c10-fnref:7"><a class="footnote-ref" href="#c10-fn:7">7</a></sup>。閾値の選択は結果に効くので、複数の閾値で再現レベルを計算して感度を報告するのが誠実な実務である。</p>
 <h3 id="c10-10-10-5">10.10.5 POT による再現レベル</h3>
+<p>10.10.4 項で閾値が決まった。<strong>年最大値法と同じ「$N$ 年再現レベル」を、POT からも出せる。</strong> 超過率の分だけ式が一手増える。</p>
 <p>年あたり $n_y$ 個の観測 (日次なら 365) があり、閾値超過の割合を $\zeta_u = P(X > u)$ とする。$N$ 年再現レベル $x_N$ は $P(X > x_N) = 1/(N n_y)$ から</p>
 <p>$$x_N = u + \frac{\tilde\sigma}{\xi}\left\{(N n_y \zeta_u)^{\xi} - 1\right\}$$</p>
 <p>($\xi = 0$ なら $u + \tilde\sigma\log(N n_y\zeta_u)$)。$\zeta_u$ は超過数/総数で推定する。日次データの自己相関 (嵐は数日続く) があるとき、超過は独立でないので<strong>デクラスタリング</strong> (連続する超過を 1 つのクラスタとしてその最大だけを使う) が要る。この極値指数の扱いを怠ると、独立標本数を過大評価して信頼区間が狭くなりすぎる。</p>
 <h3 id="c10-10-10-6">10.10.6 定常性の仮定</h3>
+<p>10.10.1〜10.10.5 項はすべて、<strong>年最大値の分布が年によらない</strong>ことを前提にしていた。気候変動も観測環境の変化も、この前提を崩す。</p>
 <p>年最大値法も POT も、年最大値が同一分布 (定常) であることを仮定する。気候変動や観測環境の変化 (計器の移設、周辺の建物) があると位置パラメータ $\mu$ が時間の関数になる。$\mu(t) = \mu_0 + \mu_1 t$ のように共変量で回帰する非定常 GEV が使えるが、「$T$ 年再現レベル」の意味自体が年ごとに変わるので、報告には注意が要る。</p>
 <h2 id="c10-10-11">10.11 構造信頼性</h2>
+<p>10.2〜10.10 節で、<strong>抵抗の分布</strong>と<strong>荷重の分布</strong>をそれぞれ扱ってきた。<strong>両者を突き合わせて破壊確率を出す</strong>のがこの節で、設計規準の部分係数はここから逆算されている。</p>
 <h3 id="c10-10-11-1">10.11.1 基本問題 $g = R - S$</h3>
+<p>2.13.3 項で 1 度扱った問題に戻る。<strong>そこでは両方正規という強い仮定を置いていた。</strong> まずその場合をきちんと定式化し、10.11.3 項で仮定を外す。</p>
 <p>抵抗 $R$ (耐力、材料強度) と荷重効果 $S$ (応力、断面力) を確率変数とし、<strong>限界状態関数</strong> $g = R - S$ を定める。$g < 0$ が破壊 (限界状態の超過) で</p>
 <p>$$P_f = P(g < 0) = P(R < S) = \int_{-\infty}^\infty F_R(s)\,f_S(s)\,ds$$</p>
 <p>$R$ の分布は材料試験 (10.8 節の Weibull、対数正規)、$S$ の分布は荷重の極値 (10.10 節の GEV) から来る。この章の 2 つの話題は $P_f$ の積分の中で出会う。</p>
@@ -21061,6 +21360,7 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 <p>$$\beta \approx \frac{\log\nu}{\sqrt{V_R^2 + V_S^2}}$$</p>
 <p>と近似できる。同じ安全率 $\nu = 2$ でも、$V_R = V_S = 0.1$ なら $\beta = 4.9$、$V_R = V_S = 0.3$ なら $\beta = 1.6$ と信頼性は桁で違う。<strong>安全率は不確かさの大きさを知らなければ安全の指標にならない</strong>、というのが信頼性設計の出発点であり、安全率を破壊確率に結びつける研究は 1980 年代までに一通り整理されている<sup id="c10-fnref:4"><a class="footnote-ref" href="#c10-fn:4">4</a></sup>。</p>
 <h3 id="c10-10-11-3">10.11.3 FORM の概要</h3>
+<p>10.11.1 項の $\beta$ には弱点がある。<strong>同じ問題を $R - S$ と書くか $R/S - 1$ と書くかで値が変わってしまう。</strong> 変数を標準正規の空間へ移してから測る、という 1 手でこれを解消する。</p>
 <p>$g$ が非線形で変数が多数 ($R$ が寸法と材料強度の積、$S$ が複数荷重の和) のとき、定義 10.7 の $\beta$ は $g$ の書き方 ($R - S$ か $R/S - 1$ か) で値が変わってしまう (不変性の欠如)。Hasofer &amp; Lind (1974) はこれを幾何で解決した。</p>
 <blockquote>
 <p><strong>定義 10.8 (Hasofer–Lind の信頼性指標)</strong> 基本変数 $X$ を独立標準正規 $U$ に変換し ($U_i = (X_i - \mu_i)/\sigma_i$、非正規なら $U_i = \Phi^{-1}(F_i(X_i))$、相関があれば Rosenblatt/Nataf 変換)、限界状態面 $g(u) = 0$ と原点との最短距離を $\beta$ とする:</p>
@@ -21072,12 +21372,14 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 <p>$$u_{k+1} = \frac{\nabla g(u_k)^\top u_k - g(u_k)}{\|\nabla g(u_k)\|^2}\,\nabla g(u_k)$$</p>
 <p>で行う (勾配方向へ射影して面に乗せる Newton 型)。設計点での単位法線 $\alpha = \nabla g(u^*)/\|\nabla g(u^*)\|$ の成分 $\alpha_i$ は<strong>感度係数</strong>で、$\sum\alpha_i^2 = 1$ を満たし、各変数の不確かさが $P_f$ にどれだけ効いているかを表す。限界状態面の曲率を 2 次まで取り入れるのが SORM である。$g$ の評価に有限要素解析が要る場合は 1 回の評価が高価なので、応答曲面・多項式カオス・クリギングなどの代理モデルで $g$ を近似してから FORM やモンテカルロを回す手法が発達している<sup id="c10-fnref:3"><a class="footnote-ref" href="#c10-fn:3">3</a></sup>。</p>
 <h3 id="c10-10-11-4">10.11.4 部分係数との関係</h3>
+<p>10.11.3 項で設計点が求まった。<strong>設計規準の材料係数・荷重係数は、その設計点から逆算されている。</strong> 規準の数字の出どころが、ここではっきりする。</p>
 <p>設計点 $x^* = T^{-1}(u^*)$ は「最も起こりやすい破壊のシナリオ」における $R$ と $S$ の値である。$g(x^*) = 0$ なので、設計点で $R^* = S^*$ (限界状態式が $R - S$ のとき)。特性値 $R_k$ (例: 5% 分位) と $S_k$ (例: 50 年再現レベル) を用いて</p>
 <p>$$\gamma_R = \frac{R_k}{R^*}, \qquad \gamma_S = \frac{S^*}{S_k}$$</p>
 <p>と定めれば、設計式 $R_k/\gamma_R \ge \gamma_S S_k$ は「設計点を通る」ことと同値になる。正規変数の場合、$x_i^* = \mu_i - \alpha_i\beta\sigma_i$ (抵抗側は $\alpha_R > 0$ で平均より下、荷重側は $\alpha_S < 0$ で平均より上) なので</p>
 <p>$$\gamma_R = \frac{\mu_R(1 - k_R V_R)}{\mu_R(1 - \alpha_R\beta V_R)} = \frac{1 - k_R V_R}{1 - \alpha_R\beta V_R}, \qquad \gamma_S = \frac{1 - \alpha_S\beta V_S}{1 + k_S V_S}$$</p>
 <p>($k_R = 1.645$ は 5% 分位の係数、$k_S$ は荷重特性値の分位に応じた係数)。これが<strong>部分係数の確率論的根拠</strong>である。部分係数は「材料の係数」「荷重の係数」として与えられるが、その値は目標 $\beta$、変動係数 $V$、感度係数 $\alpha$ の 3 つで決まっている。規準では $\alpha$ を代表的な問題で校正して固定値に丸め (例えば抵抗側 0.8、荷重側 −0.7 といった値が用いられることがある)、設計者が信頼性計算をしなくても目標 $\beta$ 近傍に収まるように係数表が作られている。</p>
 <h3 id="c10-10-11-5">10.11.5 この章の 3 つの話題の接続</h3>
+<p>10.2〜10.11 節で扱った生存解析・信頼性工学・極値統計という 3 つの話題を、<strong>1 つの設計計算の中で並べ直す。</strong></p>
 <table>
 <thead>
 <tr>
@@ -21287,6 +21589,7 @@ print(f&quot;   設計点 R* = {R_star:.2f}, S* = {S_star:.2f} → 部分係数 
 <figure><img loading="lazy" decoding="async" alt="図 10.10 左: 位置パラメータ μ(t) が 100 年で +2 m/s 動くときの年最大風速の分布。右: 同じ水準 z=41.7 m/s の年超過確率 p_t。定常なら水平線 1/50 のままだが、傾向が入ると年ごとに変わる" src="fig/10d_nonstationary_gev.png" /><figcaption>図 10.10 左: 位置パラメータ μ(t) が 100 年で +2 m/s 動くときの年最大風速の分布。右: 同じ水準 z=41.7 m/s の年超過確率 p_t。定常なら水平線 1/50 のままだが、傾向が入ると年ごとに変わる</figcaption></figure>
 <p>以下、一貫して<strong>年最大風速</strong> (m/s) を例にとる。定常時は Gumbel、位置 $\mu_0 = 30$、尺度 $\sigma = 3$ とする。このとき 50 年再現レベルは $z_{50} = 30 - 3\log(-\log 0.98) = 41.71$ m/s である。傾向の強さは <strong>100 年あたりの $\mu$ の上昇量</strong> $\Delta$ (m/s) で表す。</p>
 <h3 id="c10-10-15-2">10.15.2 共変量で GEV を非定常にする</h3>
+<p>10.15.1 項で「定常の仮定が崩れている」ことが分かった。<strong>では、どう直すか。</strong> GEV のパラメータを時間の関数にする、というのが最も素直な拡張である。</p>
 <p>非定常化の仕組み自体は素直である。パラメータを共変量の関数にするだけで、尤度の形も最尤法の手続きも変わらない。</p>
 <blockquote>
 <p><strong>定義 10.9 (非定常 GEV)</strong> 共変量 $x_t$ (年、全球平均気温、気候指数など) に対して</p>
@@ -21323,6 +21626,7 @@ $\mu$ に符号の制約がないからである。</p>
 <p>POT (10.10.3) も同様に非定常化できる。閾値超過率 $\zeta_u(t)$ と GP の尺度 $\tilde\sigma_u(t)$ を共変量の関数にすればよい。機械学習の側からも同じ構成が使われていて、まず中間的な分位点 $q_x(\tau_0)$ を通常の分位点回帰で推定し、その超過量 $(Y_i - \hat q_{X_i}(\tau_0))_+$ に<strong>尺度 $\sigma(x)$ と形状 $\gamma(x)$ が共変量に依存する条件付き GP</strong> を当てる、という 2 段構えが定石になっている<sup id="c10-fnref:n5"><a class="footnote-ref" href="#c10-fn:n5">12</a></sup>。</p>
 <p><strong>共変量に何を選ぶか</strong>は、統計以上に工学の判断である。共変量を「年」にすると、将来の設計値を求める操作がそのまま時間方向の線形外挿になる。一方、全球平均気温のような物理量を共変量にすれば、「気温が $+2$°C になったときの極値分布」という形で答えが出て、気候シナリオを介して意味が与えられる。降水極値を気温に結びつける使い方はこの典型である<sup id="c10-fnref2:n4"><a class="footnote-ref" href="#c10-fn:n4">11</a></sup>。ただし共変量側も外挿になることに変わりはない。</p>
 <h3 id="c10-10-15-3">10.15.3 再現期間が一意でなくなる — この節の山</h3>
+<p>10.15.2 項でモデルは非定常になった。<strong>ところが、その瞬間に「100 年再現値」という言葉が意味を失う。</strong> 設計で最も使う概念が定常性に依存していた、ということが、ここではっきりする。</p>
 <p>水準 $z$ を固定し、$t$ 年目の年最大値が $z$ を超える確率を $p_t = 1 - G_t(z)$ とおく。初めて超過する年を $T$ とすれば</p>
 <p>$$P(T = t) = p_t \prod_{s=1}^{t-1}(1 - p_s), \qquad P(T > N) = \prod_{t=1}^{N}(1 - p_t)$$</p>
 <p>である。ここから 10.15.1 の 4 通りをそれぞれ定義として書き下すと、次のようになる。</p>
@@ -21482,6 +21786,7 @@ $p_t$ が小さいだけでは足りない。</p>
 </table>
 <p>ここで設計者として押さえておくべき比較がある。$\Delta = 4$ m/s/100年 という決して小さくない傾向を入れても、必要な設計水準の上昇は <strong>+1.0 m/s 程度 (約 2.5%)</strong> にとどまる。これに対し、形状パラメータを $\xi = 0$ から $\pm 0.1$ 動かすと 50 年再現レベルは 39.69〜44.32 m/s、つまり <strong>4.6 m/s の幅</strong>で動く。<strong>想定される気候の傾向より、裾の形の不確かさの方がはるかに大きく効く</strong>のである。非定常モデルを導入する前に、$\xi$ の扱い・閾値の選び方・データの均質性を詰める方が、設計値への効き目は大きい。これは「気候変動を無視してよい」という意味ではまったくなく、<strong>不確かさの大きい順に手をつけよ</strong>という当たり前の原則である。</p>
 <h3 id="c10-10-15-5">10.15.5 傾向は見えるか — 検出力の問題</h3>
+<p>10.15.3〜10.15.4 項は「傾向がある」と分かっている場合の話だった。<strong>そもそも、手元の記録から傾向を検出できるのか。</strong> 4.10 節の検出力の問いがここに戻ってくる。</p>
 <p>非定常モデルを使うかどうかは、$\mu_1 = 0$ という帰無仮説の検定として書ける。定常モデル ($k=3$) は非定常モデル ($k=4$) に埋め込まれているので、尤度比統計量</p>
 <p>$$D = 2\{\ell(\hat\mu_0, \hat\mu_1, \hat\sigma, \hat\xi) - \ell(\hat\mu_0, \hat\sigma, \hat\xi)\} \;\xrightarrow{\;H_0\;}\; \chi^2_1$$</p>
 <p>を使い、$D > 3.841$ なら 5% 水準で有意とする。AIC $= -2\ell + 2k$ で比べるなら、パラメータ 1 個の追加は $D > 2$ に相当するので、尤度比検定より緩い基準である。再現レベルの信頼区間はデルタ法よりプロファイル尤度で作る方がよい (10.10.2) が、これは非定常でも同じで、対象のパラメータを固定して残りで最大化する標準的な手続きが使える<sup id="c10-fnref:n6"><a class="footnote-ref" href="#c10-fn:n6">13</a></sup>。</p>
@@ -21546,6 +21851,7 @@ $p_t$ が小さいだけでは足りない。</p>
 <p><strong>落とし穴。</strong> 「有意な地点だけ地図に色を塗る」という報告の仕方は、この問題を増幅する。検出力が低いと<strong>色がつくのは偶然大きく出た地点</strong>になり、効果量が系統的に過大評価される (勝者の呪い、4.18.6)。本文が引く研究が「期間を 2 つに分けて定常モデルを当てる」という回り道をしているのは、有意性の判定を避けて大きさを直接比べるためである。</p></div></details>
 <p>観測の側でも事情は同じである。ヨーロッパの高温・乾燥の複合事象を 1950〜2013 年について調べた研究では、年最大の乾燥継続日数の傾向が有意 ($p<0.05$) になったのはロシアと南東ヨーロッパの一部の地域だけで、傾向の大きさも 10 年あたり 1〜2 日であった。その一方で、同じ研究は期間を 1950〜1979 年と 1984〜2013 年の 2 つに分け、それぞれに<strong>定常</strong>モデルを当てて再現期間を比べる、という方法をとっている。そして事象中の最高気温 $M$ の 95 パーセンタイル超過の頻度が、多くの地点でほぼ倍増した (北スカンジナビアでは逆に半減した) と報告している<sup id="c10-fnref:n7"><a class="footnote-ref" href="#c10-fn:n7">14</a></sup>。<strong>傾向を連続的にモデル化するのではなく、期間を区切って定常モデルを 2 回当てて比べる</strong>というこの手は、検出力の問題を回避する実用的な折衷案であり、設計の文脈でも「現在の 30 年」と「過去の 30 年」を比べるという形で使える。</p>
 <h3 id="c10-10-15-6">10.15.6 50 年の記録から非定常に外挿するということ</h3>
+<p>10.15.5 項で検出力の限界が見えた。<strong>それでも設計値は出さなければならない。</strong> 50 年の記録から 100 年先を読む、という行為が何を仮定しているのかを直視する。</p>
 <p>10.10.2 では「40 年のデータで 500 年再現レベルを推定するのは $\xi$ に賭けることである」と書いた。非定常にすると、この賭けに<strong>時間方向の外挿</strong>が上乗せされる。パラメータが 1 つ増えるので分散が増え、その増えた分散が、データの範囲外へ延ばす操作によって増幅される。</p>
 <p>具体的に確かめてみる。真のモデルを $\Delta = 4$ m/s/100年 の非定常 Gumbel とし、50 年の記録を観測したとして、<strong>今後 50 年のあいだの超過確率が 10% となる設計水準</strong> (真値 51.52 m/s) を推定する。定常モデルで推定する場合と、非定常モデルで推定する場合を比べる。</p>
 <figure><img loading="lazy" decoding="async" alt="図 10.14 50 年の記録から今後 50 年の設計水準を推定する (500 回)。定常モデルは系統的に低く出るが幅は狭い。非定常モデルは中心は合うが幅が広い" src="fig/10d_uncertainty.png" /><figcaption>図 10.14 50 年の記録から今後 50 年の設計水準を推定する (500 回)。定常モデルは系統的に低く出るが幅は狭い。非定常モデルは中心は合うが幅が広い</figcaption></figure>
@@ -21620,6 +21926,7 @@ $p_t$ が小さいだけでは足りない。</p>
 <p><strong>どちらの系列でも、間違ったモデルの方も強く有意になる。</strong> 系列B にいたっては AIC が同点で、区別がついていない。これは偶然ではない。同じ生成過程を 300 回繰り返すと、AIC が真のモデルを選ぶのは、真が段差のとき 84.3%、真が傾向のとき 78.0% にとどまる (10.15.9 の実験 7)。段差の大きさを尺度パラメータの 1.3 倍 ($+4$ m/s に対し $\sigma = 3$ m/s) という、目で見て分かるほど大きな値にしてもこの程度である。46 年・年 1 個のデータに含まれる情報量では、この区別は原理的に苦しいのである。</p>
 <p><strong>したがって、見分けるのは統計ではなく記録である。</strong> 観測所の台帳、移設の記録、計器の型式、周辺の状況 — 備考欄に書かれたメタデータこそが、この区別を与える唯一の確かな情報である。第14章 14.5 の年最大風速データ (1980〜2025 年) には、まさにこの状況が用意してある。備考欄を読んで移転の年を特定してから、移転を段差として扱ったうえで残る傾向を見る、という順序で解くとよい。移転を無視して線形傾向を当てれば「有意な上昇傾向」が得られてしまい、しかもそれを 50 年先まで外挿することになる。<strong>統計的に有意であることは、外挿してよいことを意味しない。</strong></p>
 <h3 id="c10-10-15-8">10.15.8 まとめ: 何をすればよいか</h3>
+<p>10.15.1〜10.15.7 項の判断を、実際に手を動かす順に並べ直す。</p>
 <ul>
 <li>非定常では<strong>再現期間は一意でない</strong>。「$T$ 年再現レベル」と書くとき、定義 10.10 の (a)–(d) のどれを指しているかを明記する</li>
 <li>設計に使うのは <strong>(d) 耐用期間内リスク</strong>である。耐用期間・開始年・目標リスクの 3 つを先に決め、そこから水準を逆算する。これなら定義の曖昧さが生じず、構造信頼性の $\beta$ とも接続できる</li>
