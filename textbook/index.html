@@ -153,6 +153,34 @@ section.gap mjx-container[display]{margin:.9rem 0}
   width:var(--w,0%);transition:width .2s}
 @media (prefers-reduced-motion:reduce){#bar,#bar .prog i{transition:none}}
 
+/* 現在地 — 「これは何のためで、何につながるのか」を、どの頁からでも 1 タップで。
+   1 節 1 頁にしたことで、章の筋と本全体の中の位置が視界から消えた。
+   材料は本の中にある (0.2 の依存表と、各章の「この章の目的」) ので、
+   それを引き出して見せるだけで足りる。 */
+#bar{cursor:pointer}
+#where{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;
+  background:#0009;backdrop-filter:blur(2px)}
+#where .sheet{width:100%;max-height:86vh;overflow:auto;background:var(--bg);
+  border-radius:16px 16px 0 0;padding:1rem 1rem calc(1.2rem + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line)}
+#where h3{font-family:var(--mincho);font-size:1.1rem;margin:0 0 .15rem;line-height:1.45}
+#where .num{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums;
+  margin-right:.45rem}
+#where .aim{margin:.5rem 0 0;font-size:.84rem;line-height:1.85;color:var(--ink)}
+#where .lab{margin:1.1rem 0 .35rem;font-size:.72rem;letter-spacing:.1em;color:var(--muted)}
+#where .chips{display:flex;flex-wrap:wrap;gap:5px}
+#where .chips button{font:inherit;font-size:.78rem;padding:.3rem .6rem;border-radius:999px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+#where .chips button:hover{border-color:var(--accent);color:var(--accent)}
+#where .chips .none{color:var(--muted);font-size:.78rem;padding:.3rem 0}
+#where ol{list-style:none;margin:.2rem 0 0;padding:0;font-size:.82rem;line-height:1.9}
+#where ol button{display:block;width:100%;text-align:left;font:inherit;padding:.18rem .4rem;
+  border-radius:6px;color:var(--muted);cursor:pointer;background:none;border:0}
+#where ol button:hover{background:var(--sunken)}
+#where ol .cur button{background:var(--accent-soft);color:var(--accent);font-weight:600}
+#where .x{position:sticky;top:0;float:right;font-size:1.1rem;color:var(--muted);
+  background:var(--bg);border:0;cursor:pointer;padding:.1rem .4rem}
+
 /* 答えの番号帯 — 解答は 1 問 1 頁なので、番号で行き来できるようにする */
 .ansnav{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 1.15rem}
 .ansnav button{font:inherit;font-size:.76rem;min-width:2.2em;padding:.26rem .4rem;
@@ -32198,6 +32226,46 @@ function buildPages(){
   }
   PAGES.forEach((p, i)=>{ p.i = i; });
 }
+/* ---------- 章の役どころ ----------
+   「これは何のためで、何につながるのか」を本の中から拾う。
+   材料は 2 つとも既にある:
+     0.2 の表     … 章 → 前提の章 (これを**逆引き**すると「何につながるか」になる)
+     x.1 この章の目的 … 章 → ねらいの文
+   1 節 1 頁にしたことで章の筋が視界から消えたので、どの頁からでも出せるようにする。 */
+const ROLE = Object.create(null);        // 章番号 → {aim, needs:[], feeds:[]}
+function buildRoles(){
+  const host = document.createElement('div');
+  META.forEach(c=>{
+    host.innerHTML = raw(c.num);
+    // 「この章の目的」の最初の段落
+    let aim = '';
+    const heads = [...host.querySelectorAll('h2')];
+    const h = heads.find(x=>x.textContent.indexOf('この章の目的') >= 0);
+    if(h){
+      let e = h.nextElementSibling;
+      while(e && e.tagName !== 'P') e = e.nextElementSibling;
+      if(e) aim = e.textContent.trim();
+    }
+    ROLE[c.num] = {aim: aim, needs: [], feeds: []};
+  });
+  // 0.2 の表から前提を読む: 1 列目「5 回帰分析」/ 3 列目「3, 線形代数」
+  host.innerHTML = raw(META[0] ? META[0].num : '00');
+  host.querySelectorAll('table tr').forEach(tr=>{
+    const td = [...tr.children].map(x=>x.textContent.trim());
+    if(td.length < 3) return;
+    const m = /^(\d+)\s/.exec(td[0]);
+    if(!m) return;
+    const num = ('0' + m[1]).slice(-2);
+    if(!ROLE[num]) return;
+    td[2].split(/[,、]/).forEach(p=>{
+      const d = /^\s*(\d+)\s*$/.exec(p);
+      if(!d) return;
+      const dep = ('0' + d[1]).slice(-2);
+      if(ROLE[dep]){ ROLE[num].needs.push(dep); ROLE[dep].feeds.push(num); }
+    });
+  });
+}
+
 const pageOf = Object.create(null);      // 見出し id → 頁の添字 (章内リンクの行き先)
 function indexPages(){
   const host = document.createElement('div');
@@ -32335,6 +32403,11 @@ function open(pi, anchor, silent){
   bar.innerHTML = '<span class="ch"><b>' + esc(c.label || c.num) + '</b>' + esc(c.title)
     + '</span><span class="pos">' + nth + ' / ' + pagesHere.length + '</span>'
     + '<span class="prog"><i style="--w:' + ((pi + 1) / PAGES.length * 100).toFixed(1) + '%"></i></span>';
+  bar.setAttribute('role', 'button');
+  bar.setAttribute('tabindex', '0');
+  bar.setAttribute('aria-label', 'いまどこを読んでいるかを見る');
+  bar.onclick = openWhere;
+  bar.onkeydown = e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openWhere(); } };
   view.insertBefore(bar, view.firstChild);
 
   // 答えが続く頁では、番号の帯で飛べるようにする
@@ -32376,6 +32449,58 @@ function open(pi, anchor, silent){
   markRead();
   if(!silent){ last = {p: p.id, c: p.ch}; save(); }
 }
+/* ---------- 現在地 ---------- */
+// 走る見出しを叩くと出る。「この章は何のためにあり、何を前提にし、
+// どの章の前提になっているか」を 1 枚に出す。
+function openWhere(){
+  if(curPage < 0) return;
+  const p = PAGES[curPage], c = META[p.ci], r = ROLE[p.ch] || {needs:[], feeds:[]};
+  const chip = nums => nums.length
+    ? nums.map(n=>{
+        const i = META.findIndex(x=>x.num === n);
+        return i < 0 ? '' : '<button data-ch="' + i + '">' +
+          esc((META[i].label || META[i].num) + ' ' + META[i].title) + '</button>';
+      }).join('')
+    : '<span class="none">なし</span>';
+
+  let shownAns = false;
+  const list = chapterPages(p.ci).map(x=>{
+    if(x.kind === 'ans'){                 // 解答は 1 問 1 頁。流れの中では 1 行にまとめる
+      if(shownAns) return '';
+      shownAns = true;
+      return '<li class="' + (x.ci === p.ci && p.kind === 'ans' ? 'cur' : '') + '">'
+        + '<button data-pg="' + x.i + '">答え 1〜' + x.of + '</button></li>';
+    }
+    return '<li class="' + (x === p ? 'cur' : '') + '">'
+      + '<button data-pg="' + x.i + '">' + esc(x.title) + '</button></li>';
+  }).join('');
+
+  const d = document.createElement('div');
+  d.id = 'where';
+  d.innerHTML = '<div class="sheet"><button class="x" aria-label="閉じる">✕</button>'
+    + '<h3><span class="num">' + esc(c.label || c.num) + '</span>' + esc(c.title) + '</h3>'
+    + (r.aim ? '<p class="aim">' + esc(r.aim) + '</p>' : '')
+    + '<p class="lab">この章が前提にしていること</p><div class="chips">' + chip(r.needs) + '</div>'
+    + '<p class="lab">この章が前提になる章</p><div class="chips">' + chip(r.feeds) + '</div>'
+    + '<p class="lab">この章の流れ</p><ol>' + list + '</ol></div>';
+
+  d.addEventListener('click', e=>{
+    const b = e.target.closest('button');
+    if(!b || b.classList.contains('x')){ d.remove(); document.body.style.overflow = ''; return; }
+    if(b.dataset.ch !== undefined){
+      const first = PAGES.find(x=>x.ci === +b.dataset.ch);
+      if(first){ d.remove(); document.body.style.overflow = ''; open(first.i); window.scrollTo(0,0); }
+    }else if(b.dataset.pg !== undefined){
+      d.remove(); document.body.style.overflow = '';
+      open(+b.dataset.pg); window.scrollTo(0,0);
+    }
+  });
+  document.body.appendChild(d);
+  document.body.style.overflow = 'hidden';
+  // ねらいの文には数式が入る。生の $ のままでは読めないので組版する
+  if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([d]).catch(()=>{});
+}
+
 // 読んだ印。**開いただけでは付けない** — 終わりまで来たときに付ける
 // (1 頁が短いので、画面に収まる頁はその場で付く)
 function markRead(){
@@ -33437,6 +33562,8 @@ view.addEventListener('click', e=>{
 // 矢印で頁を送る。本のように読み進められるように (入力中と全画面の図では効かせない)
 addEventListener('keydown', e=>{
   if(e.metaKey || e.ctrlKey || e.altKey) return;
+  const w = document.getElementById('where');
+  if(w){ if(e.key === 'Escape'){ w.remove(); document.body.style.overflow = ''; } return; }
   if(!lb.hidden || toc.classList.contains('on')) return;
   const el = document.activeElement;
   if(el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
@@ -33533,6 +33660,7 @@ document.getElementById('bigger').onclick = ()=>setFS(nowFS()+1);
 /* ---------- 起動 ---------- */
 buildPages();
 indexPages();
+buildRoles();
 loadLocal();
 const bookmark = last;          // 起動時のしおりを退避 (open が上書きするため)
 paintPct();
