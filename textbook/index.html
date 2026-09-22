@@ -11245,6 +11245,40 @@ print(&quot;注   発展6 の 90%% 区間の上端は 1.915 → 1.914&quot;)
 <p>説明変数が 1 つの場合から始める。<strong>ここで出てくる式はすべて手で書ける</strong>ので、何が起きているかが見える。5.3 節で説明変数を増やすが、<strong>中身は 1 つも変わらない</strong> — 同じ式を行列で書き直すだけである。</p>
 <h3 id="c05-5-2-1">5.2.1 モデル</h3>
 <p>まず「$y$ が $x$ に依存する」を式にする。<strong>この時点では確率の話は最小限</strong>で、誤差について置く仮定は 1 つだけである。仮定を小出しにするのは、あとで仮定が破れたときに<strong>どの結論が壊れてどの結論が生き残るか</strong>を切り分けるためである。</p>
+<p><strong>この章で繰り返し使うデータを置く。</strong> 配合の異なる 10 バッチのコンクリートについて、水セメント比 $w/c$ と 28 日圧縮強度 $f_c$ ($\mathrm{N/mm^2}$) を測った。</p>
+<table>
+<thead>
+<tr>
+<th>$w/c$</th>
+<th style="text-align: right;">0.40</th>
+<th style="text-align: right;">0.42</th>
+<th style="text-align: right;">0.45</th>
+<th style="text-align: right;">0.48</th>
+<th style="text-align: right;">0.50</th>
+<th style="text-align: right;">0.53</th>
+<th style="text-align: right;">0.55</th>
+<th style="text-align: right;">0.58</th>
+<th style="text-align: right;">0.60</th>
+<th style="text-align: right;">0.65</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$f_c$</td>
+<td style="text-align: right;">49.5</td>
+<td style="text-align: right;">45.2</td>
+<td style="text-align: right;">44.1</td>
+<td style="text-align: right;">38.6</td>
+<td style="text-align: right;">39.7</td>
+<td style="text-align: right;">34.0</td>
+<td style="text-align: right;">35.1</td>
+<td style="text-align: right;">29.8</td>
+<td style="text-align: right;">30.5</td>
+<td style="text-align: right;">25.1</td>
+</tr>
+</tbody>
+</table>
+<p>散布図を描けば右下がりの直線に見える。<strong>しかし「直線に見える」から先へ進むには、"直線" を式にしなければならない。</strong> 第 1 章の相関係数なら $r = -0.984$ と 1 つの数で済んだが、それでは「$w/c$ を $0.05$ 下げたら強度はいくつ上がるか」に答えられない。</p>
 <p>$n$ 組の観測 $(x_i, y_i)$ に対し</p>
 <p>$$y_i = \beta_0 + \beta_1 x_i + \varepsilon_i, \qquad i = 1,\dots,n$$</p>
 <p>を仮定する。$\beta_0$ (切片) と $\beta_1$ (傾き) が未知の母数、$\varepsilon_i$ が誤差である。$x$ を説明変数 (回帰変数、predictor)、$y$ を目的変数 (応答、response) という。<strong>$x$ は確定した値、$y$ だけが確率変数</strong>として扱うのが古典的な回帰の立場である ($x$ も確率変数のときは $x$ で条件付ける)。</p>
@@ -11278,6 +11312,14 @@ print(&quot;注   発展6 の 90%% 区間の上端は 1.915 → 1.914&quot;)
 <p><strong>落とし穴。</strong> 消えるのは<strong>片方だけ</strong>中心化していない形であって、$\sum_i x_i y_i$ が $S_{xy}$ に等しいわけではない。実際 $S_{xy} = \sum_i x_i y_i - n\bar x\bar y$ である。4 で使ったのは「中心化した側の和がゼロ」という一点で、両方とも生のままでは消えない。</p></div></details>
 <p>第 1 章の記号では $\hat\beta_1 = s_{xy}/s_x^2 = r\, s_y / s_x$ である。傾きは「相関係数 × ($y$ の散らばり / $x$ の散らばり)」と読める。</p>
 <p><strong>なぜ二乗か。</strong> 絶対値の和や最大値でもよさそうだが、二乗には (i) 微分できて解が閉じた形で出る、(ii) 誤差が正規分布なら最尤推定と一致する (5.5.1)、(iii) 幾何的に射影になる (5.3.2)、という 3 つの利点がある。代償として外れ値に弱い (5.7.3)。</p>
+<p><strong>10 点で実際に計算する。</strong> $\bar x = 0.516$、$\bar y = 37.16$ で、</p>
+<p>$$S_{xx} = \sum(x_i - \bar x)^2 = 0.05904, \qquad S_{xy} = \sum(x_i-\bar x)(y_i-\bar y) = -5.5146$$</p>
+<p>したがって</p>
+<p>$$\hat\beta_1 = \frac{S_{xy}}{S_{xx}} = \frac{-5.5146}{0.05904} = -93.4, \qquad \hat\beta_0 = 37.16 - (-93.4)(0.516) = 85.4$$</p>
+<p>あてはめた式は</p>
+<p>$$\hat f_c = 85.4 - 93.4\,(w/c) \quad (\mathrm{N/mm^2})$$</p>
+<p><strong>読み方を言葉にしておく。</strong> 傾き $-93.4$ は「$w/c$ が $1$ 増えると強度が $93.4$ 下がる」だが、$w/c$ が $1$ 増えることは実際にはない。実用的な言い方は<strong>「$w/c$ を $0.05$ 下げると強度が $4.7\,\mathrm{N/mm^2}$ 上がる」</strong>である。</p>
+<p>切片 $85.4$ は $w/c = 0$ のときの強度だが、<strong>水を入れないコンクリートは存在しない。</strong> データの範囲は $0.40$〜$0.65$ であり、そこから遠く離れた $w/c = 0$ での値には何の保証もない。切片はしばしば「直線の位置を決める数」でしかなく、物理的な意味を読もうとすると間違える。</p>
 <h3 id="c05-5-2-3">5.2.3 残差の性質</h3>
 <p>5.2.2 項で解いた正規方程式は、実は<strong>残差についての 2 本の等式</strong>をそのまま述べていた。この 2 本が、以降の分散分解 (5.2.4 項) と自由度の勘定 (5.3.3 項) を支える。</p>
 <p>あてはめ値を $\hat y_i = \hat\beta_0 + \hat\beta_1 x_i$、残差を $e_i = y_i - \hat y_i$ とする。正規方程式そのものが残差の性質を述べている:</p>
@@ -11322,6 +11364,11 @@ print(&quot;注   発展6 の 90%% 区間の上端は 1.915 → 1.914&quot;)
 <p>最後は第 1 章の $r = S_{xy}/\sqrt{S_{xx}S_{yy}}$ の二乗そのものである。</p>
 <p><strong>落とし穴。</strong> 5 は「切片がモデルに入っている」ことを使っている。切片を外すと $\sum_i e_i = 0$ すら成り立たず、4 の消去も分解も崩れる。また $R^2 = r^2$ は単回帰に限った話で、重回帰で対応するのは $y$ と $\hat y$ の相関の二乗の方である。</p></div></details>
 <p>$R^2$ についての注意: (i) 説明変数を増やすと (無意味なものでも) 決して減らない。そのため重回帰では自由度調整済み $\bar R^2 = 1 - \frac{S_E/(n-p)}{S_T/(n-1)}$ を併記する。(ii) $R^2$ が高くてもモデルが正しいとは限らず (Anscombe の四つ組は全て $R^2 = 0.67$)、低くても係数が有意で有用なことはある。(iii) 時系列など $y$ 自身にトレンドがあるデータでは $R^2$ は簡単に 0.99 になる。</p>
+<p><strong>10 点で計算する。</strong> $S_T = 531.8$、$S_E = 16.72$ なので $S_R = 515.1$、したがって</p>
+<p>$$R^2 = \frac{515.1}{531.8} = 0.969$$</p>
+<p>「強度のばらつきの $96.9\%$ が水セメント比で説明できる」と読む。単回帰では $R^2 = r^2$ で、実際 $(-0.984)^2 = 0.969$ である。</p>
+<p><strong>$R^2$ が高いことは、式が正しいことを意味しない。</strong> 残っている $S_E = 16.72$ は自由度 $n - 2 = 8$ で割ると $s^2 = 2.09$、$s = 1.45\,\mathrm{N/mm^2}$ である。この $1.45$ のほうが、設計では $R^2$ よりはるかに重要になる — <strong>次に打つコンクリートがどれだけ下振れしうるかを決めるのは $s$ だから</strong>である (5.5.4 項)。</p>
+<p>$R^2$ が高くても $s$ が大きければ予測は粗いし、逆に $R^2$ が低くても ($x$ の範囲が狭いだけで) $s$ が小さければ予測は精密である。<strong>$R^2$ は $x$ の散らばり方に依存する相対的な量</strong>であって、予測精度そのものではない。</p>
 <h2 id="c05-5-3">5.3 重回帰の行列表現</h2>
 <p>5.2 節は説明変数 1 つの話だった。実務では「水セメント比<strong>と</strong>養生温度<strong>と</strong>骨材種別」のように複数が同時に効く。<strong>驚くことに、式はほとんど変わらない。</strong> 和の記号を行列に置き換えるだけで、5.2 節のすべてがそのまま成り立つ。</p>
 <h3 id="c05-5-3-1">5.3.1 正規方程式</h3>
@@ -11497,6 +11544,39 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <li>帰無仮説 $H_0: \beta_j = 0$ の検定統計量 $t_j = \hat\beta_j / \mathrm{se}(\hat\beta_j)$。$|t_j| > t_{n-p, 0.975}$ なら 5% 水準で棄却</li>
 <li>$\beta_j$ の $100(1-\alpha)$% 信頼区間 $\hat\beta_j \pm t_{n-p, 1-\alpha/2}\,\mathrm{se}(\hat\beta_j)$</li>
 </ul>
+<p><strong>10 点の回帰の出力を書き出すと、こうなる。</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">推定値</th>
+<th style="text-align: right;">標準誤差</th>
+<th style="text-align: right;">$t$</th>
+<th style="text-align: right;">$p$</th>
+<th>95% 信頼区間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>切片 $\beta_0$</td>
+<td style="text-align: right;">85.36</td>
+<td style="text-align: right;">3.10</td>
+<td style="text-align: right;">27.5</td>
+<td style="text-align: right;">$3\times10^{-9}$</td>
+<td>[78.2, 92.5]</td>
+</tr>
+<tr>
+<td>傾き $\beta_1$</td>
+<td style="text-align: right;">$-93.40$</td>
+<td style="text-align: right;">5.95</td>
+<td style="text-align: right;">$-15.7$</td>
+<td style="text-align: right;">$2.7\times10^{-7}$</td>
+<td>$[-107.1,\ -79.7]$</td>
+</tr>
+</tbody>
+</table>
+<p>($s = 1.445$、自由度 $n - p = 8$、$t_{8,0.975} = 2.306$。)</p>
+<p><strong>傾きの $p$ 値が $10^{-7}$ だからといって、傾きが正確に分かっているわけではない。</strong> 信頼区間は $-107$ から $-80$ まで、$w/c$ を $0.05$ 下げたときの効果に直すと $4.0$ から $5.4\,\mathrm{N/mm^2}$ の幅がある。<strong>「関係があるか」(p 値) と「どれだけの関係か」(区間) は別の問い</strong>で、配合設計に使うのは後者である。4.11 節で効果量を強調したのと同じ構図がここにも出る。</p>
 <p>統計ソフトの回帰出力の各行はこの $t_j$ と p 値である。$H_0: \beta_j = 0$ は「<strong>他の変数をモデルに入れた上で</strong> $x_j$ を追加する意味があるか」を問うている。したがって相関の強い変数を 2 つ入れると、どちらも「もう一方があれば要らない」ため両方とも有意でなくなりうる (5.6)。</p>
 <h3 id="c05-5-5-3">5.5.3 F 検定 (複数係数の同時検定)</h3>
 <p>5.5.2 項の $t$ 検定は係数を 1 つずつ見るものだった。<strong>「この 3 つの変数はまとめて要らないのでは」</strong>という問いには答えられない。4.12 節で見たとおり、3 回検定すれば偽陽性が増えるからである。まとめて 1 回で検定する。</p>
@@ -11529,11 +11609,73 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p>新しい 1 点の<strong>予測区間</strong>は、根号の中に $1$ が足される:</p>
 <p>$$\hat y_0 \pm t_{n-p,1-\alpha/2}\; s\sqrt{1 + \mathbf x_0(\mathbf X^\top\mathbf X)^{-1}\mathbf x_0^\top}$$</p>
 <p>単回帰では根号の中が $\frac1n + \frac{(x_0 - \bar x)^2}{S_{xx}}$ (信頼) と $1 + \frac1n + \frac{(x_0-\bar x)^2}{S_{xx}}$ (予測) になる。いずれも $\bar x$ から離れるほど広がる (帯が双曲線状にくびれる)。</p>
+<p><strong>10 点で 2 つの区間を計算する。</strong> $w/c = 0.50$ での点推定は $\hat y_0 = 85.36 - 93.40(0.50) = 38.65$。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">標準誤差</th>
+<th>95% 区間</th>
+<th style="text-align: right;">幅</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>平均応答 $E[y_0]$</td>
+<td style="text-align: right;">0.467</td>
+<td>$[37.58,\ 39.73]$</td>
+<td style="text-align: right;">2.15</td>
+</tr>
+<tr>
+<td>個別の新しい 1 本 $y_0$</td>
+<td style="text-align: right;">1.519</td>
+<td>$[35.15,\ 42.16]$</td>
+<td style="text-align: right;">7.01</td>
+</tr>
+</tbody>
+</table>
+<p><strong>幅が 3 倍以上違う。</strong> 違いは $\sqrt{1 + \cdots}$ の $1$ の項、つまり<strong>新しい 1 本自身のばらつき $\sigma$</strong> である。平均応答の区間は「この配合で無限に打ったときの平均強度はどこか」、予測区間は「次に打つ 1 本がどこに落ちるか」を答えている。</p>
+<p>設計で要るのは後者である。片側 $5\%$ 予測下限は</p>
+<p>$$38.65 - t_{8,0.95} \times 1.519 = 38.65 - 1.860 \times 1.519 = 35.8\,\mathrm{N/mm^2}$$</p>
+<p><strong>「この配合なら 95% の確率で $35.8$ を上回る」</strong>という、設計基準強度の設定にそのまま使える形の答えになる。平均応答の下限 $37.6$ を使ってしまうと、<strong>個々の供試体の 2 割以上がそれを下回る。</strong></p>
 <figure><img loading="lazy" decoding="async" alt="図 5.3 左: コンクリート圧縮強度と水セメント比。log f_c を w/c に線形回帰し、95% 信頼帯 (濃)・95% 予測帯 (淡)・片側 5% 予測下限 (緑破線) を重ねた。右: 標本数 n を増やすと信頼帯は 0 に向かって縮むが、予測帯は誤差の標準偏差 σ で下げ止まる" src="fig/05_ci_pi.png" /><figcaption>図 5.3 左: コンクリート圧縮強度と水セメント比。log f_c を w/c に線形回帰し、95% 信頼帯 (濃)・95% 予測帯 (淡)・片側 5% 予測下限 (緑破線) を重ねた。右: 標本数 n を増やすと信頼帯は 0 に向かって縮むが、予測帯は誤差の標準偏差 σ で下げ止まる</figcaption></figure>
 <p><strong>構造工学への接続 — 強度式の当てはめと安全側評価。</strong> Abrams (1918) 以来、コンクリートの圧縮強度 $f_c$ は水セメント比 $w/c$ の減少関数 $f_c \approx A\,B^{-w/c}$ で表される。両辺の対数をとれば $\log f_c = \log A - (w/c)\log B$ という線形回帰になり、対数をとることで乗法的な誤差 (強度の変動係数がほぼ一定) が加法的な等分散誤差に変わる (第 1 章 1.9 節の変換の考え方)。図 5.3 左はこの当てはめである。ここで設計に要るのは<strong>平均強度の信頼区間ではなく、次に打つコンクリートがどこまで低くなりうるかを述べる予測区間</strong>の方である。片側 5% 予測下限 (緑破線) は、規準で使われる「5% 分位値としての特性強度」の考え方に対応する。図 5.3 右が示すように、信頼帯は $n$ を増やせばいくらでも狭くなるが、予測帯は材料固有のばらつき $\sigma$ より狭くはならない。設計値を $n$ を増やして「稼ぐ」ことはできず、ばらつき自体を下げる (品質管理) しかない、というのがこの図の工学的な含意である。</p>
 <h2 id="c05-5-6">5.6 多重共線性</h2>
 <p>5.5.2 項の末尾で「相関の強い変数を 2 つ入れると両方とも有意でなくなる」と書いた。<strong>なぜそうなるのか、どれくらい深刻なのか</strong>をここで見る。これは計算の問題ではなく、<strong>データが持っている情報の問題</strong>である。</p>
 <p>説明変数同士に強い線形関係があると、$\mathbf X^\top\mathbf X$ が特異に近づき、$(\mathbf X^\top\mathbf X)^{-1}$ の要素、すなわち係数の分散が爆発する。これを<strong>多重共線性</strong> (multicollinearity) という。</p>
+<p><strong>どれくらいで困るのかを数で見る。</strong> 説明変数が 2 つで、両者の相関が $r$ のとき、係数の標準誤差は無相関のときの $1/\sqrt{1-r^2}$ 倍になる。</p>
+<table>
+<thead>
+<tr>
+<th>説明変数どうしの相関 $r$</th>
+<th style="text-align: right;">0.0</th>
+<th style="text-align: right;">0.5</th>
+<th style="text-align: right;">0.9</th>
+<th style="text-align: right;">0.95</th>
+<th style="text-align: right;">0.99</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分散が何倍になるか</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">1.3</td>
+<td style="text-align: right;">5.3</td>
+<td style="text-align: right;">10.3</td>
+<td style="text-align: right;">50.3</td>
+</tr>
+<tr>
+<td>標準誤差が何倍になるか</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.15</td>
+<td style="text-align: right;">2.29</td>
+<td style="text-align: right;">3.20</td>
+<td style="text-align: right;">7.09</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$r = 0.5$ なら 15% の増加で済むが、$r = 0.95$ では標準誤差が 3 倍になる。</strong> 標準誤差が 3 倍ということは、同じ精度を得るのに<strong>データが 9 倍要る</strong>ということである。</p>
+<p>ここで肝心なのは、<strong>これは計算の失敗ではない</strong>という点である。水セメント比と単位水量が $r = 0.95$ で連動しているデータからは、「水セメント比だけを変えたら何が起きるか」を分離する情報が、そもそも入っていない。$\mathbf X^\top\mathbf X$ の逆行列が暴れるのは、<strong>データが持っていない情報を要求されたことの正直な報告</strong>である。</p>
 <blockquote>
 <p><strong>定義 5.3 (分散拡大係数, VIF)</strong> 説明変数 $x_j$ を他の説明変数すべてに回帰したときの決定係数を $R_j^2$ として $\displaystyle \mathrm{VIF}_j = \frac{1}{1 - R_j^2}$</p>
 <p><strong>定理 5.7</strong> 変数を中心化・標準化した回帰で $\displaystyle \operatorname{Var}(\hat\beta_j) = \frac{\sigma^2}{S_{jj}}\,\mathrm{VIF}_j$ ($S_{jj} = \sum_i (x_{ij} - \bar x_j)^2$)</p>
@@ -11565,13 +11707,76 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p>5.2〜5.6 節の結論はすべて (E)(V)(N) と「モデルの形が正しい」ことの上に建っていた。<strong>その前提が成り立っているかを、どう確かめるか。</strong> 手がかりはほぼ 1 か所 — 残差 — にある。</p>
 <p>回帰の結論は (E)(V)(N) と「モデルの形が正しい」ことに依存する。その点検は主に<strong>残差</strong>で行う。</p>
 <h3 id="c05-5-7-1">5.7.1 残差の標準化</h3>
-<p>残差をそのまま見てはいけない理由がある。<strong>同じ $\sigma$ の誤差から生まれても、残差の散らばりは点によって違う</strong>からである。比べられる形に直す。</p>
+<p>5.7 節で「点検は残差で行う」と言ったが、残差をそのまま見てはいけない理由がある。<strong>同じ $\sigma$ の誤差から生まれても、残差の散らばりは点によって違う</strong>からである。比べられる形に直す。</p>
 <p>生の残差 $e_i$ の分散は $\sigma^2(1 - h_{ii})$ で一様ではない (レバレッジの高い点ほど残差が小さく出る)。そこで</p>
 <p>$$r_i = \frac{e_i}{s\sqrt{1 - h_{ii}}} \quad (\text{標準化残差}), \qquad t_i = \frac{e_i}{s_{(i)}\sqrt{1 - h_{ii}}} \quad (\text{スチューデント化残差})$$</p>
 <p>を使う。$s_{(i)}$ は第 $i$ 点を除いて推定した $\sigma$ で、$t_i \sim t_{n-p-1}$ に従う (外れ値検定に使える)。</p>
+<p><strong>5.2.1 項の 10 点で計算してみる。</strong></p>
+<table>
+<thead>
+<tr>
+<th>$w/c$</th>
+<th style="text-align: right;">0.40</th>
+<th style="text-align: right;">0.42</th>
+<th style="text-align: right;">0.45</th>
+<th style="text-align: right;">0.48</th>
+<th style="text-align: right;">0.50</th>
+<th style="text-align: right;">0.53</th>
+<th style="text-align: right;">0.55</th>
+<th style="text-align: right;">0.58</th>
+<th style="text-align: right;">0.60</th>
+<th style="text-align: right;">0.65</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>残差 $e_i$</td>
+<td style="text-align: right;">1.51</td>
+<td style="text-align: right;">$-0.93$</td>
+<td style="text-align: right;">0.78</td>
+<td style="text-align: right;">$-1.92$</td>
+<td style="text-align: right;">1.05</td>
+<td style="text-align: right;">$-1.85$</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">$-1.38$</td>
+<td style="text-align: right;">1.19</td>
+<td style="text-align: right;">0.46</td>
+</tr>
+<tr>
+<td>レバレッジ $h_{ii}$</td>
+<td style="text-align: right;">0.328</td>
+<td style="text-align: right;">0.256</td>
+<td style="text-align: right;">0.174</td>
+<td style="text-align: right;">0.122</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: right;">0.120</td>
+<td style="text-align: right;">0.169</td>
+<td style="text-align: right;">0.220</td>
+<td style="text-align: right;"><strong>0.404</strong></td>
+</tr>
+<tr>
+<td>標準化残差 $r_i$</td>
+<td style="text-align: right;">1.27</td>
+<td style="text-align: right;">$-0.74$</td>
+<td style="text-align: right;">0.59</td>
+<td style="text-align: right;">$-1.42$</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">$-1.35$</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">$-1.05$</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">0.41</td>
+</tr>
+</tbody>
+</table>
+<p><strong>いちばん右の点に注目したい。</strong> 生の残差は $0.46$ と 10 点中でも小さいほうなのに、レバレッジは $0.404$ で目安 $2p/n = 0.4$ を超えている。$w/c = 0.65$ が他の 9 点から離れているからである。</p>
+<p>残差が小さいのは<strong>当てはまりが良いから</strong>ではない。$h_{ii}$ が大きい点は直線を自分のほうへ引き寄せるので、<strong>残差が小さくなるのは当然</strong>である。標準化残差が $1/\sqrt{1-h_{ii}}$ で割り戻しているのはこのためで、$0.46$ を $1.445\sqrt{1-0.404} = 1.116$ で割って $0.41$ になっている。</p>
+<p>この点の $y$ が仮に $5\,\mathrm{N/mm^2}$ 違っていたら、傾きは大きく動く。<strong>1 点が結論を決めているかどうか</strong>を見る指標が 5.7.3 項の Cook 距離である。</p>
 <h3 id="c05-5-7-2">5.7.2 残差プロットと QQ プロット</h3>
 <p>5.7.1 項で残差を比べられる形にした。<strong>あとは描いて見るだけ</strong>である。検定より図のほうが役に立つ理由は 4.8 節と同じで、<strong>「どう外れているか」が分かるのは図だけ</strong>だからである。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.5 残差プロットの 4 パターン。上段はデータと回帰直線、下段は標準化残差 vs あてはめ値。良好なら構造のない帯。曲がり (非線形)、扇形 (不均一分散)、1 点の突出 (外れ値) はそれぞれ別の対処を要する" src="fig/05_residual_patterns.png" /><figcaption>図 5.5 残差プロットの 4 パターン。上段はデータと回帰直線、下段は標準化残差 vs あてはめ値。良好なら構造のない帯。曲がり (非線形)、扇形 (不均一分散)、1 点の突出 (外れ値) はそれぞれ別の対処を要する</figcaption></figure>
+<p>5.7.1 項の 10 点では、残差が $+1.51,\,-0.93,\,+0.78,\,-1.92,\,+1.05,\,-1.85,\,+1.12,\,-1.38,\,+1.19,\,+0.46$ と<strong>符号が規則的に交替している。</strong> 10 点中 8 回符号が変わっており、独立なら期待値は $4.5$ 回である。偶然にしてはできすぎで、$w/c$ について強度が完全な直線ではない (わずかに曲がっている) ことを示唆する。$R^2 = 0.969$ という数字だけを見ていては気づけない種類の情報で、<strong>これが残差を図にする理由</strong>である。</p>
 <ul>
 <li><strong>残差 vs あてはめ値</strong>: 最も情報量が多い 1 枚。曲がり → 項の追加・変換、扇形 → 分散が平均に依存 (変換・重み付き最小二乗・GLM)、突出 → 外れ値</li>
 <li><strong>残差 vs 各説明変数</strong>、<strong>残差 vs 観測順</strong> (時間的な相関があれば Durbin–Watson 統計量 $\sum(e_i - e_{i-1})^2/\sum e_i^2$ が 2 から離れる)</li>
@@ -11618,10 +11823,63 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <li><strong>頑健標準誤差</strong> (White 1980): 係数は OLS のまま、分散を $(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\operatorname{diag}(e_i^2)\mathbf X(\mathbf X^\top\mathbf X)^{-1}$ で推定し直す。分散の形を仮定しなくてよい</li>
 <li><strong>GLM</strong>: 分散が平均の関数として決まる分布族に乗り換える (5.9)</li>
 </ol>
+<p><strong>放置するとどれだけ狂うかを測る。</strong> $y = 1 + 2x + \varepsilon$、$x \sim U(0,1)$、$\varepsilon$ の標準偏差が $\sigma(x) = 0.2 + 3x^2$ ($x$ が大きいところで大きい) という設定で、$n = 30$ の回帰を 20000 回繰り返した。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\hat\beta_1$ の実際のばらつき (真の標準偏差)</td>
+<td style="text-align: right;">1.187</td>
+</tr>
+<tr>
+<td>古典的な公式が返す標準誤差の平均</td>
+<td style="text-align: right;">0.935</td>
+</tr>
+<tr>
+<td>比</td>
+<td style="text-align: right;"><strong>0.79</strong></td>
+</tr>
+<tr>
+<td>名目 95% 信頼区間の実際の被覆確率</td>
+<td style="text-align: right;"><strong>0.88</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>標準誤差が 2 割過小に出て、95% のつもりの区間が 88% しか当たらない。</strong> しかも $\hat\beta_1$ 自体は不偏のままである (平均は $2.00$)。<strong>壊れるのは点推定ではなく、その不確かさの見積もりだけ</strong>という点が要点で、だから「係数は信じてよいが $p$ 値と区間は信じるな」という言い方になる。</p>
+<p>$x$ が大きいところで分散が大きい、という形が効いている。<strong>分散が大きい場所とレバレッジが高い場所が一致すると、過小評価が深刻になる。</strong> 逆向き (レバレッジの低いところで分散が大きい) なら、標準誤差は逆に過大になり、保守側に外れる。</p>
 <h2 id="c05-5-8">5.8 変数選択</h2>
 <p>5.7 節までは「モデルは与えられている」前提だった。<strong>実際には、どの説明変数を入れるかを自分で決めなければならない。</strong> そしてこの判断を「当てはまりの良さ」で行うと、必ず失敗する。</p>
 <h3 id="c05-5-8-1">5.8.1 なぜ「当てはまりの良さ」で選んではいけないか</h3>
 <p>まず、素朴な基準が壊れるところを見る。<strong>$R^2$ は変数を足せば必ず上がる</strong> — たとえ乱数を足しても上がる。この一点で、$R^2$ は選択の基準として使えない。</p>
+<p><strong>「必ず上がる」を数で見る。</strong> $y$ とまったく無関係な乱数を 1 個ずつ説明変数に足していくと、$n = 30$ のデータでは $R^2$ の期待値が次のように上がる。</p>
+<table>
+<thead>
+<tr>
+<th>足した無関係な変数の数</th>
+<th style="text-align: right;">0</th>
+<th style="text-align: right;">5</th>
+<th style="text-align: right;">10</th>
+<th style="text-align: right;">20</th>
+<th style="text-align: right;">29</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$R^2$ の期待値</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">0.34</td>
+<td style="text-align: right;">0.69</td>
+<td style="text-align: right;"><strong>1.00</strong></td>
+</tr>
+</tbody>
+</table>
+<p>$p - 1$ 個の無意味な変数を入れたときの $R^2$ の期待値は $(p-1)/(n-1)$ で、<strong>変数を $n-1$ 個まで足せば $R^2$ は必ずちょうど 1 になる</strong> — 30 点を 30 個の係数で通すのだから当然である。自由度調整済み $R^2$ ($\bar R^2 = 1 - \frac{S_E/(n-p)}{S_T/(n-1)}$) はこの上昇を打ち消すように作られており、無意味な変数を足すと逆に下がる。</p>
 <p>説明変数を増やせば $S_E$ は単調に減り $R^2$ は単調に増える。訓練データへの当てはまりを基準にすると必ず最大のモデルが選ばれ、新しいデータでは予測が悪化する (<strong>過学習</strong>)。図 5.7 の多項式次数の例で、訓練 MSE は単調減少だが新データの MSE は U 字を描く。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.7 左: n=30 のデータに多項式を当てはめる。次数を上げると点は通るが真の関数から離れる。右: 訓練 MSE は単調減少、新データの MSE は U 字。AIC・BIC は新データの MSE と似た形で最小をもつ" src="fig/05_aic_poly.png" /><figcaption>図 5.7 左: n=30 のデータに多項式を当てはめる。次数を上げると点は通るが真の関数から離れる。右: 訓練 MSE は単調減少、新データの MSE は U 字。AIC・BIC は新データの MSE と似た形で最小をもつ</figcaption></figure>
 <h3 id="c05-5-8-2">5.8.2 AIC と BIC の考え方</h3>
@@ -11659,6 +11917,32 @@ $$\mathrm{AIC} = -2\hat\ell + 2k, \qquad \mathrm{BIC} = -2\hat\ell + k\log n$$</
 <li><strong>多重共線性の影響</strong>を受けやすい</li>
 </ol>
 <p>代替は、(i) 候補を事前知識で絞って全部比較する (少数なら全組合せ)、(ii) 罰則付き回帰 (Lasso: $\|\mathbf y - \mathbf X\boldsymbol\beta\|^2 + \lambda\|\boldsymbol\beta\|_1$。変数選択と縮小を同時に行う)、(iii) 交差検証で予測性能を直接測る、(iv) 選択後の推測が必要なら標本を分割する、である。工学の文脈では「物理的に意味のある変数だけを入れ、式の形も理論から決める」ことが最善の変数選択であることが多い。</p>
+<p><strong>どれくらい危ないかを測る。</strong> $n = 50$ の観測に、<strong>$y$ とまったく無関係な乱数を 20 個</strong>説明変数として与え、$|t| > t_{29,0.975}$ の変数だけを残して再び当てはめる、という手順を 2000 回繰り返した。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20 個のうち「有意」になった変数の個数 (平均)</td>
+<td style="text-align: right;">1.02</td>
+</tr>
+<tr>
+<td>少なくとも 1 個が「有意」になった割合</td>
+<td style="text-align: right;"><strong>54%</strong></td>
+</tr>
+<tr>
+<td>選ばれた変数だけで再計算した $R^2$ (平均)</td>
+<td style="text-align: right;"><strong>0.084</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>説明する力がゼロのデータから、半分以上の場合に「有意な変数」と $R^2 = 0.08$ のモデルが出てくる。</strong> これは 4.12.1 項で数えた $1 - 0.95^{20} = 0.64$ と同じ現象である (相関が入るぶん少し下がる)。</p>
+<p>厄介なのは<strong>報告される形</strong>である。最終的なモデルの出力には、選ばれた 2〜3 個の変数とその $p$ 値しか載らない。<strong>捨てられた 17 個は誰にも見えない。</strong> 4.13.1 項の p-hacking と構造がまったく同じで、「検定を何回行ったか」が消えてしまう。</p>
+<p>したがって最終モデルの $p$ 値・信頼区間・$R^2$ は<strong>そのままでは読めない</strong>。対処は (i) 変数選択をせずに理論から決める、(ii) データを分割して選択と推測を別の部分で行う、(iii) 選択後推測の手法を使う (5.22 節)、のいずれかである。</p>
 <h2 id="c05-5-9">5.9 一般化線形モデル</h2>
 <p>5.2〜5.8 節はすべて「$y$ が連続で、誤差が正規」という前提だった。<strong>$y$ が 0/1 だったら。$y$ が個数だったら。</strong> 負の予測値が出たり、分散が平均に依存したりして、枠組みが合わなくなる。枠組みのほうを広げる。</p>
 <h3 id="c05-5-9-1">5.9.1 動機と構成</h3>
@@ -11778,6 +12062,11 @@ $$f(y; \theta, \phi) = \exp\left\{\frac{y\theta - b(\theta)}{a(\phi)} + c(y, \ph
 <p>5.9.3 項は 2 値だった。<strong>$y$ が「個数」のとき</strong>は別の組み合わせを使う。2.6.2 項でポアソン分布を「稀な事象の回数」として導入したのが、ここで効いてくる。</p>
 <p>計数 $y_i \in \{0, 1, 2, \dots\}$ に対し $\log\mu_i = \mathbf x_i\boldsymbol\beta$。$x_j$ が 1 増えると平均が $e^{\beta_j}$ 倍になる (<strong>率比</strong>)。観測期間や面積が異なるときは $\log\mu_i = \log T_i + \mathbf x_i\boldsymbol\beta$ と既知の項 (オフセット) を入れて「単位時間あたりの率」をモデル化する。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.9 左: 計数データの平均と分散。ポアソンなら Var = μ (破線) だが、実データはそれより大きい (過分散) ことが多い。右: log リンクによる乗法的な効果" src="fig/05_poisson.png" /><figcaption>図 5.9 左: 計数データの平均と分散。ポアソンなら Var = μ (破線) だが、実データはそれより大きい (過分散) ことが多い。右: log リンクによる乗法的な効果</figcaption></figure>
+<p><strong>数で読む。</strong> 溶接長 $L$ ($\mathrm{m}$) あたりの欠陥個数を、施工班 (甲を基準) と溶接姿勢 (下向きを基準) で説明したとする。出力が</p>
+<p>$$\log \hat\mu = -2.30 + \log L + 0.41\,(\text{乙班}) + 0.69\,(\text{立向き})$$</p>
+<p>だったとすると、$\log L$ を<strong>オフセット</strong>として係数 1 で固定しているので $\hat\mu/L$ が「$1\,\mathrm{m}$ あたりの欠陥率」になる。基準 (甲班・下向き) では $e^{-2.30} = 0.100$ 個/m。</p>
+<p>係数は<strong>掛け算</strong>で効く。乙班なら $e^{0.41} = 1.51$ 倍、立向きなら $e^{0.69} = 2.00$ 倍、両方なら $1.51 \times 2.00 = 3.02$ 倍で $0.302$ 個/m である。<strong>「$0.41$ 増える」ではなく「$1.5$ 倍になる」と読む</strong>のが log リンクの意味で、これは 5.9.3 項のロジスティック回帰でオッズ比を読んだのと同じ構造である。</p>
+<p>$10\,\mathrm{m}$ の立向き溶接 (乙班) なら $\hat\mu = 3.02$ 個。ポアソンなら分散も $3.02$ なので標準偏差は $1.74$ 個で、<strong>平均の 6 割</strong>もばらつく。計数データでは、平均だけを見て「3 個くらい」と考えると外れる。</p>
 <p><strong>過分散</strong>: ポアソンは $\operatorname{Var} = \mu$ を強制するが、実データは異質性のため分散がそれより大きいことが多い (図 5.9 左の三角)。放置すると標準誤差が過小になる。対処は (i) 準ポアソン: $\operatorname{Var} = \phi\mu$ として $\phi$ を Pearson 残差から推定する準尤度法 (Wedderburn 1974)、(ii) 負の二項回帰: $\operatorname{Var} = \mu + \mu^2/k$ を持つ分布に乗り換える。</p>
 <h2 id="c05-5-10">5.10 混合効果モデルの紹介</h2>
 <p>5.9 節までは観測どうしが独立という前提だった。<strong>同じロットから取った供試体、同じ橋で測った複数点</strong> — こうしたデータでは観測がグループ内で似てしまう。2.7.3 項の全分散の公式が、ここでモデルの形になる。</p>
@@ -11786,14 +12075,24 @@ $$f(y; \theta, \phi) = \exp\left\{\frac{y\theta - b(\theta)}{a(\phi)} + c(y, \ph
 <p>$$\mathbf y = \mathbf X\boldsymbol\beta + \mathbf Z\mathbf b + \boldsymbol\varepsilon, \qquad \mathbf b \sim N(\mathbf 0, \boldsymbol\Sigma_b), \quad \boldsymbol\varepsilon \sim N(\mathbf 0, \sigma^2\mathbf I)$$</p>
 <p>最も単純な<strong>変量切片モデル</strong>では $y_{ij} = \mathbf x_{ij}\boldsymbol\beta + b_i + \varepsilon_{ij}$ ($i$ = グループ、$j$ = グループ内の観測) で、$b_i \sim N(0, \sigma_b^2)$。このとき同一グループ内の 2 観測の相関は $\rho = \sigma_b^2/(\sigma_b^2 + \sigma^2)$ (級内相関) になる。周辺分布は $\mathbf y \sim N(\mathbf X\boldsymbol\beta, \mathbf Z\boldsymbol\Sigma_b\mathbf Z^\top + \sigma^2\mathbf I)$ で、分散成分 $(\boldsymbol\Sigma_b, \sigma^2)$ は (制限付き) 最尤法、固定効果 $\boldsymbol\beta$ はその分散行列を使った GLS で推定する。R の <code>lme4</code> パッケージがこの計算を疎行列と罰則付き最小二乗の反復で実装した標準的な実装で、その論文に定式化と推定アルゴリズムがまとまっている<sup id="c05-fnref:2"><a class="footnote-ref" href="#c05-fn:2">2</a></sup>。Python では <code>statsmodels.regression.mixed_linear_model</code> が対応する。</p>
 <p>変量効果を入れる利点は (i) 正しい標準誤差、(ii) グループ数が多いときにグループごとの係数を推定するより効率が良い (縮小推定: 観測の少ないグループの推定値は全体平均に引き寄せられる)、(iii) 「グループ間のばらつき $\sigma_b^2$」自体が知りたい量であることが多い (ロット間変動と ロット内変動の分離は品質管理そのもの)、である。応答が非正規なら GLM と組み合わせて一般化線形混合モデル (GLMM) になる。</p>
+<p><strong>無視するとどうなるかを数で見る。</strong> 10 ロットから 6 本ずつ、計 60 本の供試体を取ったとする。ロット間の標準偏差が $\sigma_a = 2.5$、ロット内が $\sigma_e = 1.8\,\mathrm{N/mm^2}$ なら、級内相関は</p>
+<p>$$\mathrm{ICC} = \frac{\sigma_a^2}{\sigma_a^2 + \sigma_e^2} = \frac{6.25}{6.25 + 3.24} = 0.66$$</p>
+<p>同じロットの 2 本は $0.66$ の相関を持つ。このとき平均の分散は、独立を仮定した場合の</p>
+<p>$$1 + (m-1)\,\mathrm{ICC} = 1 + 5(0.66) = 4.3 \ \text{倍}$$</p>
+<p>になる (<strong>設計効果</strong>)。標準誤差にして $2.1$ 倍、<strong>実質的な標本数は 60 本ではなく $60/4.3 = 14$ 本</strong>である。</p>
+<p><strong>60 本測ったのに 14 本ぶんの情報しかない。</strong> 独立と仮定して $\sigma/\sqrt{60}$ で区間を作れば、幅は半分以下になり、被覆は大きく名目を割る。ロットを増やさずに本数だけ増やしても、この $4.3$ 倍は減らない — <strong>効くのは 1 ロットあたりの本数 $m$ ではなくロット数のほう</strong>だからである。試験計画としては「3 ロットから 20 本ずつ」より「10 ロットから 6 本ずつ」のほうが良い、という結論がここから出る。</p>
 <h2 id="c05-5-11">5.11 非線形回帰と多項式・スプラインの入口</h2>
 <p>最後に「線形」という言葉の範囲を確かめておく。<strong>実は $y = \beta_0 + \beta_1 x + \beta_2 x^2$ も線形回帰である。</strong> 何が線形で何がそうでないのか、そして本当に非線形なときはどうするのかを見る。</p>
 <h3 id="c05-5-11-1">5.11.1 「線形」の意味</h3>
-<p>言葉の確認から入る。<strong>線形かどうかは $x$ についてではなく、$\boldsymbol\beta$ について決まる。</strong></p>
+<p>5.11 節の題に「非線形」と付けた以上、言葉の確認から入る。<strong>線形かどうかは $x$ についてではなく、$\boldsymbol\beta$ について決まる。</strong></p>
 <p>回帰の「線形」は<strong>母数について線形</strong>という意味で、$x$ について線形である必要はない。$y = \beta_0 + \beta_1 x + \beta_2 x^2$、$y = \beta_0 + \beta_1\log x$、$\log y = \beta_0 + \beta_1 x$ はどれも線形回帰である。一方 $y = \beta_0 e^{-\beta_1 x} + \beta_2$ や $y = \beta_1 x/(\beta_2 + x)$ (Michaelis–Menten 型) は母数について非線形で、<strong>非線形最小二乗</strong>になる。</p>
 <h3 id="c05-5-11-2">5.11.2 非線形最小二乗</h3>
 <p>5.11.1 項の意味で本当に非線形な場合 — 材料の応力ひずみ関係や疲労の S–N 曲線が典型である。<strong>閉じた解は無く、数値的に探すしかない。</strong></p>
 <p>$S(\boldsymbol\beta) = \sum_i (y_i - f(\mathbf x_i; \boldsymbol\beta))^2$ を最小化する。Gauss–Newton 法は $f$ を現在の $\boldsymbol\beta^{(t)}$ の周りで線形化し ($\mathbf J$ = $f$ の $\boldsymbol\beta$ に関するヤコビ行列)、線形最小二乗 $\boldsymbol\beta^{(t+1)} = \boldsymbol\beta^{(t)} + (\mathbf J^\top\mathbf J)^{-1}\mathbf J^\top(\mathbf y - \mathbf f)$ を反復する。IRLS と同じ発想である。$\mathbf J^\top\mathbf J$ に $\lambda\mathbf I$ を足して安定化したのが Levenberg–Marquardt 法 (<code>scipy.optimize.least_squares</code> の既定)。収束点での推測は $\operatorname{Var}(\hat{\boldsymbol\beta}) \approx s^2(\mathbf J^\top\mathbf J)^{-1}$ で線形の場合と同じ形になる (漸近的)。</p>
+<p><strong>例で確かめる。</strong> 鋼材の疲労試験で、応力振幅 $S$ ($\mathrm{MPa}$) と破断繰返し数 $N$ の関係を Basquin 則 $N = C\,S^{-m}$ で表すとする。これは $C$ と $m$ について非線形だが、両辺の対数をとると</p>
+<p>$$\log N = \log C - m \log S$$</p>
+<p>となり、$(\log C,\,m)$ について<strong>線形</strong>である。$S = 200,\,180,\,160,\,140,\,120\,\mathrm{MPa}$ で $N = 1.1\times10^5,\ 1.5\times10^5,\ 2.1\times10^5,\ 3.2\times10^5,\ 5.1\times10^5$ という 5 点なら、対数をとって直線回帰すると $\hat m = 3.01$、$\log_{10}\hat C = 11.96$ が得られる ($\log$ スケールの $R^2 = 0.9997$)。$m \approx 3$ は溶接継手の疲労設計で標準的に使われる値で、<strong>応力振幅が半分になると寿命が 8 倍になる</strong>ことを意味する。</p>
+<p><strong>ただし変換すると最小化している対象が変わる。</strong> 対数スケールの最小二乗は $\sum(\log N_i - \log \hat N_i)^2$ を最小にしており、これは<strong>相対誤差</strong>を等しく扱う。元のスケールで最小二乗すれば $\sum(N_i - \hat N_i)^2$ で、$N$ が $10^6$ の点が $10^5$ の点の 100 倍の重みを持つ。疲労寿命のばらつきは桁で効くので、<strong>対数スケールのほうが物理的に妥当</strong>である。どちらが正しいかは残差プロットで確かめる。</p>
 <p>注意: (i) 初期値が要り、局所解に落ちうる。(ii) 対数変換して線形にすると誤差の仮定が変わる (乗法誤差 vs 加法誤差)。どちらが物理的に正しいかを残差で確認する。(iii) 疲労の S–N 曲線 $\log N = a - b\log S$ のように、<strong>変換して線形にできるなら線形の方が推測が確実</strong>である。</p>
 <h3 id="c05-5-11-3">5.11.3 多項式とスプライン</h3>
 <p>5.11.2 項のように関数形が理論から決まっている場合は幸運で、<strong>「とにかく曲がっている」としか分からない</strong>ことも多い。そのときは線形回帰の枠内で曲線を作れる。</p>
@@ -11959,8 +12258,10 @@ $$\operatorname{Var}(\hat{\boldsymbol\beta}) = (\mathbf X^\top\mathbf X)^{-1}\ma
 <figure><img loading="lazy" decoding="async" alt="図 5.10 不均一分散のもとでの最小二乗 (n=100)。左: 誤差の散らばりが x とともに増えるデータ。中: 3000 回反復した β̂₁ の分布は真値 2 を中心にしており、不偏性は保たれている。右: それでも通常の標準誤差は β̂₁ の実際のばらつきの半分ほどしか測れていない。HC3 はそれよりずっと近い" src="fig/05d_hetero_unbiased.png" /><figcaption>図 5.10 不均一分散のもとでの最小二乗 (n=100)。左: 誤差の散らばりが x とともに増えるデータ。中: 3000 回反復した β̂₁ の分布は真値 2 を中心にしており、不偏性は保たれている。右: それでも通常の標準誤差は β̂₁ の実際のばらつきの半分ほどしか測れていない。HC3 はそれよりずっと近い</figcaption></figure>
 <p>5.19 の数値実験では、$n=400$ で $\hat\beta_1$ の平均は 1.998 (真値 2) と不偏のまま、95% 信頼区間の被覆確率は <strong>0.684</strong> しかない。しかも標本を増やしても直らない ($n=25$ で 0.768、$n=100$ で 0.715、$n=400$ で 0.684)。「$n$ が大きければ中心極限定理で何とかなる」類の問題ではない。分散の式そのものが違うからである。</p>
 <h2 id="c05-5-16">5.16 サンドイッチ推定量 — White から HC3 まで</h2>
+<p>5.15.1 項で「係数は生き残るが標準誤差が嘘になる」ことが分かった。<strong>では標準誤差だけを作り直せばよい。</strong> 分散の形を仮定せずにそれができる、というのがこの節の主題である。</p>
 <h3 id="c05-5-16-1">5.16.1 中身だけを推定する</h3>
-<p>$\boldsymbol\Omega$ を推定するのは絶望的に見える。対角成分だけでも $n$ 個の未知数があり、観測も $n$ 個しかない。White (1980) の着眼は、<strong>必要なのは $\boldsymbol\Omega$ ではなく $\mathbf X^\top\boldsymbol\Omega\mathbf X$ という $p\times p$ の行列だけ</strong>という点にある。不均一分散 ($\boldsymbol\Omega=\operatorname{diag}(\sigma_i^2)$) なら</p>
+<p>$\boldsymbol\Omega$ を推定するのは絶望的に見える。対角成分だけでも $n$ 個の未知数があり、観測も $n$ 個しかない。White (1980) の着眼は、<strong>必要なのは $\boldsymbol\Omega$ ではなく $\mathbf X^\top\boldsymbol\Omega\mathbf X$ という $p\times p$ の行列だけ</strong>という点にある。</p>
+<p>数の勘定で言えばこうである。$n = 200$、説明変数 3 個 ($p = 4$) の回帰なら、$\boldsymbol\Omega$ の対角成分は <strong>200 個</strong>の未知数だが、$\mathbf X^\top\boldsymbol\Omega\mathbf X$ は対称な $4\times4$ 行列なので<strong>独立な成分は 10 個</strong>しかない。200 個を当てるのは無理でも、<strong>10 個の和を当てるだけなら 200 個の観測で足りる。</strong> 推定する対象を小さくしたのであって、分散の形を当てたわけではない。不均一分散 ($\boldsymbol\Omega=\operatorname{diag}(\sigma_i^2)$) なら</p>
 <p>$$\mathbf X^\top\boldsymbol\Omega\mathbf X = \sum_{i=1}^n \sigma_i^2\,\mathbf x_i^\top\mathbf x_i$$</p>
 <p>で、未知数の個数によらず $p(p+1)/2$ 個の数を推定すればよい。個々の $\sigma_i^2$ は 1 観測からは推定できないが、$\sigma_i^2$ を $e_i^2$ で置き換えた<strong>和</strong>は、$n\to\infty$ で正しい行列に収束する。各項が当てにならなくても、和は当てになる。</p>
 <blockquote>
@@ -12013,6 +12314,7 @@ $$\operatorname{Var}(\hat{\boldsymbol\beta}) = (\mathbf X^\top\mathbf X)^{-1}\ma
 <li>等分散が正しいときに頑健版を使う損は小さい。パネルデータの数値実験でも、通常の標準誤差は常により保守的な分散推定量に劣り、等分散のもとでも HC 型はサイズ・検出力ともに良好だったと報告されている<sup id="c05-fnref:h2"><a class="footnote-ref" href="#c05-fn:h2">7</a></sup></li>
 </ul>
 <h2 id="c05-5-17">5.17 クラスター相関 — 観測が独立でないとき</h2>
+<p>5.16 節が扱ったのは、誤差の分散が観測ごとに違う場合だった。<strong>もっと見つけにくく、実害の大きい破れ方がある</strong> — 観測どうしが相関している場合である。残差プロットには何も映らないのに、標準誤差は桁で狂うことがある。</p>
 <h3 id="c05-5-17-1">5.17.1 現場で起きる形</h3>
 <p>第 14 章 14.2 のコンクリート受入検査は 3 ロット (A, B, C) から採った 84 本の供試体である。同一ロットの供試体は同じ練り混ぜ・同じ運搬・同じ養生を共有するから、<strong>互いに独立ではない</strong>。同様の構造は至るところにある。</p>
 <ul>
@@ -12023,6 +12325,7 @@ $$\operatorname{Var}(\hat{\boldsymbol\beta}) = (\mathbf X^\top\mathbf X)^{-1}\ma
 </ul>
 <p>このとき $\boldsymbol\Omega$ はブロック対角になる。クラスター $g$ の中では任意の相関を許し、クラスター間は独立とする。そして 5.15.1 の結論がそのまま効く — <strong>係数は不偏のまま、標準誤差だけが誤る</strong>。しかも誤り方は不均一分散よりはるかに大きい。</p>
 <h3 id="c05-5-17-2">5.17.2 どれだけ狂うか — Moulton 係数</h3>
+<p>5.17.1 項で見た構造が、標準誤差をどれだけ狂わせるのか。<strong>驚くほど単純な 1 つの式</strong>で見積もれる。</p>
 <blockquote>
 <p><strong>定理 5.10 (Moulton 係数)</strong> スコア $s_{gi}=x_{gi}u_{gi}$ がスカラーで、クラスター内で等相関 $\rho_s$、クラスターの大きさが $m$ で一定のとき、$\hat\beta$ の真の分散と古典的な公式 $\sigma^2(\mathbf X^\top\mathbf X)^{-1}$ による分散の比は
 $$1 + (m-1)\rho_s$$</p>
@@ -12049,6 +12352,7 @@ $$1 + (m-1)\rho_s$$</p>
 <p>この式が伝えるのは次の一点に尽きる。<strong>悪化させるのはクラスターの数ではなく、クラスターの大きさである</strong>。$\rho_s=0.05$ という小さい相関でも、$m=100$ なら分散は約 6 倍、標準誤差は約 2.4 倍になる。クラスターを無視した解析は、観測が大きな塊で来るほど致命的になる<sup id="c05-fnref2:h3"><a class="footnote-ref" href="#c05-fn:h3">8</a></sup>。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.12 左: Moulton 係数 √(1+(m−1)ρ_s)。ρ_s が小さくてもクラスターサイズ m が大きければ急増する。右: 数値実験 (G=40 固定、m を変える) が理論曲線に乗る" src="fig/05d_moulton.png" /><figcaption>図 5.12 左: Moulton 係数 √(1+(m−1)ρ_s)。ρ_s が小さくてもクラスターサイズ m が大きければ急増する。右: 数値実験 (G=40 固定、m を変える) が理論曲線に乗る</figcaption></figure>
 <h3 id="c05-5-17-3">5.17.3 クラスター頑健分散推定量</h3>
+<p>5.17.2 項で狂いの大きさが分かった。<strong>手当ては 5.16 節と同じ形</strong>でできる — サンドイッチの具を作る単位を、観測からクラスターに変えるだけである。</p>
 <p>サンドイッチの考え方をそのまま持ち込む。具の部分を、観測ごとではなく<strong>クラスターごとの和</strong>で作る。クラスター $g$ のスコアを $\hat{\mathbf s}_g = \mathbf X_g^\top\hat{\mathbf u}_g$ とすると、</p>
 <blockquote>
 <p><strong>定義 5.8 (クラスター頑健分散推定量、CV1)</strong> クラスター数を $G$、観測数を $n$、母数の数を $p$ として
@@ -12061,6 +12365,7 @@ $$\widehat{\operatorname{Var}}_{\mathrm{CV1}}(\hat{\boldsymbol\beta}) = \frac{G(
 <p>図 5.13 で注目すべきは<strong>橙の線</strong>である。HC3 はクラスター相関に対して何の役にも立たない。5.19 の 2) ($G=40$) では、通常の標準誤差の被覆確率 0.571 に対し HC3 は 0.570 で、差がない。「頑健標準誤差を付けたから大丈夫」は、相関の種類を取り違えていれば成り立たない。</p>
 <p>実データでも同じことが起きる。Cameron, Gelbach &amp; Miller (2006) が賃金回帰で示した例では、iid を仮定した標準誤差と White 型の標準誤差はほとんど変わらなかったのに、産業でクラスターを切ると当該係数の標準誤差は 0.397 から 0.643 へ跳ね上がった<sup id="c05-fnref:h5"><a class="footnote-ref" href="#c05-fn:h5">10</a></sup>。</p>
 <h3 id="c05-5-17-4">5.17.4 クラスター数が少ないと破綻する</h3>
+<p>5.17.3 項の手当ては万能ではない。<strong>クラスターの「個数」が少ないと、今度は別の理由で $\alpha$ が狂う。</strong> しかも狂う向きは危険側 (過剰に棄却する) である。</p>
 <p>クラスター頑健標準誤差は $G\to\infty$ の漸近論に立っている。$G$ が小さいと、標準的な漸近検定は<strong>棄却しすぎる</strong>。Cameron, Gelbach &amp; Miller は $G$ が 5〜30 程度のとき名目 5% の検定が 10% 棄却しうることを示し、クラスター単位のブートストラップ $t$ でこれを名目水準まで戻せることを報告している<sup id="c05-fnref:h6"><a class="footnote-ref" href="#c05-fn:h6">11</a></sup>。</p>
 <p>小標本対策は 3 段ある。</p>
 <ol>
@@ -12074,12 +12379,14 @@ $$\widehat{\operatorname{Var}}_{\mathrm{CV1}}(\hat{\boldsymbol\beta}) = \frac{G(
 <p>$G=6$ でブートストラップでも 0.918 にとどまるのには理由がある。Rademacher 重みではクラスター数が $G$ のとき擬似標本は $2^G$ 通りしかなく、$G=6$ なら 64 通りである。<strong>反復回数をいくら増やしてもブートストラップ分布は滑らかにならない</strong><sup id="c05-fnref4:h4"><a class="footnote-ref" href="#c05-fn:h4">9</a></sup>。クラスターが数個しかない状況は、どんな手法でも救えない。設計の段階でクラスターを増やすしかない。</p>
 <p>同じ結論は別分野からも出ている。クラスター無作為化試験では、サンドイッチ推定量が小標本で真の分散を過小評価し第 1 種の過誤が膨らむため、<strong>クラスター数が少ないときは Wald の $z$ 検定は避けるべき</strong>で、$t$ 近似と Kauermann–Carroll 型の補正を併せれば $G=10$ でも名目水準を保てる、クラスターサイズの変動が大きい場合は Fay–Graubard 型の補正を使うべきだ、と報告されている<sup id="c05-fnref:h7"><a class="footnote-ref" href="#c05-fn:h7">12</a></sup>。補正の選び方で結論そのものが変わった実例も報告されている<sup id="c05-fnref:h8"><a class="footnote-ref" href="#c05-fn:h8">13</a></sup>。</p>
 <h3 id="c05-5-17-5">5.17.5 どの水準でクラスターを切るか</h3>
+<p>5.17.3〜5.17.4 項で手当てとその限界が見えた。<strong>残る問題は「何をクラスターと呼ぶか」で、これは統計が決めてくれない。</strong></p>
 <p>「何をクラスターとするか」は統計が決めてくれない。MacKinnon らの整理では、<strong>細かく切りすぎると深刻な過剰棄却</strong>を招き、しかもクラスター数を固定したまま標本を増やすほど悪化する。逆に<strong>粗く切りすぎても多少の過剰棄却と検出力の損失</strong>が生じ、特にクラスター数が小さいときに顕著である<sup id="c05-fnref5:h3"><a class="footnote-ref" href="#c05-fn:h3">8</a></sup>。</p>
 <p>経験則として「実行可能な最も粗い水準で切る」がよく勧められる。これは粗い方のクラスター数 $G$ が十分大きいときには妥当だが、$G$ が小さいときや、クラスターの大きさ・性質が不揃いなときは危険である<sup id="c05-fnref6:h3"><a class="footnote-ref" href="#c05-fn:h3">8</a></sup>。</p>
 <p>そもそもなぜある場面ではクラスターを切り、別の場面では切らないのか。Abadie らは、標本抽出が 2 段階 (まずクラスターを抽出し、次にその中から個体を抽出) である場合と、処置がクラスター単位で割り当てられている場合の 2 つを理由として挙げ、慣行のクラスタリングは保守的な「全か無か」の調整になりうると論じている<sup id="c05-fnref:h9"><a class="footnote-ref" href="#c05-fn:h9">14</a></sup>。「地域で切るのに性別では切らないのはなぜか」という問いに答えられる枠組みである。</p>
 <p>さらに近年は、<strong>極端に大きいクラスターが混じっていると従来のクラスター頑健推測そのものが妥当でなくなる</strong>ことが示されている。Chiang らは妥当性の必要十分条件を導き、2020〜2021 年の『American Economic Review』『Econometrica』掲載論文の 77% の設定がこの条件を満たしていないように見えると報告している<sup id="c05-fnref:h10"><a class="footnote-ref" href="#c05-fn:h10">15</a></sup>。クラスターが未知の場合に閾値法で対処する提案もある<sup id="c05-fnref:h11"><a class="footnote-ref" href="#c05-fn:h11">16</a></sup>。</p>
 <p>構造設計の文脈では、クラスターは<strong>現場の構造</strong>が決める。1 日の打設から採った供試体はロットで切る。複数現場にまたがるデータなら現場で切る。どちらが正しいかは統計量ではなく、<strong>「もう一度データを取り直すとき、何が共通で何が入れ替わるか」</strong>で決まる。</p>
 <h2 id="c05-5-18">5.18 「とりあえず頑健標準誤差」への疑い</h2>
+<p>5.16〜5.17 節では標準誤差を作り直す方法を見てきた。<strong>しかし、そもそも直すべきは標準誤差なのか。</strong> 扇形が見えたとき、それは誤差の性質ではなくモデルの形が間違っている合図かもしれない。</p>
 <h3 id="c05-5-18-1">5.18.1 不均一分散はモデルの誤設定の兆候かもしれない</h3>
 <p>残差が扇形になる原因は、誤差の分散が本当に一定でないことだけではない。Hayes &amp; Cai (2007) は、<strong>必要な交互作用項を落としている</strong>などのモデル誤設定でも同じ模様が出ること、有界な応答変数を OLS で扱っている場合や、測定の信頼性が説明変数と連動している場合にも生じることを挙げている<sup id="c05-fnref7:h1"><a class="footnote-ref" href="#c05-fn:h1">6</a></sup>。</p>
 <p>だとすれば、扇形を見て反射的に頑健標準誤差を付けるのは順序が逆である。まず疑うべきは<strong>モデルの形</strong>であって、誤差の分散ではない。5.7.2 の残差プロットで曲がりと扇形が同時に出ていたら、頑健標準誤差は答えではない。項を足す、変換する、GLM に乗り換える (5.9) の方が先である。</p>
@@ -12097,6 +12404,7 @@ $$\widehat{\operatorname{Var}}_{\mathrm{CV1}}(\hat{\boldsymbol\beta}) = \frac{G(
 <figure><img loading="lazy" decoding="async" alt="図 5.15 真の関係が 2 次なのに直線を当てた場合。左: x の範囲が 0〜2 の現場と 0〜5 の現場で、当てはまる直線の傾きが違う。右: どちらの HC3 区間も狭く「正しい」が、互いに重ならない。頑健標準誤差は区間を正しくするが、推定対象が設計に依存することは直さない" src="fig/05d_misspecified.png" /><figcaption>図 5.15 真の関係が 2 次なのに直線を当てた場合。左: x の範囲が 0〜2 の現場と 0〜5 の現場で、当てはまる直線の傾きが違う。右: どちらの HC3 区間も狭く「正しい」が、互いに重ならない。頑健標準誤差は区間を正しくするが、推定対象が設計に依存することは直さない</figcaption></figure>
 <p>図 5.15 は極端だが、構造分野ではありふれた状況である。ある現場のデータから得た「水セメント比 1% あたり何 N/mm²」という傾きを、試験水準の範囲が違う別の現場に持ち込めるかは、統計の問題ではなく<strong>外挿の問題</strong>である。頑健標準誤差はこの心配を一切軽くしない。むしろ区間が「正しく」なるぶん、外挿の危うさが数字の上に現れなくなる。</p>
 <h3 id="c05-5-18-3">5.18.3 誤差の扱いで処理するか、モデルの構造で処理するか</h3>
+<p>5.18.1〜5.18.2 項で 2 つの疑いを見た。<strong>同じデータに対して、誤差の側で処理する道とモデルの側で処理する道がある。</strong> どちらを選ぶかで、推定している中身そのものが変わる。</p>
 <p>クラスター相関への道は 2 本ある。</p>
 <ul>
 <li><strong>(a) 誤差の扱いで処理する</strong>: OLS のまま、分散推定量をクラスター頑健にする (5.17)。クラスター内の相関の形に仮定を置かない。代わりにクラスター数 $G$ が大きいことが要る</li>
@@ -12110,6 +12418,7 @@ $$\widehat{\operatorname{Var}}_{\mathrm{CV1}}(\hat{\boldsymbol\beta}) = \frac{G(
 <li><strong>係数の解釈</strong>が違う。(a) は集団全体で平均した周辺 (marginal) な効果、(b) は「同じグループの中で」の条件付き (conditional) な効果を推定する。線形モデルでは一致するが、ロジスティックのような非線形リンクでは一致しない。解釈の違いと、経験的標準誤差を使うか模型依存の標準誤差を使うかで有意性の判断が大きく変わることは、生態学の応用例で報告されている<sup id="c05-fnref:h13"><a class="footnote-ref" href="#c05-fn:h13">18</a></sup></li>
 </ol>
 <h3 id="c05-5-18-4">5.18.4 手順のまとめ</h3>
+<p>5.15〜5.18 節の判断を、実際に手を動かす順に並べ直す。</p>
 <ol>
 <li>残差プロット (5.7.2) で扇形を見つけたら、まず<strong>モデルの形</strong>を疑う。項の追加・変換・GLM が先</li>
 <li>それでも不均一分散が残るなら、分散の形が分かっているときは WLS、分からないときは頑健標準誤差。$n$ が小さければ <strong>HC3</strong></li>
@@ -12781,13 +13090,16 @@ for d, ans in ((1, &quot;0.406&quot;), (2, &quot;0.406&quot;), (3, &quot;0.0545&
 <p>第 4 章の検定は「2 つの平均は等しいか」を扱った。この章は<strong>3 つ以上の平均</strong>を一度に比べる分散分析 (ANOVA) と、その前段にある<strong>データをどう取るか</strong>、つまり実験計画法を扱う。両者は表裏一体である。Fisher が 1920 年代に Rothamsted 農事試験場で分散分析を作ったのは、圃場試験を「解析できる形」に設計するためであり、平方和の分解は設計の構造をそのまま写している。</p>
 <p>構造設計者にとって、この章の内容は材料試験・配合設計・溶接条件の決定など「条件を変えて試験体を作る」場面すべてに関わる。試験体は高価で、反復数は少ない。だからこそ、<strong>同じ試験体数で最大の情報を得る設計</strong>と、<strong>得られた差が偶然か否かの判定</strong>が要る。第 5 章の回帰との関係も重要で、分散分析は説明変数がカテゴリである回帰に他ならない。この見方を通しておくと、後の混合効果モデルや一般化線形モデルで統一的に扱える。</p>
 <h2 id="c06-6-2">6.2 一元配置分散分析</h2>
+<p>いちばん単純な設定 — <strong>因子が 1 つ、水準が 3 つ以上</strong> — から始める。「3 つの配合のうちどれかが違うか」がこの形である。4.12 節で見たとおり 2 群比較を繰り返すのは危ないので、<strong>まとめて 1 回で判定する</strong>道具を作る。</p>
 <h3 id="c06-6-2-1">6.2.1 モデルと記法</h3>
+<p>まず何を仮定し、何を推定するのかを式で固定する。<strong>5.2.1 項の回帰モデルと形はそっくり</strong>で、説明変数が数値ではなく「どの群か」に変わっただけである (この対応は 6.2.4 項ではっきりさせる)。</p>
 <p>$k$ 個の群 (処理、水準) があり、群 $i$ に $n_i$ 個の観測 $y_{ij}$ がある ($N = \sum n_i$)。</p>
 <blockquote>
 <p><strong>定義 6.1 (一元配置モデル)</strong> $y_{ij} = \mu + \tau_i + \varepsilon_{ij}$、$\varepsilon_{ij} \sim N(0, \sigma^2)$ 独立、$i = 1,\dots,k$、$j = 1,\dots,n_i$。$\tau_i$ は処理効果で、識別のため $\sum_i n_i \tau_i = 0$ の制約を置く (あるいは $\mu_i = \mu + \tau_i$ と書いて制約を外す)</p>
 </blockquote>
 <p>帰無仮説は $H_0: \tau_1 = \dots = \tau_k = 0$ (全平均が等しい)。記法として、添字をドットで潰した和と平均を使う: $\bar y_{i\cdot} = \frac1{n_i}\sum_j y_{ij}$ (群平均)、$\bar y_{\cdot\cdot} = \frac1N \sum_{ij} y_{ij}$ (総平均)。</p>
 <h3 id="c06-6-2-2">6.2.2 平方和の分解</h3>
+<p>6.2.1 項のモデルのもとで、<strong>$y$ のばらつきを「群による分」と「群の中の分」に割る。</strong> 2.7.3 項の全分散の公式、5.2.4 項の $S_T = S_R + S_E$ と同じ分解が、ここでは群の構造に沿って現れる。</p>
 <blockquote>
 <p><strong>定理 6.1 (平方和の分解)</strong> 
 $$\underbrace{\sum_{i}\sum_{j} (y_{ij} - \bar y_{\cdot\cdot})^2}_{SS_T} = \underbrace{\sum_i n_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}_{SS_B} + \underbrace{\sum_i \sum_j (y_{ij} - \bar y_{i\cdot})^2}_{SS_W}$$
@@ -12835,6 +13147,7 @@ $SS_W$ は群ごとに制約が 1 つずつ ($k$ 個) あるので $N-k$。<stro
 <p>幾何的には、$N$ 次元の観測ベクトルを「群平均ベクトルの張る $k$ 次元空間」に射影し、残りが直交補空間に落ちるというピタゴラスの定理に過ぎない。自由度はそれぞれの空間の次元 (総平均を引いた分だけ 1 減る) である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.1 平方和の分解。左: 3 水準の水セメント比の圧縮強度。緑線が群内偏差、赤矢印が群間偏差。右: 総平方和が群間と群内にきれいに分かれる" src="fig/06_ss_decomposition.png" /><figcaption>図 6.1 平方和の分解。左: 3 水準の水セメント比の圧縮強度。緑線が群内偏差、赤矢印が群間偏差。右: 総平方和が群間と群内にきれいに分かれる</figcaption></figure>
 <h3 id="c06-6-2-3">6.2.3 期待平方和と F 統計量</h3>
+<p>6.2.2 項で 2 つの平方和が出た。<strong>その比を取ると検定統計量になる</strong> — ただし、なぜ比を取ると良いのかは、それぞれの期待値を計算して初めて見える。</p>
 <p>平方和を自由度で割ったものを平均平方 (mean square) という: $MS_B = SS_B/(k-1)$、$MS_W = SS_W/(N-k)$。</p>
 <blockquote>
 <p><strong>定理 6.2 (期待平均平方)</strong> 定義 6.1 のもとで
@@ -12902,6 +13215,7 @@ $$F = \frac{MS_B}{MS_W} \sim F(k-1,\ N-k)$$
 </table>
 <p>$k = 2$ のとき $F = t^2$ で、2 標本 $t$ 検定 (等分散) と完全に一致する。等分散の仮定が怪しいときは Welch の補正版 (Welch 1951) を使う。分散分析は正規性より<strong>等分散性</strong>の破れに弱い。特に群の大きさが不揃いで、小さい群の分散が大きいとき第一種の過誤率が膨らむ。</p>
 <h3 id="c06-6-2-4">6.2.4 回帰との等価性</h3>
+<p>6.2.3 項までで一元配置分散分析は完成した。<strong>ところがこれは、第 5 章の回帰をダミー変数で書いたものにすぎない。</strong> これを確かめておくと、以降の複雑な計画も「回帰の計画行列を変えただけ」として扱える。</p>
 <p>群 $i$ を示すダミー変数 $d_{i}$ ($i = 2,\dots,k$。群 1 を基準) を作り、回帰モデル $y = \beta_0 + \beta_2 d_2 + \dots + \beta_k d_k + \varepsilon$ を最小二乗で当てはめると、$\hat\beta_0 = \bar y_{1\cdot}$、$\hat\beta_i = \bar y_{i\cdot} - \bar y_{1\cdot}$ となる。予測値は群平均そのものだから、回帰の平方和 $SS_{reg}$ は $SS_B$ に、残差平方和は $SS_W$ に一致する。第 5 章の「回帰の F 検定」($H_0: \beta_2 = \dots = \beta_k = 0$) は分散分析の F 検定と<strong>同じ統計量・同じ分布</strong>になる。</p>
 <p>これは単なる言い換えではなく、次の実務上の帰結を持つ。</p>
 <ul>
@@ -12911,11 +13225,14 @@ $$F = \frac{MS_B}{MS_W} \sim F(k-1,\ N-k)$$
 </ul>
 <p>分散分析は「計画行列が特殊な回帰」であり、統計ソフトの内部実装もそうなっている。</p>
 <h2 id="c06-6-3">6.3 多重比較</h2>
+<p>6.2 節の F 検定は「どれかが違う」としか言わない。<strong>実務で知りたいのは「どれとどれが違うか」</strong>である。しかしその問いに答えようとした瞬間、4.12 節の多重比較の問題が戻ってくる。</p>
 <h3 id="c06-6-3-1">6.3.1 なぜ t 検定を繰り返してはいけないか</h3>
 <p>F 検定で $H_0$ が棄却されても、どの群が違うかは分からない。$k$ 群から 2 群ずつ選んで $t$ 検定を繰り返すと、対の数は $\binom k2$ で、$k = 5$ なら 10 回。各回の第一種過誤を 5% にしても、<strong>どれか 1 つでも誤って有意になる確率</strong> (family-wise error rate, FWER) は独立なら $1 - 0.95^{10} \approx 0.40$ に達する。多重比較法は、この FWER を全体で $\alpha$ に抑える手続きである。</p>
 <h3 id="c06-6-3-2">6.3.2 Bonferroni</h3>
+<p>6.3.1 項の問題への最も単純な処方から見る。<strong>4.12.2 項で見たものと同じ</strong>で、分散分析の文脈でもそのまま使える。</p>
 <p>$m$ 個の比較それぞれを $\alpha/m$ で検定する。Boole の不等式 $P(\cup A_i) \le \sum P(A_i)$ から FWER $\le \alpha$ が<strong>分布によらず</strong>保証される。単純で万能だが、$m$ が大きいと極端に保守的になる (検出力が落ちる)。Holm (1979) の逐次法は同じ保証でやや強い。</p>
 <h3 id="c06-6-3-3">6.3.3 Tukey の HSD</h3>
+<p>6.3.2 項の Bonferroni は「どんな比較にも使える」代わりに保守的だった。<strong>「全対比較」という目的に絞れば、もっと狭い区間が作れる。</strong></p>
 <p>全対比較 ($\binom k2$ 対) 専用の方法。群平均の最大と最小の差を $\sqrt{MS_W/n}$ で割った<strong>スチューデント化された範囲</strong> $q = (\bar y_{\max} - \bar y_{\min})/\sqrt{MS_W/n}$ の分布 (自由度 $k$, $N-k$) を使う。</p>
 <blockquote>
 <p><strong>定義 6.2 (Tukey の HSD)</strong> 各群 $n$ (等しい) のとき、対 $(i, i')$ の差の同時信頼区間は
@@ -12925,6 +13242,7 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 <p>FWER が正確に $\alpha$ になる理由: 「どれか 1 対でも有意」は「最大差が HSD を超える」と同値であり、最大差は定義から $q$ の分布に従うからである。群の大きさが不揃いなら $\sqrt{MS_W/n}$ を $\sqrt{\frac{MS_W}{2}(\frac1{n_i} + \frac1{n_{i'}})}$ に置き換える Tukey–Kramer 法 (Kramer 1956) を使う。これは保守側 (FWER $\le \alpha$) であることが知られている。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.3 溶接条件 4 水準 × n=5 の全 6 対について、平均差の 95% 信頼区間を 3 通りで描いた。無調整 t (灰) は狭すぎて誤検出を起こしやすい。Tukey HSD (青) は全対比較では Bonferroni (赤) より少し狭い、つまり検出力が高い" src="fig/06_tukey_hsd.png" /><figcaption>図 6.3 溶接条件 4 水準 × n=5 の全 6 対について、平均差の 95% 信頼区間を 3 通りで描いた。無調整 t (灰) は狭すぎて誤検出を起こしやすい。Tukey HSD (青) は全対比較では Bonferroni (赤) より少し狭い、つまり検出力が高い</figcaption></figure>
 <h3 id="c06-6-3-4">6.3.4 Dunnett と Scheffé</h3>
+<p>6.3.3 項の Tukey は全対比較に最適化されていた。<strong>目的がさらに絞られるなら、もっと得をする。逆に目的が広がるなら、もっと払う。</strong> 両端にあたる 2 つの方法を見る。</p>
 <ul>
 <li><strong>Dunnett (1955)</strong>: 対照群 1 つと他の $k - 1$ 群を比べる (対 $k-1$ 個)。比較の数が少ないぶん Tukey より区間が狭い。「標準配合と新配合 4 種」のような場面に使う。統計量は多変量 $t$ 分布 (相関 $1/2$) から臨界値を取る</li>
 <li><strong>Scheffé (1953)</strong>: 任意の<strong>対比</strong> (contrast) $\psi = \sum c_i \mu_i$、$\sum c_i = 0$ について同時に成り立つ。臨界値は $\sqrt{(k-1) F_\alpha(k-1, N-k)}$。「群 1, 2 の平均 vs 群 3, 4, 5 の平均」のような事後的に思いついた比較まで守るので、対比較だけなら Tukey より必ず広い。Scheffé の区間がどの対比でもゼロを跨がないことと F 検定が有意になることは同値である</li>
@@ -12958,7 +13276,9 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 </table>
 <p>なお、近年は「FWER でなく偽発見率 (FDR) を制御する」Benjamini–Hochberg 法が多数の比較で標準になっている。一元配置の対比較でも $t$ 統計量の依存構造にもかかわらず漸近的に FDR 制御が成り立つことが示されている<sup id="c06-fnref:1"><a class="footnote-ref" href="#c06-fn:1">1</a></sup>。ただし材料試験のように比較数が数個〜十数個の場面では、FWER 制御の古典的方法で十分である。</p>
 <h2 id="c06-6-4">6.4 二元配置と交互作用</h2>
+<p>6.2〜6.3 節は因子が 1 つだった。<strong>実務では複数の条件を同時に変える</strong> — 水セメント比と養生温度、電流と溶接速度。このとき「片方ずつ調べる」では<strong>原理的に見えないもの</strong>が出てくる。それが交互作用である。</p>
 <h3 id="c06-6-4-1">6.4.1 モデル</h3>
+<p>6.2.1 項のモデルの因子を 2 つに増やす。<strong>新しい項は 1 つだけ</strong> — 2 つの因子の組み合わせ固有の効果を表す項である。</p>
 <p>因子 A ($a$ 水準) と因子 B ($b$ 水準) を組み合わせ、各セルに $n$ 回反復する。</p>
 <blockquote>
 <p><strong>定義 6.3 (二元配置モデル)</strong> $y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \varepsilon_{ijk}$、制約 $\sum_i \alpha_i = \sum_j \beta_j = \sum_i (\alpha\beta)_{ij} = \sum_j (\alpha\beta)_{ij} = 0$</p>
@@ -12967,6 +13287,7 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 <p>$$SS_T = SS_A + SS_B + SS_{AB} + SS_E$$</p>
 <p>に直交分解し、自由度は $abn - 1 = (a-1) + (b-1) + (a-1)(b-1) + ab(n-1)$。各項の F 検定は $MS_{\cdot}/MS_E$。反復 $n = 1$ のときは $SS_E$ の自由度がゼロになり交互作用と誤差が分離できない。このときは交互作用なし (加法モデル) を仮定して $SS_{AB}$ を誤差に使う (Tukey の加法性検定で妥当性を確かめる)。</p>
 <h3 id="c06-6-4-2">6.4.2 交互作用図の読み方</h3>
+<p>6.4.1 項の $(\alpha\beta)_{ij}$ という項は、式だけでは何を意味するか掴みにくい。<strong>図にすると一目で分かる</strong>うえ、主効果を報告してよいかどうかの判断もそこで付く。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.4 交互作用図 (横軸 = 因子 B の水準、線 = 因子 A の水準)。左: 平行 → 交互作用なし、効果は足し算。中: 平行でないが順序は変わらない (量的交互作用)。右: 順序が逆転する (質的交互作用) — このとき主効果は意味を失う" src="fig/06_interaction.png" /><figcaption>図 6.4 交互作用図 (横軸 = 因子 B の水準、線 = 因子 A の水準)。左: 平行 → 交互作用なし、効果は足し算。中: 平行でないが順序は変わらない (量的交互作用)。右: 順序が逆転する (質的交互作用) — このとき主効果は意味を失う</figcaption></figure>
 <p>横軸に一方の因子、線の色にもう一方の因子をとり、セル平均を折れ線で結ぶ。<strong>線が平行なら交互作用なし</strong>。平行でないとき、2 種類に分ける。</p>
 <ul>
@@ -12975,9 +13296,12 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 </ul>
 <p>主効果が有意でなくても交互作用が有意なら、その因子は効いている。分散分析表を読むときは<strong>交互作用の行から先に見る</strong>。</p>
 <h3 id="c06-6-4-3">6.4.3 構造工学への接続: 配合設計の要因実験</h3>
+<p>6.4.1〜6.4.2 項の道具を、実際の配合設計に当てる。<strong>「一因子ずつ変える」やり方が、なぜ同じ試験体数で損なのか</strong>を数で見る。</p>
 <p>コンクリートの圧縮強度を、水セメント比 (3 水準) × 養生温度 (3 水準) の 9 セル、各 3 本の供試体で調べる要因実験を考える。一因子ずつ変える (one-factor-at-a-time) と、「W/C を固定して温度を変える」「温度を固定して W/C を変える」の 2 系列で 5 セル分しか情報が無く、交互作用は原理的に検出できない。要因配置は全 9 セルを使うので、W/C の主効果を推定するとき<strong>すべての温度水準のデータが寄与し</strong>、同じ供試体数で推定精度が高い (隠れ反復)。これが Fisher が要因配置を推した理由である。</p>
 <h2 id="c06-6-5">6.5 乱塊法と分割法</h2>
+<p>6.2〜6.4 節では、処理以外の条件はすべて揃っていると仮定してきた。<strong>現実には揃わない</strong> — 試験日が違う、セメントのロットが違う、試験機が違う。それを誤差として飲み込むと検出力が落ちる。<strong>構造として明示的に扱う</strong>のがこの節である。</p>
 <h3 id="c06-6-5-1">6.5.1 乱塊法</h3>
+<p>揃わない条件が<strong>あらかじめ分かっている</strong>場合を扱う。6.4 節の二元配置と形は同じだが、<strong>片方の因子には興味がない</strong>という点が違う。</p>
 <p>処理以外の系統的な変動源 — 試験日、セメントのロット、試験機、作業者 — が分かっているとき、それを<strong>ブロック</strong>として実験を組む。各ブロック内に全処理を 1 回ずつ無作為順で配置するのが乱塊法 (randomized complete block design, RCBD) である。</p>
 <blockquote>
 <p><strong>定義 6.4 (乱塊法のモデル)</strong> $y_{ij} = \mu + \tau_i + \beta_j + \varepsilon_{ij}$、$i = 1..a$ (処理)、$j = 1..b$ (ブロック)。交互作用は無い (加法的) と仮定する</p>
@@ -12988,10 +13312,13 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 <p>代償は残差の自由度が $a(b-1)$ から $(a-1)(b-1)$ に減ることだが、ブロック間の変動が誤差分散より大きければ圧倒的に得をする。<strong>対応のある t 検定は $a = 2$ の乱塊法</strong>である。</p>
 <p>ブロックとして扱うべきか、因子として扱うべきか。「その効果自体に興味があり、他の因子との交互作用も知りたい」なら因子、「取り除きたいだけ」ならブロック。ブロックは加法性を仮定しているので、処理とブロックの交互作用が疑われるならブロック内で反復を取るか、因子に格上げする。</p>
 <h3 id="c06-6-5-2">6.5.2 分割法 (split-plot)</h3>
+<p>6.5.1 項は、すべての処理をブロック内で自由に割り付けられる前提だった。<strong>実験には「変えにくい因子」がある</strong> — 養生室の温度、炉の設定。そのとき無作為化が 2 段階になり、<strong>誤差が 2 種類</strong>現れる。</p>
 <p>ある因子は水準変更に手間がかかる (炉の温度、養生室の湿度) が、別の因子は容易に変えられる (配合、供試体寸法) とき、完全無作為化は現実的でない。分割法では、変えにくい因子 A を大きな単位 (一次単位、whole plot) に割り付け、その内部で変えやすい因子 B を小さな単位 (二次単位、subplot) に割り付ける。</p>
 <p>構造上の要点は、<strong>誤差が 2 種類ある</strong>ことである。A の検定には一次単位間の誤差 $MS_{E1}$ を、B と A×B の検定には二次単位の誤差 $MS_{E2}$ を使う。通常 $MS_{E1} > MS_{E2}$ なので、変えにくい因子 A の検定は精度が低く、変えやすい因子 B と交互作用は精度が高い。これを見落として全部 $MS_{E2}$ で割ると、A の効果を過大に有意と判定する — 実務で最も多い誤りの一つである。養生温度 (炉ごと) × 配合 (炉内で複数) の実験は典型的な分割法であり、養生温度の効果は「炉の数」で決まる自由度でしか検定できない。</p>
 <h2 id="c06-6-6">6.6 固定効果と変量効果</h2>
+<p>6.2〜6.5 節では、水準は「これを調べたい」と決めて選んだものだった。<strong>しかし「5 つのロット」を調べるとき、その 5 つ自体に興味はない。</strong> 知りたいのはロット全体のばらつきである。このとき $\tau_i$ の立場が変わる。</p>
 <h3 id="c06-6-6-1">6.6.1 二つの見方</h3>
+<p>同じ $\tau_i$ という記号が、<strong>2 つのまったく違うものを指しうる。</strong> その区別を付ける。</p>
 <p>ここまで処理効果 $\tau_i$ は<strong>固定した定数</strong> (固定効果、fixed effect) と考えてきた。「この 3 つの水セメント比」に興味があり、結論はその 3 水準についてのみ言う。</p>
 <p>一方、「セメントのロット 5 つ」を取ったとき、興味はその 5 ロットではなく<strong>ロット間のばらつきの大きさ</strong>にある。ロットは母集団から無作為に抽出されたと考え、$\tau_i$ を確率変数として扱う。これが変量効果 (random effect) モデルである。</p>
 <blockquote>
@@ -12999,6 +13326,7 @@ $|\bar y_{i\cdot} - \bar y_{i'\cdot}|$ がこの半幅 (HSD: honestly significan
 </blockquote>
 <p>同じ群の 2 観測は $A_i$ を共有するので相関を持つ: $\mathrm{Cov}(y_{ij}, y_{ij'}) = \sigma_A^2$、級内相関 $\rho = \sigma_A^2/(\sigma_A^2 + \sigma^2)$。</p>
 <h3 id="c06-6-6-2">6.6.2 期待平均平方と分散成分の推定</h3>
+<p>6.6.1 項で $\tau_i$ を確率変数と見ることにした。<strong>すると 6.2.3 項の期待平均平方が違う形になり、そこからばらつきの大きさが推定できる。</strong> 5.10 節の混合効果モデルの中身がこれである。</p>
 <blockquote>
 <p><strong>定理 6.4</strong> 各群 $n$ の釣り合い型変量モデルで
 $$E[MS_W] = \sigma^2, \qquad E[MS_B] = \sigma^2 + n\,\sigma_A^2$$</p>
@@ -13021,8 +13349,10 @@ $$E[MS_W] = \sigma^2, \qquad E[MS_B] = \sigma^2 + n\,\sigma_A^2$$</p>
 <p>$$\hat\sigma^2 = MS_W, \qquad \hat\sigma_A^2 = \frac{MS_B - MS_W}{n}$$</p>
 <p>$\hat\sigma_A^2$ は負になりうる (そのときは 0 に切り上げる) という欠点があり、不釣り合いデータでは推定量の選び方が一意でない。現代の標準は<strong>制限付き最尤法 (REML)</strong> で、固定効果を推定したことによる自由度の消費を補正した尤度を最大化する。Harville (1977) が最尤・REML による分散成分推定の枠組みを整理し、今日の混合効果モデルの計算基盤になっている<sup id="c06-fnref:2"><a class="footnote-ref" href="#c06-fn:2">2</a></sup>。$n-1$ で割る不偏分散は REML の最も単純な場合である。</p>
 <h3 id="c06-6-6-3">6.6.3 構造工学への接続: 材料強度のばらつきの階層</h3>
+<p>6.6.2 項の分散成分を、設計で使う強度分布に結び付ける。<strong>信頼性設計に入れるべきばらつきはどれか</strong>、という実務上の問いに答える。</p>
 <p>鋼材の降伏強度の変動は「製鋼ロット間」「同一ロット内の圧延材間」「同一材内の試験片間」と階層をなす。信頼性設計に使う強度分布のばらつき $\sigma_{\text{total}}^2 = \sigma_{\text{lot}}^2 + \sigma_{\text{piece}}^2 + \sigma_{\text{test}}^2$ は分散成分そのものであり、どの階層が支配的かで品質管理の打ち手 (受入検査をロット単位にするか、材単位にするか) が変わる。ロットを固定効果として扱うと、「この 5 ロット」の話しかできず、将来のロットへの外挿 (設計の目的) ができない。</p>
 <h2 id="c06-6-7">6.7 実験計画の三原則</h2>
+<p>6.2〜6.6 節は「データが取れたあと、どう解析するか」だった。<strong>ここで順序を逆にする。</strong> 解析が成り立つためにデータの取り方が満たすべき条件は何か。Fisher の 3 つの原則は、実は 6.2 節の平方和の分解を成り立たせるための条件そのものである。</p>
 <p>Fisher (1935) の <em>The Design of Experiments</em> が確立した三原則は、分散分析の妥当性そのものを支えている。</p>
 <ol>
 <li><strong>反復 (replication)</strong>: 同じ処理を複数の実験単位に適用する。誤差分散 $\sigma^2$ の推定を可能にし ($MS_W$ の自由度を生む)、処理平均の精度を $\sigma/\sqrt n$ で高める。注意: 1 本の供試体を 3 回測る (繰り返し測定) のは反復ではない。それは測定誤差しか含まず、供試体間のばらつきを過小評価する (<strong>擬似反復</strong>)</li>
@@ -13031,7 +13361,9 @@ $$E[MS_W] = \sigma^2, \qquad E[MS_B] = \sigma^2 + n\,\sigma_A^2$$</p>
 </ol>
 <p>無作為化を省くと何が起きるか。強度試験で「配合 1 を全部打ってから配合 2」と順に進めると、その日の気温上昇や試験機のドリフトが配合の効果に<strong>完全に交絡</strong>し、どれほど反復を増やしても分離できない。統計的検定は無作為化の前提のもとでしか成り立たない。</p>
 <h2 id="c06-6-8">6.8 要因配置と $2^k$ 計画</h2>
+<p>6.7 節の原則を踏まえて、<strong>具体的な計画の型</strong>に入る。因子が多いとき、まず問うべきは「どれが効くか」である。各因子を 2 水準に絞ると、驚くほど効率よくそれが分かる。</p>
 <h3 id="c06-6-8-1">6.8.1 $2^k$ 計画</h3>
+<p>水準を 2 つに絞る代わりに、<strong>因子の組み合わせを全部やる。</strong> 効果の計算は足し算と引き算だけで済み、しかも 6.4 節の交互作用がそのまま読める。</p>
 <p>$k$ 個の因子をそれぞれ 2 水準 ($-1$, $+1$ と符号化) で組み合わせた $2^k$ 通りを全部実施する計画。スクリーニング (どの因子が効くか) の標準的な道具である。</p>
 <blockquote>
 <p><strong>定義 6.6 (効果)</strong> 因子 A の主効果 = (A が $+1$ の応答の平均) − (A が $-1$ の応答の平均)。交互作用 AB の効果 = (B が $+1$ のときの A の効果 − B が $-1$ のときの A の効果) / 2。同じ定義を積の列 ($x_A x_B$) を使えば、すべての効果が
@@ -13041,11 +13373,15 @@ $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$
 <p>回帰の言葉では、モデル $y = \beta_0 + \sum \beta_i x_i + \sum \beta_{ij} x_i x_j + \dots$ において<strong>効果 = $2\beta$</strong>。計画行列 $X$ の列は互いに直交し $X^\top X = 2^k I$ なので、$\hat\beta = X^\top y / 2^k$ と逆行列なしで求まり、すべての推定量が同じ分散 $\sigma^2/2^k$ を持ち互いに無相関である。これが「直交計画」の意味である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.6 溶接条件の 2³ 計画。左: 電流 A・速度 B・ガス流量 C の 8 隅点で得た引張強さ。右: 8 個の観測から求めた 7 つの効果。A、B、AB が大きく、C と高次交互作用はノイズ程度 (真値と一致)" src="fig/06_cube_2k.png" /><figcaption>図 6.6 溶接条件の 2³ 計画。左: 電流 A・速度 B・ガス流量 C の 8 隅点で得た引張強さ。右: 8 個の観測から求めた 7 つの効果。A、B、AB が大きく、C と高次交互作用はノイズ程度 (真値と一致)</figcaption></figure>
 <h3 id="c06-6-8-2">6.8.2 効果の有意性判定</h3>
+<p>6.8.1 項で効果の値は出た。<strong>しかし反復が無ければ誤差分散が推定できない。</strong> 反復せずに済ませる工夫がある。</p>
 <p>反復があれば $MS_E$ で F 検定できる。反復なしの $2^k$ では、Daniel (1959) の<strong>半正規プロット</strong>が標準: 効果の絶対値を順に並べ、半正規分布の分位点に対して打点する。効かない効果は直線上に乗り、効く効果は右上に外れる。あるいは「高次交互作用は無い」と仮定 (効果の希薄性、sparsity of effects) して 3 因子以上の交互作用の平方和を誤差に回す。</p>
 <h3 id="c06-6-8-3">6.8.3 構造工学への接続: 溶接条件の最適化</h3>
+<p>6.8.1〜6.8.2 項の手順を、溶接条件の決定に当てはめる。</p>
 <p>溶接部の引張強さや靭性は、電流・電圧・速度・ガス流量・予熱温度など多数の因子に依存し、しかも交互作用が強い (入熱 = 電圧×電流/速度 という積の形で効く)。$2^5 = 32$ 本の試験片で 5 主効果と 10 の二因子交互作用がすべて推定でき、一因子ずつ変える方法 (各因子 2 水準で 6 本、しかし交互作用は不明で精度も低い) より圧倒的に情報が多い。入熱のように積で効く因子は対数をとると加法的になる — 変換の選択も計画の一部である。</p>
 <h2 id="c06-6-9">6.9 一部実施計画と直交表</h2>
+<p>6.8 節の $2^k$ は、因子が 7 個になると 128 回の実験になる。<strong>供試体が高価な分野では現実的でない。</strong> 高次の交互作用を捨てる代わりに、実験回数を $1/2$、$1/4$、$1/8$ と減らす。</p>
 <h3 id="c06-6-9-1">6.9.1 一部実施と交絡</h3>
+<p>6.9 節で言ったとおり実験回数を減らすと、代償として<strong>ある効果と別の効果が区別できなくなる。</strong> どれとどれが区別できなくなるのかは、設計の段階で完全に決まっている。</p>
 <p>$k$ が増えると $2^k$ は急激に大きくなる ($2^7 = 128$)。高次交互作用が無視できるなら、全体の $1/2^p$ だけ実施する $2^{k-p}$ <strong>一部実施計画</strong> (fractional factorial) で主効果と低次交互作用は推定できる。</p>
 <p>例: $2^{3-1}$ 計画。A, B の $2^2$ 計画を作り、C の列を $C = AB$ (積) で定める。4 回の実験で 3 主効果が推定できるが、C の列と AB の列が<strong>同一</strong>なので両者は区別できない。これを<strong>別名 (alias)</strong> または<strong>交絡</strong> (confounding) という。定義関係 $I = ABC$ (すべての列の積が全て $+1$) から、任意の効果に $ABC$ を掛けると別名が求まる: $A = BC$、$B = AC$、$C = AB$。</p>
 <blockquote>
@@ -13057,6 +13393,7 @@ $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$
 <p>スクリーニング (多数の因子から効く少数を拾う) には分解能 III〜IV、交互作用まで推定したいなら分解能 V 以上。分解能 III の結果を「交互作用は無い」と決め打ちして読むのが最大の落とし穴である。</p>
 <p><strong>ブロックとの交絡</strong>は別の使い方である。$2^3$ を 2 日に分けて実施するとき、ABC の列の符号で日を分ければ、日の効果は ABC (最も無視しやすい効果) にだけ混ざり、主効果と 2 因子交互作用は日の影響を受けない。</p>
 <h3 id="c06-6-9-2">6.9.2 直交表 L8・L9</h3>
+<p>6.9.1 項の一部実施計画を、<strong>表の形で標準化した</strong>ものが直交表である。列に因子を割り付けるだけで計画ができあがる。</p>
 <p>田口玄一が普及させた直交表は、一部実施計画の表を「列に因子を割り付ける」形で標準化したものである。L8($2^7$) は 8 行 7 列で、各列は 2 水準、どの 2 列を取っても水準の組み合わせ (1,1),(1,2),(2,1),(2,2) が同数 (2 回ずつ) 現れる。これが<strong>直交</strong>の定義であり、$\pm1$ 符号化すれば列ベクトルの内積がゼロ、ということと同値である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.7 L8 直交表 (左) と、±1 符号化した 7 列の内積行列 (右)。非対角が全部ゼロ = すべての列が直交し、どの列に割り付けた効果も他の列と無相関に推定できる" src="fig/06_l8_orthogonality.png" /><figcaption>図 6.7 L8 直交表 (左) と、±1 符号化した 7 列の内積行列 (右)。非対角が全部ゼロ = すべての列が直交し、どの列に割り付けた効果も他の列と無相関に推定できる</figcaption></figure>
 <p>L8 は $2^{7-4}$ 計画そのもので、列 1, 2, 4 が独立な因子、列 3 = 1×2、列 5 = 1×4、列 6 = 2×4、列 7 = 1×2×4 である。使い方:</p>
@@ -13067,6 +13404,7 @@ $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$
 </ul>
 <p>どの列がどの列の積かを示す<strong>交互作用表</strong>あるいは線点図 (linear graph) を参照して割り付ける。L9($3^4$) は 3 水準 4 列 9 行で、$3^{4-2}$ 計画。3 水準なので曲率 (二次効果) を主効果の中で捉えられるが、4 列すべて使うと 2 因子交互作用がすべて主効果と交絡する。L9 で交互作用を論じることはできない。</p>
 <h3 id="c06-6-9-3">6.9.3 田口メソッドと SN 比の位置づけ</h3>
+<p>6.9.2 項の直交表は、田口玄一が日本の製造業に広めた枠組みの一部である。<strong>その枠組みは、統計の道具というより目標設定の転換</strong>だった — 平均を合わせることではなく、ばらつきを小さくすることを目的に置く。</p>
 <p>田口の枠組み (パラメータ設計) の核心は、応答の平均でなく<strong>ばらつき</strong>を小さくする条件を探す、という目標設定にある。制御因子 (設計者が決められる) を内側直交表に、誤差因子 (使用環境・製造ばらつき) を外側直交表に割り付け、内側の各行について外側の全条件での応答から <strong>SN 比</strong> を計算し、それを応答として主効果分析する。望目特性なら $\eta = 10\log_{10}(\bar y^2/s^2)$、望小特性なら $-10\log_{10}(\frac1n\sum y^2)$ など。</p>
 <p>「ばらつきに強い設計 (robust design)」という目標は今も正しく、品質工学の大きな貢献である。一方、統計学者からの批判 (Box 1988、Nair 1992 の座談会) は次の点に集中した。</p>
 <ol>
@@ -13076,6 +13414,7 @@ $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$
 </ol>
 <p>近年の比較研究も同じ結論を支持している。多変量テストで田口法と進化的最適化を比べた実験では、因子間に依存 (交互作用) がある現実的な条件で田口法が明確に劣った<sup id="c06-fnref:3"><a class="footnote-ref" href="#c06-fn:3">3</a></sup>。溶接ビード形状の予測で L25 直交表による田口法とガウス過程回帰を比べた研究でも、非線形な依存を捉えられない点が田口法の限界として示されている<sup id="c06-fnref:4"><a class="footnote-ref" href="#c06-fn:4">4</a></sup>。<strong>直交表は「一部実施計画の便利な表」として使い、解析は通常の分散分析・回帰で行う</strong>、というのが現在の穏当な立場である。</p>
 <h2 id="c06-6-10">6.10 応答曲面法の入口</h2>
+<p>6.8〜6.9 節は「どの因子が効くか」を絞る段階だった。<strong>絞れたら次は「どの値にすれば最適か」</strong>である。2 水準では曲がりが表せないので、水準を増やして曲面を当てる。</p>
 <p>スクリーニングで効く因子が絞れたら、次は<strong>最適条件を探す</strong>段階に移る。応答曲面法 (RSM, Box &amp; Wilson 1951) は、応答 $y$ を因子 $x$ の滑らかな関数と見なし、低次の多項式で局所近似しながら最適点へ登っていく手続きである。</p>
 <ol>
 <li><strong>一次モデル</strong> $y = \beta_0 + \sum \beta_i x_i + \varepsilon$ を $2^k$ 計画 + 中心点で当てはめる。中心点の反復から純誤差が、中心点と隅点の平均差から曲率 (一次モデルの不足) が検定できる</li>
@@ -13086,7 +13425,9 @@ $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$
 <figure><img loading="lazy" decoding="async" alt="図 6.8 応答曲面法の 2 段階。等高線は真の応答 (溶接部の引張強さ)。赤の 2² + 中心点で一次モデルを当て、最急上昇方向 (破線) に沿って登り、山頂付近で中心複合計画 (青) により二次モデルを当てて最適点 (星) を推定する" src="fig/06_rsm_contour.png" /><figcaption>図 6.8 応答曲面法の 2 段階。等高線は真の応答 (溶接部の引張強さ)。赤の 2² + 中心点で一次モデルを当て、最急上昇方向 (破線) に沿って登り、山頂付近で中心複合計画 (青) により二次モデルを当てて最適点 (星) を推定する</figcaption></figure>
 <p>RSM は「実験→モデル→次の実験」を繰り返す<strong>逐次的</strong>な方法であり、一度に大きな計画を組まないことが要点である。この考え方は、計算機実験 (FEM パラメトリックスタディ) にもそのまま持ち込まれ、ガウス過程回帰による代理モデルとベイズ最適化へ発展している。</p>
 <h2 id="c06-6-11">6.11 検出力と反復数の設計</h2>
+<p>この章の最後に、<strong>実験を始める前に答えておくべき問い</strong>を扱う。「何本作ればよいか」である。4.10 節でやったことを、3 群以上の場合に広げる。</p>
 <h3 id="c06-6-11-1">6.11.1 一元配置の検出力</h3>
+<p>4.10.1 項の 2 群の検出力を、$k$ 群に広げる。<strong>効果の大きさをどう 1 つの数にまとめるか</strong>が唯一の新しい点である。</p>
 <p>定理 6.3 の証明で触れたとおり、対立仮説のもとで $F$ は非心度</p>
 <p>$$\lambda = \frac{\sum_i n_i \tau_i^2}{\sigma^2} = N f^2, \qquad f = \frac{\sqrt{\sum_i (n_i/N)\,\tau_i^2}}{\sigma}$$</p>
 <p>の非心 F 分布に従う。$f$ は Cohen の効果量で、「群平均の標準偏差 ÷ 誤差の標準偏差」である。検出力は</p>
@@ -13094,10 +13435,12 @@ $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$
 <p>で、<code>scipy.stats.ncf</code> で直接計算できる。Cohen (1992) は 8 種類の標準的な検定について効果量の目安 (小 0.10、中 0.25、大 0.40) と検出力 0.8 に必要な標本数を一覧にし、検出力分析を実務に広めた<sup id="c06-fnref:5"><a class="footnote-ref" href="#c06-fn:5">5</a></sup>。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.9 左: 一元配置 (k=4, α=0.05) の検出力と群あたり反復数。効果量 f が半分になると必要な n は 4 倍になる。右: 2 群比較で平均差 Δ/σ を検出力 0.8 / 0.9 で検出するのに必要な群あたり供試体数 (対数軸)" src="fig/06_power_n.png" /><figcaption>図 6.9 左: 一元配置 (k=4, α=0.05) の検出力と群あたり反復数。効果量 f が半分になると必要な n は 4 倍になる。右: 2 群比較で平均差 Δ/σ を検出力 0.8 / 0.9 で検出するのに必要な群あたり供試体数 (対数軸)</figcaption></figure>
 <h3 id="c06-6-11-2">6.11.2 反復数の目安</h3>
+<p>6.11.1 項の式を反復数について解く。<strong>手で計算できる目安</strong>があると、実験計画の打ち合わせでその場で判断できる。</p>
 <p>2 群比較 (両側 $\alpha$、検出力 $1 - \beta$) で群あたりに必要な $n$ は、正規近似で</p>
 <p>$$n \approx \frac{2 (z_{\alpha/2} + z_{\beta})^2}{(\Delta/\sigma)^2}$$</p>
 <p>$\alpha = 0.05$、$1-\beta = 0.8$ なら分子は $2(1.96 + 0.84)^2 \approx 15.7$。<strong>必要な反復数は検出したい差の二乗に反比例する</strong>。差を半分に絞り込みたければ試験体は 4 倍いる。</p>
 <h3 id="c06-6-11-3">6.11.3 構造工学への接続: 材料試験の反復数設計</h3>
+<p>6.11.2 項の目安を材料試験に当てる。<strong>結果は「3 本では何も言えない」という、規準の慣行に対するかなり厳しいもの</strong>になる。</p>
 <p>コンクリート圧縮強度の変動係数を 10% とすると $\sigma/\mu = 0.1$。「新配合が旧配合より平均で 5% 強い」ことを検出力 0.8 で示したいなら、$\Delta/\sigma = 0.05/0.10 = 0.5$ で $n \approx 15.7/0.25 \approx 63$ 本/群。3 本ずつの試験では $\Delta/\sigma \approx 2.3$、つまり<strong>23% の差がなければ有意にならない</strong>。一方 10% の差 ($\Delta/\sigma = 1$) なら 16 本程度で足りる。JIS の 3 本 1 組は「その配合の平均強度の推定」のためで、配合間の比較のためではない — 目的が違えば必要本数も違う。反復数を増やす代わりに $\sigma$ を減らす (ブロック化・測定精度の向上・共変量の利用) 方が安上がりなことも多い。これが実験計画法の存在意義である。</p>
 <h2 id="c06-6-12">6.12 Python で確かめる</h2>
 <pre><code class="language-python">import numpy as np
