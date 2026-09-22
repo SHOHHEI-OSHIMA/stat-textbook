@@ -7346,7 +7346,7 @@ $c$ を左に動かせば $\beta$ は下がるが $\alpha$ が上がる — こ�
 もうひとつ、$\sigma$ が未知の t 検定では 3. の分母が $s/\sqrt n$ と揺れるので、
 $H_1$ の下での分布は正規ではなく非心 $t$ になる。5. のような閉じた式は書けず、数値計算に頼る。</p></div></details>
 <p>検出力は $d = \delta/\sigma$ (<strong>効果量</strong>) と $\sqrt n$ の積だけで決まる。t 検定では帰無分布が $t_{n-1}$、対立分布が非心 $t$ 分布 (非心度 $d\sqrt n$) になり、閉じた式はないが数値計算できる。</p>
-<figure><img loading="lazy" decoding="async" alt="図 4.8 一標本 t 検定 (両側 α=0.05) の検出力。左: 効果量ごとの n 依存。d=0.2 の小さな効果は n=200 でも検出力 0.8 に届かない。右: 同じ検出力を効果量の関数として見たもの。d=0 で α に一致する" src="fig/04_power_curve.png" /><figcaption>図 4.8 一標本 t 検定 (両側 α=0.05) の検出力。左: 効果量ごとの n 依存。d=0.2 の小さな効果は n=200 でも検出力 0.8 に届かない。右: 同じ検出力を効果量の関数として見たもの。d=0 で α に一致する</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 4.8 一標本 t 検定 (両側 α=0.05) の検出力。左: 効果量ごとの n 依存。d=0.2 の小さな効果は n=200 でようやく検出力 0.8 に届く (0.804)。d=0.5 の 4 倍の標本が要る。右: 同じ検出力を効果量の関数として見たもの。d=0 で α に一致する" src="fig/04_power_curve.png" /><figcaption>図 4.8 一標本 t 検定 (両側 α=0.05) の検出力。左: 効果量ごとの n 依存。d=0.2 の小さな効果は n=200 でようやく検出力 0.8 に届く (0.804)。d=0.5 の 4 倍の標本が要る。右: 同じ検出力を効果量の関数として見たもの。d=0 で α に一致する</figcaption></figure>
 <h3 id="c04-4-10-2">4.10.2 標本サイズの設計</h3>
 <p>検出力 $1 - \beta$ を先に決めて上式を $n$ について解くと</p>
 <p>$$n = \left(\frac{z_{1-\alpha} + z_{1-\beta}}{d}\right)^2 \quad (\text{片側}), \qquad n \approx \left(\frac{z_{1-\alpha/2} + z_{1-\beta}}{d}\right)^2 \quad (\text{両側})$$</p>
@@ -9272,6 +9272,24 @@ print(&quot;注   発展6 の 90%% 区間の上端は 1.915 → 1.914&quot;)
 <p>$$\frac{\partial S}{\partial \beta_0} = -2\sum_i (y_i - \beta_0 - \beta_1 x_i) = 0, \qquad \frac{\partial S}{\partial \beta_1} = -2\sum_i x_i (y_i - \beta_0 - \beta_1 x_i) = 0$$</p>
 <p>これを<strong>正規方程式</strong>という。第 1 式から $\bar y = \beta_0 + \beta_1 \bar x$、すなわち回帰直線は重心 $(\bar x, \bar y)$ を通る。これを第 2 式に代入して整理すると</p>
 <p>$$\hat\beta_1 = \frac{\sum_i (x_i - \bar x)(y_i - \bar y)}{\sum_i (x_i - \bar x)^2} = \frac{S_{xy}}{S_{xx}}, \qquad \hat\beta_0 = \bar y - \hat\beta_1 \bar x$$</p>
+<details class="gap"><summary>行間: 正規方程式を解いて $S_{xy}/S_{xx}$ が出るまで</summary><div class="gap-body"><p>本文では「これを第 2 式に代入して整理すると」と 1 行で書いた。その中身は…</p>
+<p><strong>記号の役割を固定する。</strong> $x_i$ は固定値、$y_i$ だけが確率変数である (5.2.1 の立場)。和 $\sum_i$ はすべて $i = 1,\dots,n$ を走る。$\bar x, \bar y$ は標本平均、$S_{xx} = \sum_i (x_i - \bar x)^2$、$S_{xy} = \sum_i (x_i - \bar x)(y_i - \bar y)$。この段階の $\beta_0, \beta_1$ は「まだ解けていない未知数」であって推定値ではない。</p>
+<p><strong>1. 第 1 式を平均の形にする。</strong> 両辺を $-2$ で割り、さらに $n$ で割る。</p>
+<p>$$\bar y - \beta_0 - \beta_1 \bar x = 0$$</p>
+<p>$\sum_i \beta_0 = n\beta_0$ ($i$ を含まない定数を $n$ 回足しただけ) を使った。ここから $\beta_0 = \bar y - \beta_1\bar x$。</p>
+<p><strong>2. 第 2 式に代入する。</strong> $\beta_0$ を消すだけで、まだ整理はしない。</p>
+<p>$$\sum_i x_i\bigl(y_i - \bar y - \beta_1 (x_i - \bar x)\bigr) = 0$$</p>
+<p><strong>3. $\beta_1$ の項を右辺へ移す。</strong></p>
+<p>$$\sum_i x_i (y_i - \bar y) = \beta_1 \sum_i x_i (x_i - \bar x)$$</p>
+<p><strong>4. ここが「整理すると」の正体である。</strong> 左辺の $x_i$ を $x_i - \bar x$ に取り替えてよい。理由は</p>
+<p>$$\sum_i \bar x\,(y_i - \bar y) = \bar x \sum_i (y_i - \bar y) = 0$$</p>
+<p>で、$\bar x$ は $i$ を含まないので和の外に出せ、残った $\sum_i (y_i - \bar y)$ が平均の定義からゼロだからである。引いても値が変わらないので</p>
+<p>$$\sum_i x_i (y_i - \bar y) = S_{xy}$$</p>
+<p>右辺も同じ理由で $\sum_i x_i(x_i - \bar x) = S_{xx}$ になる。</p>
+<p><strong>5. 割る。</strong> $S_{xx} > 0$ は「$x_i$ が全部同じ値ではない」ことと同値で、これが成り立たないと傾きは決まらない。</p>
+<p>$$\hat\beta_1 = \frac{S_{xy}}{S_{xx}}$$</p>
+<p>$\hat\beta_0$ は 1 に $\hat\beta_1$ を戻すだけである。</p>
+<p><strong>落とし穴。</strong> 消えるのは<strong>片方だけ</strong>中心化していない形であって、$\sum_i x_i y_i$ が $S_{xy}$ に等しいわけではない。実際 $S_{xy} = \sum_i x_i y_i - n\bar x\bar y$ である。4 で使ったのは「中心化した側の和がゼロ」という一点で、両方とも生のままでは消えない。</p></div></details>
 <p>第 1 章の記号では $\hat\beta_1 = s_{xy}/s_x^2 = r\, s_y / s_x$ である。傾きは「相関係数 × ($y$ の散らばり / $x$ の散らばり)」と読める。</p>
 <p><strong>なぜ二乗か。</strong> 絶対値の和や最大値でもよさそうだが、二乗には (i) 微分できて解が閉じた形で出る、(ii) 誤差が正規分布なら最尤推定と一致する (5.5.1)、(iii) 幾何的に射影になる (5.3.2)、という 3 つの利点がある。代償として外れ値に弱い (5.7.3)。</p>
 <h3 id="c05-5-2-3">5.2.3 残差の性質</h3>
@@ -9295,6 +9313,26 @@ print(&quot;注   発展6 の 90%% 区間の上端は 1.915 → 1.914&quot;)
 <p><strong>定理 5.1</strong> 単回帰では $R^2 = r^2$ (ピアソン相関係数の二乗)</p>
 </blockquote>
 <p>証明: $\hat y_i - \bar y = \hat\beta_1 (x_i - \bar x)$ より $S_R = \hat\beta_1^2 S_{xx} = S_{xy}^2 / S_{xx}$。よって $R^2 = S_{xy}^2 / (S_{xx} S_{yy}) = r^2$。</p>
+<details class="gap"><summary>行間: 交差項が消えるところと、$R^2 = r^2$ になるまで</summary><div class="gap-body"><p>本文では「両辺を二乗して和をとったとき交差項が消え」と 1 行で書き、定理 5.1 の証明も 1 行に畳んだ。2 つを分けて埋める。</p>
+<p><strong>記号。</strong> $\hat y_i = \hat\beta_0 + \hat\beta_1 x_i$、$e_i = y_i - \hat y_i$、$\hat\beta_1 = S_{xy}/S_{xx}$ はもう決まった数である。$S_{yy} = \sum_i (y_i - \bar y)^2$ と書く (これが $S_T$)。</p>
+<p><strong>1. 偏差を 2 つに割る。</strong></p>
+<p>$$y_i - \bar y = (\hat y_i - \bar y) + e_i$$</p>
+<p>$\hat y_i$ を足して引いただけである。</p>
+<p><strong>2. 二乗して和をとる。</strong></p>
+<p>$$S_T = \sum_i (\hat y_i - \bar y)^2 + 2\sum_i (\hat y_i - \bar y)e_i + \sum_i e_i^2$$</p>
+<p><strong>3. 交差項を 2 つに分ける。</strong> $\bar y$ は $i$ を含まないので和の外に出せる。</p>
+<p>$$\sum_i (\hat y_i - \bar y)e_i = \sum_i \hat y_i e_i - \bar y\sum_i e_i$$</p>
+<p><strong>4. どちらもゼロ。</strong> 5.2.3 の性質 1 が $\sum_i e_i = 0$、性質 3 が $\sum_i \hat y_i e_i = 0$ である。2 本とも正規方程式そのものなので、<strong>最小二乗解でなければ成り立たない</strong>。これで 2 の中央の項が消えて分散分解が出る。</p>
+<p><strong>5. $S_R$ を $\hat\beta_1$ で書く。</strong> 回帰直線が重心を通るので $\bar y = \hat\beta_0 + \hat\beta_1\bar x$。これを $\hat y_i$ の定義から辺々引くと</p>
+<p>$$\hat y_i - \bar y = \hat\beta_1 (x_i - \bar x)$$</p>
+<p><strong>6. 二乗して和をとる。</strong> $\hat\beta_1$ は $i$ を含まないので外に出せる。</p>
+<p>$$S_R = \hat\beta_1^2 \sum_i (x_i - \bar x)^2 = \hat\beta_1^2 S_{xx}$$</p>
+<p><strong>7. $\hat\beta_1 = S_{xy}/S_{xx}$ を入れる。</strong> $S_{xx}$ が 1 つ約分される。</p>
+<p>$$S_R = \frac{S_{xy}^2}{S_{xx}^2}\,S_{xx} = \frac{S_{xy}^2}{S_{xx}}$$</p>
+<p><strong>8. 定義で割る。</strong></p>
+<p>$$R^2 = \frac{S_R}{S_T} = \frac{S_{xy}^2}{S_{xx}S_{yy}} = r^2$$</p>
+<p>最後は第 1 章の $r = S_{xy}/\sqrt{S_{xx}S_{yy}}$ の二乗そのものである。</p>
+<p><strong>落とし穴。</strong> 5 は「切片がモデルに入っている」ことを使っている。切片を外すと $\sum_i e_i = 0$ すら成り立たず、4 の消去も分解も崩れる。また $R^2 = r^2$ は単回帰に限った話で、重回帰で対応するのは $y$ と $\hat y$ の相関の二乗の方である。</p></div></details>
 <p>$R^2$ についての注意: (i) 説明変数を増やすと (無意味なものでも) 決して減らない。そのため重回帰では自由度調整済み $\bar R^2 = 1 - \frac{S_E/(n-p)}{S_T/(n-1)}$ を併記する。(ii) $R^2$ が高くてもモデルが正しいとは限らず (Anscombe の四つ組は全て $R^2 = 0.67$)、低くても係数が有意で有用なことはある。(iii) 時系列など $y$ 自身にトレンドがあるデータでは $R^2$ は簡単に 0.99 になる。</p>
 <h2 id="c05-5-3">5.3 重回帰の行列表現</h2>
 <h3 id="c05-5-3-1">5.3.1 正規方程式</h3>
@@ -9309,6 +9347,20 @@ print(&quot;注   発展6 の 90%% 区間の上端は 1.915 → 1.914&quot;)
 $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathbf y$$</p>
 </blockquote>
 <p>証明の要点: 任意の $\mathbf v \ne \mathbf 0$ に対し $\mathbf v^\top \mathbf X^\top\mathbf X \mathbf v = \|\mathbf X\mathbf v\|^2 > 0$ (列が独立なので $\mathbf X\mathbf v \ne \mathbf 0$)。よって $\mathbf X^\top\mathbf X$ は正定値で、$S$ のヘッセ行列 $2\mathbf X^\top\mathbf X$ も正定値だから停留点は唯一の最小点。</p>
+<details class="gap"><summary>行間: ベクトルで微分して正規方程式が出るところ</summary><div class="gap-body"><p>本文では残差平方和を展開した式と「$\boldsymbol\beta$ で微分して 0 とおくと」を各 1 行で書いた。行列の形に慣れていないとここで止まる。</p>
+<p><strong>次元をすべて書く。</strong> $\mathbf y$ は $n\times 1$、$\mathbf X$ は $n\times p$ (第 $i$ 行が $(1, x_{i1},\dots,x_{i,p-1})$)、$\boldsymbol\beta$ は $p\times 1$。したがって $\mathbf X\boldsymbol\beta$ は $n\times 1$、$\mathbf X^\top\mathbf X$ は $p\times p$、$\mathbf X^\top\mathbf y$ は $p\times 1$ である。$S(\boldsymbol\beta)$ は $1\times 1$ のスカラー。</p>
+<p><strong>1. 二乗ノルムを内積に開く。</strong></p>
+<p>$$S(\boldsymbol\beta) = (\mathbf y - \mathbf X\boldsymbol\beta)^\top(\mathbf y - \mathbf X\boldsymbol\beta)$$</p>
+<p><strong>2. 展開したときの「2」の出どころ。</strong> 交差項は 2 つ出るが、どちらも $1\times1$ で、スカラーは転置しても同じ値である。</p>
+<p>$$\boldsymbol\beta^\top\mathbf X^\top\mathbf y = \mathbf y^\top\mathbf X\boldsymbol\beta$$</p>
+<p>同じものが 2 つあるので $-2\boldsymbol\beta^\top\mathbf X^\top\mathbf y$ とまとめられる。</p>
+<p><strong>3. 微分する。</strong> 本文に挙げた 2 つの公式を $\mathbf a = \mathbf X^\top\mathbf y$、$\mathbf A = \mathbf X^\top\mathbf X$ として当てはめる。$\mathbf A$ が対称なのは $(\mathbf X^\top\mathbf X)^\top = \mathbf X^\top\mathbf X$ による。</p>
+<p>$$\frac{\partial S}{\partial\boldsymbol\beta} = -2\mathbf X^\top\mathbf y + 2\mathbf X^\top\mathbf X\boldsymbol\beta$$</p>
+<p>これは $p\times1$ のベクトルで、$p$ 本の連立方程式を一度に書いたものである。0 とおけば正規方程式になる。</p>
+<p><strong>4. なぜ停留点が最小点か。</strong> ヘッセ行列は $2\mathbf X^\top\mathbf X$ で、$\boldsymbol\beta$ に依らない定数行列である。任意の $\mathbf v \ne \mathbf 0$ に対し</p>
+<p>$$\mathbf v^\top\mathbf X^\top\mathbf X\mathbf v = (\mathbf X\mathbf v)^\top(\mathbf X\mathbf v) = \|\mathbf X\mathbf v\|^2$$</p>
+<p>となり、<strong>$\mathbf X$ の列が線形独立なら</strong> $\mathbf X\mathbf v \ne \mathbf 0$ なのでこれは正である。よって $\mathbf X^\top\mathbf X$ は正定値、したがって正則で、停留点は 1 つしかなく、そこが最小点になる。</p>
+<p><strong>落とし穴。</strong> 正則性は「列が独立」という仮定から来るのであって、$\mathbf X^\top\mathbf X$ という形だから自動的に得られるのではない。列が従属なら $\mathbf X\mathbf v = \mathbf 0$ となる $\mathbf v \ne \mathbf 0$ が存在して 4 の値はゼロになり、逆行列は作れない。5.6 はこの縁に近づいた場合の話である。</p></div></details>
 <p>微分を使わない別証: 任意の $\boldsymbol\beta$ について $\mathbf y - \mathbf X\boldsymbol\beta = (\mathbf y - \mathbf X\hat{\boldsymbol\beta}) + \mathbf X(\hat{\boldsymbol\beta} - \boldsymbol\beta)$ と分けると、第 1 項 (残差) は正規方程式により $\mathbf X$ の全ての列と直交するので交差項が消え、$S(\boldsymbol\beta) = S(\hat{\boldsymbol\beta}) + \|\mathbf X(\hat{\boldsymbol\beta} - \boldsymbol\beta)\|^2 \ge S(\hat{\boldsymbol\beta})$。</p>
 <p>数値計算上の注意: $(\mathbf X^\top\mathbf X)^{-1}$ を陽に作ると条件数が二乗されて桁落ちする。実装は QR 分解 ($\mathbf X = \mathbf Q\mathbf R$、$\mathbf R\hat{\boldsymbol\beta} = \mathbf Q^\top\mathbf y$) か特異値分解で解く (<code>numpy.linalg.lstsq</code> は SVD)。</p>
 <h3 id="c05-5-3-2">5.3.2 ハット行列と射影の幾何</h3>
@@ -9319,6 +9371,22 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p><strong>定理 5.3 (ハット行列の性質)</strong> (i) $\mathbf H$ は対称かつ冪等 ($\mathbf H^2 = \mathbf H$)。(ii) $\mathbf H\mathbf X = \mathbf X$。(iii) $\operatorname{tr}\mathbf H = \operatorname{rank}\mathbf H = p$。(iv) $\mathbf I - \mathbf H$ も対称冪等で、残差は $\mathbf e = (\mathbf I - \mathbf H)\mathbf y$、$\mathbf X^\top\mathbf e = \mathbf 0$</p>
 </blockquote>
 <p>証明: (i) 転置は自明。$\mathbf H^2 = \mathbf X(\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf X)(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top = \mathbf H$。(ii) 同様に直接計算。(iii) $\operatorname{tr}(\mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top) = \operatorname{tr}((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X) = \operatorname{tr}\mathbf I_p = p$ (トレースの巡回性)。対称冪等行列の固有値は 0 か 1 なので階数 = トレース。(iv) $\mathbf X^\top(\mathbf I - \mathbf H) = \mathbf X^\top - \mathbf X^\top = \mathbf 0$。</p>
+<details class="gap"><summary>行間: 対称冪等がなぜ「射影」なのか</summary><div class="gap-body"><p>本文は定理 5.3 の証明を 1 段落で流し、そのあと「対称冪等行列は直交射影である」と言い切った。ここを分ける。</p>
+<p><strong>次元。</strong> $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ は $n\times n$、中央の $(\mathbf X^\top\mathbf X)^{-1}$ は $p\times p$。$\mathbf H$ は $\mathbf X$ だけで決まり、<strong>$\mathbf y$ には依らない</strong>。</p>
+<p><strong>1. 冪等の計算は括弧の付け替えだけ。</strong></p>
+<p>$$\mathbf H^2 = \mathbf X(\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf X)(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$$</p>
+<p>中央の $(\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf X) = \mathbf I_p$ が消えて $\mathbf H$ に戻る。</p>
+<p><strong>2. $\mathbf H\mathbf X = \mathbf X$ も同じ。</strong></p>
+<p>$$\mathbf H\mathbf X = \mathbf X(\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf X) = \mathbf X$$</p>
+<p>意味は「<strong>列空間の中にあるものは動かさない</strong>」である。</p>
+<p><strong>3. 冪等なら固有値は 0 か 1。</strong> $\mathbf H\mathbf u = \lambda\mathbf u$ ($\mathbf u\ne\mathbf 0$) とすると</p>
+<p>$$\lambda\mathbf u = \mathbf H\mathbf u = \mathbf H^2\mathbf u = \lambda^2\mathbf u$$</p>
+<p>より $\lambda^2 = \lambda$、すなわち $\lambda$ は 0 か 1 に限られる。</p>
+<p><strong>4. 対称だから直交対角化できる。</strong> ここで対称性が効く。固有値 1 の固有空間と固有値 0 の固有空間が<strong>互いに直交</strong>して $\mathbb R^n$ を張る。2 より固有値 1 の空間は列空間 $\mathcal C(\mathbf X)$ を含み、$\mathbf H$ を掛ける操作は「列空間の成分だけ残して残りを捨てる」ことになる。これが直交射影の定義である。</p>
+<p><strong>5. 階数 = トレース。</strong> 対角化した形で見れば、固有値 1 の個数が階数であり、同時に固有値の和 (= トレース) でもある。そのトレースは巡回性から</p>
+<p>$$\operatorname{tr}\mathbf H = \operatorname{tr}\bigl((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\bigr) = p$$</p>
+<p>$n\times n$ 行列のトレースを $p\times p$ 行列のトレースに移し替えたのが要点で、ここで初めて $p$ が出てくる。</p>
+<p><strong>落とし穴。</strong> 冪等なだけの行列も射影ではあるが、直交とは限らない (斜交射影がありうる)。直交性を保証しているのは対称性の方である。また $\operatorname{tr}\mathbf H = p$ は<strong>個々の</strong> $h_{ii}$ については何も言わない。平均が $p/n$ というだけで、少数の点に偏っていることもある (5.7.3 のレバレッジ)。</p></div></details>
 <p>幾何的な意味 (図 5.1 左): 対称冪等行列は<strong>直交射影</strong>である。$\mathbf H$ は $\mathbb R^n$ を $\mathbf X$ の列空間 $\mathcal C(\mathbf X)$ ($p$ 次元) に射影し、$\mathbf I - \mathbf H$ はその直交補空間 ($n - p$ 次元) に射影する。最小二乗とは「$\mathbf y$ に最も近い列空間の点を探す」ことであり、最近点は垂線の足である。残差 $\mathbf e$ は列空間に垂直、だから $\mathbf X^\top\mathbf e = \mathbf 0$ である。Pythagoras の定理 $\|\mathbf y\|^2 = \|\hat{\mathbf y}\|^2 + \|\mathbf e\|^2$ が分散分解の正体である。</p>
 <p>$\mathbf H$ の対角要素 $h_{ii}$ は 5.7.3 で<strong>レバレッジ</strong>として再登場する。$\sum_i h_{ii} = p$ より平均は $p/n$。</p>
 <h3 id="c05-5-3-3">5.3.3 自由度と誤差分散の推定</h3>
@@ -9327,6 +9395,24 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p>($\mathbf e = (\mathbf I-\mathbf H)\mathbf y = (\mathbf I-\mathbf H)\boldsymbol\varepsilon$ に注意。$\mathbf H\mathbf X\boldsymbol\beta = \mathbf X\boldsymbol\beta$ で母数部分が消える)。したがって</p>
 <p>$$\hat\sigma^2 = s^2 = \frac{\mathbf e^\top\mathbf e}{n - p} = \frac{S_E}{n-p}$$</p>
 <p>が $\sigma^2$ の不偏推定量である。第 1 章の「$n-1$ で割る」は $p = 1$ (切片だけのモデル) の特別な場合にほかならない。</p>
+<details class="gap"><summary>行間: $\mathbf e^\top\mathbf e$ の期待値にトレースが出るところ</summary><div class="gap-body"><p>本文は $E[\mathbf e^\top\mathbf e]$ を等号 2 つで一気に書いた。真ん中の「二次形式の期待値がトレースになる」が最も飛んでいる。</p>
+<p><strong>記号と次元。</strong> $\boldsymbol\varepsilon$ は $n\times1$ の確率ベクトルで $E[\boldsymbol\varepsilon]=\mathbf 0$、$E[\boldsymbol\varepsilon\boldsymbol\varepsilon^\top] = \sigma^2\mathbf I_n$ (これが仮定 (V) の中身である)。$\mathbf M = \mathbf I - \mathbf H$ は $n\times n$ の<strong>確率変数でない</strong>行列。$\mathbf e^\top\mathbf e$ は $1\times1$ のスカラー。</p>
+<p><strong>1. 残差から母数が消える。</strong> $\mathbf y = \mathbf X\boldsymbol\beta + \boldsymbol\varepsilon$ を入れる。</p>
+<p>$$\mathbf e = \mathbf M\mathbf X\boldsymbol\beta + \mathbf M\boldsymbol\varepsilon$$</p>
+<p>定理 5.3 (ii) の $\mathbf H\mathbf X = \mathbf X$ より $\mathbf M\mathbf X = \mathbf O$ で、第 1 項が丸ごと消えて $\mathbf e = \mathbf M\boldsymbol\varepsilon$。<strong>未知の $\boldsymbol\beta$ が残らない</strong>ことが、このあと期待値を計算できる理由である。</p>
+<p><strong>2. 二乗和を二次形式に書く。</strong> $\mathbf M$ が対称冪等なので $\mathbf M^\top\mathbf M = \mathbf M$ である。以後 $Q = \boldsymbol\varepsilon^\top\mathbf M\boldsymbol\varepsilon$ と略記する (これもスカラー)。</p>
+<p>$$\mathbf e^\top\mathbf e = \boldsymbol\varepsilon^\top\mathbf M^\top\mathbf M\boldsymbol\varepsilon = Q$$</p>
+<p><strong>3. スカラーをトレースで包む。</strong> $1\times1$ の量は自分自身のトレースに等しい。手品に見えるが何もしていない。</p>
+<p>$$Q = \operatorname{tr}(Q)$$</p>
+<p><strong>4. 巡回性で $\boldsymbol\varepsilon$ どうしを隣り合わせる。</strong></p>
+<p>$$\operatorname{tr}(Q) = \operatorname{tr}(\mathbf M\,\boldsymbol\varepsilon\boldsymbol\varepsilon^\top)$$</p>
+<p><strong>5. 期待値を中に入れる。</strong> トレースは成分の有限和なので期待値と交換でき、$\mathbf M$ は確率変数でないから外に出せる。</p>
+<p>$$E[Q] = \operatorname{tr}\bigl(\mathbf M\,E[\boldsymbol\varepsilon\boldsymbol\varepsilon^\top]\bigr)$$</p>
+<p>右端の期待値が $\sigma^2\mathbf I_n$ なので、これは $\sigma^2\operatorname{tr}\mathbf M$ に等しい。</p>
+<p><strong>6. トレースを数える。</strong> 定理 5.3 (iii) から $\operatorname{tr}\mathbf H = p$ なので</p>
+<p>$$\operatorname{tr}(\mathbf I_n - \mathbf H) = n - p$$</p>
+<p>よって $E[\mathbf e^\top\mathbf e] = \sigma^2(n-p)$ となり、$n-p$ で割れば不偏になる。</p>
+<p><strong>落とし穴。</strong> 使ったのは (E) と (V) だけで、<strong>正規性 (N) は要らない</strong>。逆に (V) が破れて $E[\boldsymbol\varepsilon\boldsymbol\varepsilon^\top] = \boldsymbol\Omega$ なら 5 は $\operatorname{tr}(\mathbf M\boldsymbol\Omega)$ で止まり、これは一般に $\sigma^2(n-p)$ の形に書けない。「$n-p$ で割れば不偏」は等分散に寄りかかった結論である (5.15)。</p></div></details>
 <h2 id="c05-5-4">5.4 Gauss–Markov 定理</h2>
 <p>推定量の性質を述べるには誤差の仮定が要る。</p>
 <ul>
@@ -9337,6 +9423,18 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p><strong>定理 5.4</strong> (E) のもとで $E[\hat{\boldsymbol\beta}] = \boldsymbol\beta$ (不偏)。(E)(V) のもとで $\operatorname{Var}(\hat{\boldsymbol\beta}) = \sigma^2(\mathbf X^\top\mathbf X)^{-1}$</p>
 </blockquote>
 <p>証明: $\hat{\boldsymbol\beta} = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top(\mathbf X\boldsymbol\beta + \boldsymbol\varepsilon) = \boldsymbol\beta + (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\boldsymbol\varepsilon$。期待値をとれば第 2 項が消える。分散は $\mathbf A = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ とおいて $\operatorname{Var}(\mathbf A\boldsymbol\varepsilon) = \mathbf A(\sigma^2\mathbf I)\mathbf A^\top = \sigma^2(\mathbf X^\top\mathbf X)^{-1}$。</p>
+<details class="gap"><summary>行間: 分散が $\sigma^2(\mathbf X^\top\mathbf X)^{-1}$ に潰れるところ</summary><div class="gap-body"><p>本文は「$\mathbf A(\sigma^2\mathbf I)\mathbf A^\top = \sigma^2(\mathbf X^\top\mathbf X)^{-1}$」と 1 行で書いた。$\mathbf A\mathbf A^\top$ がなぜこの形になるかを 1 手ずつ見る。</p>
+<p><strong>次元。</strong> $\mathbf A = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ は $p\times n$、$\mathbf A\boldsymbol\varepsilon$ は $p\times1$。$\operatorname{Var}(\hat{\boldsymbol\beta})$ は $p\times p$ の<strong>行列</strong>であって数ではない。対角成分が各係数の分散、非対角成分が係数どうしの共分散である。</p>
+<p><strong>1. 定数行列を外に出す。</strong> ベクトルの線形変換に対する規則 $\operatorname{Var}(\mathbf A\mathbf u) = \mathbf A\operatorname{Var}(\mathbf u)\mathbf A^\top$ を使う。</p>
+<p>$$\operatorname{Var}(\mathbf A\boldsymbol\varepsilon) = \mathbf A(\sigma^2\mathbf I_n)\mathbf A^\top$$</p>
+<p>$\sigma^2\mathbf I$ はスカラー倍なので前に出せて、右辺は $\sigma^2\mathbf A\mathbf A^\top$ になる。<strong>ここで初めて (V) を使った</strong>。</p>
+<p><strong>2. 転置を書き下す。</strong> $(\mathbf X^\top\mathbf X)^{-1}$ は対称なので転置しても変わらない。</p>
+<p>$$\mathbf A^\top = \mathbf X\,(\mathbf X^\top\mathbf X)^{-1}$$</p>
+<p><strong>3. 掛ける。</strong> 中央に $\mathbf X^\top\mathbf X$ が現れる。</p>
+<p>$$\mathbf A\mathbf A^\top = (\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf X)(\mathbf X^\top\mathbf X)^{-1}$$</p>
+<p><strong>4. 約分する。</strong> 左の 2 つが $\mathbf I_p$ になって</p>
+<p>$$\mathbf A\mathbf A^\top = (\mathbf X^\top\mathbf X)^{-1}$$</p>
+<p><strong>落とし穴。</strong> 潰れるのは<strong>中央が $\mathbf I$ の定数倍のときだけ</strong>である。$\operatorname{Var}(\boldsymbol\varepsilon) = \boldsymbol\Omega$ が一般の形なら 1 の右辺は $\mathbf A\boldsymbol\Omega\mathbf A^\top$ のまま残り、$(\mathbf X^\top\mathbf X)^{-1}$ に両側から挟まれた形になる。一方、不偏性の計算には $\boldsymbol\Omega$ がどこにも入らない。「係数は無事で分散の式だけが変わる」という切り分けはここから来る (5.15)。</p></div></details>
 <p>単回帰では $(\mathbf X^\top\mathbf X)^{-1}$ を書き下すと</p>
 <p>$$\operatorname{Var}(\hat\beta_1) = \frac{\sigma^2}{S_{xx}}, \qquad \operatorname{Var}(\hat\beta_0) = \sigma^2\left(\frac1n + \frac{\bar x^2}{S_{xx}}\right)$$</p>
 <p>傾きの精度は「$x$ をどれだけ広く散らせたか ($S_{xx}$)」で決まる。実験計画の観点では、<strong>$x$ の両端に点を置くほど傾きの分散は小さい</strong> (ただし両端だけでは非線形性が検出できない)。</p>
@@ -9347,6 +9445,27 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p>$$\mathbf a_0^\top\mathbf d = \mathbf c^\top(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf d = 0$$</p>
 <p>よって $\operatorname{Var}(\mathbf a^\top\mathbf y) = \sigma^2\|\mathbf a\|^2 = \sigma^2(\|\mathbf a_0\|^2 + \|\mathbf d\|^2) \ge \sigma^2\|\mathbf a_0\|^2 = \operatorname{Var}(\mathbf c^\top\hat{\boldsymbol\beta})$。等号は $\mathbf d = \mathbf 0$ のときのみ。幾何的には「不偏という制約を満たす重みベクトル $\mathbf a$ のうち、ノルム最小のものが列空間に乗っている $\mathbf a_0$」ということで、これもまた射影である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.2 Gauss–Markov 定理の数値実験。傾き β₁ の 4 つの線形不偏推定量 (OLS、両端 2 点の差、前半後半の平均差、OLS に列空間と直交するノイズを足したもの) を 4000 回反復。平均はどれも真値 2 だが、分散は OLS が最小" src="fig/05_gauss_markov.png" /><figcaption>図 5.2 Gauss–Markov 定理の数値実験。傾き β₁ の 4 つの線形不偏推定量 (OLS、両端 2 点の差、前半後半の平均差、OLS に列空間と直交するノイズを足したもの) を 4000 回反復。平均はどれも真値 2 だが、分散は OLS が最小</figcaption></figure>
+<details class="gap"><summary>行間: Gauss–Markov の証明を 1 手ずつ</summary><div class="gap-body"><p>本文は不偏の条件・$\mathbf a_0$ の定義・直交・ピタゴラスを 1 段落に畳んだ。順に開く。</p>
+<p><strong>記号と次元。</strong> $\mathbf c$ は $p\times1$ の<strong>固定</strong>ベクトルで、どの線形結合を推定したいかを指定する。$\mathbf a$ は $n\times1$ の重みで、推定量 $\mathbf a^\top\mathbf y$ は観測の重み付き和である。$\mathbf a$ は $\mathbf y$ を見る前に決めておく — これが「線形推定量」の意味である。</p>
+<p><strong>1. 不偏という条件を $\mathbf a$ の式に翻訳する。</strong> $E[\mathbf y] = \mathbf X\boldsymbol\beta$ だから</p>
+<p>$$E[\mathbf a^\top\mathbf y] = \mathbf a^\top\mathbf X\boldsymbol\beta$$</p>
+<p>これが<strong>すべての</strong> $\boldsymbol\beta$ で $\mathbf c^\top\boldsymbol\beta$ に等しい、という要求である。$\mathbf u^\top\boldsymbol\beta$ がすべての $\boldsymbol\beta$ でゼロなら $\mathbf u = \mathbf 0$ なので、条件は</p>
+<p>$$\mathbf X^\top\mathbf a = \mathbf c$$</p>
+<p>「すべての $\boldsymbol\beta$ で」が効いている。特定の $\boldsymbol\beta$ で一致するだけでは制約にならない。</p>
+<p><strong>2. 最小二乗版の重みを書く。</strong> $\mathbf c^\top\hat{\boldsymbol\beta} = \mathbf c^\top(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf y$ なので、これも $\mathbf a_0^\top\mathbf y$ の形で</p>
+<p>$$\mathbf a_0 = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf c$$</p>
+<p>$\mathbf a_0$ は $\mathbf X$ の列の線形結合、すなわち<strong>列空間の中</strong>にいる。</p>
+<p><strong>3. 差をとる。</strong> $\mathbf d = \mathbf a - \mathbf a_0$ と置く。両方が 1 の条件を満たすので</p>
+<p>$$\mathbf X^\top\mathbf d = \mathbf c - \mathbf c = \mathbf 0$$</p>
+<p>これは「$\mathbf d$ は列空間と直交する」という意味である。</p>
+<p><strong>4. 直交を確かめる。</strong> 2 と 3 を掛け合わせる。</p>
+<p>$$\mathbf a_0^\top\mathbf d = \mathbf c^\top(\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf d) = 0$$</p>
+<p>最後に $\mathbf X^\top\mathbf d = \mathbf 0$ を使った。</p>
+<p><strong>5. ピタゴラス。</strong> 直交するものを足して二乗すると交差項が消える。</p>
+<p>$$\|\mathbf a\|^2 = \|\mathbf a_0\|^2 + 2\mathbf a_0^\top\mathbf d + \|\mathbf d\|^2$$</p>
+<p>中央が 0 なので $\|\mathbf a\|^2 \ge \|\mathbf a_0\|^2$ で、等号は $\mathbf d = \mathbf 0$ のときだけ。</p>
+<p><strong>6. 分散に戻す。</strong> (V) のもとで重み付き和の分散は $\operatorname{Var}(\mathbf a^\top\mathbf y) = \sigma^2\|\mathbf a\|^2$ である。5 を $\sigma^2$ 倍すれば主張が出る。</p>
+<p><strong>落とし穴。</strong> 「$\mathbf a$ が $\mathbf y$ に依らない」という制限が全体を支えている。$\mathbf a$ を同じデータから選んでよいなら $\mathbf a^\top\mathbf y$ は $\mathbf y$ の非線形な関数になり、1 の不偏条件からして書けなくなる。同じデータで変数選択をしたあとの推定量がこの保証の外にあるのは、そのためである (5.8.3)。</p></div></details>
 <p>定理の<strong>範囲</strong>に注意する。(i) 正規性は仮定していない。(ii) 「線形」推定量の中での話で、非線形 (例えば中央値回帰) や偏りのある推定量 (リッジ回帰) の方が平均二乗誤差では優れることがある。(iii) (V) が破れる (不均一分散・相関) なら BLUE ではなくなり、一般化最小二乗 $\hat{\boldsymbol\beta}_{GLS} = (\mathbf X^\top\boldsymbol\Sigma^{-1}\mathbf X)^{-1}\mathbf X^\top\boldsymbol\Sigma^{-1}\mathbf y$ (Aitken 1935) が BLUE になる。</p>
 <h2 id="c05-5-5">5.5 係数の分布と推測</h2>
 <h3 id="c05-5-5-1">5.5.1 正規誤差のもとでの分布</h3>
@@ -9390,6 +9509,25 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p><strong>定理 5.7</strong> 変数を中心化・標準化した回帰で $\displaystyle \operatorname{Var}(\hat\beta_j) = \frac{\sigma^2}{S_{jj}}\,\mathrm{VIF}_j$ ($S_{jj} = \sum_i (x_{ij} - \bar x_j)^2$)</p>
 </blockquote>
 <p>証明の要点: $(\mathbf X^\top\mathbf X)^{-1}$ の $(j,j)$ 要素を、$\mathbf X$ を「$x_j$ の列」と「残り」に分けたブロック逆行列公式で書くと、$1/(\mathbf x_j^\top(\mathbf I - \mathbf H_{-j})\mathbf x_j)$ になる。分母は $x_j$ を残りの変数に回帰したときの残差平方和 $S_{jj}(1 - R_j^2)$ である。</p>
+<details class="gap"><summary>行間: VIF の分母が「残りに回帰した残差平方和」になるところ</summary><div class="gap-body"><p>本文では「ブロック逆行列公式で書くと $1/(\mathbf x_j^\top(\mathbf I - \mathbf H_{-j})\mathbf x_j)$ になる」と 1 行で書いた。2 段階に分ける。</p>
+<p><strong>記号と次元。</strong> 変数はすべて中心化済みとする。$\mathbf X$ を 2 つに割り、$\mathbf x_j$ を $x_j$ の列 ($n\times1$)、$\mathbf X_{-j}$ を残りの列 ($n\times(p-1)$) とする。残りだけで作ったハット行列を</p>
+<p>$$\mathbf H_{-j} = \mathbf X_{-j}(\mathbf X_{-j}^\top\mathbf X_{-j})^{-1}\mathbf X_{-j}^\top$$</p>
+<p>と置く ($n\times n$、対称冪等)。</p>
+<p><strong>1. $\mathbf X^\top\mathbf X$ をブロックに分ける。</strong> 列を並べ替えて $j$ 番目を先頭に持ってくると</p>
+<p>$$\mathbf X^\top\mathbf X = \begin{pmatrix} a & \mathbf b^\top \\ \mathbf b & \mathbf C\end{pmatrix}$$</p>
+<p>ここで $a = \mathbf x_j^\top\mathbf x_j$ (スカラー)、$\mathbf b = \mathbf X_{-j}^\top\mathbf x_j$ ($(p-1)\times1$)、$\mathbf C = \mathbf X_{-j}^\top\mathbf X_{-j}$ ($(p-1)\times(p-1)$) である。</p>
+<p><strong>2. ブロック逆行列公式の、使う部分だけ書く。</strong> 逆行列の左上成分は</p>
+<p>$$\bigl[(\mathbf X^\top\mathbf X)^{-1}\bigr]_{jj} = \frac{1}{a - \mathbf b^\top\mathbf C^{-1}\mathbf b}$$</p>
+<p>分母を Schur 補行列という。<strong>逆行列全体を作らなくても 1 成分だけ取り出せる</strong>のがこの公式の効き目である。</p>
+<p><strong>3. 分母を書き下す。</strong> $a, \mathbf b, \mathbf C$ を戻すと、第 2 項が $\mathbf H_{-j}$ の定義そのままの形になる。</p>
+<p>$$a - \mathbf b^\top\mathbf C^{-1}\mathbf b = \mathbf x_j^\top\mathbf x_j - \mathbf x_j^\top\mathbf H_{-j}\mathbf x_j$$</p>
+<p>まとめて $\mathbf x_j^\top(\mathbf I - \mathbf H_{-j})\mathbf x_j$ である。</p>
+<p><strong>4. これが何かを読む。</strong> $\mathbf H_{-j}\mathbf x_j$ は「$x_j$ を残りの変数に回帰したときのあてはめ値」だから、$(\mathbf I - \mathbf H_{-j})\mathbf x_j$ はその<strong>残差</strong>である。$\mathbf I - \mathbf H_{-j}$ が対称冪等なので</p>
+<p>$$\mathbf x_j^\top(\mathbf I - \mathbf H_{-j})\mathbf x_j = \|(\mathbf I - \mathbf H_{-j})\mathbf x_j\|^2$$</p>
+<p>すなわち残差平方和になる。</p>
+<p><strong>5. 決定係数に直す。</strong> その回帰の全平方和は $\mathbf x_j^\top\mathbf x_j = S_{jj}$ (中心化してあるから)。決定係数の定義 $R_j^2 = 1 - S_E/S_T$ より残差平方和は $S_{jj}(1-R_j^2)$ なので</p>
+<p>$$\operatorname{Var}(\hat\beta_j) = \frac{\sigma^2}{S_{jj}(1-R_j^2)} = \frac{\sigma^2}{S_{jj}}\,\mathrm{VIF}_j$$</p>
+<p><strong>落とし穴。</strong> 分散を膨らませるのは<strong>他の説明変数との相関</strong>であって、$x_j$ と $y$ の相関ではない。また $R_j^2$ は「$x_j$ を他の $x$ に回帰した」ときの値であり、モデル全体の $R^2$ とは別物である。$\mathrm{VIF}_j$ が大きくても $S_{jj}$ が十分大きければ分散は小さくなりうる。効くのは 2 つの積である。</p></div></details>
 <p>$\mathrm{VIF}_j$ は「他の変数と無相関だった場合と比べて分散が何倍に膨れたか」を表す。目安として 10 を超えると問題視されることが多いが、境界に理論的根拠はない。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.4 2 つの説明変数の相関を 0 → 0.999 と上げたときの (β̂₁, β̂₂) の散布 (真値は (1,1)、n=50、300 回反復)。相関が高いほど β̂₁+β̂₂ ≈ 2 の直線に沿って帯状に伸び、個々の係数は決まらなくなる" src="fig/05_multicollinearity.png" /><figcaption>図 5.4 2 つの説明変数の相関を 0 → 0.999 と上げたときの (β̂₁, β̂₂) の散布 (真値は (1,1)、n=50、300 回反復)。相関が高いほど β̂₁+β̂₂ ≈ 2 の直線に沿って帯状に伸び、個々の係数は決まらなくなる</figcaption></figure>
 <p>図 5.4 が示すのは、多重共線性のもとでも<strong>和 $\beta_1 + \beta_2$ の推定は安定</strong>で、<strong>個々の係数だけが不安定</strong>だという点である。予測が目的なら (新しい $x$ が同じ相関構造を持つ限り) 実害は小さく、係数の解釈が目的なら深刻である。対処は (i) 変数を減らす・合成する (主成分など)、(ii) リッジ回帰 $\hat{\boldsymbol\beta}_\lambda = (\mathbf X^\top\mathbf X + \lambda\mathbf I)^{-1}\mathbf X^\top\mathbf y$ (Hoerl &amp; Kennard 1970) で偏りと引き換えに分散を抑える、(iii) 実験なら $x$ を直交するように計画する、である。多項式回帰で $x, x^2, x^3$ を素のまま使うと共線性が生じるので、中心化 ($x - \bar x$) か直交多項式を使う。</p>
@@ -9417,6 +9555,23 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p><strong>定義 5.4 (Cook の距離)</strong> $\displaystyle D_i = \frac{(\hat{\boldsymbol\beta} - \hat{\boldsymbol\beta}_{(i)})^\top\mathbf X^\top\mathbf X(\hat{\boldsymbol\beta} - \hat{\boldsymbol\beta}_{(i)})}{p\, s^2} = \frac{r_i^2}{p}\cdot\frac{h_{ii}}{1 - h_{ii}}$</p>
 </blockquote>
 <p>第 2 の等式が実用上重要である。$n$ 回回帰をやり直さなくても、1 回のあてはめから得た $r_i$ と $h_{ii}$ だけで全点の $D_i$ が計算できる (証明は Sherman–Morrison の公式による: 1 点を除いた $\hat{\boldsymbol\beta}_{(i)} = \hat{\boldsymbol\beta} - (\mathbf X^\top\mathbf X)^{-1}\mathbf x_i^\top e_i/(1 - h_{ii})$)。$D_i$ は「その点を除いたときの係数の移動を、係数の信頼楕円の尺度で測ったもの」で、目安は $D_i > 4/n$ や $D_i > 1$ など流儀がある<sup id="c05-fnref:4"><a class="footnote-ref" href="#c05-fn:4">4</a></sup>。</p>
+<details class="gap"><summary>行間: Cook の距離の第 2 の等式を 1 行ずつ</summary><div class="gap-body"><p>本文は「1 点を除いた $\hat{\boldsymbol\beta}_{(i)}$」の式を括弧に入れて示し、そこから第 2 の等式へ飛んだ。その間を埋める。</p>
+<p><strong>記号と次元。</strong> $\mathbf x_i$ は $\mathbf X$ の<strong>第 $i$ 行</strong> ($1\times p$ の行ベクトル)、$e_i$ と $h_{ii}$ と $s^2$ はスカラー、$\hat{\boldsymbol\beta}_{(i)}$ は第 $i$ 点を除いて計算し直した係数 ($p\times1$)。括弧内の式は Sherman–Morrison の公式から出るもので、ここではそれを出発点として使う。</p>
+<p><strong>1. 係数の移動量に名前を付ける。</strong></p>
+<p>$$\boldsymbol\delta_i = \frac{e_i}{1-h_{ii}}(\mathbf X^\top\mathbf X)^{-1}\mathbf x_i^\top$$</p>
+<p>スカラー $e_i/(1-h_{ii})$ は前に出してある。</p>
+<p><strong>2. 定義の分子に入れる。</strong> 分子は $\boldsymbol\delta_i^\top(\mathbf X^\top\mathbf X)\boldsymbol\delta_i$ である。スカラーは二乗されて外に出る。</p>
+<p>$$\boldsymbol\delta_i^\top(\mathbf X^\top\mathbf X)\boldsymbol\delta_i = \frac{e_i^2}{(1-h_{ii})^2}\,Q_i$$</p>
+<p>$$Q_i = \mathbf x_i(\mathbf X^\top\mathbf X)^{-1}(\mathbf X^\top\mathbf X)(\mathbf X^\top\mathbf X)^{-1}\mathbf x_i^\top$$</p>
+<p><strong>3. $Q_i$ を約分する。</strong> 中央の 2 つが $\mathbf I_p$ になって</p>
+<p>$$Q_i = \mathbf x_i(\mathbf X^\top\mathbf X)^{-1}\mathbf x_i^\top = h_{ii}$$</p>
+<p>最後は $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ の $(i,i)$ 成分の定義そのものである。<strong>ここでレバレッジが現れる。</strong></p>
+<p><strong>4. 分母 $p\,s^2$ で割る。</strong></p>
+<p>$$D_i = \frac{e_i^2}{p\,s^2}\cdot\frac{h_{ii}}{(1-h_{ii})^2}$$</p>
+<p><strong>5. 標準化残差の形を作る。</strong> 5.7.1 の $r_i = e_i/(s\sqrt{1-h_{ii}})$ より $r_i^2 = e_i^2/\{s^2(1-h_{ii})\}$ である。$(1-h_{ii})$ を 1 つ $r_i^2$ の側に回すと</p>
+<p>$$D_i = \frac{r_i^2}{p}\cdot\frac{h_{ii}}{1-h_{ii}}$$</p>
+<p>本文の第 2 の等式になる。</p>
+<p><strong>落とし穴。</strong> $D_i$ は $r_i^2$ と $h_{ii}/(1-h_{ii})$ の<strong>積</strong>なので、片方だけ大きくても大きくならない。$x$ が端にあっても直線に乗っていれば $r_i \approx 0$ で $D_i \approx 0$ (図 5.6 の B)、$x$ が中央なら $h_{ii}$ が小さいので残差が大きくても $D_i$ は伸びない (図 5.6 の A)。「レバレッジが高い = 影響が大きい」ではない。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 5.6 レバレッジと影響の違い。A: x の中央で y だけ外れた点は残差が大きいが直線をほとんど動かさない (低レバレッジ)。B: x の端にあっても直線上に乗っていれば影響しない。C: x の端で y も外れると直線を大きく回す (高レバレッジ × 大残差 = 高影響)" src="fig/05_leverage_cook.png" /><figcaption>図 5.6 レバレッジと影響の違い。A: x の中央で y だけ外れた点は残差が大きいが直線をほとんど動かさない (低レバレッジ)。B: x の端にあっても直線上に乗っていれば影響しない。C: x の端で y も外れると直線を大きく回す (高レバレッジ × 大残差 = 高影響)</figcaption></figure>
 <p>影響点が見つかったときの原則は第 1 章の外れ値と同じで、<strong>機械的に除かない</strong>。測定ミスなら除く、別の母集団なら分けて解析する、正当な極端値なら残して頑健回帰 (Huber 損失や最小絶対偏差) を併用する。「除いた場合と除かない場合の両方を報告する」のが誠実な扱いである。</p>
 <h3 id="c05-5-7-4">5.7.4 不均一分散</h3>
@@ -9522,6 +9677,25 @@ $$f(y; \theta, \phi) = \exp\left\{\frac{y\theta - b(\theta)}{a(\phi)} + c(y, \ph
 <p>$y_i \in \{0, 1\}$、$p_i = P(y_i = 1)$ に対し</p>
 <p>$$\operatorname{logit}(p_i) = \log\frac{p_i}{1 - p_i} = \mathbf x_i\boldsymbol\beta \quad\Longleftrightarrow\quad p_i = \frac{1}{1 + e^{-\mathbf x_i\boldsymbol\beta}}$$</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.8 左: ロジスティック関数。β₁ が大きいほど急峻で、x が 1 増えるとオッズが e^{β₁} 倍になる。右: ロジットリンクは確率 (0,1) を実数全体に写し、こちら側で線形モデルを置く" src="fig/05_logistic.png" /><figcaption>図 5.8 左: ロジスティック関数。β₁ が大きいほど急峻で、x が 1 増えるとオッズが e^{β₁} 倍になる。右: ロジットリンクは確率 (0,1) を実数全体に写し、こちら側で線形モデルを置く</figcaption></figure>
+<details class="gap"><summary>行間: なぜ対数オッズが線形になるのか</summary><div class="gap-body"><p>本文は $\operatorname{logit}(p_i) = \mathbf x_i\boldsymbol\beta$ と置き、その右に同値な形を並べた。なぜ $\log\{p/(1-p)\}$ という一見奇妙な量を線形にするのか、2 つの形をどう行き来するのかを分ける。</p>
+<p><strong>記号。</strong> $y_i \in \{0,1\}$ が確率変数、$\mathbf x_i$ は $1\times p$ の固定された行ベクトル、$\boldsymbol\beta$ は $p\times1$。$p_i = P(y_i = 1)$ で $0 < p_i < 1$。線形予測子を $\eta = \mathbf x_i\boldsymbol\beta$ と書く。</p>
+<p><strong>1. ベルヌーイを指数の形に書き直す。</strong></p>
+<p>$$f(y; p) = p^y(1-p)^{1-y} = \exp\bigl\{y\log p + (1-y)\log(1-p)\bigr\}$$</p>
+<p><strong>2. $y$ の付く項をまとめる。</strong> 中身を $y$ について整理するだけである。</p>
+<p>$$y\log p + (1-y)\log(1-p) = y\log\frac{p}{1-p} + \log(1-p)$$</p>
+<p><strong>3. 定義 5.6 と見比べる。</strong> $a(\phi)=1$ として、$y$ に掛かっているものが正準母数 $\theta$ である。</p>
+<p>$$\theta = \log\frac{p}{1-p}$$</p>
+<p>5.9.1 の表の「二項」の行がこれで、$\log(1-p)$ の方が $-b(\theta)$ にあたる。</p>
+<p><strong>4. 正準リンクの意味。</strong> 正準リンクとは $g(\mu) = \theta$ となるリンクのことだった。ここでは $\mu = p$ で $\theta = \operatorname{logit}(p)$ だから、正準リンクは logit である。GLM の構成は $g(\mu_i) = \eta$ なので、<strong>線形に置かれるのは対数オッズ</strong>になる。恣意的に選んだのではなく、二項分布を指数型分布族に書いた時点で出てくる量を線形にしている。</p>
+<p><strong>5. 逆に解く。</strong> $\eta = \log\{p/(1-p)\}$ の両辺の指数をとる。</p>
+<p>$$\frac{p}{1-p} = e^{\eta}$$</p>
+<p>分母を払うと $p = e^\eta - p\,e^\eta$、$p$ でまとめて $p(1+e^\eta) = e^\eta$。</p>
+<p>$$p = \frac{e^\eta}{1+e^\eta} = \frac{1}{1+e^{-\eta}}$$</p>
+<p>最後は分子分母を $e^\eta$ で割っただけである。これが本文の右側の形になる。</p>
+<p><strong>6. オッズ比が $e^{\beta_j}$ になるところ。</strong> $x_j$ だけを 1 増やすと $\eta$ は $\beta_j$ だけ増える。5 の第 1 式より</p>
+<p>$$\frac{e^{\eta+\beta_j}}{e^{\eta}} = e^{\beta_j}$$</p>
+<p>対数オッズの<strong>差</strong>が $\beta_j$、オッズの<strong>比</strong>が $e^{\beta_j}$ — 対数をとると比が差に化けるという、それだけのことである。</p>
+<p><strong>落とし穴。</strong> 一定なのはオッズの比であって確率の比ではない。$p=0.01$ が $0.02$ になるのと $p=0.5$ が $0.67$ になるのは、どちらもオッズが 2 倍だが確率の増え方は全く違う。$\eta$ について線形であることは、$p$ について線形であることを意味しない。</p></div></details>
 <p><strong>係数の解釈</strong>: $p/(1-p)$ を<strong>オッズ</strong>という。$x_j$ が 1 増えると対数オッズが $\beta_j$ 増える、すなわちオッズが $e^{\beta_j}$ 倍になる (<strong>オッズ比</strong>)。オッズ比は確率の比ではない。$p$ が小さいときはオッズ ≈ $p$ なので近似的に確率比とみなせるが、$p$ が 0.5 付近ではかなり違う。確率そのものへの効果 $\partial p/\partial x_j = \beta_j p(1-p)$ は $p$ に依存し、$p = 0.5$ で最大 $\beta_j/4$ である。</p>
 <p><strong>用途の例</strong>: 実験供試体の破壊/非破壊を荷重レベルで説明する (破壊確率曲線)、被災度調査で全壊/非全壊を地盤・階数・築年で説明する、など。</p>
 <p>注意点: (i) 群が完全に分離できるデータでは最尤推定量が無限大に発散する (完全分離)。罰則付き (Firth) 推定などで対処する。(ii) 適合度は $R^2$ の代わりに逸脱度や AUC で見る。</p>
@@ -9684,6 +9858,21 @@ for d in range(0, 8):
 $$\operatorname{Var}(\hat{\boldsymbol\beta}) = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\boldsymbol\Omega\mathbf X(\mathbf X^\top\mathbf X)^{-1}$$</p>
 </blockquote>
 <p>証明の要点: 定理 5.4 の証明の第 1 行 $\hat{\boldsymbol\beta}-\boldsymbol\beta=(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\boldsymbol\varepsilon$ は (V) をまったく使っていない。期待値をとれば第 2 項が消えて不偏性が出る。分散は $\mathbf A=(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ とおいて $\operatorname{Var}(\mathbf A\boldsymbol\varepsilon)=\mathbf A\boldsymbol\Omega\mathbf A^\top$ を書き下すだけである。$\boldsymbol\Omega=\sigma^2\mathbf I$ のときに限り、$\mathbf A\mathbf A^\top=(\mathbf X^\top\mathbf X)^{-1}$ により $\sigma^2(\mathbf X^\top\mathbf X)^{-1}$ に潰れる。$\blacksquare$</p>
+<details class="gap"><summary>行間: パンと具に分かれるところ</summary><div class="gap-body"><p>本文は「$\operatorname{Var}(\mathbf A\boldsymbol\varepsilon)=\mathbf A\boldsymbol\Omega\mathbf A^\top$ を書き下すだけ」と言った。その「書き下す」を実際にやる。5.4 の行間補足 (等分散の場合) と並べて読むと、どこで道が分かれるかが見える。</p>
+<p><strong>記号と次元。</strong> $\mathbf A = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ は $p\times n$、$\boldsymbol\Omega$ は $n\times n$ の (未知の) 誤差共分散行列、結果は $p\times p$。$\boldsymbol\Omega$ が対角なら不均一分散、ブロック対角ならクラスター相関である。</p>
+<p><strong>1. 変換の規則を当てる。</strong> $\mathbf A$ は $\mathbf X$ だけで決まるので確率変数ではない。</p>
+<p>$$\operatorname{Var}(\mathbf A\boldsymbol\varepsilon) = \mathbf A\boldsymbol\Omega\mathbf A^\top$$</p>
+<p>ここまで (V) をまったく使っていない。</p>
+<p><strong>2. $\mathbf A^\top$ を書き下す。</strong> $(\mathbf X^\top\mathbf X)^{-1}$ は対称である。</p>
+<p>$$\mathbf A^\top = \mathbf X(\mathbf X^\top\mathbf X)^{-1}$$</p>
+<p><strong>3. 3 つを並べる。</strong></p>
+<p>$$(\mathbf X^\top\mathbf X)^{-1}\,\mathbf X^\top\boldsymbol\Omega\mathbf X\,(\mathbf X^\top\mathbf X)^{-1}$$</p>
+<p><strong>両端は $\boldsymbol\Omega$ に触れていない。</strong> これがパンで、中央の $\mathbf X^\top\boldsymbol\Omega\mathbf X$ ($p\times p$) が具である。</p>
+<p><strong>4. 等分散のときだけ潰れる。</strong> $\boldsymbol\Omega = \sigma^2\mathbf I$ なら具が</p>
+<p>$$\mathbf X^\top(\sigma^2\mathbf I)\mathbf X = \sigma^2\,\mathbf X^\top\mathbf X$$</p>
+<p>となり、両端の逆行列の片方と約分して $\sigma^2(\mathbf X^\top\mathbf X)^{-1}$ だけが残る。<strong>約分できるのはこのときだけ</strong>で、$\boldsymbol\Omega$ が $\mathbf I$ の定数倍でなければ 3 の形のまま止まる。</p>
+<p><strong>5. 不偏性の方は何も使っていない。</strong> $\hat{\boldsymbol\beta}-\boldsymbol\beta = \mathbf A\boldsymbol\varepsilon$ の期待値は $\mathbf A\,E[\boldsymbol\varepsilon] = \mathbf 0$ で、$\boldsymbol\Omega$ が一度も現れない。「係数は無事で標準誤差だけが誤る」という切り分けは、<strong>期待値の計算に分散が入らない</strong>という一点から来ている。</p>
+<p><strong>落とし穴。</strong> 3 は「$\boldsymbol\Omega$ を知っていれば正しい分散」であって、$\boldsymbol\Omega$ をどう推定するかはまだ何も言っていない。$n\times n$ の $\boldsymbol\Omega$ そのものは $n$ 個の観測からは推定できない。5.16.1 の着眼は、必要なのが $p\times p$ の具だけだという点にある。</p></div></details>
 <p>つまり<strong>不偏性は壊れず、標準誤差の公式だけが誤る</strong>。一致性も同様に保たれる。同時に定理 5.5 (Gauss–Markov) の前提も崩れて OLS は BLUE でなくなるが、それは「もっと分散の小さい推定量がある」という効率の話で、報告した係数が嘘になるわけではない。実害が大きいのは標準誤差の方である。この切り分け — 係数は不偏かつ一致だが、共分散行列の推定量が偏り、検定と区間が甘くも辛くもなりうる — は Hayes &amp; Cai (2007) が冒頭で整理しているとおりである<sup id="c05-fnref:h1"><a class="footnote-ref" href="#c05-fn:h1">6</a></sup>。</p>
 <p>誤りの向きは一方向ではない。分散の大きい観測がレバレッジの高い位置 ($x$ の端) にあれば通常の標準誤差は<strong>過小</strong>になって区間が狭すぎ、逆の配置なら過大になる。以下の例は前者、つまり「狭すぎる区間を自信をもって報告してしまう」側である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.10 不均一分散のもとでの最小二乗 (n=100)。左: 誤差の散らばりが x とともに増えるデータ。中: 3000 回反復した β̂₁ の分布は真値 2 を中心にしており、不偏性は保たれている。右: それでも通常の標準誤差は β̂₁ の実際のばらつきの半分ほどしか測れていない。HC3 はそれよりずっと近い" src="fig/05d_hetero_unbiased.png" /><figcaption>図 5.10 不均一分散のもとでの最小二乗 (n=100)。左: 誤差の散らばりが x とともに増えるデータ。中: 3000 回反復した β̂₁ の分布は真値 2 を中心にしており、不偏性は保たれている。右: それでも通常の標準誤差は β̂₁ の実際のばらつきの半分ほどしか測れていない。HC3 はそれよりずっと近い</figcaption></figure>
@@ -9758,6 +9947,23 @@ $$\operatorname{Var}(\hat{\boldsymbol\beta}) = (\mathbf X^\top\mathbf X)^{-1}\ma
 $$1 + (m-1)\rho_s$$</p>
 </blockquote>
 <p>証明の要点: 定理 5.9 の両端のパン $(\mathbf X^\top\mathbf X)^{-1}$ はどちらの式でも共通なので、分散の比は具の比に等しい。具は $\operatorname{Var}\left(\sum_{g}\sum_{i} s_{gi}\right)$ で、クラスター間は独立だから $g$ について和が分かれる。クラスター内では分散が $m$ 個、共分散が $m(m-1)$ 個現れ、等相関なら $\operatorname{Var}(\sum_i s_{gi}) = m\,\operatorname{Var}(s)\{1+(m-1)\rho_s\}$。古典的な公式はクラスター内の共分散を 0 と見なすので $m\,\operatorname{Var}(s)$ になる。比をとればよい。$\blacksquare$</p>
+<details class="gap"><summary>行間: $1+(m-1)\rho_s$ が出るまでを 1 行ずつ</summary><div class="gap-body"><p>本文は「分散が $m$ 個、共分散が $m(m-1)$ 個現れ」と 1 行で書いた。その数え方を開く。</p>
+<p><strong>記号。</strong> クラスターは $G$ 個、どれも大きさ $m$。$s_{gi}$ はクラスター $g$ の第 $i$ 観測のスコアで、平均 0、分散 $\operatorname{Var}(s)$ はどの観測でも共通とする。同じクラスターの 2 つは相関 $\rho_s$、別クラスターどうしは独立。$g$ は $1,\dots,G$、$i$ は $1,\dots,m$ を走る。</p>
+<p><strong>1. クラスターごとに先に足す。</strong> 具に現れるのは総和 $\sum_g\sum_i s_{gi}$ である。</p>
+<p>$$T_g = \sum_{i=1}^m s_{gi}$$</p>
+<p><strong>2. クラスター間は独立なので分散が足せる。</strong></p>
+<p>$$\operatorname{Var}\Bigl(\sum_g T_g\Bigr) = \sum_{g=1}^G \operatorname{Var}(T_g)$$</p>
+<p>独立でなければこの一歩は踏めない。ここがクラスターの切り方を決める仮定である (5.17.5)。</p>
+<p><strong>3. 1 つのクラスターの分散を展開する。</strong> 和の分散は全ペアの共分散の和である。</p>
+<p>$$\operatorname{Var}(T_g) = \sum_{i}\sum_{k}\operatorname{Cov}(s_{gi}, s_{gk})$$</p>
+<p><strong>4. 項を 2 種類に分けて数える。</strong> $i = k$ の項は分散そのもので $m$ 個。$i \ne k$ の項は共分散で $m(m-1)$ 個ある ($\binom{m}{2}$ ではない。$(i,k)$ と $(k,i)$ を別に数えているからである)。等相関の仮定からそれらはどれも $\rho_s\operatorname{Var}(s)$ に等しい。</p>
+<p>$$\operatorname{Var}(T_g) = m\operatorname{Var}(s) + m(m-1)\rho_s\operatorname{Var}(s)$$</p>
+<p><strong>5. くくる。</strong></p>
+<p>$$\operatorname{Var}(T_g) = m\operatorname{Var}(s)\bigl\{1 + (m-1)\rho_s\bigr\}$$</p>
+<p><strong>6. 古典的な公式と比べる。</strong> クラスター内の相関を 0 と見なすと 4 の第 2 項が丸ごと落ちて $m\operatorname{Var}(s)$ になる。比をとると $\operatorname{Var}(s)$ も $m$ も約分されて</p>
+<p>$$\frac{m\operatorname{Var}(s)\{1+(m-1)\rho_s\}}{m\operatorname{Var}(s)} = 1 + (m-1)\rho_s$$</p>
+<p>パンは両方の式で共通なので、この比がそのまま分散の比になる。</p>
+<p><strong>落とし穴。</strong> 効くのは $\rho_s$ 単独ではなく $(m-1)\rho_s$ という<strong>積</strong>である。そして $G$ は式のどこにも残らない。クラスターの数を増やしてもこの比は変わらない (増やして良くなるのは推定の安定さの方で、それが 5.17.4 の話である)。</p></div></details>
 <p>これを <strong>Moulton 係数</strong> (Moulton 1986) という<sup id="c05-fnref:h3"><a class="footnote-ref" href="#c05-fn:h3">8</a></sup>。標準誤差の比はこの平方根である。13.9.3 のクラスター抽出の設計効果 $\mathrm{deff}=1+(m-1)\rho$ とまったく同じ形で、実際に同じ現象を別の言葉で述べたものである。</p>
 <p>この式が伝えるのは次の一点に尽きる。<strong>悪化させるのはクラスターの数ではなく、クラスターの大きさである</strong>。$\rho_s=0.05$ という小さい相関でも、$m=100$ なら分散は約 6 倍、標準誤差は約 2.4 倍になる。クラスターを無視した解析は、観測が大きな塊で来るほど致命的になる<sup id="c05-fnref2:h3"><a class="footnote-ref" href="#c05-fn:h3">8</a></sup>。</p>
 <figure><img loading="lazy" decoding="async" alt="図 5.12 左: Moulton 係数 √(1+(m−1)ρ_s)。ρ_s が小さくてもクラスターサイズ m が大きければ急増する。右: 数値実験 (G=40 固定、m を変える) が理論曲線に乗る" src="fig/05d_moulton.png" /><figcaption>図 5.12 左: Moulton 係数 √(1+(m−1)ρ_s)。ρ_s が小さくてもクラスターサイズ m が大きければ急増する。右: 数値実験 (G=40 固定、m を変える) が理論曲線に乗る</figcaption></figure>
@@ -11547,6 +11753,22 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <li>$S = \Lambda$ (対角) なら $d_M^2 = \sum_j (x_j - \bar x_j)^2 / s_{jj}$、つまり各変数を標準化してからのユークリッド距離。相関がある一般の場合は、固有ベクトルの座標系に回してから各軸を $\sqrt{\lambda_j}$ で割ったユークリッド距離になる (図 7.1 右の楕円)</li>
 <li>多変量正規分布 (7.3 節) のもとでは $d_M^2$ (母数を使ったもの) は自由度 $p$ の $\chi^2$ 分布に従う。これが「$d_M^2 > \chi^2_{p}(0.99)$ なら外れ値候補」という規則の根拠。ただし $S$ 自体が外れ値に引きずられる (破綻点 0、第 1 章 1.8 節) ので、外れ値検出には MCD などの頑健な共分散推定を使う</li>
 </ul>
+<details class="gap"><summary>行間: なぜ $S^{-1}$ で重みを付けるのか</summary><div class="gap-body"><p>本文は性質を 4 つ箇条書きにした。3 つ目の「固有ベクトルの座標系に回してから各軸を $\sqrt{\lambda_j}$ で割ったユークリッド距離になる」が最も飛んでいる。そこを開く。</p>
+<p><strong>記号と次元。</strong> $\mathbf x$ と $\bar{\mathbf x}$ は $p\times1$、$S$ は $p\times p$ の対称正定値行列。$\mathbf u = \mathbf x - \bar{\mathbf x}$ と置く ($p\times1$)。$d_M^2 = \mathbf u^{\mathsf T}S^{-1}\mathbf u$ はスカラーである。</p>
+<p><strong>1. $S$ を直交対角化する。</strong> $S$ は<strong>対称</strong>なので、正規直交固有ベクトルを並べた直交行列 $V$ を使って</p>
+<p>$$S = V\Lambda V^{\mathsf T}, \qquad \Lambda = \mathrm{diag}(\lambda_1,\dots,\lambda_p)$$</p>
+<p>と書ける。対称でなければこの一歩は踏めない。正定値なら $\lambda_j > 0$ なので逆数がとれる。</p>
+<p><strong>2. 逆行列を作る。</strong> $V^{\mathsf T}V = I$ を使うと</p>
+<p>$$S^{-1} = V\Lambda^{-1}V^{\mathsf T}$$</p>
+<p>実際に $S$ に掛けると $V\Lambda^{-1}V^{\mathsf T}V\Lambda V^{\mathsf T} = I$ になる。</p>
+<p><strong>3. 座標を回す。</strong> $\mathbf w = V^{\mathsf T}\mathbf u$ と置く ($p\times1$)。これは<strong>固有ベクトルの方向に測り直した座標</strong>である。2 を代入すると</p>
+<p>$$d_M^2 = \mathbf w^{\mathsf T}\Lambda^{-1}\mathbf w$$</p>
+<p><strong>4. 対角行列なので成分ごとにばらせる。</strong></p>
+<p>$$d_M^2 = \sum_{j=1}^p \frac{w_j^2}{\lambda_j}$$</p>
+<p>$\lambda_j$ はその方向のデータの分散である (定理 7.1 (iii) を $\mathbf a = \mathbf v_j$ に当てると $\mathbf v_j^{\mathsf T}S\mathbf v_j = \lambda_j$)。つまり<strong>各方向の変位をその方向の標準偏差 $\sqrt{\lambda_j}$ で割って二乗し、足している</strong>。</p>
+<p><strong>5. 1 変量と見比べる。</strong> $p=1$ なら和は 1 項だけで $d_M = |x-\bar x|/s$、z スコアの絶対値である。$S^{-1}$ を挟むのは「方向ごとに違う物差しで測る」ことの多変量版にすぎない。</p>
+<p><strong>6. アフィン不変の見え方。</strong> 単位を変えると $\mathbf u$ も $S$ も同じ $A$ で変換されるので、4 の分子と分母が同じだけ伸び縮みして比が変わらない。ユークリッド距離が単位に振り回されるのは、分母にあたるものを持たないからである。</p>
+<p><strong>落とし穴。</strong> 「相関の向きに逆らう点ほど遠い」のは、逆らう方向の $\lambda_j$ が小さいからである。$S^{-1}$ が大きな重みを与えるのは<strong>分散の小さい方向</strong>であって、大きい方向ではない。$S$ ではなく $S^{-1}$ を挟む理由はここにある。</p></div></details>
 <h2 id="c07-7-3">7.3 多変量正規分布</h2>
 <blockquote>
 <p><strong>定義 7.3 (多変量正規分布)</strong> 平均 $\boldsymbol\mu \in \mathbb R^p$、正定値共分散 $\Sigma$ の $p$ 変量正規分布 $N_p(\boldsymbol\mu, \Sigma)$ の密度は</p>
@@ -11562,6 +11784,23 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 (v) $(\mathbf x - \boldsymbol\mu)^{\mathsf T}\Sigma^{-1}(\mathbf x - \boldsymbol\mu) \sim \chi^2_p$</p>
 </blockquote>
 <p>証明の要点: (i) はモーメント母関数 $M(\mathbf t) = \exp(\mathbf t^{\mathsf T}\boldsymbol\mu + \tfrac12 \mathbf t^{\mathsf T}\Sigma\mathbf t)$ に $\mathbf t \to A^{\mathsf T}\mathbf t$ を代入する。(ii) は (i) で $A$ を選択行列にとる。(iii) は $\Sigma$ がブロック対角なら密度が積に分かれることから。(iv) は $\mathbf x_1 - \Sigma_{12}\Sigma_{22}^{-1}\mathbf x_2$ が $\mathbf x_2$ と無相関 (共分散を計算すると $\Sigma_{12} - \Sigma_{12}\Sigma_{22}^{-1}\Sigma_{22} = O$) であることと (iii) を組み合わせる。(v) は $\mathbf z = \Sigma^{-1/2}(\mathbf x - \boldsymbol\mu) \sim N_p(\mathbf 0, I)$ とすると $\mathbf z^{\mathsf T}\mathbf z$ が独立な標準正規の 2 乗和になるため。</p>
+<details class="gap"><summary>行間: 条件付き分布 (iv) を作る一手</summary><div class="gap-body"><p>本文は (iv) の証明を「$\mathbf x_1 - \Sigma_{12}\Sigma_{22}^{-1}\mathbf x_2$ が $\mathbf x_2$ と無相関」の一言で済ませた。なぜその組合せが出てくるのか、そこから先どう進むのかを分ける。</p>
+<p><strong>記号と次元。</strong> $\mathbf x$ を $\mathbf x_1$ ($q$ 次元) と $\mathbf x_2$ ($p-q$ 次元) に割る。$\Sigma_{11}$ は $q\times q$、$\Sigma_{22}$ は $(p-q)\times(p-q)$、$\Sigma_{12}$ は $q\times(p-q)$ で $\Sigma_{21} = \Sigma_{12}^{\mathsf T}$。$\Sigma$ が正定値なので $\Sigma_{22}$ も正定値で、逆行列を持つ。</p>
+<p><strong>1. 「$\mathbf x_2$ ぶんを抜いた部分」を作る。</strong> 係数 $B$ ($q\times(p-q)$) を未知のまま置く。</p>
+<p>$$\mathbf z = \mathbf x_1 - B\mathbf x_2$$</p>
+<p><strong>2. 無相関になるように $B$ を決める。</strong> 共分散を計算すると</p>
+<p>$$\operatorname{Cov}(\mathbf z, \mathbf x_2) = \Sigma_{12} - B\Sigma_{22}$$</p>
+<p>これを $O$ と置けば $B = \Sigma_{12}\Sigma_{22}^{-1}$。<strong>思いついたのではなく、無相関という条件から出てくる。</strong></p>
+<p><strong>3. 無相関を独立に格上げする。</strong> $(\mathbf z, \mathbf x_2)$ は $\mathbf x$ の線形変換なので、(i) によりまとめて多変量正規である。したがって (iii) が使えて、無相関から独立が言える。ここが正規分布に特有の一歩で、一般の分布では踏めない。</p>
+<p><strong>4. 条件付けても $\mathbf z$ の分布は動かない。</strong> 独立だから $\mathbf z \mid \mathbf x_2$ の分布は $\mathbf z$ の分布そのものである。あとは $\mathbf x_1 = \mathbf z + B\mathbf x_2$ と戻すだけで、条件のもとでは $B\mathbf x_2$ は<strong>定数として足されるベクトル</strong>になる。</p>
+<p><strong>5. 平均。</strong> 定数を足した分だけ平均がずれる。$E[\mathbf z] = \boldsymbol\mu_1 - B\boldsymbol\mu_2$ なので</p>
+<p>$$E[\mathbf x_1\mid\mathbf x_2] = \boldsymbol\mu_1 + B(\mathbf x_2 - \boldsymbol\mu_2)$$</p>
+<p>$B$ を戻せば本文の式である。$\mathbf x_2$ について<strong>線形</strong>になるのは、$B$ が $\mathbf x_2$ に依らない定数行列だからである。</p>
+<p><strong>6. 分散。</strong> 定数を足しても分散は変わらないので $\operatorname{Var}(\mathbf x_1\mid\mathbf x_2) = \operatorname{Var}(\mathbf z)$ である。展開すると</p>
+<p>$$\operatorname{Var}(\mathbf z) = \Sigma_{11} - B\Sigma_{21} - \Sigma_{12}B^{\mathsf T} + B\Sigma_{22}B^{\mathsf T}$$</p>
+<p>$B = \Sigma_{12}\Sigma_{22}^{-1}$ を入れると後ろの 3 項がどれも $\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}$ に等しくなり、$-1-1+1$ で 1 つ分だけ残る。</p>
+<p>$$\operatorname{Var}(\mathbf z) = \Sigma_{11} - \Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}$$</p>
+<p><strong>落とし穴。</strong> この分散に $\mathbf x_2$ が入っていないことに注意する。条件付き分散が条件の値によらないのは多変量正規に特有で、一般の分布では $\mathbf x_2$ とともに動く。$\Sigma_{11}$ 以下になるのは「情報を足せば散らばりは減る」からだが、減る量も $\mathbf x_2$ の値によらず一定である。</p></div></details>
 <p>(iv) は重要で、<strong>条件付き期待値が $\mathbf x_2$ の線形関数</strong>になる。これが「多変量正規なら回帰は線形」の根拠であり、回帰係数 $\Sigma_{12}\Sigma_{22}^{-1}$ は第 5〜6 章の最小二乗推定量の母集団版である。条件付き分散 $\Sigma_{11} - \Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}$ (Schur 補行列) は $\Sigma_{11}$ 以下 — 条件を付けると分散は減る。</p>
 <p>(iii) は正規分布<strong>特有</strong>の性質で、一般には無相関から独立は言えない。また「各周辺が正規」でも同時分布が多変量正規とは限らない (裾で依存構造が変わる例はいくらでも作れる)。荷重の組合せなど、多変量正規を仮定して同時超過確率を求める場面では、この仮定が裾でどれだけ効いているかを意識する必要がある。</p>
 <h2 id="c07-7-4">7.4 主成分分析 (PCA)</h2>
@@ -11571,6 +11810,26 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <p><strong>定理 7.3 (主成分 = 共分散行列の固有ベクトル)</strong> $S$ の固有値を $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_p \ge 0$、対応する正規直交固有ベクトルを $\mathbf v_1, \dots, \mathbf v_p$ とする。$\|\mathbf a\| = 1$ の制約下で射影分散 $\mathbf a^{\mathsf T} S \mathbf a$ を最大にするのは $\mathbf a = \mathbf v_1$ で、最大値は $\lambda_1$。さらに $\mathbf v_1, \dots, \mathbf v_{k-1}$ に直交する制約を加えて最大化すると $\mathbf v_k$、最大値 $\lambda_k$</p>
 </blockquote>
 <p>証明の要点: Lagrange 関数 $L = \mathbf a^{\mathsf T} S\mathbf a - \lambda(\mathbf a^{\mathsf T}\mathbf a - 1)$ を $\mathbf a$ で微分して $S\mathbf a = \lambda\mathbf a$、すなわち $\mathbf a$ は固有ベクトル。そのとき目的関数は $\mathbf a^{\mathsf T} S\mathbf a = \lambda$ なので、最大固有値に対応するものを選べばよい。第 $k$ 主成分は、$\mathbf a$ を固有ベクトルで展開 $\mathbf a = \sum_j c_j \mathbf v_j$ すると $\mathbf a^{\mathsf T} S\mathbf a = \sum_j c_j^2 \lambda_j$ で、直交制約 $c_1 = \dots = c_{k-1} = 0$ と $\sum c_j^2 = 1$ のもとで最大は $\lambda_k$ ($c_k = 1$)。$\lambda_k$ に重複があれば主成分は一意でない。</p>
+<details class="gap"><summary>行間: ラグランジュ乗数から固有ベクトルが出るところ</summary><div class="gap-body"><p>本文は「$L$ を $\mathbf a$ で微分して $S\mathbf a = \lambda\mathbf a$」と 1 行で書いた。微分の中身と、第 $k$ 主成分の議論を分ける。</p>
+<p><strong>記号と次元。</strong> $\mathbf a$ は $p\times1$ の単位ベクトル (求めたい方向)、$S$ は $p\times p$ の対称半正定値行列 (データから決まる固定値)、$\lambda$ はラグランジュ乗数という 1 個のスカラー。目的関数 $\mathbf a^{\mathsf T}S\mathbf a$ はスカラーである。</p>
+<p><strong>1. なぜ制約が要るか。</strong> $\mathbf a$ を 2 倍すると $\mathbf a^{\mathsf T}S\mathbf a$ は 4 倍になるので、制約なしでは上限がない。方向だけを問題にするために $\mathbf a^{\mathsf T}\mathbf a = 1$ と長さを固定する。</p>
+<p><strong>2. ラグランジュ関数を微分する。</strong> ベクトル微分の公式は 5.3.1 と同じものである。$S$ が対称だから</p>
+<p>$$\frac{\partial}{\partial\mathbf a}(\mathbf a^{\mathsf T}S\mathbf a) = 2S\mathbf a$$</p>
+<p>$$\frac{\partial}{\partial\mathbf a}(\mathbf a^{\mathsf T}\mathbf a) = 2\mathbf a$$</p>
+<p><strong>3. 0 とおく。</strong> 両方に 2 が掛かっているので割れる。</p>
+<p>$$S\mathbf a - \lambda\mathbf a = \mathbf 0$$</p>
+<p>これは固有ベクトルの定義そのものである。<strong>「最大化したら固有ベクトルが出た」のではなく、停留条件がそのまま固有方程式だった</strong>というのが要点である。</p>
+<p><strong>4. 乗数 $\lambda$ の正体。</strong> 3 の両辺に左から $\mathbf a^{\mathsf T}$ を掛ける。</p>
+<p>$$\mathbf a^{\mathsf T}S\mathbf a = \lambda\,\mathbf a^{\mathsf T}\mathbf a = \lambda$$</p>
+<p>$\mathbf a^{\mathsf T}\mathbf a = 1$ を使った。つまり<strong>乗数そのものが射影分散</strong>である。だから候補 (固有値) のうち最大のものを選べばよい。</p>
+<p><strong>5. 第 $k$ 主成分の議論。</strong> 任意の単位ベクトルを正規直交固有ベクトルで展開する。</p>
+<p>$$\mathbf a = \sum_{j=1}^p c_j\mathbf v_j, \qquad \sum_j c_j^2 = 1$$</p>
+<p>第 2 式は $\mathbf a^{\mathsf T}\mathbf a = 1$ を展開したものである ($\mathbf v_j$ が正規直交なので交差項が消える)。</p>
+<p><strong>6. 目的関数を係数で書く。</strong> $S\mathbf v_j = \lambda_j\mathbf v_j$ を使うと</p>
+<p>$$\mathbf a^{\mathsf T}S\mathbf a = \sum_{j=1}^p c_j^2\lambda_j$$</p>
+<p>重み $c_j^2$ の和が 1 なので、これは<strong>固有値の加重平均</strong>である。加重平均は最大の値を超えないから $\le\lambda_1$ で、等号は $c_1 = 1$ のとき。</p>
+<p><strong>7. 直交制約を入れる。</strong> $\mathbf v_1,\dots,\mathbf v_{k-1}$ と直交するとは、展開係数が $c_1 = \dots = c_{k-1} = 0$ ということである。残りの中での加重平均の最大は $\lambda_k$ になる。</p>
+<p><strong>落とし穴。</strong> 停留条件 3 は<strong>すべての</strong>固有ベクトルが満たす。3 だけでは最大とは言えず、4 で値を比べて初めて最大固有値のものが選べる。射影分散が最小になる方向も同じ方程式の解である (図 7.2 右の最小側がそれである)。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 7.2 左: 2 変量データと固有ベクトル (長さは √固有値に比例)。右: 射影方向の角度 θ を 0° から 180° まで回して射影分散を測ると、最大が第 1 主成分方向、最小が第 2 主成分方向で、値はそれぞれ固有値に一致する" src="fig/07_pca_axes.png" /><figcaption>図 7.2 左: 2 変量データと固有ベクトル (長さは √固有値に比例)。右: 射影方向の角度 θ を 0° から 180° まで回して射影分散を測ると、最大が第 1 主成分方向、最小が第 2 主成分方向で、値はそれぞれ固有値に一致する</figcaption></figure>
 <p>同値な言い換えが 2 つある。(a) 主成分は互いに無相関: $\mathrm{Cov}(z_j, z_k) = \mathbf v_j^{\mathsf T} S\mathbf v_k = \lambda_k \mathbf v_j^{\mathsf T}\mathbf v_k = 0$ ($j \ne k$)。(b) <strong>再構成誤差最小化</strong>: 最初の $k$ 本の主成分で張る $k$ 次元部分空間は、データ点から部分空間への垂線の二乗和を最小にする (Pearson 1901 の元々の定式化)。全分散 $\mathrm{tr}(S) = \sum \lambda_j$ は「射影に残る分散 $\sum_{j \le k}\lambda_j$」+「捨てる分散 $\sum_{j > k}\lambda_j$」に分解されるので、分散最大化と残差最小化は同じ問題である。</p>
 <h3 id="c07-7-4-2">7.4.2 寄与率とスクリープロット</h3>
@@ -11582,6 +11841,22 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <li>変数の性質から解釈できるところまで</li>
 </ul>
 <p>いずれも経験則である。データ数 $n$ が変数 $p$ より少ない、あるいは同程度の状況では、標本固有ベクトルは母集団のものから大きくずれることが知られているが、支配的な信号に対応する成分の<strong>得点</strong> (score) は回転・伸縮を除いて母集団のものを保ち、可視化の道具としては依然有用であることが示されている<sup id="c07-fnref:2"><a class="footnote-ref" href="#c07-fn:2">2</a></sup>。</p>
+<details class="gap"><summary>行間: 寄与率の分母はなぜ全分散なのか</summary><div class="gap-body"><p>本文は寄与率を $\lambda_k/\sum_j\lambda_j$ と定義しただけで、なぜこれを「割合」と呼べるのかは 7.2.1 の一行 ($\mathrm{tr}(S) = \sum_j s_{jj} = \sum_j\lambda_j$) に預けてある。そこを開く。</p>
+<p><strong>記号。</strong> $S$ は $p\times p$ の対称半正定値行列、$\lambda_1\ge\dots\ge\lambda_p\ge0$ はその固有値、$V$ は正規直交固有ベクトルを並べた直交行列、$s_{jj}$ は変数 $x_j$ の分散である。</p>
+<p><strong>1. 対角化する。</strong> 対称だから $S = V\Lambda V^{\mathsf T}$ と書ける。</p>
+<p><strong>2. トレースの巡回性を使う。</strong> $\mathrm{tr}(AB) = \mathrm{tr}(BA)$ を $A = V$、$B = \Lambda V^{\mathsf T}$ として当てる。</p>
+<p>$$\mathrm{tr}(S) = \mathrm{tr}(\Lambda V^{\mathsf T}V) = \mathrm{tr}(\Lambda)$$</p>
+<p>$V^{\mathsf T}V = I$ を使った。右辺は固有値の和である。</p>
+<p><strong>3. 左辺を読み直す。</strong> $\mathrm{tr}(S)$ は定義上 $S$ の対角成分の和、すなわち各変数の分散の和である。したがって</p>
+<p>$$\sum_j s_{jj} = \sum_j \lambda_j$$</p>
+<p><strong>元の変数の分散の合計と、主成分の分散の合計が同じ数</strong>になる。これが寄与率を割合として読める理由で、分母は座標系の取り方によらない。</p>
+<p><strong>4. 主成分の分散が $\lambda_j$ であること。</strong> 第 $j$ 主成分は $z_j = \mathbf v_j^{\mathsf T}(\mathbf x - \bar{\mathbf x})$ で、定理 7.1 (iii) よりその分散は $\mathbf v_j^{\mathsf T}S\mathbf v_j$。$S\mathbf v_j = \lambda_j\mathbf v_j$ を入れると</p>
+<p>$$\mathbf v_j^{\mathsf T}S\mathbf v_j = \lambda_j\,\mathbf v_j^{\mathsf T}\mathbf v_j = \lambda_j$$</p>
+<p><strong>5. 累積寄与率の意味。</strong> 3 と 4 から、全分散は「残す $k$ 本が担う分」と「捨てる分」にちょうど分かれる。</p>
+<p>$$\sum_j\lambda_j = \sum_{j\le k}\lambda_j + \sum_{j>k}\lambda_j$$</p>
+<p>7.4.1 の (b) が言う「捨てる分散」はこの第 2 項である。</p>
+<p><strong>6. Kaiser 基準の数字の出どころ。</strong> 相関行列 $R$ を使うと対角成分がすべて 1 なので $\mathrm{tr}(R) = p$、したがって固有値の平均がちょうど 1 になる。「固有値 1 以上」は<strong>平均以上の分散を担う成分だけ残す</strong>という意味である。</p>
+<p><strong>落とし穴。</strong> 分母が変わらないのは<strong>直交変換に限った</strong>話である。標準化は各軸を違う倍率で伸縮する非直交な操作なので、$S$ から $R$ に移ると固有値も寄与率も変わる。次項が「結果が全く変わる」と言っているのはこのことである。</p></div></details>
 <h3 id="c07-7-4-3">7.4.3 標準化の要否</h3>
 <p>$S$ (共分散) を使うか $R$ (相関) を使うかは<strong>結果が全く変わる</strong>選択である。図 7.3 は同じデータに、単位の異なる列 (分散が 900 倍の列と 1/400 倍の列) を含めたときの比較で、共分散行列の PCA では分散の大きい 1 列がそのまま第 1 主成分になり、他の変数の情報は事実上無視される。</p>
 <figure><img loading="lazy" decoding="async" alt="図 7.3 同じ 8 変数データの寄与率。左: 共分散行列の PCA。分散が突出した 1 列が第 1 主成分を独占する。右: 相関行列 (標準化後) の PCA。埋め込んだ 2 本の共通因子が 2 主成分として現れる" src="fig/07_scree.png" /><figcaption>図 7.3 同じ 8 変数データの寄与率。左: 共分散行列の PCA。分散が突出した 1 列が第 1 主成分を独占する。右: 相関行列 (標準化後) の PCA。埋め込んだ 2 本の共通因子が 2 主成分として現れる</figcaption></figure>
@@ -11590,6 +11865,22 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <p>中心化データ行列 $X_c$ の特異値分解を $X_c = U \Sigma_s V^{\mathsf T}$ ($U$: $n\times p$ 列直交、$\Sigma_s = \mathrm{diag}(\sigma_1, \dots, \sigma_p)$、$V$: $p\times p$ 直交) とすると</p>
 <p>$$S = \frac{1}{n-1} X_c^{\mathsf T} X_c = V \frac{\Sigma_s^2}{n-1} V^{\mathsf T}$$</p>
 <p>なので、$V$ の列が主成分 (固有ベクトル)、$\lambda_j = \sigma_j^2/(n-1)$、主成分得点は $Z = X_c V = U\Sigma_s$ である。数値的には $S$ を作ってから固有値分解するより、$X_c$ を直接 SVD する方が桁落ちに強い (条件数が 2 乗にならない)。SVD と PCA の対応関係の整理は Wall ら<sup id="c07-fnref:3"><a class="footnote-ref" href="#c07-fn:3">3</a></sup> が明快である。</p>
+<details class="gap"><summary>行間: SVD が固有値分解に化けるところ</summary><div class="gap-body"><p>本文は $S = V\Sigma_s^2/(n-1)\,V^{\mathsf T}$ を等号 1 つで出し、そこから固有ベクトルと得点を読み取った。その等号を開く。</p>
+<p><strong>記号と次元。</strong> $X_c$ は $n\times p$ の中心化データ行列 ($n > p$ とする)。$U$ は $n\times p$ で<strong>列だけが直交</strong> ($U^{\mathsf T}U = I_p$)、$\Sigma_s$ は $p\times p$ の対角行列、$V$ は $p\times p$ の直交行列 ($V^{\mathsf T}V = VV^{\mathsf T} = I_p$)。$S$ は $p\times p$ である。</p>
+<p><strong>1. 定義に SVD を代入する。</strong></p>
+<p>$$X_c^{\mathsf T}X_c = (U\Sigma_s V^{\mathsf T})^{\mathsf T}(U\Sigma_s V^{\mathsf T})$$</p>
+<p><strong>2. 転置を開く。</strong> 積の転置は順序が逆になる。$\Sigma_s$ は対角なので転置しても変わらない。</p>
+<p>$$X_c^{\mathsf T}X_c = V\Sigma_s\,U^{\mathsf T}U\,\Sigma_s V^{\mathsf T}$$</p>
+<p><strong>3. 中央を消す。</strong> $U^{\mathsf T}U = I_p$ を使うと $\Sigma_s\Sigma_s = \Sigma_s^2$ が残る。</p>
+<p>$$X_c^{\mathsf T}X_c = V\Sigma_s^2V^{\mathsf T}$$</p>
+<p><strong>4. $n-1$ で割る。</strong> 定義 7.1 より $S = X_c^{\mathsf T}X_c/(n-1)$ なので</p>
+<p>$$S = V\left(\frac{\Sigma_s^2}{n-1}\right)V^{\mathsf T}$$</p>
+<p>右辺は「直交行列 × 対角行列 × その転置」という、<strong>対称行列の固有値分解の形そのもの</strong>である。分解の一意性から、$V$ の列が固有ベクトル、対角成分 $\sigma_j^2/(n-1)$ が固有値 $\lambda_j$ だと読める。</p>
+<p><strong>5. 得点を書く。</strong> 主成分得点は $Z = X_cV$ である。SVD を入れると</p>
+<p>$$Z = U\Sigma_s V^{\mathsf T}V = U\Sigma_s$$</p>
+<p>$V^{\mathsf T}V = I_p$ で $V$ が消える。得点を得るのに固有値分解を通る必要がない、ということである。</p>
+<p><strong>6. なぜ数値的に有利か。</strong> 3 を逆から読むと、$X_c^{\mathsf T}X_c$ を作る操作は特異値を<strong>二乗</strong>している。条件数 (最大と最小の比) も二乗されるので、$X_c$ のままなら区別できた大小が $S$ を経由すると潰れる。$X_c$ を直接 SVD すればこの二乗を通らない。</p>
+<p><strong>落とし穴。</strong> 使えるのは $U^{\mathsf T}U = I_p$ であって、$UU^{\mathsf T}$ は $I_n$ ではない。$U$ は $n\times p$ の縦長行列で、正方直交行列ではないからである。順序を逆にした式は成り立たない。</p></div></details>
 <blockquote>
 <p><strong>定理 7.4 (Eckart–Young)</strong> ランク $k$ の行列の中で $X_c$ に Frobenius ノルムで最も近いのは $X_k = U_k \Sigma_{s,k} V_k^{\mathsf T}$ (上位 $k$ 個の特異値だけを残したもの) で、残差は $\|X_c - X_k\|_F^2 = \sum_{j > k}\sigma_j^2$</p>
 </blockquote>
@@ -11651,6 +11942,22 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <p>「解釈しやすい」の定式化が Thurstone の<strong>単純構造</strong>: 各変数が少数の因子にだけ大きく載り、各因子には少数の変数だけが載る。それを負荷量の 2 乗の分散が最大になる回転として実現するのが <strong>varimax</strong> (Kaiser 1958) で、直交回転の標準である。因子間の相関を許す斜交回転 (promax, oblimin) もよく使われる。</p>
 <figure><img loading="lazy" decoding="async" alt="図 7.5 8 変数・2 因子のデータ (真の構造は x1–x4 が因子 1、x5–x8 が因子 2)。回転前の主成分解では全変数が両因子に載るが、varimax 回転後は各変数が片方の軸に寄り、単純構造が現れる。2 つの図は同じ点集合を回しただけで、変数間の距離は保たれている" src="fig/07_factor_rotation.png" /><figcaption>図 7.5 8 変数・2 因子のデータ (真の構造は x1–x4 が因子 1、x5–x8 が因子 2)。回転前の主成分解では全変数が両因子に載るが、varimax 回転後は各変数が片方の軸に寄り、単純構造が現れる。2 つの図は同じ点集合を回しただけで、変数間の距離は保たれている</figcaption></figure>
 <p>図 7.5 の 2 枚は同じ負荷ベクトルの集合を回転しただけで、点の相対配置 (したがって $\Lambda\Lambda^{\mathsf T}$) は同一である。回転で変わるのは「軸をどこに置くか」だけであり、データの当てはまりは変わらないことを確かめてほしい。</p>
+<details class="gap"><summary>行間: 回転で何が変わらず、何が変わるのか</summary><div class="gap-body"><p>本文は $\Lambda^*\Lambda^{*\mathsf T} = \Lambda\Lambda^{\mathsf T}$ を 1 行で示した。その一行が何を含意するかを分ける。</p>
+<p><strong>記号と次元。</strong> $\Lambda$ は $p\times m$ の因子負荷行列、$T$ は $m\times m$ の直交行列 ($T^{\mathsf T}T = TT^{\mathsf T} = I_m$)、$\mathbf f$ は $m\times1$ の共通因子、$\Psi$ は $p\times p$ の対角行列である。$m < p$。</p>
+<p><strong>1. 回転後のモデルを書く。</strong> $\Lambda^* = \Lambda T$、$\mathbf f^* = T^{\mathsf T}\mathbf f$ と置くと</p>
+<p>$$\Lambda^*\mathbf f^* = \Lambda TT^{\mathsf T}\mathbf f = \Lambda\mathbf f$$</p>
+<p><strong>観測 $\mathbf x$ 自体が変わっていない。</strong> $T$ を入れて $T^{\mathsf T}$ で戻しただけである。</p>
+<p><strong>2. 因子の条件も保たれる。</strong> $\mathbf f$ の共分散が $I_m$ なら</p>
+<p>$$\operatorname{Var}(\mathbf f^*) = T^{\mathsf T}I_mT = I_m$$</p>
+<p>$\mathbf f^*$ も「互いに無相関で分散 1 の共通因子」という条件を満たす。つまり回転後も定義 7.4 のモデルの形のままである。</p>
+<p><strong>3. 共分散への当てはまりが変わらない。</strong></p>
+<p>$$\Lambda^*\Lambda^{*\mathsf T} = \Lambda TT^{\mathsf T}\Lambda^{\mathsf T} = \Lambda\Lambda^{\mathsf T}$$</p>
+<p>$\Psi$ には $T$ が掛からないので $\Sigma = \Lambda\Lambda^{\mathsf T}+\Psi$ もそのまま。<strong>データから見て $\Lambda$ と $\Lambda T$ は区別できない。</strong></p>
+<p><strong>4. 共通性も変わらない。</strong> 3 の対角成分を取ればよい。</p>
+<p>$$h_j^{*2} = h_j^2$$</p>
+<p>各変数が共通因子に説明される割合は回転で動かない。動くのは「その割合を $m$ 本の因子にどう配分するか」だけである。</p>
+<p><strong>5. だから何を選ぶかは解釈の問題になる。</strong> 当てはまりが同じ解が無数にあり、データは 1 つに決めてくれない。そこで別の基準 — 単純構造 — を持ち込む。varimax が負荷量の 2 乗の分散を最大にする $T$ を選ぶのは、<strong>分散が大きい = 大きい負荷と小さい負荷にはっきり分かれる</strong>という読み替えによる。</p>
+<p><strong>落とし穴。</strong> 自由なのは $m\times m$ の直交行列の分だけであって、何でも動かせるわけではない。$m = 1$ なら $T$ は $\pm1$ しかなく、符号の反転を除いて負荷は一意に決まる。また PCA にこの不定性がないのは、主成分が「分散最大」という追加の条件で軸を 1 本ずつ固定しているからである (7.5.2 の表の最終行)。</p></div></details>
 <h2 id="c07-7-6">7.6 クラスター分析</h2>
 <p>ラベルのないデータを「似たもの同士」に分ける。何を「似ている」とするか (距離) と、どう分けるか (アルゴリズム) の 2 つの選択がある。</p>
 <h3 id="c07-7-6-1">7.6.1 距離</h3>
@@ -11663,6 +11970,25 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <li><strong>群平均法</strong>: 全対の平均距離</li>
 <li><strong>Ward 法</strong>: 併合によるクラスタ内平方和 $\sum_{\mathbf x \in A\cup B}\|\mathbf x - \bar{\mathbf x}_{A\cup B}\|^2$ の増分が最小の対を併合する。増分は $\frac{n_A n_B}{n_A + n_B}\|\bar{\mathbf x}_A - \bar{\mathbf x}_B\|^2$ と閉じた形で書け (Ward 1963)、k-means と同じ目的関数を貪欲に最小化していることになる</li>
 </ul>
+<details class="gap"><summary>行間: Ward 法の増分が閉じた形になるところ</summary><div class="gap-body"><p>本文は増分が $\frac{n_A n_B}{n_A + n_B}\|\bar{\mathbf x}_A - \bar{\mathbf x}_B\|^2$ と「書ける」と 1 行で述べた。なぜ 2 つの重心の距離だけで決まるのかを開く。</p>
+<p><strong>記号。</strong> クラスタ $A$ は $n_A$ 個、$B$ は $n_B$ 個の点からなり、共通部分はない。$\bar{\mathbf x}_A, \bar{\mathbf x}_B$ は各重心 ($p\times1$)、$\bar{\mathbf x}$ は $A\cup B$ 全体の重心。クラスタ内平方和を $W(A) = \sum_{\mathbf x\in A}\|\mathbf x-\bar{\mathbf x}_A\|^2$ と書き、増分を $\Delta = W(A\cup B) - W(A) - W(B)$ とする。</p>
+<p><strong>1. 全体の重心は重み付き平均。</strong> 定義から</p>
+<p>$$\bar{\mathbf x} = \frac{n_A\bar{\mathbf x}_A + n_B\bar{\mathbf x}_B}{n_A+n_B}$$</p>
+<p><strong>2. 平方和を重心の移動分に分ける。</strong> $A$ の側だけ見る。$\mathbf x-\bar{\mathbf x} = (\mathbf x-\bar{\mathbf x}_A)+(\bar{\mathbf x}_A-\bar{\mathbf x})$ と割って二乗して足すと、交差項は $\sum_{\mathbf x\in A}(\mathbf x-\bar{\mathbf x}_A) = \mathbf 0$ により消える。</p>
+<p>$$\sum_{\mathbf x\in A}\|\mathbf x-\bar{\mathbf x}\|^2 = W(A) + n_A\|\bar{\mathbf x}_A-\bar{\mathbf x}\|^2$$</p>
+<p>第 2 項は点に依らない量を $n_A$ 回足したものである。6.2.2 で $SS_B$ に $n_i$ が付いたのと同じ理屈である。</p>
+<p><strong>3. $B$ の側も同じ。</strong> 足し合わせて $W(A), W(B)$ を引くと</p>
+<p>$$\Delta = n_A\|\bar{\mathbf x}_A-\bar{\mathbf x}\|^2 + n_B\|\bar{\mathbf x}_B-\bar{\mathbf x}\|^2$$</p>
+<p><strong>増分は重心の移動だけで決まる。</strong> クラスタ内の散らばりは引き算で消えている。</p>
+<p><strong>4. 重心の移動を書き下す。</strong> 1 を使うと</p>
+<p>$$\bar{\mathbf x}_A - \bar{\mathbf x} = \frac{n_B}{n_A+n_B}(\bar{\mathbf x}_A-\bar{\mathbf x}_B)$$</p>
+<p>$\bar{\mathbf x}_B-\bar{\mathbf x}$ の方は係数が $-n_A/(n_A+n_B)$ になる。</p>
+<p><strong>5. 代入してまとめる。</strong> $\mathbf u = \bar{\mathbf x}_A-\bar{\mathbf x}_B$ と置くと 3 は</p>
+<p>$$\Delta = \frac{n_An_B^2 + n_Bn_A^2}{(n_A+n_B)^2}\|\mathbf u\|^2$$</p>
+<p>分子は $n_An_B(n_A+n_B)$ なので 1 つ約分されて</p>
+<p>$$\Delta = \frac{n_An_B}{n_A+n_B}\|\bar{\mathbf x}_A-\bar{\mathbf x}_B\|^2$$</p>
+<p><strong>6. 読み方。</strong> 係数 $n_An_B/(n_A+n_B)$ は両方が大きいほど大きい。だから Ward 法は、重心が同じだけ離れていても<strong>大きいクラスタどうしの併合を後回しにする</strong>。単連結や完全連結が大きさをまったく見ないのと対照的で、これが大きさの揃ったクラスタを作る傾向の出どころである。</p>
+<p><strong>落とし穴。</strong> 増分は距離の<strong>二乗</strong>に比例するので、変数の単位を変えると全体が一様に伸縮する。7.6.1 の標準化の注意がそのまま効く。また $\Delta$ が最小の対を選ぶのは各段階での貪欲な選択であって、最終的な $k$ 分割がクラスタ内平方和を最小にする保証はない。</p></div></details>
 <p>結果は<strong>デンドログラム</strong> (樹形図) で表す。縦軸は併合時の距離で、水平に切る高さを決めるとクラスタ数が決まる。併合距離の<strong>大きな飛び</strong> (ギャップ) がある高さで切るのが目安。</p>
 <figure><img loading="lazy" decoding="async" alt="図 7.6 3 群 × 8 点のデータの階層的クラスタリング。単連結 (中央) では併合距離の落差が小さく群の境界が読みにくい。Ward 法 (右) では 3 群の併合が他より格段に高い位置で起き、3 クラスタが明瞭に読める" src="fig/07_dendrogram.png" /><figcaption>図 7.6 3 群 × 8 点のデータの階層的クラスタリング。単連結 (中央) では併合距離の落差が小さく群の境界が読みにくい。Ward 法 (右) では 3 群の併合が他より格段に高い位置で起き、3 クラスタが明瞭に読める</figcaption></figure>
 <p>階層的手法は $O(n^2)$ の距離行列を要するので、$n$ が数万を超えると実用的でない。</p>
@@ -11698,12 +12024,46 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <p><strong>定理 7.6 (Fisher の線形判別)</strong> $J(\mathbf w)$ を最大にする方向は $\mathbf w \propto S_W^{-1}(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)$</p>
 </blockquote>
 <p>証明の要点: $J$ は $\mathbf w$ のスケールに依らない (分子分母とも 2 次) ので、$\mathbf w^{\mathsf T} S_W\mathbf w = 1$ の制約下で分子を最大化する。Lagrange 条件は $S_B\mathbf w = \lambda S_W\mathbf w$ (一般化固有値問題)。$S_B\mathbf w = (\bar{\mathbf x}_1 - \bar{\mathbf x}_2)\{(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)^{\mathsf T}\mathbf w\}$ はスカラー倍の $(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)$ なので、$S_W\mathbf w \propto \bar{\mathbf x}_1 - \bar{\mathbf x}_2$、すなわち $\mathbf w \propto S_W^{-1}(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)$。$S_B$ のランクが 1 なので解は 1 方向に限られる ($G$ 群なら $G - 1$ 方向まで取れる)。</p>
+<details class="gap"><summary>行間: Fisher 方向が $S_W^{-1}(\bar{\mathbf x}_1-\bar{\mathbf x}_2)$ になるまで</summary><div class="gap-body"><p>本文は一般化固有値問題を経由して答えへ飛んだ。$S_B$ の階数が 1 であることがどこで効くのかを開く。</p>
+<p><strong>記号と次元。</strong> $\mathbf w$ は $p\times1$ の射影方向、$S_W$ は $p\times p$ の群内散布行列 (正則とする)、$\mathbf m = \bar{\mathbf x}_1-\bar{\mathbf x}_2$ ($p\times1$) として $S_B = \mathbf m\mathbf m^{\mathsf T}$ ($p\times p$)。$J(\mathbf w)$ はスカラーである。</p>
+<p><strong>1. 分子が $S_B$ で書けること。</strong> 射影後の平均差はスカラー $\mathbf w^{\mathsf T}\mathbf m$ で、その二乗は</p>
+<p>$$(\mathbf w^{\mathsf T}\mathbf m)^2 = (\mathbf w^{\mathsf T}\mathbf m)(\mathbf m^{\mathsf T}\mathbf w)$$</p>
+<p>右辺の中央 2 つをくくれば $\mathbf m\mathbf m^{\mathsf T} = S_B$ が現れて $\mathbf w^{\mathsf T}S_B\mathbf w$ になる。スカラーは転置しても同じ、を使っただけである。</p>
+<p><strong>2. スケールを固定する。</strong> $\mathbf w$ を $c$ 倍すると分子も分母も $c^2$ 倍になり $J$ は変わらない。そこで $\mathbf w^{\mathsf T}S_W\mathbf w = 1$ と決めて分子だけを最大化する問題に直す。7.4.1 で長さを 1 に固定したのと同じ手である。</p>
+<p><strong>3. ラグランジュ条件。</strong> 7.4.1 と同じ微分公式を使う ($S_B, S_W$ とも対称)。</p>
+<p>$$S_B\mathbf w = \lambda S_W\mathbf w$$</p>
+<p><strong>4. 左辺を潰す。</strong> ここが本文で最も飛んでいる。$S_B = \mathbf m\mathbf m^{\mathsf T}$ を入れると</p>
+<p>$$S_B\mathbf w = \mathbf m\,(\mathbf m^{\mathsf T}\mathbf w)$$</p>
+<p>括弧の中は $1\times1$ のスカラーである。つまり $S_B\mathbf w$ は、$\mathbf w$ が何であれ<strong>必ず $\mathbf m$ の定数倍</strong>になる。$S_B$ の階数が 1 とはこのことである。</p>
+<p><strong>5. 解く。</strong> 3 と 4 から $S_W\mathbf w$ も $\mathbf m$ の定数倍である。$S_W$ が正則なら左から逆行列を掛けて</p>
+<p>$$\mathbf w \propto S_W^{-1}\mathbf m$$</p>
+<p>比例定数は 2 で決めたスケールから決まるが、判別には向きしか使わないので気にしなくてよい。</p>
+<p><strong>6. なぜ「平均差の方向」ではないのか。</strong> $S_W$ が単位行列の定数倍のときに限り $S_W^{-1}\mathbf m \propto \mathbf m$ となって両者は一致する。一般には $S_W^{-1}$ が<strong>群内の散らばりの小さい方向を持ち上げる</strong>ので、方向がずれる。7.2.2 で $S^{-1}$ が分散の小さい方向に大きな重みを与えたのと同じ仕組みである。</p>
+<p><strong>落とし穴。</strong> $S_W$ の正則性が要る。$n$ が $p$ に比べて小さいと $S_W$ は特異になり、この式は書けない (7.10 の最後の項目)。また解が 1 方向に決まるのは 2 群だからで、$G$ 群なら $S_B$ の階数が $G-1$ になり、その数だけ方向が取れる。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 7.8 2 群の共分散が強い相関を持つ例。平均差の方向 (灰) へ射影すると 2 群は大きく重なるが、Fisher 方向 (緑) へ射影すると分離度 J が約 4 倍になる。群内の散らばりが小さい方向を選んでいる" src="fig/07_fisher.png" /><figcaption>図 7.8 2 群の共分散が強い相関を持つ例。平均差の方向 (灰) へ射影すると 2 群は大きく重なるが、Fisher 方向 (緑) へ射影すると分離度 J が約 4 倍になる。群内の散らばりが小さい方向を選んでいる</figcaption></figure>
 <p>図 7.8 が示すように、Fisher 方向は「平均差の方向」ではなく、<strong>群内共分散で補正した方向</strong>である。$S_W$ が単位行列の定数倍なら両者は一致する。判別規則は、射影値 $\mathbf w^{\mathsf T}\mathbf x$ が 2 群の射影平均の中点より大きいか小さいかで決める。この規則は、2 群の平均への Mahalanobis 距離 (プールした共分散を使う) が小さい方に分類する規則と同値である (演習 6)。</p>
 <h3 id="c07-7-7-2">7.7.2 正規分布からの導出と二次判別</h3>
 <p>群 $g$ の分布を $N_p(\boldsymbol\mu_g, \Sigma)$ (<strong>共分散が共通</strong>)、事前確率 $\pi_g$ とすると、Bayes の規則で事後確率が大きい群に分類するのが誤分類率最小の規則で、対数事後比は</p>
 <p>$$\log\frac{P(g=1 \mid \mathbf x)}{P(g=2 \mid \mathbf x)} = \log\frac{\pi_1}{\pi_2} + (\boldsymbol\mu_1 - \boldsymbol\mu_2)^{\mathsf T}\Sigma^{-1}\mathbf x - \frac12(\boldsymbol\mu_1 + \boldsymbol\mu_2)^{\mathsf T}\Sigma^{-1}(\boldsymbol\mu_1 - \boldsymbol\mu_2)$$</p>
 <p>と $\mathbf x$ の<strong>線形関数</strong>になる (2 次の項 $\mathbf x^{\mathsf T}\Sigma^{-1}\mathbf x$ が分子分母で打ち消す)。係数ベクトル $\Sigma^{-1}(\boldsymbol\mu_1 - \boldsymbol\mu_2)$ は Fisher 方向と同じである。つまり Fisher の分離度最大化は、正規等分散モデルの Bayes 最適規則を再現している。共分散が群ごとに異なると 2 次項が残り、境界が 2 次曲面になる (二次判別分析 QDA)。QDA は各群で $p(p+1)/2$ 個の共分散パラメータを推定するので、$n$ が小さいと不安定になりやすい。</p>
+<details class="gap"><summary>行間: 2 次の項が打ち消すところを 1 行ずつ</summary><div class="gap-body"><p>本文は対数事後比を 1 つの式で与え、「2 次の項が分子分母で打ち消す」と括弧書きで済ませた。そこを開く。</p>
+<p><strong>記号。</strong> 群は 2 つ、密度はどちらも $N_p(\boldsymbol\mu_g, \Sigma)$ で<strong>共分散 $\Sigma$ が共通</strong>、事前確率は $\pi_1,\pi_2$ とする。群 $g$ の密度を $f_g(\mathbf x)$ と書く。$\mathbf x$ は $p\times1$。</p>
+<p><strong>1. Bayes の定理で事後比を作る。</strong> 分母 (証拠) は両群で共通なので、比をとると消える。</p>
+<p>$$\frac{P(g=1 \mid \mathbf x)}{P(g=2 \mid \mathbf x)} = \frac{\pi_1f_1(\mathbf x)}{\pi_2f_2(\mathbf x)}$$</p>
+<p><strong>2. 対数をとる。</strong> 積が和に分かれて $\log(\pi_1/\pi_2) + \log f_1 - \log f_2$ になる。</p>
+<p><strong>3. 密度の対数を書く。</strong> 定義 7.3 の $(2\pi)^{p/2}|\Sigma|^{1/2}$ は $g$ に依らないので、差をとると消える。残るのは指数の中身だけで、$d_g^2 = (\mathbf x-\boldsymbol\mu_g)^{\mathsf T}\Sigma^{-1}(\mathbf x-\boldsymbol\mu_g)$ と置くと</p>
+<p>$$\log f_1 - \log f_2 = \tfrac12\bigl(d_2^2 - d_1^2\bigr)$$</p>
+<p><strong>定数部分が消えるのは $\Sigma$ が共通だから</strong>で、群ごとに違えば $|\Sigma_g|$ が残る。</p>
+<p><strong>4. 二次形式を展開する。</strong> $k_g = \boldsymbol\mu_g^{\mathsf T}\Sigma^{-1}\boldsymbol\mu_g$ (スカラー) と置くと、1 つ分は</p>
+<p>$$d_g^2 = \mathbf x^{\mathsf T}\Sigma^{-1}\mathbf x - 2\boldsymbol\mu_g^{\mathsf T}\Sigma^{-1}\mathbf x + k_g$$</p>
+<p>中央の 2 つが 1 つにまとまるのは、$\mathbf x^{\mathsf T}\Sigma^{-1}\boldsymbol\mu_g$ がスカラーで、$\Sigma^{-1}$ が対称だから転置しても同じ値になるためである。</p>
+<p><strong>5. 差をとる。</strong> 第 1 項は $g$ を含まないので<strong>引き算で消える</strong>。これが「2 次の項が打ち消す」の中身である。$c = k_1 - k_2$ と置くと</p>
+<p>$$d_2^2 - d_1^2 = 2(\boldsymbol\mu_1-\boldsymbol\mu_2)^{\mathsf T}\Sigma^{-1}\mathbf x - c$$</p>
+<p><strong>6. $c$ を本文の形に直す。</strong> 展開して確かめると、交差項が対称性で打ち消し合うので</p>
+<p>$$c = (\boldsymbol\mu_1+\boldsymbol\mu_2)^{\mathsf T}\Sigma^{-1}(\boldsymbol\mu_1-\boldsymbol\mu_2)$$</p>
+<p>3 の $\tfrac12$ を掛ければ本文の第 3 項になる。</p>
+<p><strong>7. 係数を読む。</strong> $\mathbf x$ に掛かっているのは $\Sigma^{-1}(\boldsymbol\mu_1-\boldsymbol\mu_2)$ で、7.7.1 の Fisher 方向と同じ形である。残りは $\mathbf x$ に依らない定数なので、境界の<strong>向き</strong>は変えずに位置だけを動かす。事前確率の項 $\log(\pi_1/\pi_2)$ も同じ働きをする。</p>
+<p><strong>落とし穴。</strong> 打ち消しが起きるのは $\Sigma$ が共通のときだけである。$\Sigma_1\ne\Sigma_2$ なら 4 の第 1 項が $\mathbf x^{\mathsf T}(\Sigma_2^{-1}-\Sigma_1^{-1})\mathbf x$ の形で残り、境界が 2 次曲面になる。これが QDA である。</p></div></details>
 <h3 id="c07-7-7-3">7.7.3 ロジスティック回帰との関係</h3>
 <p>ロジスティック回帰 (第 6 章) も対数オッズ $\log\{P(g=1\mid\mathbf x)/P(g=2\mid\mathbf x)\} = \beta_0 + \boldsymbol\beta^{\mathsf T}\mathbf x$ を線形と置くので、<strong>判別境界の形は LDA と同じ</strong>である。違いは何を推定するか:</p>
 <ul>
@@ -12871,6 +13231,49 @@ $\tau^2$ がほとんど決まらないため、超事前の選び方が縮小�
 <p>証明の要点: $\pi(\theta) q(\theta' \mid \theta) \ge \pi(\theta') q(\theta \mid \theta')$ の場合を考える (逆は対称)。このとき $\alpha(\theta, \theta') = \pi(\theta')q(\theta \mid \theta') / (\pi(\theta) q(\theta' \mid \theta))$、$\alpha(\theta', \theta) = 1$ なので</p>
 <p>$$\pi(\theta) K(\theta \to \theta') = \pi(\theta)\, q(\theta' \mid \theta)\, \frac{\pi(\theta')\, q(\theta \mid \theta')}{\pi(\theta)\, q(\theta' \mid \theta)} = \pi(\theta')\, q(\theta \mid \theta') = \pi(\theta') K(\theta' \to \theta)$$</p>
 <p>で詳細釣り合いが成り立つ。両辺を $\theta$ で積分すると $\int \pi(\theta) K(\theta \to \theta')\, d\theta = \pi(\theta') \int K(\theta' \to \theta)\, d\theta = \pi(\theta')$、すなわち $\pi$ から出発した連鎖は 1 ステップ後も $\pi$ に従う (定常性)。留まる確率の分はどちら側にも同じ量が入るので詳細釣り合いを壊さない。加えて連鎖が既約 (どこからでもどこへでも到達できる) かつ非周期的なら、任意の初期値から分布が $\pi$ に収束する。</p>
+<details class="gap"><summary>行間: 採択確率の $\min$ はどこから来て、釣り合いがなぜ定常性になるのか</summary><div class="gap-body"><p>本文は採択確率の形を天下りに与え、証明では「このとき $\alpha(\theta,\theta') = \dots$」と
+すでに約分した式を置いた。2 つに分けて開く。<strong>前半は $\min$ の出どころ、後半は
+詳細釣り合いから定常性への 1 行</strong>である。</p>
+<p><strong>記号の役割。</strong> $\pi$ は目標分布 (ここでは事後分布) で、<strong>正規化されていなくてよい</strong>。
+$q(\theta'\mid\theta)$ は「いま $\theta$ にいるとき $\theta'$ を候補に出す」密度。
+$K(\theta\to\theta')$ は実際に移動する密度で $\theta \ne \theta'$ のとき
+$q(\theta'\mid\theta)\alpha(\theta,\theta')$。以下 $\theta \ne \theta'$ とする。</p>
+<p><strong>前半: $\min$ の出どころ</strong></p>
+<p><strong>1. 欲しい条件を書く。</strong> 詳細釣り合いを $\alpha$ について書き下すと、これが満たしたい等式である。</p>
+<p>$$\pi(\theta)\,q(\theta'\mid\theta)\,\alpha(\theta,\theta') = \pi(\theta')\,q(\theta\mid\theta')\,\alpha(\theta',\theta)$$</p>
+<p><strong>2. 比に名前を付ける。</strong> 右辺の $\alpha$ 以外を左辺の $\alpha$ 以外で割った量を $r$ と書く。</p>
+<p>$$r = \frac{\pi(\theta')\,q(\theta\mid\theta')}{\pi(\theta)\,q(\theta'\mid\theta)}$$</p>
+<p>すると 1 の条件はひどく簡単になる。</p>
+<p>$$\alpha(\theta,\theta') = r\,\alpha(\theta',\theta)$$</p>
+<p><strong>3. 未知が 2 つで式が 1 つ。</strong> $\alpha(\theta,\theta')$ と $\alpha(\theta',\theta)$ の
+両方が未知なので、解は 1 つに決まらない。制約は<strong>どちらも確率だから $0$ 以上 $1$ 以下</strong>
+というだけである。</p>
+<p><strong>4. 自由度を「なるべく動く」で埋める。</strong> 棄却は時間の無駄なので、制約の中で
+$\alpha$ を<strong>できるだけ大きく</strong>取る。$r \le 1$ の場合、$\alpha(\theta',\theta)$ の最大は $1$ で、
+そのとき $\alpha(\theta,\theta') = r$。$r > 1$ なら逆向きで、$\alpha(\theta,\theta') = 1$、
+$\alpha(\theta',\theta) = 1/r$。</p>
+<p><strong>5. 2 つの場合を 1 本にまとめる。</strong> 「$r\le1$ なら $r$、$r>1$ なら $1$」は $\min$ である。</p>
+<p>$$\alpha(\theta,\theta') = \min\{1,\ r\}$$</p>
+<p>これが本文の採択確率である。<strong>$\min$ は工夫ではなく、$\alpha \le 1$ の制約の下で
+釣り合いを保ったまま最大を取った結果</strong>である。</p>
+<p><strong>6. 正規化定数が要らない理由。</strong> 2 の $r$ には $\pi$ が<strong>比でしか</strong>現れない。
+$\pi(\theta) = p(y\mid\theta)p(\theta)/p(y)$ の $p(y)$ は分子と分母で同じなので約分される。
+だから 8.2.1 で捨てた $p(y)$ を、ここでも計算せずに済む。</p>
+<p><strong>後半: 釣り合い $\Rightarrow$ 定常性</strong></p>
+<p><strong>7. 定常性の定義を書く。</strong> 「$\pi$ から出発すると 1 歩後も $\pi$」という条件である。</p>
+<p>$$\int \pi(\theta)\,K(\theta\to\theta')\,d\theta = \pi(\theta')$$</p>
+<p><strong>8. 被積分関数を詳細釣り合いで置き換える。</strong> 左辺の中身を $\pi(\theta')K(\theta'\to\theta)$ に
+そのまま差し替える。</p>
+<p><strong>9. $\theta$ を含まない因子を外に出す。</strong> $\pi(\theta')$ は積分変数 $\theta$ を含まないので、
+積分の外へ出せる。</p>
+<p>$$\pi(\theta')\int K(\theta'\to\theta)\,d\theta = \pi(\theta')$$</p>
+<p><strong>10. 残った積分が 1。</strong> $K(\theta'\to\cdot)$ は「$\theta'$ にいる粒子の 1 歩後の行き先の分布」だから、
+全体で 1 になる。ここに<strong>留まる確率も含めて</strong>数えるのが本文の但し書きの意味である。
+よって 7 が成り立つ。</p>
+<p><strong>落とし穴。</strong> 詳細釣り合いは定常性の<strong>十分条件であって必要条件ではない</strong>。
+釣り合っていなくても定常な連鎖はある。また定常分布を持つことと、任意の初期値から
+そこへ<strong>収束する</strong>ことも別である。後者には既約性と非周期性が要る —— 本文の最後の 1 文は
+この別の条件を足している。図 8.8 の「混合が悪い鎖」は、収束はするが遅い例である。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 8.8 ランダムウォーク MH (目標 N(0,1))。提案幅が小さいと採択率は高いが少しずつしか動けず、大きいとほとんど棄却されて同じ値に留まる。どちらも自己相関が長く有効標本数が激減する。1 次元では採択率 0.44 前後、高次元では 0.23 前後が最適とされる" src="fig/08_mh_trace.png" /><figcaption>図 8.8 ランダムウォーク MH (目標 N(0,1))。提案幅が小さいと採択率は高いが少しずつしか動けず、大きいとほとんど棄却されて同じ値に留まる。どちらも自己相関が長く有効標本数が激減する。1 次元では採択率 0.44 前後、高次元では 0.23 前後が最適とされる</figcaption></figure>
 <p><strong>Gibbs サンプリング</strong> (Geman &amp; Geman 1984、統計への導入は Gelfand &amp; Smith 1990)。多次元の $\theta = (\theta_1, \dots, \theta_d)$ で、各成分の<strong>完全条件付き分布</strong> $p(\theta_k \mid \theta_{-k}, y)$ から順に抽出する。これは提案が完全条件付き分布そのものである MH の特殊形で、採択確率が常に 1 になる (演習 6)。共役構造があれば完全条件付き分布は標準的な分布になるので、階層モデルの定番手法だった (BUGS/JAGS)。欠点は、成分間の相関が強いと軸に沿ってしか動けず混合が遅いこと。</p>
 <p><strong>Hamiltonian Monte Carlo (HMC)</strong> (Duane ら 1987、統計への解説は Neal 2011)。母数を位置 $\theta$、補助変数を運動量 $r$ とみなし、ポテンシャル $U(\theta) = -\log \pi(\theta)$ と運動エネルギー $r^\top M^{-1} r/2$ を持つ Hamilton 力学を数値積分 (leapfrog) して遠くの候補を提案する。勾配 $\nabla \log \pi$ を使うので、ランダムウォークと違って高次元・強相関の事後でも大きく動け、しかもエネルギー保存のため採択率が高い。積分の長さ (ステップ数) を自動で決めるのが <strong>NUTS</strong> (No-U-Turn Sampler、Hoffman &amp; Gelman 2014) で、Stan<sup id="c08-fnref:3"><a class="footnote-ref" href="#c08-fn:3">3</a></sup> や PyMC の既定サンプラーである。勾配は自動微分で得るので、ユーザーは対数事後密度を書くだけでよい。</p>
@@ -12887,6 +13290,41 @@ $$\hat R = \sqrt{\frac{\widehat{\mathrm{var}}^+}{W}}, \qquad \widehat{\mathrm{va
 $$T_{\rm eff} = \frac{T}{1 + 2\sum_{k=1}^\infty \rho_k}$$</p>
 </blockquote>
 <p>導出: $\mathrm{Var}(\bar\theta) = \frac{1}{T^2}\sum_{s,t} \mathrm{Cov}(\theta^{(s)}, \theta^{(t)}) = \frac{\sigma^2}{T^2}\sum_{s,t}\rho_{|s-t|} \approx \frac{\sigma^2}{T}\left(1 + 2\sum_{k \ge 1}\rho_k\right)$ ($T$ が大きいとき)。図 8.8 の下段のとおり、混合の悪い鎖は 2000 反復あっても数十個分の情報しか持たない。事後平均の Monte Carlo 標準誤差は $\sigma/\sqrt{T_{\rm eff}}$ で見積もる。</p>
+<details class="gap"><summary>行間: 二重和を対角線に沿って数え直すところ</summary><div class="gap-body"><p>本文の導出は $\frac{1}{T^2}\sum_{s,t}$ から $\approx$ 一つで結論へ飛んでいる。
+その $\approx$ の前に<strong>数え上げ</strong>が 1 手隠れているので、そこを開く。</p>
+<p><strong>記号の役割。</strong> $\theta^{(1)},\dots,\theta^{(T)}$ は定常に達した鎖の標本。
+$s$ と $t$ はどちらも $1$ から $T$ を独立に走る。$\sigma^2 = \mathrm{Var}(\theta^{(t)})$ は
+$t$ に依らない (定常だから)。$\rho_k$ はラグ $k$ の自己相関で、$\rho_0 = 1$、$\rho_{-k} = \rho_k$。</p>
+<p><strong>1. 標本平均の分散を二重和で書く。</strong> $\mathrm{Var}(\sum) = \sum\sum\mathrm{Cov}$ である。</p>
+<p>$$\mathrm{Var}(\bar\theta) = \frac{1}{T^2}\sum_{s=1}^{T}\sum_{t=1}^{T}\mathrm{Cov}(\theta^{(s)},\theta^{(t)})$$</p>
+<p><strong>2. 共分散を差だけの関数に直す。</strong> 定常性により、共分散は $s,t$ の<strong>差にしか依らない</strong>。</p>
+<p>$$\mathrm{Cov}(\theta^{(s)},\theta^{(t)}) = \sigma^2\,\rho_{|s-t|}$$</p>
+<p><strong>ここが定常性の効きどころ</strong>である。$T^2$ 個の項が、値としては $T$ 種類しかなくなる。</p>
+<p><strong>3. 差ごとに項を数える。</strong> $k = |s-t|$ を固定して、$(s,t)$ の組が何個あるかを数える。</p>
+<ul>
+<li>$k = 0$: 対角線上の $(t,t)$ で $T$ 個</li>
+<li>$k \ge 1$: $s - t = k$ の組が $T-k$ 個、$t - s = k$ の組も $T-k$ 個。合わせて $2(T-k)$ 個</li>
+</ul>
+<p><strong>4. 数え上げた結果を書く。</strong> 二重和が 1 重和になる。</p>
+<p>$$\sum_{s,t}\rho_{|s-t|} = T + 2\sum_{k=1}^{T-1}(T-k)\,\rho_k$$</p>
+<p><strong>5. $T$ で括る。</strong> $(T-k) = T(1 - k/T)$ である。</p>
+<p>$$\sum_{s,t}\rho_{|s-t|} = T\left[1 + 2\sum_{k=1}^{T-1}\left(1-\tfrac{k}{T}\right)\rho_k\right]$$</p>
+<p><strong>6. $T$ を大きくする。</strong> 各 $k$ について $1 - k/T \to 1$ なので、括弧の中は
+$1 + 2\sum_{k\ge1}\rho_k$ に近づく。<strong>これが本文の $\approx$ の中身</strong>である。</p>
+<p><strong>7. 1 に戻す。</strong> 2、4、5 を 1 に入れ、$\sigma^2/T^2 \cdot T = \sigma^2/T$。</p>
+<p>$$\mathrm{Var}(\bar\theta) \approx \frac{\sigma^2}{T}\left(1 + 2\sum_{k\ge1}\rho_k\right)$$</p>
+<p><strong>8. 独立標本と比べる。</strong> 独立な標本 $T_{\rm eff}$ 個なら分散は $\sigma^2/T_{\rm eff}$。
+7 と等しいと置いて $T_{\rm eff}$ について解けば、定義 8.7 の式が出る。
+$\rho_k$ がすべて 0 なら $T_{\rm eff} = T$ に戻ることを確かめておくとよい。</p>
+<p><strong>落とし穴 1。</strong> 3 の $2$ を落とすと係数が半分になる。差が $+k$ の組と $-k$ の組の
+<strong>両方</strong>を数える必要がある。</p>
+<p><strong>落とし穴 2。</strong> 定義 8.7 の和は $k = 1$ から $\infty$ だが、実際の鎖から計算できるのは
+$k \le T-1$ までで、しかもラグが大きいところの $\hat\rho_k$ は雑音まみれである。
+そのまま足すと雑音を足し込んで $T_{\rm eff}$ が壊れるので、どこかで打ち切る。
+8.11 の <code>ess</code> が $\rho_k < 0.05$ で和を止めているのはこのためである。</p>
+<p><strong>落とし穴 3。</strong> $\rho_k$ は<strong>鎖の</strong>自己相関であって、データの自己相関ではない。
+混合の悪さはサンプラーの性質なので、観測を増やしても直らない。直すのは提案分布や
+サンプラーのほう (図 8.8) である。</p></div></details>
 <h3 id="c08-8-9-4">8.9.4 変分推論 (一言)</h3>
 <p>MCMC が「標本を引く」のに対し、<strong>変分推論</strong>は事後分布を扱いやすい族 $q_\phi(\theta)$ (例: 独立正規の積) の中で探し、$\mathrm{KL}(q_\phi \,\|\, p(\theta \mid y))$ を最小化する<strong>最適化問題</strong>に置き換える (Blei, Kucukelbir &amp; McAuliffe 2017)。KL は $\log p(y)$ の下界 (ELBO) の最大化と等価で、確率的勾配法で大規模データにも適用できる。代償として事後の分散を過小評価しやすく、精度が要る場面では MCMC の代わりにはならない。</p>
 <h2 id="c08-8-10">8.10 構造工学への接続</h2>
@@ -13024,6 +13462,40 @@ for L in [100, 300, 1500]:
 <p><strong>(b) Jeffreys 事前は 1 母数では不変だが、多母数では素直に伸びない。</strong> 定理 8.5 の不変性は 1 母数の話である。正規分布 $N(\mu, \sigma^2)$ を $(\mu, \sigma)$ で母数化すると Fisher 情報行列は $I = \mathrm{diag}(1/\sigma^2,\ 2/\sigma^2)$ で、$\sqrt{\det I} = \sqrt2/\sigma^2$。すなわち Jeffreys 則をそのまま当てはめると</p>
 <p>$$p_J(\mu, \sigma) \propto \frac{1}{\sigma^2}$$</p>
 <p>になる。ところが本文 8.3.3 で「平坦な事前」として使った $p(\mu, \sigma^2) \propto 1/\sigma^2$ は、$\sigma$ の尺度に直すと $p(\mu,\sigma) \propto 1/\sigma$ であって、これとは<strong>別物</strong>である。後者は $\mu$ と $\sigma$ に別々に Jeffreys 則を当ててから掛けた<strong>独立 Jeffreys 事前</strong>で、第 5 章の $t$ 区間と一致するのはこちらのほうである。どちらを「無情報」と呼ぶかで答えが変わる。多母数問題で Jeffreys 則に難点があり、局外母数が多いと導出も解釈も難しくなること、そうした場面では参照事前分布 (reference prior) が選ばれることは、この分野では共通の認識である<sup id="c08-fnref:p4"><a class="footnote-ref" href="#c08-fn:p4">8</a></sup>。</p>
+<details class="gap"><summary>行間: $\sqrt{\det I} = \sqrt2/\sigma^2$ と $1/\sigma$ が分かれるところ</summary><div class="gap-body"><p>本文は Fisher 情報行列を $\mathrm{diag}(1/\sigma^2,\ 2/\sigma^2)$ と結果だけ置き、そこから
+2 つの「Jeffreys」が出ると書いた。微分と、2 つが分かれる分岐点を開く。</p>
+<p><strong>記号の役割。</strong> 母数は $(\mu,\sigma)$ の 2 つで、<strong>$\sigma^2$ ではなく $\sigma$</strong> を使う。
+$y$ は 1 観測 ($n$ 個なら全体が $n$ 倍になるだけで、比例記号の中では効かない)。
+対数密度から $\mu,\sigma$ を含まない定数を落として</p>
+<p>$$\ell = -\log\sigma - \frac{(y-\mu)^2}{2\sigma^2}$$</p>
+<p><strong>1. $\mu$ で 2 回微分する。</strong> 1 回目は $(y-\mu)/\sigma^2$、2 回目は</p>
+<p>$$\frac{\partial^2 \ell}{\partial\mu^2} = -\frac{1}{\sigma^2}$$</p>
+<p><strong>2. 符号を変えて期待値を取る。</strong> 中身が $y$ を含まない定数なので期待値はそのまま。
+$I_{\mu\mu} = 1/\sigma^2$。</p>
+<p><strong>3. $\sigma$ で 1 回微分する。</strong> $-\log\sigma$ から $-1/\sigma$、$-(y-\mu)^2/(2\sigma^2)$ からは
+$\sigma^{-2}$ の微分が $-2\sigma^{-3}$ なので $+(y-\mu)^2/\sigma^3$。</p>
+<p>$$\frac{\partial \ell}{\partial\sigma} = -\frac{1}{\sigma} + \frac{(y-\mu)^2}{\sigma^3}$$</p>
+<p><strong>4. もう 1 回微分する。</strong> 第 1 項から $+1/\sigma^2$、第 2 項から $-3(y-\mu)^2/\sigma^4$。</p>
+<p>$$\frac{\partial^2 \ell}{\partial\sigma^2} = \frac{1}{\sigma^2} - \frac{3(y-\mu)^2}{\sigma^4}$$</p>
+<p><strong>5. 期待値を取る。</strong> ここで初めて $y$ の分布を使う。$E[(y-\mu)^2] = \sigma^2$ だから
+第 2 項の期待値は $-3/\sigma^2$。合わせて $-2/\sigma^2$、符号を変えて $I_{\sigma\sigma} = 2/\sigma^2$。
+<strong>$2$ が出るのはここ</strong>である。</p>
+<p><strong>6. 非対角を見る。</strong> 3 を $\mu$ で微分すると $-2(y-\mu)/\sigma^3$。
+$E[y-\mu] = 0$ なので $I_{\mu\sigma} = 0$。よって $I$ は対角行列になる。</p>
+<p><strong>7. 行列式と平方根。</strong> 対角行列の行列式は対角成分の積。</p>
+<p>$$\det I = \frac{1}{\sigma^2}\cdot\frac{2}{\sigma^2} = \frac{2}{\sigma^4}, \qquad \sqrt{\det I} = \frac{\sqrt2}{\sigma^2}$$</p>
+<p>$\sqrt2$ は $\sigma$ を含まない定数なので比例記号に吸収され、$p_J(\mu,\sigma)\propto 1/\sigma^2$。</p>
+<p><strong>8. 分岐点。</strong> 独立 Jeffreys は<strong>行列式を取らない</strong>。$\mu$ については
+$\sigma$ を既知とみなして $\sqrt{I_{\mu\mu}} = 1/\sigma$ だが、$\mu$ の関数としては定数なので
+$p(\mu)\propto 1$。$\sigma$ については $\sqrt{I_{\sigma\sigma}} = \sqrt2/\sigma \propto 1/\sigma$。
+掛けて $p(\mu,\sigma)\propto 1/\sigma$ となる。</p>
+<p><strong>どこで差がついたか。</strong> 7 は $\sigma$ の寄与を<strong>2 回</strong> ($I_{\mu\mu}$ 経由で 1 回、
+$I_{\sigma\sigma}$ 経由で 1 回) 数えており、8 は $\mu$ の行を捨てて 1 回しか数えていない。
+指数が $2$ と $1$ で違うのはこの一点である。</p>
+<p><strong>落とし穴。</strong> どちらも「Jeffreys 事前」と呼ばれるので、どちらの流儀かを書かないと
+再現できない。定理 8.5 の不変性が保証しているのは 1 母数の話で、
+2 つを同時に扱った 7 のほうにまで自動的には伸びない。本文 8.3.3 の $t$ 区間と一致するのは
+8 のほう ($1/\sigma$、すなわち $p(\mu,\sigma^2)\propto1/\sigma^2$) である。</p></div></details>
 <p><strong>(c) 非正則な事前は、事後まで非正則にすることがある。</strong> 8.4.1 は「事後が正則になれば実用上は許されるが、確認が要る」で止めていた。その確認を怠るとどうなるかを見ておく。8.8 の正規階層モデル ($J$ 群、群内分散既知) で、群間標準偏差 $\tau$ に「尺度母数だから」と $p(\tau) \propto 1/\tau$ を置く。$\mu$ を積分消去した周辺尤度 $p(y \mid \tau)$ は $\tau \to 0$ で有限の正の値に収束するので、</p>
 <p>$$\int_0^{T} \frac{p(y \mid \tau)}{\tau}\, d\tau$$</p>
 <p>は下端で<strong>対数発散</strong>する。図 8.11 は下端 $\varepsilon$ を 1 桁下げるたびに質量が一定量ずつ増え続ける様子で、事後分布が存在していない。半 Cauchy 事前に替えると同じ図が頭打ちになる。一般化線形混合モデルでも、分散成分に標準的な不変事前を置くと事後が非正則になることが報告されている<sup id="c08-fnref:p5"><a class="footnote-ref" href="#c08-fn:p5">9</a></sup>。実務上の救いは道具の側にもある。Stan は非正則な事前を禁じないが、事後が非正則なら停止してエラーを返す設計になっており、上下限のない母数に暗黙に置かれる一様分布は非正則であることが明記されている<sup id="c08-fnref:p6"><a class="footnote-ref" href="#c08-fn:p6">10</a></sup>。</p>
@@ -13115,6 +13587,39 @@ $$E[\mu \mid y] = \frac{n\bar y + n_0 \mu_0}{n + n_0}, \qquad \mathrm{Var}(\mu \
 $$\Delta_n = \frac{n_0}{n + n_0}\,|\mu_0 - \mu_0'| = O(n^{-1}), \qquad \frac{\Delta_n}{\mathrm{sd}(\mu \mid y)} = \frac{n_0\,|\mu_0 - \mu_0'|}{\sigma\sqrt{n + n_0}} = O(n^{-1/2})$$</p>
 </blockquote>
 <p>証明の要点: 定理 8.4 に $\tau_0^2 = \sigma^2/n_0$ を代入すると $1/\tau_n^2 = (n_0 + n)/\sigma^2$、$\mu_n = \tau_n^2(n_0\mu_0 + n\bar y)/\sigma^2$ で第 1 式が出る。第 2 式は $\mu_n$ の $\mu_0$ に関する差を取るだけ。第 3 式は第 2 式を $\mathrm{sd} = \sigma/\sqrt{n+n_0}$ で割る。</p>
+<details class="gap"><summary>行間: $O(n^{-1})$ と $O(n^{-1/2})$ が分かれるところ</summary><div class="gap-body"><p>本文は「代入するだけ」で 3 つの式を並べた。代入は確かに機械的だが、<strong>$\sigma^2$ が
+どこで消えるか</strong>と<strong>指数が $1$ から $1/2$ に変わるのはなぜか</strong>の 2 点が飛んでいる。</p>
+<p><strong>記号の役割。</strong> $\sigma^2$ は既知の観測分散。$n$ は今回の標本数、$\bar y$ はその平均。
+$n_0 = \sigma^2/\tau_0^2$ が事前の実効標本数で、$\tau_0$ を決めれば決まる数である。
+$\mu_0$ と $\mu_0'$ は<strong>中心だけが違う 2 つの事前</strong>の中心で、広さ $\tau_0$ は共通、
+したがって $n_0$ も共通である。</p>
+<p><strong>1. 精度の式に代入する。</strong> $\tau_0^2 = \sigma^2/n_0$ を定理 8.4 の第 1 式へ。</p>
+<p>$$\frac{1}{\tau_n^2} = \frac{n_0}{\sigma^2} + \frac{n}{\sigma^2} = \frac{n_0+n}{\sigma^2}$$</p>
+<p><strong>2. 逆数を取る。</strong> $\tau_n^2 = \sigma^2/(n+n_0)$。これが定理の $\mathrm{Var}(\mu\mid y)$ である。
+<strong>$n_0$ が $n$ とまったく同じ位置に立っている</strong>のが見どころで、事前は「$n_0$ 本の
+追加の供試体」として働いている。</p>
+<p><strong>3. 事後平均に代入する。</strong> 定理 8.4 の第 2 式の括弧の中も $\tau_0^2 = \sigma^2/n_0$ で書き換える。</p>
+<p>$$\mu_n = \frac{\sigma^2}{n+n_0}\left(\frac{n_0\mu_0}{\sigma^2} + \frac{n\bar y}{\sigma^2}\right)$$</p>
+<p><strong>4. $\sigma^2$ を約分する。</strong> 前の $\sigma^2$ と括弧の中の $1/\sigma^2$ が消える。</p>
+<p>$$\mu_n = \frac{n\bar y + n_0\mu_0}{n + n_0}$$</p>
+<p><strong>$\sigma^2$ が消えるのが要点である。</strong> 事前とデータの重みは「本数の比」だけで決まり、
+観測のばらつきの大きさは入ってこない。$\sigma$ は $n_0$ の定義の中に吸収済みだからである。</p>
+<p><strong>5. 中心だけ違う 2 つを引く。</strong> 4 を $\mu_0$ と $\mu_0'$ で 2 本書いて引くと、
+$\bar y$ の項は共通なので消える。</p>
+<p>$$\Delta_n = \frac{n_0}{n+n_0}\,|\mu_0 - \mu_0'|$$</p>
+<p><strong>6. $n$ が大きいときの速さを読む。</strong> $|\mu_0-\mu_0'|$ と $n_0$ は $n$ に依らない定数。
+分母だけが $n$ とともに伸びるので $\Delta_n \sim (n_0|\mu_0-\mu_0'|)/n$、すなわち $O(n^{-1})$。</p>
+<p><strong>7. 事後標準偏差で割る。</strong> 2 より $\mathrm{sd} = \sigma/\sqrt{n+n_0}$ なので、
+割ることは $\sqrt{n+n_0}/\sigma$ を掛けることである。</p>
+<p>$$\frac{\Delta_n}{\mathrm{sd}} = \frac{n_0\,|\mu_0-\mu_0'|}{n+n_0}\cdot\frac{\sqrt{n+n_0}}{\sigma}$$</p>
+<p>$$\frac{\Delta_n}{\mathrm{sd}} = \frac{n_0\,|\mu_0-\mu_0'|}{\sigma\,\sqrt{n+n_0}}$$</p>
+<p><strong>8. 指数を数える。</strong> $(n+n_0)$ が分母に 1 乗あったところへ、分子に $1/2$ 乗が掛かった。
+差し引き $1/2$ 乗が分母に残る。よって $O(n^{-1/2})$ である。</p>
+<p><strong>落とし穴。</strong> $O(n^{-1})$ から $O(n^{-1/2})$ への変化は、<strong>分子が遅くなったからではない</strong>。
+分子 $\Delta_n$ の落ち方は 5 のまま $1/n$ で変わっていない。変わったのは分母で、
+事後分布そのものも $1/\sqrt n$ で細くなる。つまり<strong>物差しが縮むぶんだけ、同じ差が
+大きく見え続ける</strong>。「事前は流されたか」を事後平均の生の差で見るか、事後の幅で見るかで
+答えが違うのはこのためで、本文の表の 2 列 (差と 差/sd) はこの 2 つの読み方を並べている。</p></div></details>
 <p>$n_0$ は「事前分布が何本分の試験体に相当するか」である。$\mathrm{Beta}(a,b)$ の $a+b$ が疑似観測数だった (8.3.1) のと同じ読み方で、正規の場合は事前標準偏差 $\tau_0$ が観測の標準偏差 $\sigma$ の何分の一かで決まる。$\tau_0 = \sigma/2$ なら $n_0 = 4$、すなわち<strong>その事前は供試体 4 本分の発言権を持つ</strong>。</p>
 <p>定理の後半が要点である。<strong>生の差は $n$ に反比例して消えるが、事後分布の幅で測った差は $\sqrt n$ でしか消えない</strong>。事前が流されるのと同時に事後も細くなるので、「信用区間のどのあたりに位置するか」という見方では影響が長く残る。$\sigma = 4$ N/mm²、標本平均を 30.0 に固定して数えたのが次の表である (8.14.9 の 6)。</p>
 <table>
@@ -14297,6 +14802,38 @@ for lab, pr in hyper:
 <p><strong>定義 9.1 (弱定常)</strong> 確率過程 $\{X_t\}$ が弱定常 (共分散定常) とは、(i) $E[X_t] = \mu$ が $t$ によらず、(ii) $\mathrm{Var}(X_t) < \infty$、(iii) $\mathrm{Cov}(X_t, X_{t+k}) = \gamma(k)$ が $t$ によらず<strong>ラグ $k$ だけ</strong>の関数であること</p>
 </blockquote>
 <p>すべての有限次元分布が時間シフトで不変なら<strong>強定常</strong>という。強定常かつ 2 次モーメント有限なら弱定常。ガウス過程 (すべての有限次元分布が多変量正規) では弱定常と強定常が一致する (正規分布は 1・2 次モーメントで決まるから)。この章で「定常」といえば弱定常を指す。</p>
+<details class="gap"><summary>行間: 「時間をずらしても同じ」を式にするところ</summary><div class="gap-body"><p>定義 9.1 は 3 つの条件を並べただけで、何と何が同じなのかは書いていない。
+その「同じ」を式で書き、なぜそれがないと推定ができないのかまでを開く。</p>
+<p><strong>記号の役割。</strong> $\{X_t\}$ は<strong>各時刻ごとに 1 つずつ確率変数が並んだ列</strong>である。
+観測した数列 $x_1,\dots,x_n$ はこの列の<strong>実現値 1 本</strong>にすぎない。
+$t$ は時刻を走り、$k$ は<strong>時刻の差 (ラグ)</strong> を走る。$h$ は「全体をどれだけずらすか」を表す
+整数で、以下これを動かす。</p>
+<p><strong>1. 「ずらす」を式にする。</strong> 列全体を $h$ だけ後ろへずらした新しい列を作る。</p>
+<p>$$\{X_t\} \;\longmapsto\; \{X_{t+h}\}$$</p>
+<p><strong>2. 定常性は「ずらしても統計量が変わらない」こと。</strong> 定義 9.1 の (i) と (iii) は、
+任意の $h$ に対して次が成り立つことと同じである。</p>
+<p>$$E[X_{t+h}] = E[X_t], \qquad \mathrm{Cov}(X_{t+h},\,X_{t+h+k}) = \mathrm{Cov}(X_t,\,X_{t+k})$$</p>
+<p><strong>3. これが何をもたらすか。</strong> 共分散はもともと 2 つの時刻 $(s,t)$ の関数で、引数が 2 つある。
+2 で $h = -t$ と選ぶと</p>
+<p>$$\mathrm{Cov}(X_t,\,X_{t+k}) = \mathrm{Cov}(X_0,\,X_k)$$</p>
+<p>となり、<strong>右辺に $t$ が残っていない</strong>。つまり引数が 2 つから 1 つ ($k$ だけ) に減る。
+これを $\gamma(k)$ と書く、というのが定義 9.2 である。</p>
+<p><strong>4. なぜこの縮約が要るのか。</strong> ここが本題である。実現値は 1 本しかないので、
+$\mathrm{Cov}(X_t, X_{t+k})$ を「時刻 $t$ での量」として推定しようとしても、各 $t$ に対して
+観測は $(x_t, x_{t+k})$ の 1 組しかない。1 組から共分散は推定できない。
+ところが 3 により<strong>どの $t$ でも同じ量</strong>なので、$t$ を動かして得た $n-k$ 組を
+すべて同じ量の観測とみなして平均できる (9.4.3 の $\hat\gamma(k)$)。
+<strong>定常性は「繰り返し標本を時間方向に作り出すための仮定」</strong>である。</p>
+<p><strong>5. 偶関数になる理由。</strong> 2 で $h = -k$ と選ぶと $\gamma(k) = \mathrm{Cov}(X_{t-k}, X_t)$。
+共分散は 2 つの引数の順序を入れ替えても同じなので、これは $\gamma(-k)$ でもある。
+よって $\gamma(-k) = \gamma(k)$。</p>
+<p><strong>落とし穴 1。</strong> 定常は「変動しない」ではない。系列はいくら激しく揺れてもよい。
+<strong>揺れ方の規則が $t$ に依らない</strong>という意味である。図 9.2 の 3 つの非定常例は、
+値が動くことではなく規則が動くことで定常性を壊している。</p>
+<p><strong>落とし穴 2。</strong> 弱定常が縛るのは 1 次と 2 次のモーメントだけである。
+3 次以上のモーメントや分布の形が $t$ とともに変わっても、平均と自己共分散さえ
+$t$ に依らなければ弱定常でありうる。そこまで縛るのが強定常で、
+両者が一致するのはガウス過程の場合に限られる。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 9.2 定常な系列 (左上) と非定常な系列 3 種。平均が動く、分散が動く、のどちらでも定常性は壊れる" src="fig/09_stationarity.png" /><figcaption>図 9.2 定常な系列 (左上) と非定常な系列 3 種。平均が動く、分散が動く、のどちらでも定常性は壊れる</figcaption></figure>
 <p>定常性が壊れる典型は 3 つ: トレンド (平均が $t$ に依存)、分散の変化 (2 次モーメントが $t$ に依存)、<strong>単位根</strong> (次項)。前 2 者は変換 (差分・対数) で対処できることが多い。</p>
 <h3 id="c09-9-3-2">9.3.2 ランダムウォークと単位根</h3>
@@ -14325,6 +14862,54 @@ for lab, pr in hyper:
 <p>$$\hat\gamma(k) = \frac{1}{n}\sum_{t=1}^{n-k} (x_t - \bar x)(x_{t+k} - \bar x), \qquad r_k = \hat\gamma(k)/\hat\gamma(0)$$</p>
 <p>で推定する。分母を $n - k$ でなく $n$ にするのは、$\hat\gamma$ が非負定値になるように (定理 9.1 を保つため) である。バイアスはあるが、行列 $[\hat\gamma(i-j)]$ が正定値でないと Yule–Walker 方程式 (9.5.4 項) が解けない。</p>
 <p>ホワイトノイズのもとで $r_k$ は近似的に平均 0、分散 $1/n$ の正規分布に従う (Bartlett の公式の特別な場合)。証明の要点: $r_k \approx \frac1n \sum_t \varepsilon_t \varepsilon_{t+k} / \sigma^2$ で、和の各項は平均 0、分散 $\sigma^4$、互いに無相関だから中心極限定理が効く。したがって $\pm 1.96/\sqrt n$ の帯を描き、これを越えるラグが「有意な自己相関」の目安になる。図 9.3 以降の点線がこれである。</p>
+<details class="gap"><summary>行間: なぜ $n$ で割るのか、なぜ帯が $\pm1.96/\sqrt n$ なのか</summary><div class="gap-body"><p>本文は「$n$ にするのは非負定値になるように」と 1 行、帯のほうも「証明の要点」の 1 行で
+済ませた。2 つとも開く。</p>
+<p><strong>記号の役割。</strong> $x_1,\dots,x_n$ は観測列、$k \ge 0$ はラグ。$\hat\gamma(k)$ の和の項数は
+$n-k$ 個しかない ($t$ が $1$ から $n-k$ まで) ことをまず確かめておく。$t+k$ が $n$ を
+超えられないからである。</p>
+<p><strong>前半: 分母が $n-k$ ではなく $n$ である理由</strong></p>
+<p><strong>1. 素直な選択は $n-k$ である。</strong> 項が $n-k$ 個なら、平均を取るには $n-k$ で割る。
+これは期待値の意味でも素直で、バイアスが小さい。にもかかわらず採らない。</p>
+<p><strong>2. $\hat\gamma$ は「数」ではなく「関数」として使われる。</strong> 9.5.4 の Yule–Walker では
+$\hat\gamma(i-j)$ を並べた行列 $\hat{\mathbf R}$ を作って逆行列を取る。
+このとき $\hat\gamma(\cdot)$ は<strong>どれか 1 つの定常過程の自己共分散関数になっていなければ
+困る</strong>。定理 9.1 の非負定値性がその条件である。</p>
+<p><strong>3. 中心化した列をゼロで延長する。</strong> $\tilde x_t = x_t - \bar x$ ($1\le t\le n$)、
+それ以外の $t$ では $\tilde x_t = 0$ と定める。すると $n$ で割った $\hat\gamma$ は、
+すべての整数 $t$ にわたる和として書ける。</p>
+<p>$$\hat\gamma(k) = \frac{1}{n}\sum_{t}\tilde x_t\,\tilde x_{t+k}$$</p>
+<p><strong>ゼロで埋めたおかげで、$k$ ごとに項数を気にしなくてよくなった</strong>ことに注意する。
+足りない項は 0 が入るだけである。</p>
+<p><strong>4. 非負定値性を確かめる。</strong> 実数 $a_1,\dots,a_p$ に対し、3 を代入して和の順序を変える。
+$s = t-j$ と置き直すと二重和が完全平方に畳める。</p>
+<p>$$\sum_{i,j} a_ia_j\,\hat\gamma(i-j) = \frac{1}{n}\sum_{s}\left(\sum_{i} a_i\,\tilde x_{s+i}\right)^{2}$$</p>
+<p>右辺は二乗の和だから非負。<strong>これで定理 9.1 が保たれる。</strong></p>
+<p><strong>5. $n-k$ では壊れる理由。</strong> 4 の変形は「全部同じ $n$ で割っている」ことに依存している。
+$k$ ごとに違う数 $n-k$ で割ると、3 のような 1 本の列の畳み込みとして書けなくなり、
+完全平方に畳めない。実際、$n-k$ で割った $\hat\gamma$ から作った行列が正定値にならず
+Yule–Walker が非定常な AR を返す、ということが起きる。</p>
+<p><strong>6. 代価。</strong> $n$ で割ると、$k$ が大きいところで $(n-k)/n$ の分だけ 0 へ引っ張られる。
+バイアスがあるのはこのためだが、実務で見るのは $k \ll n$ のラグなので実害は小さい。</p>
+<p><strong>後半: 帯の幅</strong></p>
+<p><strong>7. ホワイトノイズのもとで $r_k$ を近似する。</strong> $\bar x \approx 0$、$\hat\gamma(0)\approx\sigma^2$
+とみなすと</p>
+<p>$$r_k \approx \frac{1}{n\sigma^2}\sum_{t=1}^{n-k}\varepsilon_t\,\varepsilon_{t+k}$$</p>
+<p><strong>8. 各項の平均と分散を出す。</strong> $\varepsilon_t$ と $\varepsilon_{t+k}$ は無相関で平均 0 だから
+$E[\varepsilon_t\varepsilon_{t+k}] = 0$。分散は $E[\varepsilon_t^2\varepsilon_{t+k}^2] = \sigma^4$。</p>
+<p><strong>9. 項どうしが無相関であることを見る。</strong> $t \ne t'$ なら、$\{t,t+k\}$ と $\{t',t'+k\}$ は
+完全には重ならない。重ならない側の $\varepsilon$ が他と独立で平均 0 なので、
+積の期待値は 0 になる。よって和の分散は分散の和で $(n-k)\sigma^4$。</p>
+<p><strong>10. 中心極限定理を当てる。</strong> 和は近似的に $N(0,\ (n-k)\sigma^4)$。7 の
+$1/(n\sigma^2)$ を掛けると分散は $(n-k)\sigma^4/(n^2\sigma^4) = (n-k)/n^2$。</p>
+<p><strong>11. $k \ll n$ で $1/n$。</strong> よって $r_k \approx N(0,\ 1/n)$ となり、
+$1.96\sqrt{1/n} = 1.96/\sqrt n$ が 95% の帯である。</p>
+<p><strong>落とし穴 1。</strong> この帯は<strong>「ホワイトノイズだったら」という仮定の下で</strong>の幅である。
+系列に本当の自己相関があると $r_k$ の分散はこれより大きくなり、帯は狭すぎる。
+モデル残差に当てるぶんには正しい使い方だが、生の系列で「帯を出たから有意」と
+言い切るのは強すぎる。</p>
+<p><strong>落とし穴 2。</strong> $h$ 本のラグを並べて見るのは $h$ 回の検定である。帯の外に出る点が
+20 本に 1 本あるのは、ホワイトノイズでも当たり前に起きる。だから複数ラグを
+まとめて 1 つの統計量にするのが Ljung–Box である。</p></div></details>
 <p>複数ラグをまとめて検定するには <strong>Ljung–Box 統計量</strong> $Q = n(n+2)\sum_{k=1}^h r_k^2/(n-k)$ を使い、ホワイトノイズのもとで近似的に $\chi^2_h$ (モデル残差に適用するときは自由度から推定パラメータ数を引く)。</p>
 <h3 id="c09-9-4-4">9.4.4 偏自己相関 (PACF)</h3>
 <blockquote>
@@ -14341,6 +14926,40 @@ for lab, pr in hyper:
 <p><strong>定理 9.2 (MA(q) の ACF は q 次で切れる)</strong> $\theta_0 = 1$ として $\gamma(k) = \sigma^2\sum_{j=0}^{q-k}\theta_j\theta_{j+k}$ ($0 \le k \le q$)、$\gamma(k) = 0$ ($k > q$)</p>
 </blockquote>
 <p>証明: $\mathrm{Cov}(X_t, X_{t+k}) = \sum_{i,j}\theta_i\theta_j\mathrm{Cov}(\varepsilon_{t-i}, \varepsilon_{t+k-j})$ で、共分散が生き残るのは $t - i = t + k - j$ すなわち $j = i + k$ のときだけ。$k > q$ ならそのような $j \le q$ は存在しない。</p>
+<details class="gap"><summary>行間: 添字が「生き残る」条件を 1 手ずつ</summary><div class="gap-body"><p>本文は二重和を書いて「生き残るのは $j = i+k$ のときだけ」と 1 行で飛ばした。
+その 1 行と、和の上限が $q-k$ になる理由を開く。</p>
+<p><strong>記号の役割。</strong> $\theta_0 = 1$ と決めておくと $X_t = \sum_{i=0}^{q}\theta_i\varepsilon_{t-i}$ と
+1 本に書ける。$i$ は $X_t$ 側の和を走る添字、$j$ は $X_{t+k}$ 側の和を走る添字で、
+<strong>別々に</strong> $0$ から $q$ まで動く。$t$ は時刻、$k \ge 0$ はラグ。$\varepsilon_t$ は
+平均 0、分散 $\sigma^2$ のホワイトノイズ。</p>
+<p><strong>1. 2 つの和の積を二重和にする。</strong> 平均 0 なので共分散は積の期待値そのもの。</p>
+<p>$$X_t = \sum_{i=0}^{q}\theta_i\varepsilon_{t-i}, \qquad X_{t+k} = \sum_{j=0}^{q}\theta_j\varepsilon_{t+k-j}$$</p>
+<p>$$\mathrm{Cov}(X_t,X_{t+k}) = \sum_{i=0}^{q}\sum_{j=0}^{q}\theta_i\theta_j\,\mathrm{Cov}(\varepsilon_{t-i},\varepsilon_{t+k-j})$$</p>
+<p><strong>2. ホワイトノイズの定義を当てる。</strong> 定義 9.3 より、$\varepsilon$ の共分散は
+<strong>時刻がぴったり一致するときだけ</strong> $\sigma^2$、それ以外は 0 である。</p>
+<p><strong>3. 一致条件を解く。</strong> 2 つの時刻を等しいと置く。</p>
+<p>$$t - i = t + k - j \;\Longleftrightarrow\; j = i + k$$</p>
+<p><strong>$t$ が両辺から消える</strong>ことに注目する。どの時刻で見ても同じ条件になる —— これが
+$\gamma$ が $k$ だけの関数になる ($=$ 定常である) ことの、この過程における中身である。</p>
+<p><strong>4. 二重和が 1 重和になる。</strong> $j$ は $i$ で決まってしまうので、$j$ についての和は
+項を 1 つだけ残して消える。</p>
+<p>$$\gamma(k) = \sigma^2\sum_{i}\theta_i\,\theta_{i+k}$$</p>
+<p><strong>5. $i$ の走る範囲を詰める。</strong> ここが本文の飛ばしどころである。$i$ は 2 つの条件を
+同時に満たさねばならない。</p>
+<ul>
+<li>$\theta_i$ が存在するには $0 \le i \le q$</li>
+<li>$\theta_{i+k}$ が存在するには $0 \le i+k \le q$、すなわち $i \le q-k$</li>
+</ul>
+<p>2 つを合わせると $0 \le i \le q-k$。<strong>これが本文の上限 $q-k$ の出どころ</strong>である。</p>
+<p><strong>6. $k > q$ を入れてみる。</strong> このとき $q - k < 0$ なので、5 の範囲を満たす $i$ が
+1 つも無い。空の和は 0 だから $\gamma(k) = 0$。<strong>ACF が $q$ 次で切れる</strong>のはここである。</p>
+<p><strong>7. $k = 0$ で検算する。</strong> 5 より $i$ は $0$ から $q$ まで走り、
+$\gamma(0) = \sigma^2\sum_{i=0}^{q}\theta_i^2 = \sigma^2(1+\theta_1^2+\dots+\theta_q^2)$。
+$\theta_0 = 1$ を入れ忘れると先頭の $\sigma^2$ が落ちる。</p>
+<p><strong>落とし穴。</strong> $\gamma(k) = 0$ が言っているのは<strong>無相関</strong>であって独立ではない。
+$\varepsilon_t$ が独立なら $X_t$ と $X_{t+k}$ ($k>q$) も独立になるが、
+定義 9.3 の弱ホワイトノイズは無相関しか要求していない。9.4.2 の GARCH の注意と同じ
+区別がここにも効いている。</p></div></details>
 <p>MA 過程は有限個のパラメータの<strong>どんな値でも定常</strong>である。MA(1) なら $\rho(1) = \theta/(1+\theta^2)$ で、$|\rho(1)| \le 1/2$ しか表せない。</p>
 <h3 id="c09-9-5-2">9.5.2 可逆性</h3>
 <p>MA(1) で $\theta$ と $1/\theta$ は同じ ACF を与える ($\theta/(1+\theta^2)$ は $\theta \to 1/\theta$ で不変)。つまり ACF からはパラメータが一意に決まらない。$\varepsilon_t = \theta(B)^{-1}X_t = X_t - \theta X_{t-1} + \theta^2 X_{t-2} - \dots$ と過去の観測で $\varepsilon_t$ を表せる (<strong>可逆</strong>である) のは $|\theta| < 1$ のときだけで、可逆な方を採用する規約で一意になる。一般に MA(q) が可逆 $\iff$ $\theta(z) = 0$ の根がすべて単位円の外。可逆でないと残差 (= $\varepsilon_t$ の推定) が計算できず、予測式も書けない。</p>
@@ -14350,6 +14969,40 @@ for lab, pr in hyper:
 <p><strong>定理 9.3 (AR の定常条件)</strong> AR(p) が (過去の $\varepsilon$ のみで表せる) 定常解を持つ $\iff$ $\phi(z) = 0$ の根がすべて単位円の外 ($|z| > 1$)</p>
 </blockquote>
 <p>証明の要点 (AR(1)): $X_t = \phi X_{t-1} + \varepsilon_t$ を $m$ 回代入すると $X_t = \sum_{j=0}^{m-1}\phi^j\varepsilon_{t-j} + \phi^m X_{t-m}$。$|\phi| < 1$ なら第 2 項は平均二乗で 0 に収束し $X_t = \sum_{j\ge0}\phi^j\varepsilon_{t-j}$ (MA($\infty$) 表現)。これから $\mu = 0$、$\gamma(0) = \sigma^2/(1-\phi^2)$、$\gamma(k) = \sigma^2\phi^k/(1-\phi^2)$、よって $\rho(k) = \phi^{|k|}$。$|\phi| \ge 1$ なら級数が発散する。一般の $p$ では $\phi(z)$ を 1 次因子に分解し、$1/\phi(z)$ が $|z| \le 1$ で冪級数展開できる条件が「根が単位円の外」に他ならない。</p>
+<details class="gap"><summary>行間: $\rho(k) = \phi^k$ が出るまでを 1 行ずつ</summary><div class="gap-body"><p>本文は MA($\infty$) 表現を出したあと、$\gamma(0)$、$\gamma(k)$、$\rho(k)$ を読点で繋いで
+1 行に並べた。3 つとも別の計算なので、順に開く。</p>
+<p><strong>記号の役割。</strong> $|\phi| < 1$ とし、$\varepsilon_t \sim \mathrm{WN}(0,\sigma^2)$。
+定常解は $X_t = \sum_{j\ge0}\phi^j\varepsilon_{t-j}$ で、$j$ は<strong>過去へ何歩さかのぼるか</strong>を走る。
+$k \ge 0$ はラグ。$\phi$ は固定された数で、確率変数ではない。</p>
+<p><strong>1. 分散を出す。</strong> $\varepsilon$ たちは互いに無相関なので、和の分散は分散の和になる。
+$\phi^j$ は定数だから二乗して外へ出る。</p>
+<p>$$\gamma(0) = \sum_{j\ge0}(\phi^j)^2\,\sigma^2 = \sigma^2\sum_{j\ge0}(\phi^2)^j$$</p>
+<p><strong>2. 等比級数を閉じる。</strong> 公比は $\phi^2$ で、$|\phi|<1$ だから $\phi^2 < 1$。
+和は $1/(1-\phi^2)$。</p>
+<p>$$\gamma(0) = \frac{\sigma^2}{1-\phi^2}$$</p>
+<p><strong>級数が収束することが $|\phi|<1$ の効き目</strong>である。$|\phi| \ge 1$ なら分散が無限大になり、
+定常解が存在しない。</p>
+<p><strong>3. 共分散を二重和で書く。</strong> $X_t$ と $X_{t+k}$ を掛けて期待値を取る。</p>
+<p>$$\gamma(k) = \sum_{i\ge0}\sum_{j\ge0}\phi^i\phi^j\,E[\varepsilon_{t-i}\,\varepsilon_{t+k-j}]$$</p>
+<p><strong>4. 生き残る条件を解く。</strong> 9.5.1 と同じ操作である。$t-i = t+k-j$、すなわち $j = i+k$ の
+ときだけ期待値が $\sigma^2$、他は 0。</p>
+<p>$$\gamma(k) = \sigma^2\sum_{i\ge0}\phi^i\,\phi^{i+k}$$</p>
+<p><strong>5. $i$ を含まない因子を外に出す。</strong> $\phi^{i+k} = \phi^i\phi^k$ で、$\phi^k$ は $i$ を含まない。</p>
+<p>$$\gamma(k) = \sigma^2\,\phi^k\sum_{i\ge0}(\phi^2)^i$$</p>
+<p><strong>6. 残った級数は 1 と同じもの。</strong> よって</p>
+<p>$$\gamma(k) = \frac{\sigma^2\,\phi^k}{1-\phi^2} = \phi^k\,\gamma(0)$$</p>
+<p><strong>7. 割る。</strong> $\rho(k) = \gamma(k)/\gamma(0) = \phi^k$。負のラグは偶関数性 (定義 9.2 の性質)
+から $\rho(k) = \phi^{|k|}$。</p>
+<p><strong>別の道 (漸化式)。</strong> MA($\infty$) を経由せずに出すこともできる。定義式の両辺に $X_{t-k}$ を
+掛けて期待値を取ると $\gamma(k) = \phi\,\gamma(k-1)$ が出る ($k\ge1$)。
+$\gamma(0)$ から順に掛けていけば $\gamma(k) = \phi^k\gamma(0)$。これは 9.5.4 の
+Yule–Walker 方程式を $p=1$ にしたものである。</p>
+<p><strong>落とし穴 1。</strong> 2 の分母は $1-\phi^2$ であって $1-\phi$ ではない。1 で<strong>二乗してから</strong>
+足したからである。$\phi = 0.9$ なら $\gamma(0) = 5.26\sigma^2$ で、$10\sigma^2$ ではない。</p>
+<p><strong>落とし穴 2。</strong> $\rho(k) = \phi^k$ は指数減衰であって、$k$ に比例して減るのではない。
+$\phi = 0.9$ でも $k = 20$ で $0.12$ まで落ちる。「$\phi$ が 1 に近いと記憶が長い」のは
+この指数の底が 1 に近いという意味で、$\phi < 0$ のときは符号が交互になるが
+絶対値の減り方 $|\phi|^k$ は同じ速さである。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 9.3 AR(1) の φ を変えたときの系列 (左) と標本 ACF (右)。φ が 1 に近いほど系列は滑らかで ACF の減衰が遅い。φ&lt;0 では符号が交互になる。赤線は理論値 φ^k" src="fig/09_ar1_acf.png" /><figcaption>図 9.3 AR(1) の φ を変えたときの系列 (左) と標本 ACF (右)。φ が 1 に近いほど系列は滑らかで ACF の減衰が遅い。φ&lt;0 では符号が交互になる。赤線は理論値 φ^k</figcaption></figure>
 <p>$\rho(k) = \phi^k$ は指数減衰で、$\phi$ が 1 に近いほど「記憶」が長い。$\phi < 0$ なら符号が交互に変わる。AR(2) では根が複素数のとき ACF が減衰する正弦波になり、擬似周期的な系列 (Yule が太陽黒点数で示した例) を表現できる。</p>
 <h3 id="c09-9-5-4">9.5.4 Yule–Walker 方程式</h3>
@@ -14361,6 +15014,47 @@ for lab, pr in hyper:
 <p>導出: 定義式の両辺に $X_{t-k}$ ($k \ge 1$) を掛けて期待値をとる。$E[\varepsilon_t X_{t-k}] = 0$ ($X_{t-k}$ は $\varepsilon_{t-k}$ 以前の $\varepsilon$ だけで表せ、$\varepsilon_t$ と無相関) なので</p>
 <p>$$\gamma(k) = \phi_1\gamma(k-1) + \dots + \phi_p\gamma(k-p)$$</p>
 <p>を得て $\gamma(0)$ で割る。$k = 0$ のときは $E[\varepsilon_t X_t] = \sigma^2$ なので $\gamma(0) = \sum\phi_j\gamma(j) + \sigma^2$。これが第 2 式。</p>
+<details class="gap"><summary>行間: $X_{t-k}$ を掛けて期待値を取るところを 1 手ずつ</summary><div class="gap-body"><p>本文は「両辺に $X_{t-k}$ を掛けて期待値をとる」と 1 行で済ませ、$k\ge1$ の式と $k=0$ の式を
+同じ段落に並べた。<strong>2 つは別の計算</strong>で、分かれ目は 1 か所しかない。そこを名指しする。</p>
+<p><strong>記号の役割。</strong> 平均 0 の定常な AR($p$) を考える ($\mu \ne 0$ なら $X_t - \mu$ に
+置き換えれば同じ)。$j$ は AR の係数を走る添字 ($1$ から $p$)、$k$ は掛ける相手の
+ラグで、まず $k \ge 1$ を固定する。$\gamma(k) = E[X_tX_{t+k}]$ が平均 0 のとき
+共分散と一致することを使う。</p>
+<p><strong>1. 定義式の両辺に $X_{t-k}$ を掛ける。</strong></p>
+<p>$$X_t X_{t-k} = \sum_{j=1}^{p}\phi_j\,X_{t-j}X_{t-k} + \varepsilon_t X_{t-k}$$</p>
+<p><strong>2. 期待値を取り、線形性で項ごとに分ける。</strong> $\phi_j$ は定数なので外に出る。</p>
+<p>$$E[X_tX_{t-k}] = \sum_{j=1}^{p}\phi_j\,E[X_{t-j}X_{t-k}] + E[\varepsilon_t X_{t-k}]$$</p>
+<p><strong>3. 各期待値を $\gamma$ に読み替える。</strong> 定常なので、必要なのは<strong>時刻の差だけ</strong>である。</p>
+<ul>
+<li>$X_t$ と $X_{t-k}$ の差は $k$ なので $E[X_tX_{t-k}] = \gamma(k)$</li>
+<li>$X_{t-j}$ と $X_{t-k}$ の差は $(t-j)-(t-k) = k-j$ なので $E[X_{t-j}X_{t-k}] = \gamma(k-j)$</li>
+</ul>
+<p><strong>4. 最後の項が消える理由。</strong> $X_{t-k}$ は定理 9.3 の MA($\infty$) 表現により
+$\varepsilon_{t-k},\varepsilon_{t-k-1},\dots$ の線形結合である。$k \ge 1$ だから
+その中に $\varepsilon_t$ は<strong>入っていない</strong>。$\varepsilon_t$ は他のすべての $\varepsilon$ と
+無相関で平均 0 なので、積の期待値は 0。</p>
+<p>$$E[\varepsilon_t X_{t-k}] = 0 \qquad (k \ge 1)$$</p>
+<p><strong>5. 差分方程式が出る。</strong> 3 と 4 を 2 に入れる。</p>
+<p>$$\gamma(k) = \phi_1\gamma(k-1) + \dots + \phi_p\gamma(k-p)$$</p>
+<p>両辺を $\gamma(0)$ で割れば $\rho$ の式、すなわち定理の第 1 式になる。</p>
+<p><strong>6. $k = 0$ では 4 が成り立たない。</strong> $X_t$ には $\varepsilon_t$ が<strong>係数 1 で</strong>入っている
+(定義式そのもの)。だから 4 の議論が使えない。定義式を代入して計算する。</p>
+<p>$$E[\varepsilon_t X_t] = \sum_j \phi_j E[\varepsilon_t X_{t-j}] + E[\varepsilon_t^2]$$</p>
+<p>右辺の和の各項は 4 により 0 ($j \ge 1$ なので $X_{t-j}$ に $\varepsilon_t$ は入らない)。
+残るのは $E[\varepsilon_t^2] = \sigma^2$。</p>
+<p><strong>7. $\gamma(0)$ の式。</strong> $k=0$ として 2 に戻り、6 を入れる。$\gamma(-j) = \gamma(j)$ を使う。</p>
+<p>$$\gamma(0) = \sum_{j=1}^{p}\phi_j\,\gamma(j) + \sigma^2$$</p>
+<p>$\gamma(0)$ で割って $\rho(j) = \gamma(j)/\gamma(0)$ に直し、$\gamma(0)$ について解けば
+定理の第 2 式である。</p>
+<p><strong>8. なぜ Toeplitz 行列になるか。</strong> 5 を $k = 1,\dots,p$ について縦に並べると、
+$(k,j)$ 成分は $\rho(k-j)$ である。$\rho$ は偶関数なので値は $|k-j|$ だけで決まり、
+<strong>対角線に沿って同じ値が並ぶ</strong>。これが Toeplitz という名前の意味で、
+だから $\hat{\mathbf R}$ は $r_0,\dots,r_{p-1}$ の $p$ 個だけで決まる。</p>
+<p><strong>落とし穴。</strong> $k\ge1$ の式で $\sigma^2$ が消え、$k=0$ の式では消えない。
+この違いを見落として $k=0$ でも $\sigma^2$ を落とすと $\gamma(0) = \sum\phi_j\gamma(j)$ となり、
+AR(1) では $\gamma(0) = \phi\gamma(1) = \phi^2\gamma(0)$、すなわち $\gamma(0) = 0$ という
+矛盾した結論が出る。分かれ目は<strong>「掛けた相手 $X_{t-k}$ が $\varepsilon_t$ を含むか」</strong>の
+一点だけである。</p></div></details>
 <p>行列で書くと $\mathbf{R}\boldsymbol\phi = \boldsymbol\rho$ ($\mathbf R = [\rho(i-j)]_{i,j=1}^p$ は Toeplitz 行列)。$\rho$ を標本値 $r_k$ で置き換えれば $\hat{\boldsymbol\phi} = \hat{\mathbf R}^{-1}\hat{\boldsymbol\rho}$ という<strong>モーメント法推定量</strong>が得られ、これを Yule–Walker 推定という。9.4.3 項で分母を $n$ にしたおかげで $\hat{\mathbf R}$ は必ず正定値であり、推定された AR は必ず定常になる。最尤推定や条件付き最小二乗と比べて効率は少し落ちるが、初期値として優れている。</p>
 <p>AR(p) は $\rho(k)$ が $p$ 次の線形差分方程式 $\phi(B)\rho(k) = 0$ ($k \ge 1$) を満たすので、ACF は特性根の冪 (実根なら指数、複素根なら減衰振動) の和になり、<strong>切れずに減衰し続ける</strong>。</p>
 <h3 id="c09-9-5-5">9.5.5 ARMA(p, q) と次数の見分け方</h3>
@@ -14401,6 +15095,41 @@ for lab, pr in hyper:
 <p>$\nabla = 1 - B$ (1 階差分) を $d$ 回施した $\nabla^d X_t$ が定常な ARMA(p,q) に従うとき、$X_t$ を ARIMA(p,d,q) という。ランダムウォークは ARIMA(0,1,0)、「ランダムウォーク + ドリフト」は $\nabla X_t = \delta + \varepsilon_t$。</p>
 <figure><img loading="lazy" decoding="async" alt="図 9.5 ランダムウォーク (上) は ACF がほとんど減衰しない。1 階差分 (下) をとるとホワイトノイズになり、ACF はすべて信頼帯の内側に落ちる" src="fig/09_randomwalk_diff.png" /><figcaption>図 9.5 ランダムウォーク (上) は ACF がほとんど減衰しない。1 階差分 (下) をとるとホワイトノイズになり、ACF はすべて信頼帯の内側に落ちる</figcaption></figure>
 <p>差分は単位根を消す<strong>唯一の正しい処方</strong>であって、トレンドがあれば何でも差分すればよいわけではない。決定的トレンド $X_t = a + bt + \varepsilon_t$ に差分をとると $\nabla X_t = b + \varepsilon_t - \varepsilon_{t-1}$ となり、可逆でない MA(1) ($\theta = -1$) を人工的に作ってしまう (過剰差分)。単位根検定でどちらの型かを見てから処置する。逆に単位根を持つ系列からトレンドを回帰で除いても定常にはならない。</p>
+<details class="gap"><summary>行間: 差分したら可逆でない MA(1) ができる、の中身</summary><div class="gap-body"><p>本文は「$\nabla X_t = b + \varepsilon_t - \varepsilon_{t-1}$ となり、可逆でない MA(1)
+($\theta = -1$) を人工的に作ってしまう」と 1 行で書いた。<strong>なぜ MA(1) なのか、
+なぜ $\theta = -1$ なのか、なぜそれが困るのか</strong>の 3 つが飛んでいる。</p>
+<p><strong>記号の役割。</strong> $a$ と $b$ は固定された定数 (切片と傾き) で、確率変数ではない。
+$\varepsilon_t \sim \mathrm{WN}(0,\sigma^2)$。$t$ は時刻。
+この $X_t$ は単位根を持たず、<strong>トレンドを除けばすでに定常</strong>である点を頭に置いておく。</p>
+<p><strong>1. 差分を書き下す。</strong> $\nabla X_t = X_t - X_{t-1}$ に定義を入れる。</p>
+<p>$$\nabla X_t = (a + bt + \varepsilon_t) - \big(a + b(t-1) + \varepsilon_{t-1}\big)$$</p>
+<p><strong>2. 項ごとに引く。</strong> $a$ は同じなので消える。$bt - b(t-1) = b$ で、$t$ が消えて定数 $b$ が残る。
+雑音は引き算のまま残る。</p>
+<p>$$\nabla X_t = b + \varepsilon_t - \varepsilon_{t-1}$$</p>
+<p><strong>トレンドは確かに消えた。</strong> 問題はこの後である。</p>
+<p><strong>3. MA(1) の形と見比べる。</strong> 定義 9.5 の MA(1) は $\varepsilon_t + \theta\varepsilon_{t-1}$。
+定数 $b$ は平均なので脇へ置くと、残りは $\varepsilon_{t-1}$ の係数が $-1$ の MA(1) である。
+すなわち $\theta = -1$。</p>
+<p><strong>4. ACF を計算する。</strong> 定理 9.2 に $q=1$、$\theta_0 = 1$、$\theta_1 = -1$ を入れる。</p>
+<p>$$\gamma(0) = \sigma^2(\theta_0^2 + \theta_1^2) = 2\sigma^2, \qquad \gamma(1) = \sigma^2\,\theta_0\theta_1 = -\sigma^2$$</p>
+<p>$$\rho(1) = \frac{\gamma(1)}{\gamma(0)} = -\frac{1}{2}$$</p>
+<p><strong>5. 可逆でないことを確かめる。</strong> 9.5.2 の条件は $\theta(z) = 1 + \theta z$ の根が
+単位円の<strong>外</strong>にあること。$\theta = -1$ なら $\theta(z) = 1 - z$ で、根は $z = 1$ ——
+単位円の<strong>上</strong>である。外ではないので可逆でない。</p>
+<p><strong>6. なぜ困るのか。</strong> 9.5.2 のとおり、可逆なら $\varepsilon_t$ を過去の観測で表せる。
+その級数の係数は $\theta^j$ の形なので、$|\theta| < 1$ なら減衰して収束する。
+$|\theta| = 1$ では係数が減衰せず、級数が収束しない。つまり<strong>残差 $\varepsilon_t$ が
+計算できない</strong>。残差が出せなければ診断 (9.7.1 の 3) も予測式も立たない。</p>
+<p><strong>7. そもそも差分は要らなかった。</strong> $X_t = a + bt + \varepsilon_t$ は $a + bt$ を
+回帰で除けば $\varepsilon_t$ そのもの、すなわちホワイトノイズになる。
+差分は問題を解かずに新しい問題を作っただけである。</p>
+<p><strong>落とし穴。</strong> 「トレンドがあるから差分する」は誤りで、差分が正しいのは
+<strong>単位根 (確率的トレンド)</strong> のときである。本文が「差分は単位根を消す唯一の正しい処方」と
+書いているのはこの意味で、決定的トレンドに当てると 6 の状態になる。
+逆向きの誤りも本文の最後の 1 文にある。どちらの型かを決めるのが 9.3.3 の単位根検定である。</p>
+<p><strong>見分け方の手がかり。</strong> 9.5.1 のとおり MA(1) の $\rho(1)$ は $-1/2$ より下がれない。
+$\theta = -1$ はその端そのものである。だから<strong>差分した系列の $r_1$ が $-0.5$ の近くに
+貼り付いていたら、差分しすぎを疑う</strong>。演習 5 はこの計算そのものである。</p></div></details>
 <h3 id="c09-9-6-2">9.6.2 季節 ARIMA</h3>
 <p>周期 $s$ の季節差分 $\nabla_s = 1 - B^s$ を導入し、季節側にも AR/MA 多項式 $\Phi(B^s), \Theta(B^s)$ を持たせたものが $\mathrm{ARIMA}(p,d,q)(P,D,Q)_s$:</p>
 <p>$$\phi(B)\Phi(B^s)\nabla^d\nabla_s^D X_t = \theta(B)\Theta(B^s)\varepsilon_t$$</p>
@@ -14427,6 +15156,41 @@ for lab, pr in hyper:
 <p>$$\mathrm{Var}(X_{n+h} - \hat X_{n+h}) = \sigma^2\,\frac{1-\phi^{2h}}{1-\phi^2} = \sigma^2(1 + \phi^2 + \dots + \phi^{2(h-1)})$$</p>
 </blockquote>
 <p>証明: $X_{n+h} = \phi^h X_n + \sum_{j=0}^{h-1}\phi^j\varepsilon_{n+h-j}$ で、第 2 項は $\mathcal F_n$ と無相関かつ平均 0 なので条件付き期待値は第 1 項。分散は無相関和の分散の和。</p>
+<details class="gap"><summary>行間: $h$ 歩先まで代入を繰り返すところ</summary><div class="gap-body"><p>本文は $X_{n+h}$ の分解をいきなり書いた。その式を作る代入の繰り返しと、
+有限等比級数が閉じるところを開く。</p>
+<p><strong>記号の役割。</strong> $n$ は「いま」の時刻で固定。$h \ge 1$ が何歩先を予測するかで、
+$j$ は和を走る添字である。$\mathcal F_n$ は時刻 $n$ までに分かっていること。
+$X_n$ は $\mathcal F_n$ の中にあるので、以下<strong>既知の数として扱える</strong>。
+$\varepsilon_{n+1},\varepsilon_{n+2},\dots$ はまだ起きていない雑音である。</p>
+<p><strong>1. 1 歩進める。</strong> 定義式をそのまま書く。</p>
+<p>$$X_{n+1} = \phi X_n + \varepsilon_{n+1}$$</p>
+<p><strong>2. 2 歩進める。</strong> $X_{n+2} = \phi X_{n+1} + \varepsilon_{n+2}$ の $X_{n+1}$ に 1 を代入する。</p>
+<p>$$X_{n+2} = \phi^2 X_n + \phi\,\varepsilon_{n+1} + \varepsilon_{n+2}$$</p>
+<p><strong>3. 規則を読む。</strong> 1 歩進むごとに $X_n$ の係数に $\phi$ が 1 つ増え、
+新しい雑音が係数 1 で先頭に加わり、それまでの雑音の係数に $\phi$ が 1 つ掛かる。
+$h$ 歩繰り返すと</p>
+<p>$$X_{n+h} = \phi^h X_n + \sum_{j=0}^{h-1}\phi^{\,j}\,\varepsilon_{n+h-j}$$</p>
+<p><strong>4. 和の中身を確かめる。</strong> $j = 0$ が一番新しい $\varepsilon_{n+h}$ (係数 1)、
+$j = h-1$ が一番古い $\varepsilon_{n+1}$ (係数 $\phi^{h-1}$)。
+<strong>入っているのは時刻 $n$ より後の雑音だけ</strong>で、$h$ 個ある。</p>
+<p><strong>5. 条件付き期待値を取る。</strong> 第 1 項の $X_n$ は既知なので、そのまま出る。
+第 2 項の雑音はどれも時刻 $n$ より後で、平均 0 かつ $\mathcal F_n$ と無相関だから
+条件付き平均は 0。</p>
+<p>$$\hat X_{n+h} = E[X_{n+h}\mid\mathcal F_n] = \phi^h X_n$$</p>
+<p><strong>6. 予測誤差は第 2 項そのもの。</strong> $X_{n+h} - \hat X_{n+h} = \sum_{j}\phi^j\varepsilon_{n+h-j}$。</p>
+<p><strong>7. 分散を取る。</strong> $\varepsilon$ たちは互いに無相関なので分散は足せる。
+係数は二乗して出る。</p>
+<p>$$\mathrm{Var} = \sigma^2\sum_{j=0}^{h-1}(\phi^2)^{\,j} = \sigma^2\,\frac{1-\phi^{2h}}{1-\phi^2}$$</p>
+<p><strong>有限等比級数</strong>の公式 $\sum_{j=0}^{h-1}r^j = (1-r^h)/(1-r)$ に $r = \phi^2$ を入れただけである。</p>
+<p><strong>8. 両端を確かめる。</strong> $h=1$ なら $(1-\phi^2)/(1-\phi^2) = 1$ で分散 $\sigma^2$ —— 1 歩先の
+誤差は $\varepsilon_{n+1}$ そのものだから正しい。$h\to\infty$ なら $\phi^{2h}\to0$ で
+$\sigma^2/(1-\phi^2) = \gamma(0)$ —— 無条件分散に戻る。</p>
+<p><strong>落とし穴 1。</strong> 分母は $1-\phi^2$ で、分子の $1-\phi^{2h}$ を落として
+$\sigma^2/(1-\phi^2)$ と書くと<strong>無限先の分散</strong>になってしまう。$h$ が小さいうちは
+これよりずっと小さい ($h=1$ では $(1-\phi^2)$ 倍)。</p>
+<p><strong>落とし穴 2。</strong> ここで数えた不確かさは<strong>将来の雑音だけ</strong>である。$\phi$ を推定値
+$\hat\phi$ で置き換えて使うときの推定誤差は 1 つも入っていない。9.8.2 が
+「最も楽観的な見積もり」と言っているのはこの意味である。</p></div></details>
 <p>$h \to \infty$ で点予測は平均 (ここでは 0) へ、予測誤差分散は $\gamma(0) = \sigma^2/(1-\phi^2)$ (無条件分散) へ収束する。「遠い将来については、条件付けても何も分からない」ことの定量化である。一般の ARMA では MA($\infty$) 表現 $X_t = \sum_j\psi_j\varepsilon_{t-j}$ を使って $\mathrm{Var} = \sigma^2\sum_{j=0}^{h-1}\psi_j^2$。ARIMA では $\psi_j$ が 0 に収束しないので、予測分散は $h$ とともに際限なく増える (ランダムウォークなら $h\sigma^2$)。</p>
 <figure><img loading="lazy" decoding="async" alt="図 9.6 AR(1) (φ̂=0.8 前後) の 30 期先までの予測。点予測は標本平均へ幾何的に戻り、95% 予測区間の幅は無条件分散で頭打ちになる。点線は答え合わせ用の実際の将来値" src="fig/09_forecast.png" /><figcaption>図 9.6 AR(1) (φ̂=0.8 前後) の 30 期先までの予測。点予測は標本平均へ幾何的に戻り、95% 予測区間の幅は無条件分散で頭打ちになる。点線は答え合わせ用の実際の将来値</figcaption></figure>
 <h3 id="c09-9-8-2">9.8.2 予測区間</h3>
@@ -14451,6 +15215,47 @@ $\mathbf a_{t|t} = \mathbf a_{t|t-1} + \mathbf K_t v_t$、$\mathbf P_{t|t} = \ma
 <p>導出の要点。予測ステップは状態方程式の期待値と分散をとるだけ ($\boldsymbol\eta_t$ は過去と独立)。更新ステップは<strong>多変量正規の条件付き分布の公式</strong>そのものである: $(\mathbf x, y)$ が同時正規で $\mathbf x \sim N(\boldsymbol\mu_x, \boldsymbol\Sigma_{xx})$ なら</p>
 <p>$$E[\mathbf x\mid y] = \boldsymbol\mu_x + \boldsymbol\Sigma_{xy}\Sigma_{yy}^{-1}(y - \mu_y), \qquad \mathrm{Var}(\mathbf x\mid y) = \boldsymbol\Sigma_{xx} - \boldsymbol\Sigma_{xy}\Sigma_{yy}^{-1}\boldsymbol\Sigma_{yx}$$</p>
 <p>ここで $\mathbf x = \boldsymbol\alpha_t$、$y = y_t$、条件は $y_{1:t-1}$ 付き、とすると $\boldsymbol\mu_x = \mathbf a_{t|t-1}$、$\mu_y = \mathbf Z\mathbf a_{t|t-1}$、$\boldsymbol\Sigma_{xy} = \mathbf P_{t|t-1}\mathbf Z'$、$\Sigma_{yy} = F_t$ で、更新式がそのまま出る。<strong>カルマン利得</strong> $\mathbf K_t$ は「観測の新情報 $v_t$ (イノベーション) をどれだけ信じるか」の重みで、観測雑音 $H$ が大きいほど小さい。</p>
+<details class="gap"><summary>行間: 条件付き正規の公式に何を代入するのか</summary><div class="gap-body"><p>本文は多変量正規の公式を出して「$\mathbf x = \boldsymbol\alpha_t$、$y = y_t$ とすると
+更新式がそのまま出る」と書いた。その代入を 1 つずつ確かめる。</p>
+<p><strong>記号の役割。</strong> 以下すべて $y_1,\dots,y_{t-1}$ で条件付けた世界の中の話である
+(書くと煩いので省く)。$\boldsymbol\alpha_t$ は $m$ 次元の見えない状態、$y_t$ はこれから見る
+スカラーの観測。$\mathbf Z$ は $1\times m$ 行列、$H$ はスカラー。
+$\mathbf a_{t|t-1}$、$\mathbf P_{t|t-1}$ は予測ステップで求まっている既知の量である。</p>
+<p><strong>1. 予測ステップの結果を「事前」として置く。</strong> この世界では</p>
+<p>$$\boldsymbol\alpha_t \sim N(\mathbf a_{t|t-1},\ \mathbf P_{t|t-1})$$</p>
+<p><strong>2. $y_t$ の平均を出す。</strong> 観測方程式の期待値を取る。$\varepsilon_t$ は平均 0。</p>
+<p>$$\mu_y = E[\mathbf Z\boldsymbol\alpha_t + \varepsilon_t] = \mathbf Z\,\mathbf a_{t|t-1}$$</p>
+<p><strong>3. $y_t$ の分散を出す。</strong> $\mathbf Z\boldsymbol\alpha_t$ の分散は
+$\mathbf Z\mathbf P_{t|t-1}\mathbf Z'$ (線形変換の分散)。$\varepsilon_t$ は状態と独立なので
+分散を足すだけ。</p>
+<p>$$\Sigma_{yy} = \mathbf Z\,\mathbf P_{t|t-1}\,\mathbf Z' + H = F_t$$</p>
+<p><strong>4. 状態と観測の共分散を出す。</strong> 共分散も線形性で分けられる。
+$\mathrm{Cov}(\boldsymbol\alpha_t, \varepsilon_t) = \mathbf 0$ なので第 2 項は消える。</p>
+<p>$$\boldsymbol\Sigma_{xy} = \mathrm{Cov}(\boldsymbol\alpha_t,\ \mathbf Z\boldsymbol\alpha_t) = \mathbf P_{t|t-1}\,\mathbf Z'$$</p>
+<p><strong>5. 公式の $(y - \mu_y)$ を読み替える。</strong> 2 より</p>
+<p>$$y_t - \mu_y = y_t - \mathbf Z\,\mathbf a_{t|t-1} = v_t$$</p>
+<p>これがイノベーション、すなわち<strong>観測のうち予測できなかった分</strong>である。</p>
+<p><strong>6. 重みに名前を付ける。</strong> 公式の $\boldsymbol\Sigma_{xy}\Sigma_{yy}^{-1}$ に 3 と 4 を入れる。
+$F_t$ はスカラーなので逆行列は単なる割り算になる。</p>
+<p>$$\mathbf K_t = \mathbf P_{t|t-1}\,\mathbf Z'\,/\,F_t$$</p>
+<p><strong>7. 平均の更新式。</strong> 公式 $E[\mathbf x\mid y] = \boldsymbol\mu_x + \boldsymbol\Sigma_{xy}\Sigma_{yy}^{-1}(y-\mu_y)$
+に 1、5、6 を代入する。</p>
+<p>$$\mathbf a_{t|t} = \mathbf a_{t|t-1} + \mathbf K_t\,v_t$$</p>
+<p><strong>8. 分散の更新式。</strong> 公式の第 2 式は
+$\boldsymbol\Sigma_{xx} - \boldsymbol\Sigma_{xy}\Sigma_{yy}^{-1}\boldsymbol\Sigma_{yx}$。
+$\boldsymbol\Sigma_{xy}\Sigma_{yy}^{-1} = \mathbf K_t$、$\boldsymbol\Sigma_{yx} = \mathbf Z\mathbf P_{t|t-1}$
+(4 の転置) なので</p>
+<p>$$\mathbf P_{t|t} = \mathbf P_{t|t-1} - \mathbf K_t\,\mathbf Z\,\mathbf P_{t|t-1}$$</p>
+<p><strong>利得の読み方。</strong> 3 より、観測雑音 $H$ が大きいほど $F_t$ が大きい。6 はその $F_t$ で
+割っているので、$\mathbf K_t$ は小さくなる。7 を見れば、$\mathbf K_t$ が小さいとは
+<strong>イノベーションを小さくしか採り入れない</strong> ということである。逆に
+$\mathbf P_{t|t-1}$ が大きい (状態の見当が付いていない) ほど $\mathbf K_t$ は大きくなり、
+観測に寄る。</p>
+<p><strong>落とし穴。</strong> 8 の右辺に $y_t$ も $v_t$ も入っていない。<strong>観測の値がいくつであっても
+分散の減り方は同じ</strong>である。だから $\mathbf P$ の再帰はデータを一度も見ずに回せて、
+9.9.3 の Riccati 再帰のように「初期値によらず定常値へ収束する」という言い方ができる。
+これは定義 9.8 が線形かつガウスであることが効いているところで、
+$\mathbf a$ の側 (7) はもちろん $y_t$ に依存する。</p></div></details>
 <p>副産物として、イノベーション $v_t \sim N(0, F_t)$ は互いに独立なので対数尤度が</p>
 <p>$$\log L = -\frac12\sum_{t=1}^n\left(\log 2\pi F_t + \frac{v_t^2}{F_t}\right)$$</p>
 <p>と書ける (<strong>予測誤差分解</strong>)。ARMA の最尤推定はこれを数値最適化して行うのが標準である。観測の欠測は更新をスキップするだけで扱え、$\mathbf a_{t|n}$ (全データを使った平滑化) も逆向きの再帰で得られる。</p>
@@ -14468,6 +15273,50 @@ $\mathbf a_{t|t} = \mathbf a_{t|t-1} + \mathbf K_t v_t$、$\mathbf P_{t|t} = \ma
 <p><strong>定理 9.7 (Wiener–Khinchin)</strong> $\gamma(k) = \int_{-\pi}^{\pi}e^{ik\omega}f(\omega)\,d\omega$。特に $\gamma(0) = \mathrm{Var}(X_t) = \int_{-\pi}^{\pi}f(\omega)\,d\omega$、かつ $f(\omega) \ge 0$</p>
 </blockquote>
 <p>証明の要点: 第 1 式は定義をフーリエ逆変換しただけ ($\int e^{i(k-j)\omega}d\omega = 2\pi\delta_{kj}$)。非負性は定理 9.1 から: $a_t = e^{-it\omega}$ ($t = 1,\dots,n$) を代入すると $\frac{1}{n}\sum_{t,s}e^{-i(t-s)\omega}\gamma(t-s) = \sum_{|k|<n}(1 - |k|/n)\gamma(k)e^{-ik\omega} \ge 0$ で、$n \to \infty$ の極限が $2\pi f(\omega)$。</p>
+<details class="gap"><summary>行間: フーリエ対になるところと、二重和を対角線で数え直すところ</summary><div class="gap-body"><p>本文は 2 つの計算を「〜しただけ」で済ませた。前半は $\gamma$ と $f$ が互いに
+戻り合うこと、後半は非負性の式で二重和が 1 重和に潰れるところである。</p>
+<p><strong>記号の役割。</strong> $k$ と $j$ は整数のラグ、$\omega \in [-\pi,\pi]$ は角周波数。
+$f$ は $\gamma(k)$ を係数に持つフーリエ級数であって、確率密度ではない。
+$i$ は虚数単位で、和の添字には使わない。</p>
+<p><strong>前半: $\gamma$ から $f$、$f$ から $\gamma$</strong></p>
+<p><strong>1. 直交関係を確かめる。</strong> 整数 $m$ に対して次が成り立つ。</p>
+<p>$$\int_{-\pi}^{\pi} e^{im\omega}\,d\omega = 2\pi\,\delta_{m0}$$</p>
+<p>理由: $m \ne 0$ なら原始関数は $e^{im\omega}/(im)$ で、$e^{im\pi}$ と $e^{-im\pi}$ が
+等しい ($m$ が整数だから) ので差が 0。$m = 0$ なら被積分関数が 1 で、区間の長さ $2\pi$。</p>
+<p><strong>2. 定理の右辺に定義 9.9 を代入する。</strong> $f(\omega)$ の中の和の添字は $k$ と
+ぶつかるので $j$ にしておく。</p>
+<p>$$\int_{-\pi}^{\pi} e^{ik\omega} f(\omega)\,d\omega = \frac{1}{2\pi}\sum_{j}\gamma(j)\,c_{kj}$$</p>
+<p>ここで $c_{kj} = \int_{-\pi}^{\pi} e^{i(k-j)\omega}\,d\omega$ と置いた。
+和と積分を入れ替えてよいのは、定義 9.9 の仮定 $\sum_k|\gamma(k)| < \infty$ が
+あるからである。</p>
+<p><strong>3. 1 を使って和を潰す。</strong> $c_{kj}$ は $j = k$ のときだけ $2\pi$、他は 0。
+無限個の項のうち 1 つしか残らない。</p>
+<p>$$\frac{1}{2\pi}\sum_j \gamma(j)\,c_{kj} = \frac{1}{2\pi}\,\gamma(k)\cdot 2\pi = \gamma(k)$$</p>
+<p><strong>これで定理の第 1 式が出た。</strong> $\gamma$ と $f$ は<strong>互いに相手から復元できる</strong> ——
+これが「フーリエ対」の意味である。</p>
+<p><strong>4. $k = 0$ を入れる。</strong> $e^{0} = 1$ なので $\gamma(0) = \int_{-\pi}^{\pi}f(\omega)d\omega$。
+左辺は分散だから、<strong>$f$ は分散を周波数に配分したもの</strong>と読める。</p>
+<p><strong>後半: 非負性の式の数え上げ</strong></p>
+<p><strong>5. 定理 9.1 の左辺に $a_t = e^{-it\omega}$ を入れ、$\frac1n$ を掛ける。</strong>
+本文の左辺 $\frac1n\sum_{t,s}e^{-i(t-s)\omega}\gamma(t-s)$ はこれである。
+$t$ と $s$ はどちらも $1$ から $n$ を走る。</p>
+<p><strong>6. 差ごとに項を数える。</strong> 被加数は $t-s$ にしか依存しない。$k = t-s$ を固定すると、
+$(t,s)$ の組の個数は $n - |k|$ である ($k \ge 0$ なら $t = s+k \le n$ を満たす $s$ が
+$n-k$ 個)。$k$ の動く範囲は $-(n-1)$ から $n-1$。</p>
+<p><strong>7. 1 重和に書き直す。</strong> 個数 $n-|k|$ を $\frac1n$ と合わせると $1 - |k|/n$。</p>
+<p>$$\frac{1}{n}\sum_{t,s} e^{-i(t-s)\omega}\gamma(t-s) = \sum_{|k|<n}\left(1-\tfrac{|k|}{n}\right)\gamma(k)\,e^{-ik\omega}$$</p>
+<p><strong>これが本文の等号である。</strong> 二重和が 1 重和に潰れたのは数え上げだけの操作で、
+確率も極限も使っていない。</p>
+<p><strong>8. $n$ を大きくする。</strong> 各 $k$ について $1 - |k|/n \to 1$。仮定
+$\sum_k|\gamma(k)| < \infty$ により和の入れ替えと極限が許され、
+右辺は $\sum_k \gamma(k)e^{-ik\omega} = 2\pi f(\omega)$ に近づく。
+左辺は 5 より非負なので、極限も非負。よって $f(\omega) \ge 0$。</p>
+<p><strong>落とし穴 1。</strong> $f$ は密度と呼ばれるが確率密度ではない。積分すると 1 ではなく
+$\gamma(0)$ になる (4)。$f/\gamma(0)$ なら確率密度の形になる。</p>
+<p><strong>落とし穴 2。</strong> $f$ が持っている情報は $\gamma$ と<strong>まったく同じだけ</strong>である。
+表し方が違うだけで、片方から他方が復元できる (3)。したがって $f$ を見ても
+分布の形 (正規かどうか、独立かどうか) は分からない —— 9.4.2 のホワイトノイズの
+注意がそのまま効く。</p></div></details>
 <p>意味: <strong>自己共分散関数とスペクトル密度はフーリエ対</strong>であり、同じ情報を「ラグ」と「周波数」の 2 つの言葉で表している。$f(\omega)d\omega$ は「周波数 $\omega$ 付近の成分が分散 $\gamma(0)$ に寄与する量」。ホワイトノイズは $f(\omega) = \sigma^2/2\pi$ (平坦)、AR(1) は</p>
 <p>$$f(\omega) = \frac{\sigma^2}{2\pi}\,\frac{1}{1 - 2\phi\cos\omega + \phi^2}$$</p>
 <p>で、$\phi > 0$ なら低周波が強い (滑らか)、$\phi < 0$ なら高周波が強い (ギザギザ)。一般の ARMA では $f(\omega) = \frac{\sigma^2}{2\pi}\left|\theta(e^{-i\omega})/\phi(e^{-i\omega})\right|^2$ (線形フィルタの伝達関数の 2 乗)。</p>
@@ -27680,6 +28529,227 @@ IACT['04_power_curve'] = function(box){
   paintAlpha();
   addEventListener('resize', draw, {passive:true});
   box.addEventListener('repaint', ()=>{ paintAlpha(); draw(); });
+  draw();
+};
+
+/* --- 陽性的中率 (図 2.13) ---
+   本文 2.3.2 / 2.18 の非破壊検査。欠陥率 2%・検出率 90%・誤検出率 5% で
+   尤度比 18、的中率 27%。**同じ検査でも欠陥率が変われば的中率は大きく動く**
+   というのが肝なので、つまみの主役は欠陥率。
+   自然頻度 (2000 箇所 → 検出 134 → 真の欠陥 36) も同じ絵の中に出す。 */
+IACT['02c_ppv'] = function(box){
+  const BASE = 2000;                      // 本文と同じ「溶接部 2000 箇所」
+  let prev = 0.02, sens = 0.90, fpr = 0.05;
+
+  const cv = document.createElement('canvas');
+  box.appendChild(cv);
+  const rd = document.createElement('div'); rd.className = 'rd';
+  const ctl = document.createElement('div'); ctl.className = 'ctl';
+  const reset = document.createElement('button'); reset.textContent = '本文の値に戻す';
+  ctl.appendChild(reset);
+  const hint = document.createElement('p'); hint.className = 'hint';
+  hint.innerHTML = '<b>検査の性能を変えずに欠陥率だけ動かしてみる。</b>'
+    + '同じ検査なのに的中率がどれだけ動くかが、条件を取り違える誤りの正体。'
+    + '薄い線は尤度比 5・18・100 の検査 — <b>良い検査ほど曲線は左に寄る</b>。';
+
+  // 欠陥率は対数で振る (0.1% と 2% を同じ操作感で行き来できるように)
+  const L0 = Math.log10(0.001), L1 = Math.log10(0.5);
+  const toP = t => Math.pow(10, L0 + (L1 - L0) * t / 1000);
+  const toT = p => Math.round((Math.log10(p) - L0) / (L1 - L0) * 1000);
+
+  const sP = slider(box, '欠陥率', 0, 1000, 1, toT(prev),
+                    t=>{ const p = toP(t); return (p*100 < 1 ? (p*100).toFixed(2) : (p*100).toFixed(1)) + '%'; },
+                    t=>{ prev = toP(t); draw(); });
+  const sS = slider(box, '検出率', 50, 99, 1, sens*100, v=>v + '%', v=>{ sens = v/100; draw(); });
+  const sF = slider(box, '誤検出率', 1, 30, 1, fpr*100, v=>v + '%', v=>{ fpr = v/100; draw(); });
+  box.append(rd, ctl, hint);
+
+  const ppv = (p, lr) => { const o = lr * p / (1 - p); return o / (1 + o); };
+
+  function draw(){
+    const lr = sens / fpr;
+    const H = 260;
+    const g = fitCanvas(cv, H);
+    const W = cv.width / Math.min(devicePixelRatio || 1, 2);
+    const PADL = 34, PADR = 10, PADT = 12, BAR = 46, PADB = 26 + BAR;
+    const X = p => PADL + (Math.log10(p) - L0)/(L1 - L0) * (W - PADL - PADR);
+    const Y = v => PADT + (1 - v) * (H - PADT - PADB);
+    const ink = css('--ink'), muted = css('--muted'), line = css('--line'),
+          accent = css('--accent'), mark = css('--mark');
+
+    g.clearRect(0, 0, W, H);
+    g.strokeStyle = line; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(PADL, PADT); g.lineTo(PADL, H-PADB); g.lineTo(W-PADR, H-PADB); g.stroke();
+    g.fillStyle = muted; g.font = '11px system-ui, sans-serif';
+    g.textAlign = 'right';
+    [0, 0.5, 1].forEach(v=>g.fillText((v*100) + '%', PADL - 5, Y(v) + 4));
+    g.textAlign = 'center';
+    [0.001, 0.01, 0.1, 0.5].forEach(p=>{
+      g.fillText((p*100 < 1 ? (p*100).toFixed(1) : String(p*100)) + '%', X(p), H - PADB + 16);
+    });
+
+    const curve = (l, color, w)=>{
+      g.strokeStyle = color; g.lineWidth = w; g.beginPath();
+      for(let i = 0; i <= 120; i++){
+        const p = toP(i/120*1000), px = X(p), py = Y(ppv(p, l));
+        i ? g.lineTo(px, py) : g.moveTo(px, py);
+      }
+      g.stroke();
+    };
+    g.globalAlpha = 0.28; [5, 18, 100].forEach(l=>curve(l, ink, 1)); g.globalAlpha = 1;
+    curve(lr, accent, 2.4);
+
+    const v = ppv(prev, lr);
+    g.fillStyle = mark;
+    g.beginPath(); g.arc(X(prev), Y(v), 5, 0, 7); g.fill();
+    g.strokeStyle = mark; g.lineWidth = 1; g.setLineDash([2,3]);
+    g.beginPath(); g.moveTo(X(prev), Y(v)); g.lineTo(X(prev), H-PADB); g.stroke();
+    g.setLineDash([]);
+
+    // 自然頻度の帯 (検出の中身を、真と誤で分ける)
+    const def = BASE * prev, hit = def * sens, fp = (BASE - def) * fpr, det = hit + fp;
+    const by = H - BAR + 10, bw = W - PADL - PADR;
+    const wHit = det ? bw * (hit / det) : 0;
+    g.fillStyle = accent; g.fillRect(PADL, by, wHit, 14);
+    g.fillStyle = mark;   g.fillRect(PADL + wHit, by, bw - wHit, 14);
+    g.fillStyle = muted; g.textAlign = 'left';
+    g.fillText('「検出」' + Math.round(det) + ' 箇所の中身', PADL, by - 4);
+    g.fillStyle = accent; g.textAlign = 'left';
+    g.fillText('真 ' + Math.round(hit), PADL + 3, by + 27);
+    g.fillStyle = mark; g.textAlign = 'right';
+    g.fillText('誤 ' + Math.round(fp), W - PADR - 3, by + 27);
+
+    rd.innerHTML =
+      '<span>陽性的中率<b>' + (v*100).toFixed(1) + '%</b></span>' +
+      '<span>尤度比<b>' + lr.toFixed(1) + '</b></span>' +
+      '<span>欠陥率<b>' + (prev*100 < 1 ? (prev*100).toFixed(2) : (prev*100).toFixed(1)) + '%</b></span>' +
+      '<span class="wide">' + BASE + ' 箇所のうち「検出」は <b>' + Math.round(det) +
+      '</b> 箇所、そのうち本当に欠陥があるのは <b>' + Math.round(hit) + '</b> 箇所' +
+      ' = <b>' + (v*100).toFixed(1) + '%</b></span>';
+  }
+
+  reset.onclick = ()=>{
+    prev = 0.02; sens = 0.90; fpr = 0.05;
+    sP.input.value = toT(prev); sS.input.value = 90; sF.input.value = 5;
+    sP.paint(); sS.paint(); sF.paint();
+    draw();
+  };
+  addEventListener('resize', draw, {passive:true});
+  box.addEventListener('repaint', draw);
+  draw();
+};
+
+/* --- カーネル密度推定の帯域幅 (図 1.11) ---
+   図の生成元と同じ混合: N(-1, 0.5) を 120 点、N(1.5, 0.8) を 80 点。
+   つまみは h ただ 1 つ。**山の数**を数えて出すのが肝で、
+   h を動かすと「凹凸だらけ → 2 山 → 1 山」と整数が動く。
+   バイアスと分散の綱引きが、そのまま指先の感覚になる。 */
+IACT['01d_kde_bandwidth'] = function(box){
+  const N1 = 120, N2 = 80, N = N1 + N2;
+  let h = 0.3;
+
+  // 毎回同じ 200 点から始める (mulberry32 + Box-Muller)
+  const data = (function(){
+    let s = 20260922;
+    const u = ()=>{ s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const z = ()=>Math.sqrt(-2 * Math.log(Math.max(u(), 1e-12))) * Math.cos(2 * Math.PI * u());
+    const a = [];
+    for(let i = 0; i < N1; i++) a.push(-1 + 0.5 * z());
+    for(let i = 0; i < N2; i++) a.push(1.5 + 0.8 * z());
+    return a;
+  })();
+  const sorted = data.slice().sort((a,b)=>a-b);
+  const mean = data.reduce((a,b)=>a+b,0)/N;
+  const sd = Math.sqrt(data.reduce((a,b)=>a+(b-mean)**2,0)/(N-1));
+  const q = p => sorted[Math.min(N-1, Math.floor(p*N))];
+  const iqr = q(0.75) - q(0.25);
+  const hRot = 0.9 * Math.min(sd, iqr/1.34) * Math.pow(N, -0.2);   // Silverman の経験則
+
+  const npdf = z => Math.exp(-z*z/2) / Math.sqrt(2*Math.PI);
+  const truth = x => 0.6 * npdf((x+1)/0.5)/0.5 + 0.4 * npdf((x-1.5)/0.8)/0.8;
+  const kde = (x, bw)=>{
+    let s = 0;
+    for(let i = 0; i < N; i++) s += npdf((x - data[i])/bw);
+    return s / (N * bw);
+  };
+
+  const cv = document.createElement('canvas');
+  box.appendChild(cv);
+  const rd = document.createElement('div'); rd.className = 'rd';
+  const ctl = document.createElement('div'); ctl.className = 'ctl';
+  const rot = document.createElement('button'); rot.textContent = '経験則の h にする';
+  ctl.appendChild(rot);
+  const hint = document.createElement('p'); hint.className = 'hint';
+  hint.innerHTML = '<b>灰色が真の密度 (2 山)、青が推定。下の細い線は 200 個のデータ。</b>'
+    + 'h が小さいとデータ 1 点ごとの凹凸を拾い (分散が大)、大きいと 2 つの山が溶けて'
+    + '1 つになる (バイアスが大)。<b>山の数</b>を見ながら動かすと綱引きが分かる。';
+
+  const L0 = Math.log10(0.02), L1 = Math.log10(1.5);
+  const toH = t => Math.pow(10, L0 + (L1 - L0) * t/1000);
+  const toT = v => Math.round((Math.log10(v) - L0)/(L1 - L0) * 1000);
+  const sH = slider(box, '帯域幅 h', 0, 1000, 1, toT(h), t=>toH(t).toFixed(3),
+                    t=>{ h = toH(t); draw(); });
+  box.append(rd, ctl, hint);
+
+  function draw(){
+    const H = 250;
+    const g = fitCanvas(cv, H);
+    const W = cv.width / Math.min(devicePixelRatio || 1, 2);
+    const PADL = 30, PADR = 10, PADT = 12, PADB = 34, RUG = 12;
+    const LO = -3.5, HI = 4.5;
+    const X = x => PADL + (x - LO)/(HI - LO) * (W - PADL - PADR);
+    const muted = css('--muted'), line = css('--line'),
+          accent = css('--accent'), mark = css('--mark');
+
+    // 山の数は格子の上で数える (目で数えるのと同じ粒度にする)
+    const M = 320, ys = [], xs = [];
+    for(let i = 0; i <= M; i++){ const x = LO + (HI-LO)*i/M; xs.push(x); ys.push(kde(x, h)); }
+    let top = 0; for(const y of ys) top = Math.max(top, y);
+    for(let i = 0; i <= M; i++) top = Math.max(top, truth(xs[i]));
+    top *= 1.12;
+    const Y = y => PADT + (1 - y/top) * (H - PADT - PADB);
+
+    let peaks = 0;
+    for(let i = 2; i < M - 1; i++)
+      if(ys[i] > ys[i-1] && ys[i] >= ys[i+1] && ys[i] > top*0.04) peaks++;
+
+    g.clearRect(0, 0, W, H);
+    g.strokeStyle = line; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(PADL, H-PADB); g.lineTo(W-PADR, H-PADB); g.stroke();
+    g.fillStyle = muted; g.font = '11px system-ui, sans-serif'; g.textAlign = 'center';
+    [-3,-1,1,3].forEach(t=>g.fillText(String(t), X(t), H - PADB + 16));
+
+    const path = (f, color, w, dash)=>{
+      g.strokeStyle = color; g.lineWidth = w; g.setLineDash(dash || []);
+      g.beginPath();
+      for(let i = 0; i <= M; i++){ const px = X(xs[i]), py = Y(f(i));
+        i ? g.lineTo(px, py) : g.moveTo(px, py); }
+      g.stroke(); g.setLineDash([]);
+    };
+    path(i=>truth(xs[i]), muted, 1.6, [4,3]);
+    path(i=>ys[i], accent, 2.2);
+
+    // データの位置 (ラグ)
+    g.strokeStyle = mark; g.globalAlpha = 0.45; g.lineWidth = 1;
+    g.beginPath();
+    for(const v of data){ g.moveTo(X(v), H-PADB); g.lineTo(X(v), H-PADB+RUG); }
+    g.stroke(); g.globalAlpha = 1;
+
+    const verdict = peaks === 2 ? '真の形と同じ' : peaks < 2 ? '山が溶けた (バイアス大)' : '凹凸を拾いすぎ (分散大)';
+    rd.innerHTML =
+      '<span>帯域幅 h<b>' + h.toFixed(3) + '</b></span>' +
+      '<span>山の数<b>' + peaks + '</b></span>' +
+      '<span>経験則の h<b>' + hRot.toFixed(3) + '</b></span>' +
+      '<span class="wide">山が <b>' + peaks + '</b> つ — ' + verdict +
+      '（真の密度は 2 山）</span>';
+  }
+
+  rot.onclick = ()=>{ h = hRot; sH.input.value = toT(h); sH.paint(); draw(); };
+  addEventListener('resize', draw, {passive:true});
+  box.addEventListener('repaint', draw);
   draw();
 };
 
