@@ -15531,9 +15531,9 @@ $\Sigma$ は正定値である。定義 2.11 の $n$ を $p$ に読み替えれ�
 </table>
 <p>組の中の相関も要る。階数と剛性率が $0.830$、最大層間変形角と最大加速度が $0.862$ である (この 6 つで $4\times4$ の相関行列が埋まる)。</p>
 <p>どれも高いが、<strong>「組と組の関係の強さ」を 1 つの数で言うにはどれを使えばよいか分からない。</strong> 正準相関分析は、それぞれの組の中で最も相関が高くなる線形結合を探し</p>
-<p>$$\rho_1 = 0.957, \qquad \rho_2 = 0.171$$</p>
+<p>$$\rho_1 = 0.957, \qquad \rho_2 = 0.17$$</p>
 <p>を返す。<strong>第 1 正準相関 $0.957$ が、どの単純相関よりも高い</strong>ことに注目したい。2 つの幾何量をうまく混ぜると、2 つの応答量をうまく混ぜたものと $0.957$ で対応する、ということである。</p>
-<p>そして $\rho_2 = 0.171$ が小さいことから、<strong>組と組をつなぐ軸は実質 1 本</strong>だと分かる。「建物の規模」という 1 つの量が幾何にも応答にも現れている、という読み方になる。</p>
+<p>そして $\rho_2 = 0.17$ が小さいことから、<strong>組と組をつなぐ軸は実質 1 本</strong>だと分かる。「建物の規模」という 1 つの量が幾何にも応答にも現れている、という読み方になる。</p>
 <p>なお正準相関は必ず単純相関以上になるので、<strong>高く出ること自体に意味は無い。</strong> 意味があるのは $\rho_2$ 以降が小さいこと (軸が何本あるか) と、線形結合の重みが解釈できるかどうかである。</p>
 <h2 id="c07-7-9">7.9 多次元尺度法 (紹介)</h2>
 <p>ここまではすべて「観測が座標として与えられている」前提だった。<strong>座標は無いが、観測どうしの近さだけは測れる</strong>という場面がある。波形どうしの相違度、損傷パターンどうしの違い、などがそれである。</p>
@@ -20798,6 +20798,45 @@ for (ph, n9, e_mean, e_bias) in ((0.5, 25, 0.3977, -0.1023), (0.5, 100, 0.4751, 
 <h2 id="c10-10-2">10.2 生存関数・ハザード・累積ハザード</h2>
 <p>「いつ壊れるか」を扱うには、第 2 章の分布関数や密度とは<strong>別の言い方</strong>が要る。<strong>「まだ壊れていないものが、次の瞬間に壊れる率」</strong>という見方をすると、初期不良・偶発故障・摩耗という技術者の言葉が、そのまま関数の形に対応する。</p>
 <h3 id="c10-10-2-1">10.2.1 定義</h3>
+<p><strong>この章で繰り返し使うデータを置く。</strong> 同じ形式の溶接継手 12 体を同じ応力振幅で疲労試験し、破断までの繰返し数を記録した。ただし <strong>200 万回に達した時点で試験を打ち切った</strong>ので、3 体は「200 万回でまだ壊れていない」としか分かっていない。</p>
+<table>
+<thead>
+<tr>
+<th>体</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+<th style="text-align: right;">4</th>
+<th style="text-align: right;">5</th>
+<th style="text-align: right;">6</th>
+<th style="text-align: right;">7</th>
+<th style="text-align: right;">8</th>
+<th style="text-align: right;">9</th>
+<th style="text-align: right;">10</th>
+<th style="text-align: right;">11</th>
+<th style="text-align: right;">12</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>繰返し数 (万回)</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">200$^+$</td>
+<td style="text-align: right;">200$^+$</td>
+<td style="text-align: right;">200$^+$</td>
+</tr>
+</tbody>
+</table>
+<p>($^+$ は打ち切り。)</p>
+<p><strong>この 3 体をどう扱うかで答えが変わる。</strong> 捨てれば「弱い 9 体だけ」で推定することになり寿命を過小評価する。200 万回で壊れたとみなせば、やはり過小評価する。<strong>どちらも偏る</strong>というのが 10.3 節の主題で、正しい扱いは 10.3.2 項で決まる。</p>
 <p>非負の連続確率変数 $T$ (寿命、故障時間、生存時間) の分布は、分布関数 $F(t) = P(T \le t)$ でも密度 $f(t)$ でも記述できるが、生存時間解析では次の 2 つが主役になる。</p>
 <blockquote>
 <p><strong>定義 10.1 (生存関数・ハザード関数)</strong> 生存関数 $S(t) = P(T > t) = 1 - F(t)$。ハザード関数 (瞬間故障率) は</p>
@@ -20897,6 +20936,43 @@ $S$ がそこで 0 になる場合は、その手前でのみ成り立つ式で�
 <li><strong>ランダム打ち切り</strong>: $C_i$ が確率変数 (例: 追跡途中の脱落、観測終了時点の違い)</li>
 </ul>
 <p>左打ち切り (開始前に既に故障していたことだけ分かる) や区間打ち切り (検査と検査の間に故障) もあるが、ここでは右打ち切りに絞る。</p>
+<p><strong>10.2.1 項のデータで、素朴な 2 通りの扱いがどれだけ外すかを先に見ておく。</strong> Weibull を当てて $B_{10}$ 寿命 (10% が壊れる時刻) と MTTF を出すと</p>
+<table>
+<thead>
+<tr>
+<th>扱い</th>
+<th style="text-align: right;">形状 $k$</th>
+<th style="text-align: right;">尺度 $\lambda$</th>
+<th style="text-align: right;">$B_{10}$ (万回)</th>
+<th style="text-align: right;">MTTF (万回)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>正しい扱い</strong> (10.3.2 項)</td>
+<td style="text-align: right;">2.33</td>
+<td style="text-align: right;">161.4</td>
+<td style="text-align: right;"><strong>61.4</strong></td>
+<td style="text-align: right;"><strong>143.0</strong></td>
+</tr>
+<tr>
+<td>打ち切りの 3 体を捨てる</td>
+<td style="text-align: right;">4.04</td>
+<td style="text-align: right;">120.7</td>
+<td style="text-align: right;">69.2</td>
+<td style="text-align: right;">109.4</td>
+</tr>
+<tr>
+<td>打ち切りを破断とみなす</td>
+<td style="text-align: right;">3.09</td>
+<td style="text-align: right;">148.1</td>
+<td style="text-align: right;">71.5</td>
+<td style="text-align: right;">132.4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MTTF は 2 通りの誤った扱いでそれぞれ 24%・7% 過小に出る。</strong> 「捨てる」ほうが悪いのは、長寿命の個体だけを狙い撃ちで除くからである。</p>
+<p><strong>形状母数 $k$ の狂い方のほうが深刻である。</strong> 正しくは $2.33$ なのに、捨てると $4.04$ になる。$k$ はハザードの増え方 (摩耗の速さ) を表すので、<strong>$4.04$ は「急激に摩耗する」という、データにない性質をモデルに与えてしまう。</strong> 保全周期の設計はこの $k$ に強く依存する。</p>
 <h3 id="c10-10-3-2">10.3.2 打ち切りを含む尤度</h3>
 <p>10.3.1 項で種類が分かった。<strong>それぞれの個体が持っている情報を、そのまま尤度に書く。</strong> 3.5.1 項の尤度の定義に戻るだけで、新しい原理は要らない。</p>
 <p>打ち切られた個体を「壊れなかった」と数えても、「無かったこと」にしても、どちらも偏る。正しい扱いは、各個体が持つ情報をそのまま尤度に書くことである。</p>
@@ -20989,6 +21065,116 @@ $1 - d_j/n_j$ を単独で取り出しても意味を持たず、掛け合わせ
 <p>累積ハザードを直接推定するなら</p>
 <p>$$\hat H(t) = \sum_{j:\, t_{(j)} \le t} \frac{d_j}{n_j}$$</p>
 <p>これが Nelson–Aalen 推定量で、$\exp\{-\hat H(t)\}$ は Kaplan–Meier に近い ($\log(1-x) \approx -x$)。$\hat H(t)$ を $t$ に対してプロットすると、ハザードが一定なら直線、Weibull なら両対数で直線になるので、<strong>分布形の目視診断</strong>に使える。</p>
+<p><strong>10.2.1 項のデータで表を作る。</strong> 打ち切りの 3 体は最後 (200 万回) にあるので、それ以前のリスク集合には全員が入っている。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">$t_{(j)}$</th>
+<th style="text-align: right;">リスク数 $n_j$</th>
+<th style="text-align: right;">破断 $d_j$</th>
+<th style="text-align: right;">$1 - d_j/n_j$</th>
+<th style="text-align: right;">$\hat S(t)$</th>
+<th style="text-align: right;">標準誤差</th>
+<th style="text-align: right;">$\hat H(t)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.9167</td>
+<td style="text-align: right;">0.9167</td>
+<td style="text-align: right;">0.080</td>
+<td style="text-align: right;">0.083</td>
+</tr>
+<tr>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.9091</td>
+<td style="text-align: right;">0.8333</td>
+<td style="text-align: right;">0.108</td>
+<td style="text-align: right;">0.174</td>
+</tr>
+<tr>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.9000</td>
+<td style="text-align: right;">0.7500</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">0.274</td>
+</tr>
+<tr>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.8889</td>
+<td style="text-align: right;">0.6667</td>
+<td style="text-align: right;">0.136</td>
+<td style="text-align: right;">0.385</td>
+</tr>
+<tr>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.8750</td>
+<td style="text-align: right;">0.5833</td>
+<td style="text-align: right;">0.142</td>
+<td style="text-align: right;">0.510</td>
+</tr>
+<tr>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.8571</td>
+<td style="text-align: right;">0.5000</td>
+<td style="text-align: right;">0.144</td>
+<td style="text-align: right;">0.653</td>
+</tr>
+<tr>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.8333</td>
+<td style="text-align: right;">0.4167</td>
+<td style="text-align: right;">0.142</td>
+<td style="text-align: right;">0.820</td>
+</tr>
+<tr>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.8000</td>
+<td style="text-align: right;">0.3333</td>
+<td style="text-align: right;">0.136</td>
+<td style="text-align: right;">1.020</td>
+</tr>
+<tr>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.7500</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">1.270</td>
+</tr>
+<tr>
+<td style="text-align: right;">200$^+$</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">0.2500</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">1.270</td>
+</tr>
+</tbody>
+</table>
+<p><strong>読みどころが 3 つある。</strong></p>
+<p>第 1 に、<strong>$\hat S$ は $0.25$ で止まり、0 まで下がらない。</strong> 最後の観測が打ち切りだからで、200 万回より先については<strong>何も言っていない。</strong> 打ち切りのあるデータで「平均寿命」を求めようとすると、この先を何らかの形で補わねばならない — 10.7 節でパラメトリックモデルが要る理由がこれである。</p>
+<p>第 2 に、<strong>標準誤差が中央で最大 ($0.144$)、両端で小さい。</strong> $\hat S$ が 0 か 1 に近いところでは幅が狭くなる。3.8.4 項の二項比率と同じ事情で、Greenwood の公式は $\hat S^2 \sum d_j/\{n_j(n_j-d_j)\}$ という形から自動的にこうなる。</p>
+<p>第 3 に、<strong>Nelson–Aalen から $\exp(-\hat H) = e^{-1.270} = 0.281$</strong> で、Kaplan–Meier の $0.250$ と少し違う。$\log(1-x) \approx -x$ の近似のぶんで、<strong>イベントが少ないほど差が大きい。</strong> 大標本では一致する。</p>
 <h2 id="c10-10-5">10.5 ログランク検定</h2>
 <p>10.4 節で 2 群の生存曲線が描けるようになった。<strong>「2 本の曲線は違うと言えるか」</strong>を判定したい。打ち切りがあるので第 4 章の $t$ 検定は使えず、イベントが起きた時点ごとに数え上げる方法を作る。</p>
 <p>2 群 (例: 表面処理あり/なし の疲労寿命) の生存曲線が同じかを検定したい。$t$ 検定は打ち切りのために使えない。</p>
@@ -21077,6 +21263,11 @@ $\beta$ で微分すると第 1 項から $x_{i_j}$ が出る。第 2 項は $\l
 生存曲線 $S(t \mid x)$ そのものを描くには基準側を別に推定しなければならない。
 Cox モデルが答えるのは「どちらが何倍危ないか」であって「何年もつか」ではない。</p></div></details>
 <p>Cox モデルの最尤解は $\beta$ について凹な目的関数の最大化なので Newton 法で安定に解ける。共変量が多いときは $\ell_1$/$\ell_2$ 罰則を加えた正則化版が座標降下法で効率よく解ける<sup id="c10-fnref:6"><a class="footnote-ref" href="#c10-fn:6">6</a></sup>。</p>
+<p><strong>10.2.1 項の 12 体に共変量を付けて実際に解く。</strong> 12 体のうち 7 体に表面処理 (ショットピーニング) を施していたとする ($x = 1$)。部分尤度を最大化すると</p>
+<p>$$\hat\beta = -0.877, \qquad \mathrm{se}(\hat\beta) = 0.687$$</p>
+<p>ハザード比は $e^{-0.877} = 0.416$ で、<strong>表面処理をするとハザードが 0.42 倍になる</strong> — 同じ時点で生き残っている継手のうち、処理ありは処理なしの 4 割の率でしか壊れない、と読む。</p>
+<p>$95\%$ 信頼区間は $[e^{-0.877 - 1.96 \times 0.687},\ e^{-0.877 + 1.96 \times 0.687}] = [0.11,\ 1.60]$ で、<strong>1 をまたいでいる</strong> ($z = -1.28$、$p = 0.20$)。9 件のイベントでは、ハザードが「1/9 になる」のか「1.6 倍になる」のかすら区別できていない。</p>
+<p><strong>検出力を支配するのはイベント数であって、試験体の数ではない。</strong> 打ち切りの 3 体は部分尤度のリスク集合には入るが、分子には一度も現れない。$12$ 体試験しても $9$ 件分の情報しかないので、<strong>打ち切りが多いほど、同じ試験体数で言えることが減る。</strong> 10.5 節のログランク検定でも $\chi^2 = 1.72$、$p = 0.19$ とほぼ同じ結論になる (共変量が 2 値のとき、両者はほぼ同じ検定である)。</p>
 <h3 id="c10-10-6-3">10.6.3 比例性の検証</h3>
 <p>10.6.1 項の比例ハザードは<strong>仮定</strong>である。5.7 節でやったのと同じく、<strong>仮定が成り立っているかを点検する</strong>手順が要る。</p>
 <p>比例ハザードは仮定であって、破れれば $\hat\beta$ は「時間平均したハザード比」のような解釈しにくい量になる。検証法:</p>
@@ -21094,6 +21285,35 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p>Cox モデルは $h_0$ を捨てるが、寿命そのものを予測したい (信頼性の設計) なら $h_0$ が要る。$h_0$ を Weibull や対数正規と指定して定理 10.2 の尤度を直接最大化するのがパラメトリック生存回帰である。Weibull ハザード $h_0(t) = (k/\lambda)(t/\lambda)^{k-1}$ に $\exp(\beta^\top x)$ を掛けると</p>
 <p>$$h(t \mid x) = \frac{k}{\lambda}\left(\frac{t}{\lambda}\right)^{k-1} e^{\beta^\top x} = \frac{k}{\lambda^*}\left(\frac{t}{\lambda^*}\right)^{k-1}, \qquad \lambda^* = \lambda\, e^{-\beta^\top x/k}$$</p>
 <p>つまり共変量は尺度パラメータを $e^{-\beta^\top x/k}$ 倍する。</p>
+<p><strong>10.3.1 項で計算した値がそのまま使える。</strong> 10.2.1 項の 12 体に Weibull を当てると $\hat k = 2.33$、$\hat\lambda = 161.4$ 万回だった。ここから</p>
+<table>
+<thead>
+<tr>
+<th>量</th>
+<th>式</th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTTF</td>
+<td>$\lambda\,\Gamma(1 + 1/k)$</td>
+<td style="text-align: right;">143.0 万回</td>
+</tr>
+<tr>
+<td>$B_{10}$ 寿命</td>
+<td>$\lambda(-\log 0.9)^{1/k}$</td>
+<td style="text-align: right;">61.4 万回</td>
+</tr>
+<tr>
+<td>$S(200)$</td>
+<td>$\exp\{-(200/\lambda)^k\}$</td>
+<td style="text-align: right;">0.193</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$S(200) = 0.193$ に注目したい。</strong> Kaplan–Meier は $200$ 万回で $0.250$ を返して止まっていた (10.4 節)。パラメトリックモデルは分布形を仮定するぶん<strong>打ち切りの先まで外挿できる</strong>が、その値は<strong>データではなく仮定から来ている。</strong></p>
+<p>$\hat k = 2.33 > 1$ なのでハザードは増加しており、摩耗型の故障である。<strong>この $k$ が 1 を超えているかどうかが、予防保全に意味があるかどうかを決める</strong> — $k = 1$ (指数、無記憶性) なら、部品を新品に取り替えても故障率は変わらないので、時間基準の交換は無駄になる (2.6.3 項の無記憶性の話が、ここで保全方針に直結する)。</p>
 <h3 id="c10-10-7-2">10.7.2 加速寿命モデル (AFT)</h3>
 <p>10.7.1 項とは<strong>別の書き方</strong>がある。共変量がハザードを倍にするのではなく、<strong>時間そのものを速く進める</strong>と考える。加速試験を行う技術者にとっては、こちらのほうが直感に合う。</p>
 <blockquote>
@@ -21138,6 +21358,45 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 </tbody>
 </table>
 <p>外挿 (試験範囲外の低応力での寿命) をするなら分布形を仮定するしかない。その代わり分布形の誤りが外挿誤差に直結するので、10.8.3 節の確率紙で形を確かめる。</p>
+<p><strong>10.2.1 項の同じデータに 3 つを当てると、答えがこう分かれる。</strong></p>
+<table>
+<thead>
+<tr>
+<th>問い</th>
+<th>Kaplan–Meier</th>
+<th>Cox</th>
+<th>Weibull</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$S(200)$ は</td>
+<td>0.250 (データそのもの)</td>
+<td>—</td>
+<td>0.193</td>
+</tr>
+<tr>
+<td>$S(300)$ は</td>
+<td><strong>答えられない</strong></td>
+<td>—</td>
+<td>0.014</td>
+</tr>
+<tr>
+<td>表面処理の効果は</td>
+<td>曲線を 2 本描くだけ</td>
+<td>ハザード比 0.42</td>
+<td>尺度母数の比として</td>
+</tr>
+<tr>
+<td>仮定</td>
+<td>無し</td>
+<td>比例ハザード</td>
+<td>比例ハザード + Weibull</td>
+</tr>
+</tbody>
+</table>
+<p><strong>「答えられない」が Kaplan–Meier の正直さである。</strong> 打ち切りの先は観測していないので、何も言わない。Weibull の $S(300) = 0.014$ は<strong>仮定に支えられた外挿</strong>で、数字が出ること自体は精度を意味しない。</p>
+<p>実務での使い分けは順序が決まっている。<strong>まず Kaplan–Meier で描いて形を見る</strong> (仮定なし)。<strong>次に Cox で共変量の効果を測る</strong> (分布形の仮定なし)。<strong>最後に、外挿や寿命予測が要るときだけ Weibull に進む</strong> (仮定が最も重い)。仮定の軽いほうから重いほうへ、というのが 5.7 節のモデル診断と同じ作法である。</p>
 <h2 id="c10-10-8">10.8 信頼性工学</h2>
 <p>10.2〜10.7 節は 1 つの品目の寿命の話だった。<strong>実務では、部品が集まった系の信頼度と、保全の計画に答えなければならない。</strong> 使う数学は同じで、<strong>言葉と問いの立て方</strong>が工学の側に寄る。</p>
 <h3 id="c10-10-8-1">10.8.1 バスタブ曲線と Weibull</h3>
@@ -21199,6 +21458,34 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p><strong>証明の要点.</strong> 極限 $G$ は <strong>max 安定</strong>でなければならない: $M_{nk}$ は $k$ 個の $M_n$ の最大値なので、$G^k(x) = G(\alpha_k x + \beta_k)$ を満たす定数 $\alpha_k, \beta_k$ が存在する。この関数方程式を解く。$-\log(-\log G)$ を $\psi$ とおくと $\psi(\alpha_k x + \beta_k) - \psi(x) = -\log k$ となり、$\alpha_k \equiv 1$ なら $\psi$ は線形 (Gumbel)、$\alpha_k \ne 1$ なら固定点 $x_0$ のまわりで $\psi$ は $\log|x - x_0|$ の線形関数 (Fréchet または Weibull)。関数方程式の解が「加法的か乗法的か」の二択に帰着するのが本質で、初等的な導出も知られている<sup id="c10-fnref:1"><a class="footnote-ref" href="#c10-fn:1">1</a></sup>。$\square$</p>
 <p>3 型を 1 つの式にまとめたのが GEV で (von Mises 1936、Jenkinson 1955)、<strong>データから型を選ばずに $\xi$ を推定できる</strong>のが実用上の利点である。$\xi < 0$ のときは上限 $\mu - \sigma/\xi$ が存在する (これより大きい値は起きない)。$\xi > 0$ では裾がベキ的に重く、$k$ 次モーメントは $k < 1/\xi$ でしか存在しない。</p>
 <figure><img loading="lazy" decoding="async" alt="図 10.6 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである" src="fig/10_gev.png" /><figcaption>図 10.6 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである</figcaption></figure>
+<p><strong>$\xi$ の符号が何を意味するかを数で見る。</strong> 位置 $\mu = 32$、尺度 $\sigma = 4.5$ を固定し、$\xi$ だけ変えて 100 年再現レベルを計算すると</p>
+<table>
+<thead>
+<tr>
+<th>$\xi$</th>
+<th style="text-align: right;">$-0.10$ (Weibull 型)</th>
+<th style="text-align: right;">$0$ (Gumbel 型)</th>
+<th style="text-align: right;">$+0.15$ (Fréchet 型)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100 年再現レベル</td>
+<td style="text-align: right;">48.6</td>
+<td style="text-align: right;">52.7</td>
+<td style="text-align: right;"><strong>61.8</strong></td>
+</tr>
+<tr>
+<td>上限の有無</td>
+<td style="text-align: right;">あり ($\mu - \sigma/\xi = 77$)</td>
+<td style="text-align: right;">無し</td>
+<td style="text-align: right;">無し</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$\xi$ が $-0.10$ と $+0.15$ で、100 年再現レベルが $48.6$ と $61.8$、27% 違う。</strong> 位置と尺度は同じなのに、である。</p>
+<p>3 つの型の違いは<strong>「どこまで大きくなりうるか」</strong>にある。$\xi < 0$ は上限を持つ (物理的な上限がある量 — 貯水池の水位、部材が受けうる最大荷重)。$\xi = 0$ は上限が無いが指数的に減衰する。$\xi > 0$ はべき的にしか減衰せず、<strong>平均や分散が存在しないこともある</strong> ($\xi \ge 1$ で平均が、$\xi \ge 0.5$ で分散が発散)。</p>
+<p><strong>$\xi$ は 3 つのパラメータのうち最も推定しにくく、外挿ではいちばん効く。</strong> 2.12.2 項でも同じことを述べたが、10.10.2 項で見るとおり $N = 40$ 年の記録では $\xi$ の標準誤差が $\pm 0.2$ 程度あり、上の表の幅がそのまま推定の不確かさになる。</p>
 <h3 id="c10-10-9-3">10.9.3 どの分布がどの型に引き寄せられるか</h3>
 <p>10.9.2 項で 3 つの型が出た。<strong>目の前の量がどの型になるのかは、母集団の右裾の減衰だけで決まる。</strong> 風速・流量・地震動それぞれについて、どの型を想定すべきかの根拠になる。</p>
 <p>母集団の分布 $F$ が Gumbel/Fréchet/Weibull のどの型に収束するか (<strong>最大値吸引域</strong>) は、$F$ の<strong>右裾の減衰の速さ</strong>だけで決まる。</p>
@@ -21338,6 +21625,27 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 <p>年あたり $n_y$ 個の観測 (日次なら 365) があり、閾値超過の割合を $\zeta_u = P(X > u)$ とする。$N$ 年再現レベル $x_N$ は $P(X > x_N) = 1/(N n_y)$ から</p>
 <p>$$x_N = u + \frac{\tilde\sigma}{\xi}\left\{(N n_y \zeta_u)^{\xi} - 1\right\}$$</p>
 <p>($\xi = 0$ なら $u + \tilde\sigma\log(N n_y\zeta_u)$)。$\zeta_u$ は超過数/総数で推定する。日次データの自己相関 (嵐は数日続く) があるとき、超過は独立でないので<strong>デクラスタリング</strong> (連続する超過を 1 つのクラスタとしてその最大だけを使う) が要る。この極値指数の扱いを怠ると、独立標本数を過大評価して信頼区間が狭くなりすぎる。</p>
+<p><strong>数を入れる。</strong> 日最大風速の記録に閾値 $u = 30\,\mathrm{m/s}$ を当て、超過率 $\zeta_u = 0.08$ (年 365 日のうち約 29 日が超過)、当てはめた GP 分布が $\tilde\sigma = 6.2$、$\xi = 0.05$ だったとする。</p>
+<table>
+<thead>
+<tr>
+<th>$N$ (年)</th>
+<th style="text-align: right;">50</th>
+<th style="text-align: right;">100</th>
+<th style="text-align: right;">500</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>再現レベル $x_N$ ($\mathrm{m/s}$)</td>
+<td style="text-align: right;">84.5</td>
+<td style="text-align: right;">90.8</td>
+<td style="text-align: right;">106.3</td>
+</tr>
+</tbody>
+</table>
+<p>$N$ が 10 倍になっても再現レベルは 1.26 倍にしかならない。<strong>$\xi$ が小さいときは対数的にしか伸びない</strong>からである ($\xi \to 0$ で $x_N \to u + \tilde\sigma\log(N n_y \zeta_u)$)。</p>
+<p><strong>この鈍さは諸刃である。</strong> 一方では「$N$ を安全側に大きく取っても設計値がさほど上がらない」という安心材料になる。他方、$\xi$ が少し大きいだけで伸び方が一変する — $\xi = 0.20$ なら 500 年再現レベルは $106$ ではなく $210$ になる。<strong>再現期間を延ばすことより、$\xi$ を精度よく推定することのほうが効く。</strong></p>
 <h3 id="c10-10-10-6">10.10.6 定常性の仮定</h3>
 <p>10.10.1〜10.10.5 項はすべて、<strong>年最大値の分布が年によらない</strong>ことを前提にしていた。気候変動も観測環境の変化も、この前提を崩す。</p>
 <p>年最大値法も POT も、年最大値が同一分布 (定常) であることを仮定する。気候変動や観測環境の変化 (計器の移設、周辺の建物) があると位置パラメータ $\mu$ が時間の関数になる。$\mu(t) = \mu_0 + \mu_1 t$ のように共変量で回帰する非定常 GEV が使えるが、「$T$ 年再現レベル」の意味自体が年ごとに変わるので、報告には注意が要る。</p>
