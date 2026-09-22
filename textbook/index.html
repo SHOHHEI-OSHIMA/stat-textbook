@@ -164,6 +164,8 @@ details.gap > summary:hover{text-decoration:underline}
 .iact button:hover{background:var(--accent-soft);border-color:var(--accent)}
 /* つまみ。1 行 1 つで、名前・スライダ・現在値を横に並べる */
 .iact .sl{display:flex;align-items:center;gap:.55rem;margin-top:.5rem;font-size:.8rem}
+/* display:flex は UA の [hidden]{display:none} に勝ってしまうので明示する */
+.iact .sl[hidden]{display:none}
 .iact .sl > span:first-child{flex:none;min-width:5.2em;color:var(--muted)}
 .iact .sl > b{flex:none;min-width:4.6em;text-align:right;color:var(--ink);
   font-weight:500;font-variant-numeric:tabular-nums}
@@ -12436,6 +12438,29 @@ $$p(\theta \mid y) = \frac{p(y \mid \theta)\, p(\theta)}{p(y)}, \qquad p(y) = \i
 <p>証明の要点: 同時分布を二通りに分解すると $p(\theta, y) = p(\theta \mid y)\, p(y) = p(y \mid \theta)\, p(\theta)$。両辺を $p(y)$ で割れば得られる。分母 $p(y)$ は<strong>周辺尤度</strong> (または証拠、evidence) と呼ばれ、$\theta$ を含まないので事後分布の<strong>正規化定数</strong>にすぎない。したがって実用上は</p>
 <p>$$p(\theta \mid y) \propto p(y \mid \theta)\, p(\theta) \qquad (\text{事後} \propto \text{尤度} \times \text{事前})$$</p>
 <p>だけ覚えておけばよく、正規化は最後に (解析的に、または数値的に) 行う。周辺尤度が主役になるのはモデル比較 (8.7 節) のときである。</p>
+<details class="gap"><summary>行間: 分母の $p(y)$ はどこへ消えたのか</summary><div class="gap-body"><p>本文では「$p(y)$ は $\theta$ を含まないので正規化定数にすぎない」と 1 行で書いて、等号を
+比例記号に落とした。その中身である。</p>
+<p><strong>記号の役割を先に固定する。</strong> $y$ は<strong>観測して数が決まった</strong>もので、以下ずっと動かさない。
+$\theta$ だけが動く変数である。$p(\theta \mid y)$ も $p(y \mid \theta)\,p(\theta)$ も、
+この節では「$\theta$ の関数」として見る。</p>
+<p><strong>1. $p(y)$ の定義を書き出す。</strong> 定理 8.1 の分母はこれである。</p>
+<p>$$p(y) = \int p(y \mid \theta)\, p(\theta)\, d\theta$$</p>
+<p><strong>2. ここに $\theta$ が残っていないことを確かめる。</strong> $\theta$ は<strong>積分変数</strong>であり、
+積分し終えた時点で消える。$\int_0^1 x\,dx = 1/2$ に $x$ が残らないのと同じである。
+残っているのは $y$ だけで、その $y$ は固定されている。よって $p(y)$ はただの数である。</p>
+<p><strong>3. だから定数を前に出せる。</strong> $c = 1/p(y)$ と置く。</p>
+<p>$$p(\theta \mid y) = c\, p(y \mid \theta)\, p(\theta)$$</p>
+<p><strong>$\theta$ をどう動かしても $c$ は同じ</strong>なので、$\theta$ の関数としての形 —— 山がどこにあるか、
+どれだけ広いか —— は右辺の積だけで決まる。これが $\propto$ の意味である。</p>
+<p><strong>4. 定数は後から決められる。</strong> $p(\theta \mid y)$ は密度なので</p>
+<p>$$\int p(\theta \mid y)\, d\theta = 1$$</p>
+<p>を満たさねばならない。3 を代入すれば $c$ は一意に決まる。つまり<strong>先に形を求め、
+最後に高さを合わせる</strong>という順序が取れる。共役の場合 (8.3 節) は積分すら要らず、
+出てきた形を見て「これは $\mathrm{Beta}$ の核だ」と名前を読むだけで $c$ が決まる。</p>
+<p><strong>落とし穴。</strong> $p(y)$ が定数なのは<strong>この推論の中だけ</strong>である。$y$ を動かせば $p(y)$ は動くし、
+モデルを取り替えれば別の値になる。8.7.1 のベイズ因子は $y$ を固定したままモデルを取り替えて
+$p(y \mid M_1)/p(y \mid M_0)$ を見るので、そこでは $p(y)$ が主役そのものである。
+「正規化定数だから無視してよい」は、$\theta$ について事後分布を求める場面に限った話である。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 8.1 事前 × 尤度 ∝ 事後。ベータ事前 Beta(2,8) (平均 0.2) と真値 0.6 の二項データ。n が増えると事後は尤度に支配され、事前の影響は消えていく" src="fig/08_prior_lik_post.png" /><figcaption>図 8.1 事前 × 尤度 ∝ 事後。ベータ事前 Beta(2,8) (平均 0.2) と真値 0.6 の二項データ。n が増えると事後は尤度に支配され、事前の影響は消えていく</figcaption></figure>
 <p>図 8.1 は、事前分布が「真値から外れた」信念を持っていても、データが増えれば事後が真値へ集中することを示している。</p>
 <p>この図はつまみで動かせる (標本数 $n$ と事前の強さ)。動かすと、事後がどちらに寄るかだけでなく、<strong>事後平均が事前平均と最尤推定値のちょうど加重平均になっている</strong>ことが数字で見える。その式はベータ–二項の共役性から出るので 8.3.1 で導く。これは事後分布の<strong>一致性</strong>: 正則条件下で $p(\theta \mid y_{1:n})$ は $n \to \infty$ で真値に退化し、さらに $\sqrt n$ の尺度で見ると正規分布 $N(\hat\theta_{\rm MLE}, I(\hat\theta)^{-1}/n)$ に近づく (Bernstein–von Mises の定理)。つまり<strong>大標本ではベイズも最尤も同じ答えに至り、事前分布が効くのは小標本のときだけ</strong>である。</p>
@@ -12531,6 +12556,30 @@ $a$ が事前の疑似観測の<strong>総数</strong>、$y$ が実観測の成�
 $$\lambda \mid y \sim \mathrm{Gamma}\!\left(\alpha + \textstyle\sum y_i,\; \beta + n\right)$$</p>
 </blockquote>
 <p>証明: $\prod_i \lambda^{y_i} e^{-\lambda} \cdot \lambda^{\alpha-1}e^{-\beta\lambda} = \lambda^{\alpha + \sum y_i - 1} e^{-(\beta+n)\lambda}$。事後平均は $(\alpha + \sum y_i)/(\beta + n)$ で、これも事前平均 $\alpha/\beta$ と MLE $\bar y$ を $\beta : n$ で混ぜた加重平均である。$\beta$ は「事前に観測した期間の長さ」、$\alpha$ は「その間の件数」と読める。地震・落雷・事故など<strong>稀な事象の発生率</strong>を、少ない実績と過去の統計から推定する標準形である。</p>
+<details class="gap"><summary>行間: 共役性を確かめる「核だけ見る」操作を 1 手ずつ</summary><div class="gap-body"><p>本文は $\prod_i \lambda^{y_i}e^{-\lambda}\cdot\lambda^{\alpha-1}e^{-\beta\lambda}$ を 1 行で
+整理して「事後平均は」へ飛んだ。その 1 行を開く。共役性の確認はどの対でも同じ 4 手なので、
+ここで覚えておけば 8.3.1 も 8.3.3 も同じ手が効く。</p>
+<p><strong>記号の役割。</strong> 動くのは $\lambda > 0$ だけである。$y_1,\dots,y_n$ と $\alpha, \beta$ は
+観測ずみ・設定ずみの数で、以下では「$\lambda$ を含むか含まないか」だけを見る。</p>
+<p><strong>1. 尤度を書く。</strong> Poisson の確率関数を $n$ 個掛ける。</p>
+<p>$$p(y \mid \lambda) = \prod_{i=1}^{n} \frac{\lambda^{y_i} e^{-\lambda}}{y_i!}$$</p>
+<p><strong>2. $\lambda$ を含まない因子を落とす。</strong> $\prod_i 1/y_i!$ は $\lambda$ に依らないので、
+8.2.1 の $c$ と同じ扱いで $\propto$ の外へ捨てる。<strong>これが「核だけ見る」の正体</strong>である。</p>
+<p>$$p(y \mid \lambda) \propto \prod_{i=1}^{n} \lambda^{y_i} e^{-\lambda}$$</p>
+<p><strong>3. 同じ底の冪をまとめる。</strong> $\lambda$ の肩は足し算、$e$ の肩も足し算になる。</p>
+<p>$$\prod_i \lambda^{y_i} = \lambda^{\sum_i y_i}, \qquad \prod_i e^{-\lambda} = e^{-n\lambda}$$</p>
+<p><strong>4. 事前を掛けて、もう一度まとめる。</strong> 事前の核は $\lambda^{\alpha-1}e^{-\beta\lambda}$ である。</p>
+<p>$$p(\lambda \mid y) \propto \lambda^{\sum y_i}\, e^{-n\lambda} \cdot \lambda^{\alpha-1} e^{-\beta\lambda}$$</p>
+<p>$$p(\lambda \mid y) \propto \lambda^{\alpha + \sum y_i - 1}\, e^{-(\beta+n)\lambda}$$</p>
+<p><strong>5. 形を見て名前を読む。</strong> $\mathrm{Gamma}(A, B)$ の核は $\lambda^{A-1}e^{-B\lambda}$ である。
+肩どうしを見比べると $A - 1 = \alpha + \sum y_i - 1$、$B = \beta + n$。よって</p>
+<p>$$A = \alpha + \sum_i y_i, \qquad B = \beta + n$$</p>
+<p><strong>なぜ名前を読むだけでよいか。</strong> 密度は「形 × 高さ」で、形が決まれば高さは
+$\int p = 1$ から自動的に決まる (8.2.1 の 4)。$\mathrm{Gamma}(A,B)$ の核を持つ密度は
+$\mathrm{Gamma}(A,B)$ しかないので、正規化定数を計算せずに事後が同定できる。</p>
+<p><strong>落とし穴。</strong> 核の肩は $A-1$ であって $A$ ではない。$\lambda^{\alpha+\sum y_i-1}$ を見て
+$A = \alpha + \sum y_i - 1$ としてしまう取り違えが最も多い。$-1$ を足し戻すこと。
+同じ理由でベータ–二項 (8.3.1) も $\theta^{a+y-1}$ から $a+y$ を読む。</p></div></details>
 <h3 id="c08-8-3-3">8.3.3 正規–正規</h3>
 <blockquote>
 <p><strong>定理 8.4 (正規–正規、分散既知)</strong> $y_i \mid \mu \overset{\rm iid}{\sim} N(\mu, \sigma^2)$ ($\sigma^2$ 既知)、$\mu \sim N(\mu_0, \tau_0^2)$ ならば $\mu \mid y \sim N(\mu_n, \tau_n^2)$、ここで
@@ -12539,6 +12588,39 @@ $$\frac{1}{\tau_n^2} = \frac{1}{\tau_0^2} + \frac{n}{\sigma^2}, \qquad \mu_n = \
 <p>証明の要点: 対数事後は $\mu$ の 2 次式</p>
 <p>$$\log p(\mu \mid y) = -\frac{(\mu-\mu_0)^2}{2\tau_0^2} - \sum_i \frac{(y_i-\mu)^2}{2\sigma^2} + \text{const} = -\frac{\mu^2}{2}\left(\frac{1}{\tau_0^2} + \frac{n}{\sigma^2}\right) + \mu\left(\frac{\mu_0}{\tau_0^2} + \frac{n\bar y}{\sigma^2}\right) + \text{const}$$</p>
 <p>であり ($\sum y_i = n\bar y$ を使った)、$\mu^2$ の係数が $-1/(2\tau_n^2)$、$\mu$ の係数が $\mu_n/\tau_n^2$ になるよう平方完成すれば正規分布の対数密度になる。</p>
+<details class="gap"><summary>行間: 精度が足し算になるのはなぜか</summary><div class="gap-body"><p>本文は長い等号 1 本で「対数事後は $\mu$ の 2 次式」まで進めて、「平方完成すれば」で
+終えた。展開と係数集めを 1 手ずつ開く。</p>
+<p><strong>記号の役割。</strong> 動く変数は $\mu$ だけである。$y_1,\dots,y_n$、$\bar y$、$\sigma^2$、
+$\mu_0$、$\tau_0^2$、$n$ はすべて固定された数。以下、$\mu$ を含まない項はまとめて $C$ と書き、
+$C$ の中身は最後まで一度も要らない (8.2.1 の $c$ の対数版である)。</p>
+<p><strong>1. 対数を取って積を和にする。</strong> 事後 $\propto$ 尤度 $\times$ 事前 の両辺の対数。</p>
+<p>$$\log p(\mu \mid y) = -\frac{(\mu-\mu_0)^2}{2\tau_0^2} - \sum_i \frac{(y_i-\mu)^2}{2\sigma^2} + C$$</p>
+<p><strong>2. 事前側の二乗を展開する。</strong></p>
+<p>$$(\mu - \mu_0)^2 = \mu^2 - 2\mu_0\,\mu + \mu_0^2$$</p>
+<p>$\mu_0^2$ は $\mu$ を含まないので $C$ へ移す。</p>
+<p><strong>3. 尤度側の和を展開する。</strong> ここが本文の飛ばしどころである。$\mu$ は $i$ に依らないので、
+$\sum_i \mu^2 = n\mu^2$、$\sum_i y_i = n\bar y$ となる。</p>
+<p>$$\sum_i (y_i-\mu)^2 = n\mu^2 - 2n\bar y\,\mu + \sum_i y_i^2$$</p>
+<p>$\sum_i y_i^2$ も $\mu$ を含まないので $C$ へ。<strong>$n$ が出てくるのはここだけ</strong>で、
+「同じ値を $n$ 回足した」という一点から来ている。</p>
+<p><strong>4. 記号を置いて係数を集める。</strong> 式が長くなるので 2 つ名前を付ける。</p>
+<p>$$A = \frac{1}{\tau_0^2} + \frac{n}{\sigma^2}, \qquad b = \frac{\mu_0}{\tau_0^2} + \frac{n\bar y}{\sigma^2}$$</p>
+<p>2 と 3 を 1 に戻して $\mu^2$ の項と $\mu$ の項に分けると、対数事後はこう書ける。</p>
+<p>$$\log p(\mu \mid y) = -\frac{A}{2}\mu^2 + b\,\mu + C$$</p>
+<p><strong>5. 正規分布の対数密度も同じ形に開いておく。</strong> $N(m, v)$ の対数密度は
+$-(\mu-m)^2/(2v)$ に定数を足したものだから、展開すると</p>
+<p>$$-\frac{(\mu-m)^2}{2v} = -\frac{1}{2v}\mu^2 + \frac{m}{v}\mu + C'$$</p>
+<p><strong>6. 係数を見比べる。</strong> 2 次式が一致するなら係数が一致する。</p>
+<p>$$\frac{1}{v} = A, \qquad \frac{m}{v} = b$$</p>
+<p>第 1 式が定理の $1/\tau_n^2 = 1/\tau_0^2 + n/\sigma^2$、第 2 式から $m = v\,b$、すなわち
+$\mu_n = \tau_n^2\left(\mu_0/\tau_0^2 + n\bar y/\sigma^2\right)$ である。</p>
+<p><strong>なぜ「精度」が足し算なのか。</strong> 足し算が起きたのは 4 の $A$ の中だけで、$A$ は
+<strong>$\mu^2$ の係数</strong>である。分散は $\mu^2$ の係数の逆数に現れるので、足し算になるのは
+分散ではなくその逆数のほう —— これが精度と呼ばれる量である。事前の寄与 $1/\tau_0^2$ と
+データの寄与 $n/\sigma^2$ が、同じ $\mu^2$ の係数に並んで入るから足される。</p>
+<p><strong>落とし穴。</strong> 事後分散は $\tau_0^2 + \sigma^2/n$ <strong>ではない</strong>。逆数どうしが足されるので、
+事後分散は $\tau_0^2$ よりも $\sigma^2/n$ よりも<strong>小さい</strong>。分散が足されるのは独立な確率変数の
+<strong>和</strong>を作ったときであって、ここでやっているのは分布の和ではなく積である (8.3.1 の落とし穴と同じ)。</p></div></details>
 <p>この結果は重要な構造を持つ。<strong>精度 (分散の逆数) が足し算になる</strong>: 事後精度 = 事前精度 + データの精度 $n/\sigma^2$。そして事後平均は</p>
 <p>$$\mu_n = w\,\bar y + (1-w)\,\mu_0, \qquad w = \frac{n/\sigma^2}{1/\tau_0^2 + n/\sigma^2}$$</p>
 <p>と<strong>精度を重みとする加重平均</strong>になる。三つの共役対に共通するこの構造 — 「事後平均 = 事前平均と MLE の加重平均、重みは情報量」— が、ベイズ推定を理解する最短の要約である。</p>
@@ -12553,6 +12635,37 @@ $$\frac{1}{\tau_n^2} = \frac{1}{\tau_0^2} + \frac{n}{\sigma^2}, \qquad \mu_n = \
 <p><strong>定理 8.5 (再パラメータ化不変性)</strong> $\phi = h(\theta)$ が単調変換なら、$\theta$ の Jeffreys 事前を変数変換した密度は $\phi$ の Jeffreys 事前に一致する</p>
 </blockquote>
 <p>証明: 連鎖律より $\partial \log p/\partial\phi = (\partial \log p/\partial\theta)(d\theta/d\phi)$ なので、Fisher 情報量は $I(\phi) = I(\theta)(d\theta/d\phi)^2$ と変換される。よって $\sqrt{I(\phi)} = \sqrt{I(\theta)}\,|d\theta/d\phi|$ であり、右辺はまさに $p_J(\theta)$ を変数変換した密度 $p_J(\theta)|d\theta/d\phi|$ である。</p>
+<details class="gap"><summary>行間: 「不変」とは何と何が一致することなのか</summary><div class="gap-body"><p>本文は連鎖律から 3 つの等号で証明を終えている。飛んでいるのは計算よりも
+<strong>「一致する」の中身</strong>のほうなので、まずそこから名指しする。</p>
+<p><strong>記号の役割。</strong> $\phi = h(\theta)$ は単調変換で、逆に $\theta = h^{-1}(\phi)$ と戻せる。
+$J = d\theta/d\phi$ をヤコビアンと呼ぶ。データ $y$ は固定。$p_J(\theta)$ と $p_J(\phi)$ は
+<strong>それぞれの座標で Jeffreys の定義式を新たに適用して作った</strong>事前で、記号は似ているが別の関数である。</p>
+<p><strong>1. 比べるべき 2 つを作る。</strong> 道は 2 本ある。</p>
+<ul>
+<li><strong>道 A</strong>: $\theta$ で Jeffreys 事前 $p_J(\theta)$ を作り、それを $\phi$ の密度へ<strong>変数変換</strong>する</li>
+<li><strong>道 B</strong>: 最初から $\phi$ を母数とみなし、$\phi$ の Fisher 情報量から $p_J(\phi)$ を作る</li>
+</ul>
+<p>定理 8.5 が主張しているのは<strong>この 2 本が同じ関数に着く</strong>ことである。</p>
+<p><strong>2. 道 A を書く。</strong> 密度の変数変換則 (8.4.1 の $(2)$ と同じ規則) より</p>
+<p>$$p_A(\phi) = p_J(\theta)\,|J| \propto \sqrt{I(\theta)}\,|J|$$</p>
+<p><strong>3. 道 B のために $I(\phi)$ を出す。</strong> 対数尤度は座標に名前を付け替えただけの同じ数なので、
+連鎖律が使える。</p>
+<p>$$\frac{\partial \log p}{\partial \phi} = \frac{\partial \log p}{\partial \theta}\cdot J$$</p>
+<p><strong>4. 二乗して期待値を取る。</strong> 定義 3.5 のスコアの二乗の形 $I = E[(\partial \log p)^2]$ を使う。
+$J$ は確率変数 $y$ に依らない<strong>ただの数</strong>なので、期待値の外に出せる。ここが要点である。</p>
+<p>$$I(\phi) = E\!\left[\left(\frac{\partial \log p}{\partial\theta}\right)^2\right] J^2 = I(\theta)\,J^2$$</p>
+<p><strong>5. 平方根を取る。</strong> 平方根は非負なので $\sqrt{J^2} = |J|$ であって $J$ ではない。</p>
+<p>$$p_B(\phi) \propto \sqrt{I(\phi)} = \sqrt{I(\theta)}\;|J|$$</p>
+<p><strong>6. 2 と 5 を見比べる。</strong> 右辺が同じ式である。よって $p_A = p_B$ で、道 A と道 B は一致する。</p>
+<p><strong>なぜこれが「無知の表現」として望ましいか。</strong> 座標を $\theta$ で取るか $\phi$ で取るかは、
+長さを m で測るか mm で測るかと同じで、こちらの都合である。その都合で事前分布が
+<strong>別の意見に変わってしまう</strong>のが 8.4.1 の一様事前の難点だった。Jeffreys 則はその難点を
+消すように作られている。</p>
+<p><strong>落とし穴。</strong> 不変なのは<strong>作り方</strong>であって、密度の<strong>値</strong>ではない。$p_J(\phi)$ の値は
+$p_J(\theta)$ の値と $|J|$ 倍だけ違う。密度の値が一致すると思うと、5 の $|J|$ が余計に見えて
+混乱する。値ではなく「同じ確率をどの区間にも割り当てるか」が一致する、と読む。
+なお不変性が言えているのは母数が 1 つのときで、多母数では $\sqrt{\det I}$ の取り方に
+複数の流儀が生じる (8.14.1)。</p></div></details>
 <p>例: 二項分布では $I(\theta) = n/(\theta(1-\theta))$ より $p_J \propto \theta^{-1/2}(1-\theta)^{-1/2}$、すなわち $\mathrm{Beta}(1/2, 1/2)$。正規分布の平均には $p_J \propto 1$、標準偏差には $p_J(\sigma) \propto 1/\sigma$ (対数尺度で一様)。尺度母数に $1/\sigma$ を置くのは「単位を変えても同じ」という要請から自然である。</p>
 <h3 id="c08-8-4-3">8.4.3 弱情報事前分布 (実務の標準)</h3>
 <p>現代の実務では、真の無情報を追うより<strong>弱情報事前</strong> (weakly informative prior) を置くことが多い。物理的にあり得る範囲を緩く覆い、あり得ない値 (負の強度、桁違いの係数) を排除する程度の事前である。階層モデルの分散パラメータに逆ガンマ $(\epsilon, \epsilon)$ を「無情報」のつもりで置くと、$\epsilon$ の選び方に事後が強く依存することが知られており、半 Cauchy などの弱情報事前が推奨される<sup id="c08-fnref:2"><a class="footnote-ref" href="#c08-fn:2">2</a></sup>。事前分布が結果を左右するときは、<strong>複数の事前で結果を出して感度を報告する</strong>のが誠実な手続きである。</p>
@@ -12562,6 +12675,36 @@ $$\frac{1}{\tau_n^2} = \frac{1}{\tau_0^2} + \frac{n}{\sigma^2}, \qquad \mu_n = \
 $$p(\tilde y \mid y) = \int p(\tilde y \mid \theta)\, p(\theta \mid y)\, d\theta$$</p>
 </blockquote>
 <p>母数の不確かさを積分で消し込んだ予測であり、点推定を代入した $p(\tilde y \mid \hat\theta)$ より広がる。例: ベータ–二項で次の 1 回が成功する確率は $P(\tilde y = 1 \mid y) = E[\theta \mid y] = (a+y)/(a+b+n)$ (Laplace の継起則: $a=b=1$ なら $(y+1)/(n+2)$)。正規–正規 (分散既知) なら $\tilde y \mid y \sim N(\mu_n, \tau_n^2 + \sigma^2)$ — 母数の不確かさ $\tau_n^2$ と観測のばらつき $\sigma^2$ が足し合わさる。分散未知・平坦事前なら $\tilde y \mid y \sim t_{n-1}\!\left(\bar y, s^2(1 + 1/n)\right)$ で、これは第 5 章の予測区間と同じ式である。</p>
+<details class="gap"><summary>行間: 予測の分散で $\tau_n^2$ と $\sigma^2$ が足されるところ</summary><div class="gap-body"><p>本文は正規–正規の事後予測を $\tilde y \mid y \sim N(\mu_n,\ \tau_n^2 + \sigma^2)$ と
+結果だけ書いた。定義 8.4 の積分をどう通るとこうなるかを開く。</p>
+<p><strong>記号の役割。</strong> ここでは $\mu$ も $\tilde y$ も<strong>確率変数</strong>である。$\mu$ は事後分布
+$N(\mu_n, \tau_n^2)$ に従い、$\tilde y$ は $\mu$ を与えたもとで $N(\mu, \sigma^2)$ に従う。
+$y$ (既に観測したデータ) は固定で、以下の条件付けにはずっと $y$ が入っているが、
+書くと煩いので省く。</p>
+<p><strong>1. 2 段の生成として書き直す。</strong> 定義 8.4 の積分は、次の 2 段で $\tilde y$ を作ることと同じである。</p>
+<p>$$\mu \sim N(\mu_n,\ \tau_n^2), \qquad \tilde y \mid \mu \sim N(\mu,\ \sigma^2)$$</p>
+<p>積分 $\int p(\tilde y\mid\theta)p(\theta\mid y)d\theta$ は「$\mu$ を引いてから $\tilde y$ を引く」
+という手続きの、$\mu$ を消した後の分布そのものである。</p>
+<p><strong>2. 第 2 段を足し算の形に直す。</strong> $\tilde y \mid \mu \sim N(\mu, \sigma^2)$ は</p>
+<p>$$\tilde y = \mu + e, \qquad e \sim N(0,\ \sigma^2)$$</p>
+<p>と書ける。<strong>$e$ は $\mu$ と独立</strong>である —— 観測誤差の大きさは母数の値に依らない、
+というのが正規モデルの仮定だからである。ここが 4 で効く。</p>
+<p><strong>3. 平均を取る。</strong> 独立なので期待値は素直に足せる。</p>
+<p>$$E[\tilde y \mid y] = E[\mu \mid y] + E[e] = \mu_n + 0$$</p>
+<p><strong>4. 分散を取る。</strong> 独立な 2 つの和だから、分散は足し算になる (第 2 章)。</p>
+<p>$$\mathrm{Var}(\tilde y \mid y) = \mathrm{Var}(\mu \mid y) + \mathrm{Var}(e) = \tau_n^2 + \sigma^2$$</p>
+<p><strong>ここが本題である。</strong> $\tau_n^2$ は「$\mu$ がどこにあるか分からない」ぶん、
+$\sigma^2$ は「$\mu$ が分かっていても観測はばらつく」ぶん。2 つは出どころが違い、
+独立なので足される。</p>
+<p><strong>5. 形が正規であることを言う。</strong> 独立な正規変数の和は正規 (第 2 章)。よって
+$\tilde y \mid y \sim N(\mu_n,\ \tau_n^2+\sigma^2)$。</p>
+<p><strong>落とし穴 1。</strong> 点推定を代入した $N(\mu_n, \sigma^2)$ は $\tau_n^2$ のぶんだけ狭い。
+本文の「点推定を代入したものより広がる」はこの差である。$n$ が小さいほど $\tau_n^2$ が
+大きいので、差も大きい。</p>
+<p><strong>落とし穴 2。</strong> 信用区間と予測区間は別物である。前者は $\mu$ という<strong>母数</strong>が入る範囲で
+幅は $\tau_n$ の程度、後者は次の<strong>観測 1 個</strong>が入る範囲で幅は $\sqrt{\tau_n^2+\sigma^2}$ の程度。
+$n \to \infty$ で前者は 0 に潰れるが、後者は $\sigma$ の程度で下げ止まる。
+8.10 の特性値が「事後予測分布の 5% 分位」で定義されるのは、次に打つ 1 本の供試体の話だからである。</p></div></details>
 <h3 id="c08-8-5-1">8.5.1 事後予測チェック</h3>
 <p>モデルが妥当かは、<strong>事後予測分布から複製データ $y^{\rm rep}$ を生成し、観測データと比べる</strong>ことで調べる (Gelman らが標準化した手続き)。統計量 $T(y)$ を決め、$T(y^{\rm rep})$ の分布の中で $T(y)$ がどこにあるかを見る。事後予測 p 値 $P(T(y^{\rm rep}) \ge T(y) \mid y)$ が 0 か 1 に近ければ、モデルはその側面を再現できていない。</p>
 <figure><img loading="lazy" decoding="async" alt="図 8.5 事後予測チェック。過分散な計数データにポアソン (ガンマ事前) を当てはめた。平均は再現できるが、複製データの分散・最大値は観測値に届かない。分布を負の二項に変えるべきという診断" src="fig/08_ppc.png" /><figcaption>図 8.5 事後予測チェック。過分散な計数データにポアソン (ガンマ事前) を当てはめた。平均は再現できるが、複製データの分散・最大値は観測値に届かない。分布を負の二項に変えるべきという診断</figcaption></figure>
@@ -12572,6 +12715,41 @@ $$p(\tilde y \mid y) = \int p(\tilde y \mid \theta)\, p(\theta \mid y)\, d\theta
 (i) 二乗損失 $L = (\theta - \hat\theta)^2$ なら<strong>事後平均</strong>、(ii) 絶対損失 $L = |\theta - \hat\theta|$ なら<strong>事後中央値</strong>、(iii) 0–1 損失 $L = \mathbb{1}\{|\theta - \hat\theta| > \epsilon\}$ の $\epsilon \to 0$ 極限なら<strong>事後最頻値 (MAP)</strong></p>
 </blockquote>
 <p>証明の要点: (i) $E[(\theta - c)^2 \mid y] = \mathrm{Var}(\theta \mid y) + (E[\theta \mid y] - c)^2$ は $c = E[\theta \mid y]$ で最小 (第 1 章の平均の二乗偏差最小性と同じ)。(ii) 第 1 章の中央値の絶対偏差最小性の連続版: $c$ を $dc$ 動かすと損失は $[P(\theta < c) - P(\theta > c)]\,dc$ だけ変わり、符号が変わる点は $P(\theta < c) = 1/2$。(iii) 期待損失は $1 - P(|\theta - c| \le \epsilon \mid y) \approx 1 - 2\epsilon\, p(c \mid y)$ で、$p(c \mid y)$ 最大の点で最小。</p>
+<details class="gap"><summary>行間: 二乗損失で平均、絶対損失で中央値が出るところを 1 行ずつ</summary><div class="gap-body"><p>本文は (i) を等式 1 本、(ii) を「$c$ を $dc$ 動かすと」の 1 行で済ませた。どちらも
+<strong>何が動いて何が固定か</strong>が見えないと追えないので、そこから始める。</p>
+<p><strong>記号の役割。</strong> $\theta$ は事後分布 $p(\theta\mid y)$ に従う<strong>確率変数</strong>である。
+$c$ は我々がこれから選ぶ<strong>数</strong>で、$\theta$ とは無関係に動かせる。期待値 $E[\,\cdot\mid y]$ は
+$\theta$ についてだけ取る。データ $y$ は固定。以下 $m = E[\theta \mid y]$ と置く。</p>
+<p><strong>(i) 二乗損失。</strong></p>
+<p><strong>1. $m$ を足して引く。</strong> 何もしていない変形である。</p>
+<p>$$\theta - c = (\theta - m) + (m - c)$$</p>
+<p><strong>2. 二乗して展開する。</strong> $m - c$ は数なので、$\theta$ について定数である。</p>
+<p>$$(\theta-c)^2 = (\theta-m)^2 + 2(\theta-m)(m-c) + (m-c)^2$$</p>
+<p><strong>3. 期待値を取り、3 項に分ける。</strong> 第 2 項で $(m-c)$ は定数だから外に出せて、
+残る $E[\theta - m \mid y] = m - m = 0$。ここが消える理由である。</p>
+<p>$$E[(\theta-c)^2 \mid y] = \mathrm{Var}(\theta \mid y) + (m-c)^2$$</p>
+<p><strong>4. $c$ で動くのは第 2 項だけ。</strong> 第 1 項は $c$ を含まない。第 2 項は二乗なので非負で、
+$c = m$ のときだけ 0。よって最小点は事後平均である。</p>
+<p><strong>(ii) 絶対損失。</strong></p>
+<p><strong>5. 絶対値を外して 2 つの積分に割る。</strong> $\theta < c$ なら $|\theta - c| = c - \theta$、
+$\theta > c$ なら $\theta - c$ である。$g(c)$ を期待損失と書く。</p>
+<p>$$g(c) = \int_{-\infty}^{c}(c-\theta)\,p\,d\theta + \int_{c}^{\infty}(\theta-c)\,p\,d\theta$$</p>
+<p>($p$ は $p(\theta\mid y)$ の略。)</p>
+<p><strong>6. $c$ で微分する。</strong> $c$ は<strong>積分の端</strong>と<strong>被積分関数の中</strong>の 2 か所に入っている。
+端が動くぶんの寄与は、境界 $\theta = c$ で被積分関数が $c - c = 0$ になるので消える。
+残るのは被積分関数を $c$ で微分したぶんだけで、第 1 項からは $+1$、第 2 項からは $-1$。</p>
+<p>$$g'(c) = \int_{-\infty}^{c} p\,d\theta - \int_{c}^{\infty} p\,d\theta$$</p>
+<p>$$g'(c) = P(\theta \le c \mid y) - P(\theta > c \mid y)$$</p>
+<p><strong>これが本文の $[P(\theta<c) - P(\theta>c)]$ である。</strong></p>
+<p><strong>7. 0 と置く。</strong> 2 つの確率は足して 1 なので、差が 0 になるのは両方 $1/2$ のとき。
+すなわち $c$ は事後中央値。</p>
+<p><strong>8. 最小であることを確かめる。</strong> $c$ を大きくすると第 1 項は増え第 2 項は減るので、
+$g'$ は非減少。$g'$ が負から正へ変わる点なので、$g$ はそこで最小になる。</p>
+<p><strong>落とし穴。</strong> ここで最小にしているのは<strong>事後分布についての期待損失</strong>であって、
+真の $\theta$ からの距離ではない。真値は分からないままである。「事後分布が正しいとして、
+平均的に損を最小にする一点」を選んでいるにすぎない。また 3 の $\mathrm{Var}(\theta\mid y)$ は
+$c$ に依らない —— ここを「$c$ で動く」と読むと 4 の議論が立たなくなる。
+事後が左右対称で単峰なら平均・中央値・最頻値は一致するが、歪んだ事後では 3 つとも別の点になる。</p></div></details>
 <p>MAP は事前分布を罰則項とみなした<strong>罰則付き最尤</strong> ($\log p(y \mid \theta) + \log p(\theta)$ の最大化) と同じである: 正規事前なら L2 (リッジ) 罰則、Laplace 事前なら L1 (Lasso) 罰則に対応する (第 7 章)。ただし MAP は再パラメータ化で変わる (密度の最頻値は座標に依存する) 一方、事後平均・中央値は損失の意味が明確なぶん扱いやすい。<strong>非対称損失</strong> (過大評価と過小評価で損失が違う) なら最小化点は分位点になる — 耐力を過大評価する方がはるかに危険な設計判断では、こちらの方が本来の形である。</p>
 <h2 id="c08-8-7">8.7 モデル比較</h2>
 <h3 id="c08-8-7-1">8.7.1 ベイズ因子</h3>
@@ -12605,6 +12783,66 @@ $$p(\tilde y \mid y) = \int p(\tilde y \mid \theta)\, p(\theta \mid y)\, d\theta
 $$E[\theta_j \mid y, \mu, \tau^2] = (1 - B_j)\,\bar y_j + B_j\,\mu, \qquad B_j = \frac{\sigma_j^2}{\sigma_j^2 + \tau^2}$$</p>
 </blockquote>
 <p>証明: 各 $j$ について、$\theta_j$ の事前 $N(\mu, \tau^2)$ と尤度 $N(\bar y_j; \theta_j, \sigma_j^2)$ に定理 8.4 を $n=1$ で適用すればよい。$B_j$ は<strong>縮小率</strong> (shrinkage factor) で、群の標本誤差 $\sigma_j^2$ が群間分散 $\tau^2$ に比べて大きいほど 1 に近く、その群の推定は全体平均 $\mu$ へ強く引き寄せられる。</p>
+<details class="gap"><summary>行間: 縮小率 $B_j$ はどこから出てくるのか</summary><div class="gap-body"><p>本文は「定理 8.4 を $n=1$ で適用すればよい」の 1 行で済ませた。<strong>何を何に対応させるのか</strong>と、
+精度の式が $B_j$ という比の形になるまでを開く。</p>
+<p><strong>記号の役割。</strong> $j$ は群の番号 ($j = 1,\dots,J$)。$\theta_j$ が推定したい群ごとの母数で、
+これが動く変数である。$\bar y_j$ は観測ずみ、$\sigma_j^2$ は既知、そして $\mu$ と $\tau^2$ は
+<strong>この計算の間は与えられた数として固定する</strong> (定理の条件付けが $\mid y,\mu,\tau^2$ なのはこの意味)。</p>
+<p><strong>1. 群を 1 つに絞れる理由を先に言う。</strong> $\mu, \tau^2$ を固定すると $\theta_1,\dots,\theta_J$ は
+互いに独立に $N(\mu,\tau^2)$ から生じ、$\bar y_j$ は $\theta_j$ だけに依存する。
+よって群 $j$ の事後は他の群を一切見ずに求まる。</p>
+<p><strong>2. 対応表を作る。</strong> 定理 8.4 の記号を、いまの問題の記号に読み替える。</p>
+<table>
+<thead>
+<tr>
+<th>定理 8.4</th>
+<th>ここでは</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>未知の平均 $\mu$</td>
+<td>$\theta_j$</td>
+</tr>
+<tr>
+<td>事前 $N(\mu_0, \tau_0^2)$</td>
+<td>$N(\mu, \tau^2)$</td>
+</tr>
+<tr>
+<td>観測 1 個の分散 $\sigma^2$</td>
+<td>$\sigma_j^2$</td>
+</tr>
+<tr>
+<td>標本数 $n$</td>
+<td>$1$</td>
+</tr>
+<tr>
+<td>標本平均 $\bar y$</td>
+<td>$\bar y_j$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$n=1$ の意味はこれである。</strong> $\bar y_j$ は本当は $n_j$ 個の平均だが、その事実は
+<strong>すでに $\sigma_j^2$ の中に畳み込まれている</strong> ($\sigma_j^2 = \sigma^2/n_j$)。
+だから「分散 $\sigma_j^2$ の観測が 1 個ある」と見れば足りる。</p>
+<p><strong>3. 精度を足す。</strong> 定理 8.4 の第 1 式に、対応表どおり代入する。$v_j$ を事後分散と書く。</p>
+<p>$$\frac{1}{v_j} = \frac{1}{\tau^2} + \frac{1}{\sigma_j^2}$$</p>
+<p><strong>4. 事後平均を書く。</strong> 定理 8.4 の第 2 式に代入。</p>
+<p>$$E[\theta_j \mid \cdot] = v_j\left(\frac{\mu}{\tau^2} + \frac{\bar y_j}{\sigma_j^2}\right)$$</p>
+<p><strong>5. 分数を払う。</strong> 3 を通分すると $v_j = \tau^2\sigma_j^2/(\tau^2+\sigma_j^2)$。
+これを 4 に入れて $\tau^2\sigma_j^2$ を配ると</p>
+<p>$$E[\theta_j \mid \cdot] = \frac{\sigma_j^2\,\mu + \tau^2\,\bar y_j}{\sigma_j^2 + \tau^2}$$</p>
+<p><strong>6. 重みに名前を付ける。</strong> $B_j = \sigma_j^2/(\sigma_j^2+\tau^2)$ と置けば、
+$\tau^2/(\sigma_j^2+\tau^2) = 1 - B_j$ である (2 つの分子を足すと分母になるから)。</p>
+<p>$$E[\theta_j \mid \cdot] = (1-B_j)\,\bar y_j + B_j\,\mu$$</p>
+<p><strong>重みに「相手の分散」が乗ることに注意する。</strong> $\bar y_j$ に掛かるのは $\tau^2$ のほうで、
+$\sigma_j^2$ ではない。自分の分散が大きいほど自分の重みは<strong>小さい</strong>という向きになる。
+5 の通分を追うと、これは 3 で精度 (分散の逆数) を足したことの裏返しだと分かる。</p>
+<p><strong>落とし穴。</strong> $B_j$ は $\tau^2$ を含むので、実際には<strong>推定された量</strong>である。上の式は
+$\tau^2$ を与えたもとでの事後平均であって、$\tau^2$ の不確かさは入っていない。
+完全ベイズではさらに $\tau^2$ の事後で平均を取ることになる (8.8.2)。
+$\tau^2$ をデータから決めるところが階層モデルの効きどころで、$J$ が小さいと
+$\tau^2$ がほとんど決まらないため、超事前の選び方が縮小率を直接動かす (8.14.4)。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 8.7 階層モデルの縮小。8 群の平均 (緑) が事後平均 (青) では全体平均へ寄る。右: 縮小率 B_j は群の標本数が少ないほど大きい" src="fig/08_hierarchical_shrinkage.png" /><figcaption>図 8.7 階層モデルの縮小。8 群の平均 (緑) が事後平均 (青) では全体平均へ寄る。右: 縮小率 B_j は群の標本数が少ないほど大きい</figcaption></figure>
 <p>縮小は「情報の借用」である: 標本の少ない群は、他の群から学んだ「群はだいたいこの範囲にある」という知識を借りる。この推定量は、Stein (1956) と James–Stein (1961) が示した「3 次元以上では標本平均は許容的でない (縮小推定量に一様に負ける)」という結果のベイズ的解釈になっている (Efron &amp; Morris 1975)。</p>
 <h3 id="c08-8-8-2">8.8.2 完全ベイズと経験ベイズ</h3>
@@ -27032,6 +27270,32 @@ function lgamma(x){
   for(let i = 0; i < 8; i++) a += C[i] / (x + i + 1);
   return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
 }
+// 標準正規の分布関数と分位点 (A&S 7.1.26 / Acklam)。動かせる図で使い回す
+function Phi(x){
+  const s = x < 0 ? -1 : 1, z = Math.abs(x) / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * z);
+  const y = 1 - ((((1.061405429*t - 1.453152027)*t + 1.421413741)*t
+                  - 0.284496736)*t + 0.254829592) * t * Math.exp(-z*z);
+  return 0.5 * (1 + s * y);
+}
+function zQuant(p){
+  const a=[-3.969683028665376e+1,2.209460984245205e+2,-2.759285104469687e+2,
+           1.383577518672690e+2,-3.066479806614716e+1,2.506628277459239e+0];
+  const b=[-5.447609879822406e+1,1.615858368580409e+2,-1.556989798598866e+2,
+           6.680131188771972e+1,-1.328068155288572e+1];
+  const c=[-7.784894002430293e-3,-3.223964580411365e-1,-2.400758277161838e+0,
+           -2.549732539343734e+0,4.374664141464968e+0,2.938163982698783e+0];
+  const d=[7.784695709041462e-3,3.224671290700398e-1,2.445134137142996e+0,
+           3.754408661907416e+0];
+  let q, r;
+  if(p < 0.02425){ q = Math.sqrt(-2*Math.log(p));
+    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if(p > 0.97575){ q = Math.sqrt(-2*Math.log(1-p));
+    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  q = p - 0.5; r = q*q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
+         (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
 function betaPdf(x, a, b){
   if(x <= 0 || x >= 1) return 0;
   const lp = (a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x)
@@ -27257,6 +27521,165 @@ IACT['03_ci_coverage'] = function(box){
   rs.onclick  = ()=>{ runs = []; miss = 0; seed = 20260922; draw(); };
   addEventListener('resize', draw, {passive:true});
   box.addEventListener('repaint', draw);
+  draw();
+};
+
+/* --- 検出力 (図 4.8) ---
+   図の生成元 (figures/make_figures_04.py) と同じ **一標本・両側・非心 t**。
+   scipy の値と 3e-7 まで一致することを確かめてある。
+
+   つまみは d = δ/σ 1 つ。δ と σ を別々にしない (本文 4.10.2 が d で書いている)。
+   **「観測された効果量」を入れられる作りにしない** — それは事後検出力で、
+   p 値の言い換えにしかならない (本文が明示的に警告している)。 */
+IACT['04_power_curve'] = function(box){
+  const ALPHAS = [0.01, 0.05, 0.10];
+  // 自由度が小さいと Cornish–Fisher が効かないので、そこだけ表で持つ
+  const TT = {0.005:[63.657,9.9248,5.8409,4.6041,4.0321,3.7074],
+              0.025:[12.706,4.3027,3.1824,2.7764,2.5706,2.4469],
+              0.05 :[6.3138,2.9200,2.3534,2.1318,2.0150,1.9432]};
+  let d = 0.5, n = 32, target = 0.8, ai = 1, mode = 'power';
+
+  function tQuant(p, df){
+    const tail = +(1 - p).toFixed(4);
+    if(TT[tail] && df <= 6) return TT[tail][df - 1];
+    const z = zQuant(p), z2 = z*z, z3 = z2*z, z5 = z3*z2, z7 = z5*z2, z9 = z7*z2;
+    return z + (z3+z)/(4*df) + (5*z5+16*z3+3*z)/(96*df*df)
+             + (3*z7+19*z5+17*z3-15*z)/(384*df*df*df)
+             + (79*z9+776*z7+1482*z5-1920*z3-945*z)/(92160*df*df*df*df);
+  }
+  // s = sqrt(V/df) で積分すると power = E_s[Φ(nc-tc s) + Φ(-nc-tc s)]
+  function power(dd, nn, alpha, m){
+    if(nn < 3) return alpha;
+    const df = nn - 1, nc = dd * Math.sqrt(nn), tc = tQuant(1 - alpha/2, df);
+    const k = Math.log(2) + (df/2)*Math.log(df/2) - lgamma(df/2);
+    const f = s => Math.exp(k + (df-1)*Math.log(s) - df*s*s/2)
+                 * (Phi(nc - tc*s) + Phi(-nc - tc*s));
+    // s の広がりは 1/sqrt(2df)。n が大きいほど 1 の周りに尖るので、
+    // 固定幅で積分すると山を跨いでしまう (n=100000 で検出力 0 になった)
+    const sd = 1/Math.sqrt(2*df);
+    const lo = Math.max(1e-9, 1 - 9*sd), hi = 1 + 9*sd;
+    const steps = m || 120, h = (hi - lo)/steps;
+    let acc = f(lo) + f(hi);
+    for(let i = 1; i < steps; i++) acc += f(lo + i*h) * (i % 2 ? 4 : 2);
+    return Math.min(1, Math.max(0, acc*h/3));
+  }
+  // 検出力は n について単調なので二分で探す
+  function needN(dd, alpha, want){
+    if(power(dd, 100000, alpha, 60) < want) return null;
+    let lo = 3, hi = 100000;
+    while(hi - lo > 1){
+      const mid = Math.floor((lo + hi)/2);
+      if(power(dd, mid, alpha, 60) >= want) hi = mid; else lo = mid;
+    }
+    return hi;
+  }
+
+  const cv = document.createElement('canvas');
+  box.appendChild(cv);
+  const rd = document.createElement('div'); rd.className = 'rd';
+  const ctl = document.createElement('div'); ctl.className = 'ctl';
+  const mb = document.createElement('button');
+  const ab = ALPHAS.map(a=>{
+    const b = document.createElement('button');
+    b.textContent = 'α ' + a.toFixed(2);
+    b.onclick = ()=>{ ai = ALPHAS.indexOf(a); paintAlpha(); draw(); };
+    return b;
+  });
+  function paintAlpha(){
+    ab.forEach((b, i)=>{ b.style.borderColor = i === ai ? css('--accent') : css('--line');
+                         b.style.color = i === ai ? css('--accent') : css('--ink'); });
+  }
+  ctl.append(mb, ...ab);
+  const hint = document.createElement('p'); hint.className = 'hint';
+  hint.innerHTML = '<b>d は「検出したい最小の差」であって、観測された効果量ではない。</b>'
+    + '観測値を入れると事後検出力になり、p 値の言い換えにしかならない (4.10.2)。<br>'
+    + 'd = δ/σ の δ と σ は<b>統計学の外から来る</b> — 現場の判断と過去データ。'
+    + 'これは決めごとを入れると答えが出る道具で、データから答えが出る道具ではない。';
+
+  const sD = slider(box, '検出したい差 d', 5, 150, 1, d*100, v=>(v/100).toFixed(2),
+                    v=>{ d = v/100; draw(); });
+  const sN = slider(box, '標本数 n', 3, 300, 1, n, v=>String(v), v=>{ n = v; draw(); });
+  const sT = slider(box, '目標検出力', 50, 99, 1, target*100, v=>(v/100).toFixed(2),
+                    v=>{ target = v/100; draw(); });
+  box.append(rd, ctl, hint);
+
+  function draw(){
+    const alpha = ALPHAS[ai];
+    // 読み方でつまみを出し分ける (n を答えにするとき n のつまみは要らない)
+    sN.input.parentElement.hidden = mode !== 'power';
+    sT.input.parentElement.hidden = mode !== 'size';
+    mb.textContent = mode === 'power' ? '標本数を出すに切り替え' : '検出力を出すに切り替え';
+
+    const needed = needN(d, alpha, target);
+    if(mode === 'size' && needed) n = needed;
+
+    const H = 240;
+    const g = fitCanvas(cv, H);
+    const W = cv.width / Math.min(devicePixelRatio || 1, 2);
+    const PADL = 34, PADR = 10, PADT = 12, PADB = 26;
+    const NMAX = Math.max(60, Math.min(600, n * 2.2));
+    const X = v => PADL + (v - 3)/(NMAX - 3) * (W - PADL - PADR);
+    const Y = p => PADT + (1 - p) * (H - PADT - PADB);
+    const ink = css('--ink'), muted = css('--muted'), line = css('--line'),
+          accent = css('--accent'), mark = css('--mark');
+
+    g.clearRect(0, 0, W, H);
+    g.strokeStyle = line; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(PADL, PADT); g.lineTo(PADL, H-PADB); g.lineTo(W-PADR, H-PADB); g.stroke();
+    g.fillStyle = muted; g.font = '11px system-ui, sans-serif';
+    g.textAlign = 'right';
+    [0, 0.5, 0.8, 1].forEach(p=>{ g.fillText(p.toFixed(1), PADL - 5, Y(p) + 4); });
+    g.textAlign = 'center';
+    [3, Math.round(NMAX/3), Math.round(NMAX*2/3), NMAX].forEach(v=>{
+      g.fillText(String(v), X(v), H - PADB + 16);
+    });
+    // 目標の水平線
+    g.strokeStyle = muted; g.setLineDash([3,3]);
+    g.beginPath(); g.moveTo(PADL, Y(target)); g.lineTo(W-PADR, Y(target)); g.stroke();
+    g.setLineDash([]);
+    g.textAlign = 'left'; g.fillText('目標 ' + target.toFixed(2), PADL + 4, Y(target) - 5);
+
+    // 検出力の曲線
+    g.strokeStyle = accent; g.lineWidth = 2.2; g.beginPath();
+    for(let i = 0; i <= 90; i++){
+      const v = 3 + (NMAX - 3) * i/90;
+      const px = X(v), py = Y(power(d, Math.round(v), alpha, 60));
+      i ? g.lineTo(px, py) : g.moveTo(px, py);
+    }
+    g.stroke();
+
+    const pw = power(d, n, alpha, 400);
+    g.fillStyle = mark;
+    g.beginPath(); g.arc(X(n), Y(pw), 5, 0, 7); g.fill();
+    g.strokeStyle = mark; g.lineWidth = 1; g.setLineDash([2,3]);
+    g.beginPath(); g.moveTo(X(n), Y(pw)); g.lineTo(X(n), H-PADB); g.stroke();
+    g.setLineDash([]);
+
+    const rough = Math.ceil(Math.pow((zQuant(1-alpha/2) + zQuant(target))/d, 2));
+    if(mode === 'power'){
+      rd.innerHTML =
+        '<span>検出力<b>' + pw.toFixed(3) + '</b></span>' +
+        '<span>標本数 n<b>' + n + '</b></span>' +
+        '<span>目標に要る n<b>' + (needed === null ? '—' : needed) + '</b></span>' +
+        '<span class="wide">d = ' + d.toFixed(2) + '・n = ' + n + '・α = ' + alpha.toFixed(2) +
+        ' なら検出力 <b>' + pw.toFixed(3) + '</b>' +
+        (needed === null ? '' : '。目標 ' + target.toFixed(2) + ' には <b>n = ' + needed + '</b> 要る') +
+        '</span>';
+    }else{
+      rd.innerHTML =
+        '<span>必要な n<b>' + (needed === null ? '—' : needed) + '</b></span>' +
+        '<span>本文の目安<b>' + rough + '</b></span>' +
+        '<span>その n の検出力<b>' + pw.toFixed(3) + '</b></span>' +
+        '<span class="wide">正規近似の <b>n = ((z<sub>1−α/2</sub>+z<sub>1−β</sub>)/d)² = ' + rough +
+        '</b> に対し、t では <b>' + (needed === null ? '—' : needed) + '</b>。' +
+        'σ を推定するぶん数個多く要る (4.10.2)</span>';
+    }
+  }
+
+  mb.onclick = ()=>{ mode = mode === 'power' ? 'size' : 'power'; draw(); };
+  paintAlpha();
+  addEventListener('resize', draw, {passive:true});
+  box.addEventListener('repaint', ()=>{ paintAlpha(); draw(); });
   draw();
 };
 
