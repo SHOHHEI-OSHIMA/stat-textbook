@@ -13,10 +13,12 @@ textbook/fig/01_anscombe.png
 textbook/fig/01_boxplot_iqr.png
 textbook/fig/01_correlation.png
 textbook/fig/01_hist_bins.png
+textbook/fig/01_iqr_normal.png
 textbook/fig/01_log_transform.png
 textbook/fig/01_mean_median.png
 textbook/fig/01_robustness.png
 textbook/fig/01_scales.png
+textbook/fig/01_spread_breakdown.png
 textbook/fig/01d_influence.png
 textbook/fig/01d_kde_bandwidth.png
 textbook/fig/01d_mise.png
