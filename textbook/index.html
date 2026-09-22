@@ -1386,6 +1386,7 @@ print(&quot;naive:&quot;, (np.sum(big**2) - len(big) * big.mean()**2) / (len(big
 <p>$$\rho_k(u) = \begin{cases} \tfrac12 u^2 & (|u| \le k) \\ k|u| - \tfrac12 k^2 & (|u| > k)\end{cases} \qquad \psi_k(u) = \max(-k,\ \min(k,\ u))$$</p>
 <p>中心付近では二乗 (平均のように効率がよい)、外側では絶対値 (中央値のように外れ値に鈍い) という設計である。$\hat\sigma$ で割っているのは、測定単位を変えても同じ答えを出すため (尺度同変) で、通常は $\hat\sigma = 1.4826\,\mathrm{MAD}$ を使う (1.5.3 節)。</p>
 <h3 id="c01-1-13-2">1.13.2 影響関数: 1 点の汚染が推定値を動かす量</h3>
+<p>1.13.1 項の破綻点は「何割まで耐えるか」という粗い指標だった。<strong>1 点を動かしたときに推定値がどれだけ動くか</strong>を、もっと細かく測る道具がある。</p>
 <blockquote>
 <p><strong>定義 1.7 (影響関数)</strong> 分布 $F$ に点 $x$ を割合 $\varepsilon$ だけ混ぜた分布を $F_\varepsilon = (1-\varepsilon)F + \varepsilon\delta_x$ とする。汎関数 $T$ の影響関数は $\displaystyle IF(x; T, F) = \lim_{\varepsilon \downarrow 0} \frac{T(F_\varepsilon) - T(F)}{\varepsilon}$</p>
 </blockquote>
@@ -1423,6 +1424,7 @@ print(&quot;naive:&quot;, (np.sum(big**2) - len(big) * big.mean()**2) / (len(big
 <figure><img loading="lazy" decoding="async" alt="図 1.13 左: 3 つの推定量の影響関数。右: 実際に 1 点を動かして推定値の変化を測ると、理論の形と一致する" src="fig/01d_influence.png" /><figcaption>図 1.13 左: 3 つの推定量の影響関数。右: 実際に 1 点を動かして推定値の変化を測ると、理論の形と一致する</figcaption></figure>
 <p>右図は理論の確認である。$n=200$ のデータの 1 点だけを動かし、$n \times (\text{推定値の変化})$ を描くと、左図の影響関数と同じ形が現れる。<strong>影響関数は絵に描いた理屈ではなく、実際に測れる量</strong>だと分かる。</p>
 <h3 id="c01-1-13-3">1.13.3 漸近分散と相対効率 — 頑健性の代償</h3>
+<p>1.13.2 項の影響関数は、頑健性を測るために導入した。<strong>同じ関数から、推定量の精度も出てくる。</strong> そして精度を比べると、<strong>頑健性がただではない</strong>ことが数で分かる。</p>
 <p>影響関数が分かると、推定量の精度も分かる。</p>
 <p>記号をひとつ先取りする。$\xrightarrow{d}$ は<strong>分布収束</strong>で、「左辺の分布が右辺の分布に近づく」という意味である (2.10 節で正式に定義する。$\xrightarrow{p}$ は確率収束で、値そのものが近づくことを言う)。</p>
 <blockquote>
@@ -1452,6 +1454,7 @@ print(&quot;naive:&quot;, (np.sum(big**2) - len(big) * big.mean()**2) / (len(big
 <h3 id="c01-1-13-4">1.13.4 効率と破綻点は本当にトレードオフか</h3>
 <p>ここまでの説明だと「頑健にすれば効率を失う」と読めるが、それは $\hat\sigma$ を固定した場合の話である。スケールも同時に頑健に推定する形にすると、<strong>両方を高く保てる</strong>。Salibian-Barrera (2004) は、尺度同変な M 推定量で調律定数を適切に選べば (同論文の例では $d = 1.548$、$b = 0.5$、$c = 1.525$)、<strong>破綻点 50% と正規分布での効率 95% を同時に達成できる</strong>と述べている<sup id="c01-fnref:d1"><a class="footnote-ref" href="#c01-fn:d1">1</a></sup>。破綻点と効率は原理的に対立するのではなく、「素朴な作り方だと対立する」のである。</p>
 <h3 id="c01-1-13-5">1.13.5 有限標本での破綻点は漸近値と違う</h3>
+<p>1.13.1 項で「中央値の破綻点は 50%」と述べた。<strong>それは $n \to \infty$ の話である。</strong> 試験体が 5 本や 10 本のとき、実際の値は違う。</p>
 <p>破綻点 50% という数字は $n \to \infty$ の値である。実際の $n$ では違う。Park (2019) は主要な位置・尺度推定量について有限標本での破綻点を整理し、標本数が小さいとき漸近値と目立って異なることを示している<sup id="c01-fnref:d2"><a class="footnote-ref" href="#c01-fn:d2">2</a></sup>。例えば Hodges–Lehmann 型の推定量 (全ペアの平均の中央値) では、$n^2$ 個のペア平均のうち $k$ 個の観測を汚染すると $n^2 - (n-k)^2$ 個が汚染されるため、有限標本の破綻点は $k^*/n$ ($k^2 - 2nk + \lfloor (n^2-1)/2 \rfloor \ge 0$ を満たす最大の $k$) となる。</p>
 <p>実務的な意味は単純で、<strong>試験体が 5 個や 10 個のときに「破綻点 50% だから 2 個までの異常値は大丈夫」と考えてはいけない</strong>ということである。</p>
 <h3 id="c01-1-13-6">1.13.6 Python で確かめる</h3>
@@ -1522,6 +1525,7 @@ print(&quot;Huber  MSE =&quot;, np.mean(np.array([huber_loc(d) for d in D])**2))
 <h2 id="c01-1-14">1.14 発展 ★2: ヒストグラムからカーネル密度推定へ</h2>
 <p>1.3 節では階級幅の選び方を経験則として並べた。なぜ $n^{-1/3}$ なのか、そもそも「よい階級幅」とは何かを、密度推定の枠組みで見直す。</p>
 <h3 id="c01-1-14-1">1.14.1 カーネル密度推定</h3>
+<p>1.4 節のヒストグラムには、<strong>階級の境界をどこに置くかで見え方が変わる</strong>という弱点があった。境界を無くす方法がある。</p>
 <p>ヒストグラムは「階級という箱に入れて数える」方法だが、箱の境界の位置で見え方が変わってしまう。各データ点を中心になめらかな山を置き、それらを足し合わせれば境界問題は消える。</p>
 <blockquote>
 <p><strong>定義 1.8 (カーネル密度推定量)</strong> $\displaystyle \hat f_h(x) = \frac{1}{nh}\sum_{i=1}^n K\!\left(\frac{x - x_i}{h}\right)$。$K$ はカーネル ($\int K = 1$、通常は標準正規密度)、$h > 0$ は帯域幅</p>
@@ -1529,6 +1533,7 @@ print(&quot;Huber  MSE =&quot;, np.mean(np.array([huber_loc(d) for d in D])**2))
 <figure><img loading="lazy" decoding="async" alt="図 1.15 同じ 200 点に対し帯域幅だけを変えた。灰色が真の密度 (2 山)" src="fig/01d_kde_bandwidth.png" /><figcaption>図 1.15 同じ 200 点に対し帯域幅だけを変えた。灰色が真の密度 (2 山)</figcaption></figure>
 <p>$h$ が小さいとデータ 1 点ごとの凹凸を拾い (分散が大きい)、大きいと 2 つの山が溶けて 1 つになる (バイアスが大きい)。<strong>階級幅の選択と同じ綱引き</strong>が、より扱いやすい形で現れている。</p>
 <h3 id="c01-1-14-2">1.14.2 バイアスと分散の分解、そして $n^{-1/5}$</h3>
+<p>1.14.1 項の推定量には、<strong>帯域幅 $h$ という 1 つのパラメータ</strong>が残っている。大きすぎればならされ、小さすぎれば暴れる。12.3 節のバイアス–分散のつり合いが、ここで最初に現れる。</p>
 <p>$K$ が対称で $\int u^2 K(u) du = \mu_2 < \infty$、$f$ が 2 回連続微分可能なとき、テイラー展開から次が出る。記号 $o(\cdot)$ は<strong>ランダウ記法</strong>で、$o(h^2)$ は「$h \to 0$ のとき $h^2$ より速く 0 へ行く項」、つまり<strong>書いた主要項に比べて無視できる残り</strong>を意味する。</p>
 <p>$$\mathrm{Bias}[\hat f_h(x)] = \tfrac12 h^2 \mu_2 f''(x) + o(h^2), \qquad \mathrm{Var}[\hat f_h(x)] = \frac{f(x)R(K)}{nh} + o\!\left(\frac{1}{nh}\right)$$</p>
 <p>ただし $R(K) = \int K^2$。両者を足して積分した平均積分二乗誤差 (MISE) の主要項は</p>
@@ -23877,6 +23882,9 @@ $S$ に $T$ の子孫を入れないという (i) は、$S$ の因子まで介�
 </tbody>
 </table>
 <p><strong>独立な 2 つの変数から、$-0.8$ もの相関が作り出された。</strong> しかも<strong>回帰に入れるのがいちばん強く作り出す</strong> — 一部を選ぶのではなく全データで $C$ を固定するからである。</p>
+<p>最後の $-0.800$ はモンテカルロ誤差を含まない厳密な値である。$X, Y \sim N(0,1)$ が独立で $C = X + Y + \sigma_\varepsilon\varepsilon$ のとき、偏相関は</p>
+<p>$$\rho_{XY\cdot C} = -\frac{1}{1 + \sigma_\varepsilon^2}$$</p>
+<p>となる。$\sigma_\varepsilon = 0.5$ なら $-1/1.25 = -0.8$ である。<strong>$C$ に乗るノイズが小さいほど、作り出される相関が強い</strong> — $\sigma_\varepsilon \to 0$ なら $C$ を固定した時点で $Y = C - X$ と決まってしまうので、相関は $-1$ に近づく。逆にノイズが大きければ $C$ は $X$ と $Y$ についてほとんど何も語らないので、作り出される相関も小さい。</p>
 <p>現場の形に直すとこうなる。$X$ = 構造の強さ、$Y$ = 地盤の良さ、$C$ = 被害の小ささとして、<strong>被害の小さかった建物だけを調べる</strong>と「構造が強い建物ほど地盤が悪い」という関係が見える。元の母集団にそんな関係は無い。<strong>「構造が強いのに被害が小さかったのだから、地盤は悪かったのだろう」</strong>という説明が自動的に働くからである。</p>
 <p><strong>調整してよい変数とそうでない変数を、データを見て決めることはできない。</strong> 11.5.2 項のバックドア基準が「$T$ の子孫を含まない」と要求しているのは、まさにこれを禁じるためである。</p>
 <figure><img loading="lazy" decoding="async" alt="図 11.4 数値実験: $X \perp Y$、$C = X + Y + \varepsilon$。全データでは無相関 (左) だが、$C$ の大きいものだけを選ぶと負の相関 (中)、回帰に $C$ を説明変数として入れても係数は負になる (右)" src="fig/11_collider_experiment.png" /><figcaption>図 11.4 数値実験: $X \perp Y$、$C = X + Y + \varepsilon$。全データでは無相関 (左) だが、$C$ の大きいものだけを選ぶと負の相関 (中)、回帰に $C$ を説明変数として入れても係数は負になる (右)</figcaption></figure>
@@ -26513,7 +26521,7 @@ $e^{s(X_i - E X_i)}$ で押さえる標準的なもので、ここでは結果�
 </tr>
 </tbody>
 </table>
-<p><strong>いちばん右の列とよく合っている。</strong> 線形モデルなら置換重要度は $2\hat\beta_j^2\mathrm{Var}(x_j)$ にほぼ一致する — つまり<strong>係数の二乗に比例する</strong>ので、5 章の $t$ 統計量とは別の順位を与えうる。</p>
+<p><strong>いちばん右の列とよく合っている。</strong> 線形モデルなら置換重要度は $2\hat\beta_j^2\mathrm{Var}(x_j)$ にほぼ一致する ($\mathrm{Var}$ はこの 400 点の<strong>標本</strong>分散で、$x_1$ なら $0.916$。母集団の $1.0$ を使うと合わない) — つまり<strong>係数の二乗に比例する</strong>ので、5 章の $t$ 統計量とは別の順位を与えうる。</p>
 <p><strong>真の係数の列とは合っていない。</strong> $x_1$ は真の係数が $2.0$ なのに重要度が理論値 $2(2.0)^2\mathrm{Var} = 7.33$ より低く、$x_2$ は逆に高く出ている。<strong>$x_1$ と $x_2$ が相関しているので、当てはめが手柄を分け合った</strong>からである。</p>
 <p><strong>ここが置換重要度の最大の注意点になる。</strong> 返ってくるのは「その変数が真にどれだけ効くか」ではなく、<strong>「この予測器がその変数にどれだけ依存しているか」</strong>である。相関する変数が 2 本あれば、どちらか一方だけを壊してももう一方が情報を補うので、<strong>両方の重要度が同時に低く出る</strong>こともある。「重要度が低いから要らない」と読むのは危険で、<strong>変数を実際に抜いて当てはめ直す</strong>のが確実である。</p>
 <h3 id="c12-12-13-2">12.13.2 部分依存</h3>
@@ -28308,31 +28316,111 @@ print(&quot;問8 標本 Var(y) の平均 %.4f (解答 1.0072)&quot; % vy.mean())
 </ol>
 <p>構造設計との接続は明確である。部材の破壊確率 $P_f = 10^{-4}$ を確かめるのに素朴なモンテカルロでは 10^6 回の解析が要り、有限要素解析 1 回が数分なら現実的でない。重点サンプリングや LHS はこの桁を落とすための道具であり、EM は欠測や打ち切りを含む材料試験データの最尤推定に使う。標本調査の設計効果は、建物実態調査で「同じ町内の建物ばかり集めた」ときに有効標本数がどれだけ減るかを教える。</p>
 <h2 id="c13-13-2">13.2 疑似乱数</h2>
+<p>この章の後半で使う道具の土台から始める。<strong>モンテカルロ法もブートストラップも MCMC も、すべて「一様乱数が手に入る」ことを前提にしている。</strong> その前提がどう作られ、どこで壊れうるのかを最初に押さえておく。</p>
 <h3 id="c13-13-2-1">13.2.1 疑似乱数とは何か</h3>
 <p>計算機の「乱数」は決定的な漸化式 $x_{k+1} = f(x_k)$ の出力である。初期値 (<strong>種</strong>, seed) を決めれば列全体が決まる。それでも乱数として使えるのは、列が (i) 一様分布に従っているように見え (ii) 相関がなく (iii) 周期が十分に長い、という統計的性質を満たすからである。これを<strong>疑似乱数</strong> (pseudo-random number) と呼ぶ。物理乱数 (熱雑音等) と違って<strong>再現できる</strong>ことが、デバッグ・検証・査読のうえでむしろ長所になる。</p>
 <h3 id="c13-13-2-2">13.2.2 線形合同法 (LCG)</h3>
+<p>13.2.1 項で「決定的な漸化式」と言った、その最も単純な形から見る。<strong>1 行で書けるのに、良い性質を持たせるには条件が要る。</strong></p>
 <blockquote>
 <p><strong>定義 13.1 (線形合同法)</strong> 整数 $a, c, m$ に対し $x_{k+1} = (a x_k + c) \bmod m$、$u_k = x_k / m$。</p>
 </blockquote>
 <p>最も古く単純な生成器 (Lehmer 1951)。周期は最大でも $m$ で、Hull–Dobell の定理により $c$ と $m$ が互いに素、$a - 1$ が $m$ の全素因数で割り切れ、$m$ が 4 の倍数なら $a-1$ も 4 の倍数、のとき最大周期 $m$ に達する。しかし LCG には<strong>格子構造</strong>という致命的な欠点がある。連続する $d$ 個 $(u_k, u_{k+1}, \dots, u_{k+d-1})$ を $d$ 次元空間の点とみると、点はすべて少数の平行超平面の上に乗る (Marsaglia 1968)。$m = 2^{31}$ なら 3 次元で高々 $(6m)^{1/3} \approx 2344$ 枚の平面しかない。歴史的に有名な IBM の RANDU ($a = 65539$, $m = 2^{31}$) はわずか 15 枚で、3 次元の積分がまるで合わなかった。</p>
+<p><strong>悪い LCG がどう壊れるかを数で見る。</strong> IBM が 1960 年代に配布した RANDU ($a = 65539$、$c = 0$、$m = 2^{31}$) で 30000 個の乱数を作り、連続する 3 個を 3 次元の点 $(u_k, u_{k+1}, u_{k+2})$ とみなす。このとき</p>
+<p>$$9u_k - 6u_{k+1} + u_{k+2}$$</p>
+<p>の値を計算すると、<strong>30000 点すべてがわずか 15 通りの値にしか落ちない。</strong> つまり 3 次元空間で見ると、<strong>全部の点がたった 15 枚の平面の上に並んでいる。</strong></p>
+<p>1 次元のヒストグラムを描く限り、RANDU の出力は完璧に一様に見える。<strong>次元を上げて初めて構造が見える</strong>のが、乱数生成器の検査の難しいところである。3 変数以上のモンテカルロ積分や多変量正規の生成では、この格子が系統誤差として結果に入り込む。</p>
+<p>$m = 2^{31}$ という制約も効く。<strong>周期は最大でも $2.15 \times 10^9$</strong> で、現代の構造信頼性解析 ($10^7$ 回以上の試行) では周期の数% を使い切ってしまう。</p>
 <h3 id="c13-13-2-3">13.2.3 Mersenne Twister</h3>
+<p>13.2.2 項の LCG は周期が短く、高次元で規則的な構造 (格子) を作る。<strong>その両方を大幅に改善した</strong>のが、長らく既定だったこの生成器である。</p>
 <p>Matsumoto &amp; Nishimura (1998) の Mersenne Twister (MT19937) は、$\mathbb{F}_2$ 上の線形漸化式を 624 語の状態で回す。周期 $2^{19937} - 1$ (メルセンヌ素数)、623 次元まで等分布、生成は速い。NumPy の旧 API (<code>np.random.seed</code>, <code>np.random.rand</code>) と Python 標準の <code>random</code> はこれを使う。欠点は (i) 状態が 2.5 KB と大きい (ii) 線形なので出力から状態を復元できる (暗号用途には不可) (iii) 種が 0 に近い (状態に 0 が多い) と良い列に入るまで数十万個かかる、である。</p>
 <h3 id="c13-13-2-4">13.2.4 PCG と現代の既定</h3>
+<p>13.2.3 項の Mersenne Twister にも弱点がある — 状態が大きく、<strong>出力から内部状態が復元できてしまう。</strong> 現在の NumPy が既定を変えたのには理由がある。</p>
 <p>O'Neill (2014) の PCG (permuted congruential generator) は、64 ビットまたは 128 ビットの LCG を内部状態とし、出力の前に<strong>状態依存の置換</strong> (回転・xor シフト) をかける。これで LCG の格子構造は消え、状態は 16 バイト、統計検定 (TestU01 の BigCrush) を通る。NumPy 1.17 以降の <code>np.random.default_rng()</code> の既定は PCG64 である。</p>
 <pre><code class="language-python">import numpy as np
 rng = np.random.default_rng(20260907)   # PCG64, 種を固定
 rng.uniform(size=3)
 </code></pre>
+<p><strong>3 つを数で並べると、何を取引しているかが見える。</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>周期</th>
+<th style="text-align: right;">状態の大きさ</th>
+<th>出力から状態を復元できるか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LCG ($m = 2^{31}$)</td>
+<td>$2.15\times10^9$</td>
+<td style="text-align: right;">32 ビット</td>
+<td>容易</td>
+</tr>
+<tr>
+<td>MT19937</td>
+<td>$2^{19937} \approx 10^{6001}$</td>
+<td style="text-align: right;"><strong>19,968 ビット</strong></td>
+<td>624 個の出力から可能</td>
+</tr>
+<tr>
+<td>PCG64</td>
+<td>$2^{128} \approx 3.4\times10^{38}$</td>
+<td style="text-align: right;"><strong>128 ビット</strong></td>
+<td>出力を置換しているため困難</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MT19937 の周期 $10^{6001}$ は、どんな計算でも使い切れない</strong> (宇宙の原子の数が $10^{80}$ 程度)。一方で状態が 19,968 ビット (約 2.5 KB) あり、<strong>並列計算で 1 万個の生成器を持つと 24 MB</strong> になる。PCG は周期を $10^{38}$ に落とす代わりに状態を 156 分の 1 に縮めた。</p>
+<p><strong>$10^{38}$ で足りるのか。</strong> $10^{10}$ 個の乱数を消費する解析を $10^{10}$ 回繰り返しても $10^{20}$ で、まだ $10^{18}$ 倍の余裕がある。<strong>周期は「多ければ多いほど良い」量ではなく、「足りていればよい」量</strong>である。NumPy が既定を PCG64 に変えたのは、この判断による。</p>
 <h3 id="c13-13-2-5">13.2.5 種の管理</h3>
+<p>13.2.1〜13.2.4 項は生成器そのものの話だった。<strong>実務で事故が起きるのは生成器ではなく、種の使い方のほう</strong>である。</p>
 <p>再現性のために種を固定するのは当然として、実務では次の 3 点に注意する。</p>
 <ol>
 <li><strong>並列実行</strong>: 種を $s, s+1, s+2, \dots$ と 1 ずつずらして別プロセスに渡すのは危険で、生成器によっては列が重なる。NumPy では <code>SeedSequence(s).spawn(k)</code> で統計的に独立な子生成器を作る (PCG64 はジャンプアヘッドも持つ)</li>
 <li><strong>1 つの実験に 1 つの生成器</strong>: 図を作る関数の中でグローバル状態 <code>np.random.seed()</code> を触ると、呼び出し順で別の結果が出る。<code>rng</code> オブジェクトを引数で渡す</li>
 <li><strong>種そのものを記録する</strong>: 論文・報告書には種と生成器名 (PCG64, MT19937) を書く。生成器を変えると同じ種でも列は変わる</li>
 </ol>
+<p><strong>連番の種が危ないことを数で見る。</strong> NumPy の <code>SeedSequence</code> は種を撹拌してから配るので、親 1 つから 4 つの子を作ると</p>
+<table>
+<thead>
+<tr>
+<th>子</th>
+<th>最初の 3 個</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0.8700, 0.5609, 0.2216</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.3771, 0.6895, 0.7435</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.1413, 0.2112, 0.0865</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.3920, 0.9787, 0.9729</td>
+</tr>
+</tbody>
+</table>
+<p>互いに無関係に見える。<strong>古い世代の生成器では、種を $s,\,s+1,\,s+2$ と連番にすると、最初の数個が強く相関した。</strong> LCG なら $x_1 = (as + c) \bmod m$ なので、$s$ が 1 増えると $x_1$ が $a$ だけ増える — <strong>完全に決定的な関係</strong>である。</p>
+<p>実務での作法は 3 つに集約できる。</p>
+<ol>
+<li><strong>親の種を 1 つだけ記録し、子は <code>spawn</code> で作る。</strong> ログに残すのは親の 1 つでよい</li>
+<li><strong>反復ごとに新しい生成器を作らない。</strong> ループの中で <code>default_rng()</code> を呼ぶと、時刻由来の種が使われて再現できなくなる</li>
+<li><strong>結果を報告するときは、種と生成器の種類の両方を書く。</strong> 「seed=42」だけでは、NumPy のバージョンが変われば別の数列になる</li>
+</ol>
+<p><strong>再現性は「同じ数が出ること」だけではない。</strong> 種を変えて数回回し、<strong>結論が変わらないことを確かめる</strong>のがより重要である。1 つの種でしか成り立たない結論は、乱数のゆらぎを見ているだけかもしれない。</p>
 <h2 id="c13-13-3">13.3 一様乱数から任意の分布へ</h2>
+<p>13.2 節で $\mathrm{U}(0,1)$ が手に入った。<strong>そこから先はすべて変換の問題である。</strong> 正規分布もワイブル分布も極値分布も、一様乱数を加工して作る。</p>
 <p>一様乱数 $U \sim \mathrm{U}(0,1)$ が手に入れば、任意の分布の乱数はそこから変換で作る。</p>
 <h3 id="c13-13-3-1">13.3.1 逆関数法</h3>
+<p>最も基本的な変換から入る。<strong>2.4.3 項の分位関数に一様乱数を通すだけ</strong>で、どんな分布の乱数でも作れる。定理 2.3 の十分性の証明が、そのまま算法になっている。</p>
 <blockquote>
 <p><strong>定理 13.1 (逆関数法)</strong> 分布関数 $F$ の一般化逆関数を $F^{-1}(u) = \inf\{x : F(x) \ge u\}$ とする。$U \sim \mathrm{U}(0,1)$ なら $X = F^{-1}(U)$ は分布関数 $F$ に従う。</p>
 </blockquote>
@@ -28358,6 +28446,7 @@ $$</p>
 <p>Weibull 分布 $F(x) = 1 - \exp[-(x/\eta)^m]$ なら $X = \eta(-\ln U)^{1/m}$。材料強度の Weibull 分布 (第 3 章) の乱数はこれで作る。正規分布は $F^{-1}$ が閉じた式を持たないが、数値的な逆関数 (<code>scipy.stats.norm.ppf</code>) は高精度で、実は現代の実装の主流である。離散分布は $F$ が階段関数になるだけで、$U$ が入る段を探せばよい (累積確率の表を二分探索)。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.1 左: 逆関数法。縦軸に一様乱数 U を取り、分布関数を横に読んで X = F⁻¹(U) を得る。右: 棄却法。包絡 M·g(x) の下に一様に点を撒き、目標密度 f の下に落ちた点の x だけを採る" src="fig/13_inverse_rejection.png" /><figcaption>図 13.1 左: 逆関数法。縦軸に一様乱数 U を取り、分布関数を横に読んで X = F⁻¹(U) を得る。右: 棄却法。包絡 M·g(x) の下に一様に点を撒き、目標密度 f の下に落ちた点の x だけを採る</figcaption></figure>
 <h3 id="c13-13-3-2">13.3.2 棄却法</h3>
+<p>13.3.1 項は $F^{-1}$ が計算できる場合の話だった。<strong>分位関数が書けない分布のほうが多い。</strong> 密度さえ計算できれば使える方法がある。</p>
 <p>$F^{-1}$ が計算しにくく、密度 $f$ は計算できる (定数倍を除いてもよい) ときの方法。</p>
 <blockquote>
 <p><strong>定理 13.2 (棄却法, von Neumann 1951)</strong> 提案密度 $g$ と定数 $M \ge 1$ が $f(x) \le M g(x)$ (すべての $x$) を満たすとする。$Y \sim g$、$U \sim \mathrm{U}(0,1)$ を独立に生成し、$U \le f(Y) / (M g(Y))$ なら $X = Y$ として採択、そうでなければ捨てて繰り返す。採択された $X$ は密度 $f$ に従い、採択確率は $1/M$ である。</p>
@@ -28386,6 +28475,7 @@ $$</p>
 <p><strong>落とし穴。</strong> $M$ は「$f \le Mg$ を満たす定数」であって、最小である必要はない。しかし採択確率がちょうど $1/M$ なので、安全を見て $M$ を大きくとった分はそのまま計算量に跳ね返る。最良の $M$ は $\sup_x f(x)/g(x)$ で、これが有限でないとき — $g$ の裾が $f$ より軽いとき — は、そもそも包絡が作れず棄却法が使えない。</p></div></details>
 <p>図 13.1 右は Beta(2,4) を一様提案で作った例で、$M \approx 2.2$ なので 45% しか採れない。$M$ を小さくする (提案 $g$ を $f$ に似せる) のが棄却法の設計のすべてで、$M$ は定数倍を除いて $f$ を知っていれば十分な点がベイズ計算 (正規化定数が分からない事後分布) で効いてくる。多次元では $M$ が次元とともに指数的に増えるため実用にならず、MCMC (第 8 章) に道を譲る。</p>
 <h3 id="c13-13-3-3">13.3.3 Box–Muller 法の導出</h3>
+<p>正規分布は 13.3.1 項の逆関数法が使えない ($\Phi^{-1}$ に閉じた式が無い) 代表例である。<strong>2 個まとめて作ると、極座標に移るだけで厳密に作れる。</strong></p>
 <p>独立な標準正規乱数 2 個を、一様乱数 2 個から厳密に作る (Box &amp; Muller 1958)。</p>
 <blockquote>
 <p><strong>定理 13.3 (Box–Muller)</strong> $U_1, U_2$ が独立に $\mathrm{U}(0,1)$ なら</p>
@@ -28419,13 +28509,50 @@ $$</p>
 <p>図 13.2 は正方形上の一様点群が正規の点群に写る様子である。三角関数を避ける Marsaglia の極法 (単位円内に一様な点を棄却法で作り、$Z = X\sqrt{-2\ln S / S}$ とする) も同じ導出から出る。実装上の注意: $U_1 = 0$ で $\ln$ が発散するので、生成器が 0 を返し得るなら $1 - U_1$ を使う。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.2 Box–Muller 変換。一様な正方形上の点 (U₁, U₂) を R² = −2 ln U₁、Θ = 2πU₂ で極座標に写すと、2 次元標準正規の点群になる。右は Z₁ の周辺分布" src="fig/13_box_muller.png" /><figcaption>図 13.2 Box–Muller 変換。一様な正方形上の点 (U₁, U₂) を R² = −2 ln U₁、Θ = 2πU₂ で極座標に写すと、2 次元標準正規の点群になる。右は Z₁ の周辺分布</figcaption></figure>
 <h3 id="c13-13-3-4">13.3.4 その他の道具</h3>
+<p>13.3.1〜13.3.3 項の 3 つで大半は足りるが、<strong>特定の構造を持つ分布にはもっと簡単な作り方がある。</strong></p>
 <ul>
 <li><strong>合成法</strong>: 混合分布 $f = \sum_k \pi_k f_k$ は、まず $k$ を確率 $\pi_k$ で選び、次に $f_k$ から引く</li>
 <li><strong>変換法</strong>: $\chi^2_\nu = \sum_{i=1}^\nu Z_i^2$、$t_\nu = Z / \sqrt{\chi^2_\nu / \nu}$、ガンマ・ベータは Marsaglia–Tsang (2000) の棄却法</li>
 <li><strong>多変量正規</strong> $N(\mu, \Sigma)$: Cholesky 分解 $\Sigma = LL^\top$ をとり $X = \mu + LZ$ ($Z$ は独立標準正規ベクトル)。$\mathrm{Cov}(X) = L\,I\,L^\top = \Sigma$</li>
 </ul>
+<p><strong>どれを使うかは、1 個作るのに何回の一様乱数が要るかで決まる。</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>一様乱数の消費</th>
+<th>使える条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逆関数法</td>
+<td><strong>1 個</strong></td>
+<td>$F^{-1}$ が計算できる</td>
+</tr>
+<tr>
+<td>Box–Muller</td>
+<td>2 個で正規 2 個 (<strong>1 個あたり 1 個</strong>)</td>
+<td>正規分布</td>
+</tr>
+<tr>
+<td>棄却法</td>
+<td>$1/$採択率 の期待値ぶん</td>
+<td>密度が計算でき、包絡が作れる</td>
+</tr>
+<tr>
+<td>合成法</td>
+<td>1 + 成分の分だけ</td>
+<td>混合分布</td>
+</tr>
+</tbody>
+</table>
+<p><strong>棄却法の採択率がそのまま効率になる。</strong> 採択率 $0.5$ なら 1 個作るのに平均 4 個 (棄却された分も含め、提案 1 個につき一様乱数 2 個) が要る。採択率が $0.01$ まで落ちると 100 倍のコストになるので、<strong>包絡の選び方が実用性を決める。</strong></p>
+<p><strong>実務では、まず標準ライブラリを疑わずに使う</strong>のが正しい。SciPy と NumPy の主要分布は、逆関数法より速い専用アルゴリズム (Ziggurat 法、Marsaglia の方法など) で実装されている。<strong>自分で書くのは、ライブラリに無い分布のときだけ</strong>である。</p>
 <h2 id="c13-13-4">13.4 モンテカルロ積分</h2>
+<p>13.3 節で任意の分布から乱数が引けるようになった。<strong>それを使って積分を計算する。</strong> 構造信頼性の破壊確率も、ベイズの事後平均も、形は同じ積分である。この節の主題は「精度が $n^{-1/2}$ でしか上がらない」という事実と、その回避策になる。</p>
 <h3 id="c13-13-4-1">13.4.1 基本定理と $n^{-1/2}$</h3>
+<p>大数の法則と中心極限定理 (2.10〜2.11 節) を、そのまま積分の計算に読み替える。<strong>次元に依存しない</strong>という性質が、この方法の最大の売りである。</p>
 <p>積分 $I = \int g(x) f(x)\,dx = E_f[g(X)]$ を、$X_1, \dots, X_n \overset{iid}{\sim} f$ で</p>
 <p>$$
 \hat I_n = \frac{1}{n}\sum_{i=1}^n g(X_i)
@@ -28437,12 +28564,14 @@ $$</p>
 <p>つまり誤差は $\sigma_g / \sqrt{n}$ で、<strong>次元によらない</strong>。これがモンテカルロ法の最大の利点で、$d$ 次元の台形則が $n^{-2/d}$ でしか収束しないのと対照的である (次元が 5 を超えるとモンテカルロが勝つ)。同時に最大の欠点でもあり、精度を 1 桁上げるには $n$ を 100 倍にしなければならない (図 13.3 左)。$\sigma_g^2$ は標本分散 $s_g^2$ で推定でき、$\hat I_n \pm 1.96\, s_g / \sqrt{n}$ が信頼区間になる。推定値を報告するときは<strong>必ずこの標準誤差を添える</strong>。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.3 左: ∫₀¹ e^{−x²}dx のモンテカルロ推定の RMSE は n^{−1/2} に沿って減る。右: 破壊確率 p を素朴に数えるときの変動係数 √((1−p)/(np))。P_f = 10⁻⁴ を CoV 10% で求めるには n ≈ 10⁶ 回要る" src="fig/13_mc_error.png" /><figcaption>図 13.3 左: ∫₀¹ e^{−x²}dx のモンテカルロ推定の RMSE は n^{−1/2} に沿って減る。右: 破壊確率 p を素朴に数えるときの変動係数 √((1−p)/(np))。P_f = 10⁻⁴ を CoV 10% で求めるには n ≈ 10⁶ 回要る</figcaption></figure>
 <h3 id="c13-13-4-2">13.4.2 稀事象の問題</h3>
+<p>13.4.1 項の $n^{-1/2}$ は、<strong>求める確率が小さいときに致命的になる。</strong> $P_f = 10^{-4}$ を 10% の精度で出すのに何回の解析が要るかを数える。</p>
 <p>$g = \mathbb{1}\{\text{破壊}\}$ とすると $I = P_f$、$\sigma_g^2 = P_f(1 - P_f)$ で、推定値の変動係数は</p>
 <p>$$
 \mathrm{CoV}(\hat P_f) = \sqrt{\frac{1 - P_f}{n P_f}} \approx \frac{1}{\sqrt{n P_f}}
 $$</p>
 <p>CoV を 10% にするには $n \approx 100 / P_f$ 回、すなわち $P_f = 10^{-4}$ なら $10^6$ 回 (図 13.3 右)。「破壊が平均 100 回観測されるまで回す」と覚えるとよい。構造信頼性でこれが問題になる理由は 13.6 節で述べる。以下の分散低減法はすべて、同じ $n$ で $\sigma_g^2$ を小さくする工夫である。</p>
 <h3 id="c13-13-4-3">13.4.3 対照変量</h3>
+<p>13.4.2 項の問題への処方を 3 つ見ていく。1 つめは、<strong>答えが分かっている量を引き算して、ばらつきだけを減らす</strong>方法である。</p>
 <p>期待値 $E[h(X)] = \mu_h$ が既知の関数 $h$ (対照変量) を使い</p>
 <p>$$
 \hat I_{cv} = \frac{1}{n}\sum_{i=1}^n \left[g(X_i) - c\,(h(X_i) - \mu_h)\right]
@@ -28452,7 +28581,34 @@ $$</p>
 \mathrm{Var}[\hat I_{cv}] = \frac{\sigma_g^2}{n}\,(1 - \rho_{gh}^2)
 $$</p>
 <p>つまり $g$ と相関 $\rho$ の対照変量があれば分散が $(1 - \rho^2)$ 倍になる。$c^*$ は標本から回帰係数として推定してよい (わずかなバイアスが入るが $O(1/n)$)。例: $\int_0^1 e^{-x^2}dx$ に $h(x) = x^2$ ($\mu_h = 1/3$) を使うと $\rho \approx -0.98$ で分散は 1/25 になる。構造解析では、線形化した応答 (一次近似の変位) を非線形応答の対照変量に使うのが常套手段である。</p>
+<p><strong>数で効き目を測る。</strong> $E[e^X]$ ($X \sim N(0,1)$、真値 $e^{0.5} = 1.6487$) を $n = 10000$ で推定する。対照変量に $h(X) = X$ ($E[X] = 0$ が既知) を使うと</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">推定値</th>
+<th style="text-align: right;">標準誤差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>素朴なモンテカルロ</td>
+<td style="text-align: right;">1.6223</td>
+<td style="text-align: right;">0.0198</td>
+</tr>
+<tr>
+<td>対照変量 ($c = 1.581$)</td>
+<td style="text-align: right;">1.6232</td>
+<td style="text-align: right;"><strong>0.0121</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>標準誤差が 0.61 倍</strong>、分散にして $0.374$ 倍になった。同じ精度を素朴な方法で出すには <strong>$n$ を 2.7 倍</strong>にしなければならない。</p>
+<p><strong>削減率は相関だけで決まる。</strong> 理論値は $1 - \rho^2$ で、ここでは $\rho = \mathrm{Corr}(e^X, X) = 0.791$ なので $1 - 0.791^2 = 0.374$ — <strong>実測とぴったり一致する。</strong></p>
+<p><strong>$\rho$ が小さければ何も得られない。</strong> 対照変量の良し悪しは「期待値が既知であること」ではなく、<strong>「求めたい量と強く相関していること」</strong>で決まる。$|\rho| < 0.3$ 程度なら分散が 1 割しか減らず、実装の手間に見合わない。</p>
+<p>最適な係数 $c = \mathrm{Cov}(g,h)/\mathrm{Var}(h)$ は同じ標本から推定できる。<strong>5.2.2 項の回帰係数とまったく同じ式</strong>で、実際「$g$ を $h$ に回帰して残差を見ている」と読める。</p>
 <h3 id="c13-13-4-4">13.4.4 重点サンプリング</h3>
+<p>13.4.2 項の問題への処方の 2 つめは、<strong>そもそも標本を引く場所を変える</strong>という、より踏み込んだ方法である。稀事象の評価では、これが最も効く。</p>
 <p>$f$ の代わりに別の密度 $g_{IS}$ (提案分布) から標本を引き、重み $w = f/g_{IS}$ で補正する。</p>
 <p>$$
 I = \int g(x) f(x)\,dx = \int g(x)\frac{f(x)}{g_{IS}(x)}\,g_{IS}(x)\,dx = E_{g_{IS}}\!\left[g(X)\,w(X)\right],\qquad \hat I_{IS} = \frac{1}{n}\sum_{i=1}^n g(X_i)\,\frac{f(X_i)}{g_{IS}(X_i)}
@@ -28478,12 +28634,54 @@ $$</p>
 <p><strong>なぜ使えないか。</strong> $g_{IS}^*$ の定義の中に、求めたい答え $I$ 自身が入っている。知りたい量を先に知っていないと作れないので、実際には「$gf$ に比例した形」を目標にして近似するしかない。</p>
 <p><strong>落とし穴。</strong> 逆に $g_{IS}$ の裾が $f$ より薄いと、$w = f/g_{IS}$ が裾で発散し、分散が有限でなくなる。このとき推定値は、まれに出る巨大な重みに当たるまでは安定して見え、標準誤差も小さく出る。<strong>分散が無限の推定量は、有限標本では「うまくいっているように見える」</strong>ので、標準誤差だけを監視していても気づけない。有効標本数 $n_{eff}$ を見るのはこのためである。</p></div></details>
 <h3 id="c13-13-4-5">13.4.5 層化サンプリング</h3>
+<p>3 つめは、<strong>積分領域をあらかじめ分けて、それぞれに割り当てる</strong>方法である。6.5.1 項の乱塊法と同じ発想で、層の中のばらつきだけが残る。</p>
 <p>積分領域を $K$ 個の層 $D_1, \dots, D_K$ ($P_f(D_k) = p_k$) に分け、層 $k$ から $n_k$ 個を引いて</p>
 <p>$$
 \hat I_{st} = \sum_{k=1}^K p_k\,\bar g_k,\qquad \mathrm{Var}[\hat I_{st}] = \sum_{k=1}^K \frac{p_k^2 \sigma_k^2}{n_k}
 $$</p>
 <p>$n_k = n p_k$ (比例配分) とすると $\mathrm{Var} = \frac1n \sum_k p_k \sigma_k^2$ で、全分散の分解 $\sigma_g^2 = \sum_k p_k \sigma_k^2 + \sum_k p_k(\mu_k - I)^2$ から、層間のばらつき $\sum_k p_k(\mu_k - I)^2$ の分だけ<strong>必ず</strong>分散が減る。1 次元なら層を $[0,1]$ の等分にとるだけで誤差が $n^{-3/2}$ 程度まで改善する ($g$ が滑らかなとき)。多次元では層の数が $K^d$ に爆発するので、次の Latin Hypercube に進む。層化の考え方は 13.9 節の層化抽出とまったく同じ数学である。</p>
+<p><strong>1 次元で効き目を測る。</strong> $\int_0^1 e^x dx = 1.71828$ を $n = 10000$ で推定する。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th style="text-align: right;">推定値</th>
+<th style="text-align: right;">標準誤差</th>
+<th style="text-align: right;">素朴の何倍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>素朴なモンテカルロ</td>
+<td style="text-align: right;">1.71694</td>
+<td style="text-align: right;">0.00493</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+<tr>
+<td>層化 $K = 4$</td>
+<td style="text-align: right;">1.71694</td>
+<td style="text-align: right;">0.00127</td>
+<td style="text-align: right;">0.258</td>
+</tr>
+<tr>
+<td>層化 $K = 10$</td>
+<td style="text-align: right;">1.71776</td>
+<td style="text-align: right;">0.00051</td>
+<td style="text-align: right;">0.104</td>
+</tr>
+<tr>
+<td>層化 $K = 100$</td>
+<td style="text-align: right;">1.71828</td>
+<td style="text-align: right;"><strong>0.00005</strong></td>
+<td style="text-align: right;"><strong>0.010</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>$K$ を 10 倍にすると標準誤差が 10 分の 1 になる。</strong> 滑らかな被積分関数では、層化の効き目は $1/K$ のオーダーで、<strong>$n^{-1/2}$ の壁を破っている。</strong></p>
+<p><strong>ただし次元が上がると崩れる。</strong> $d$ 次元で各軸を $K$ 分割すると層は $K^d$ 個になり、$d = 10$、$K = 10$ なら $10^{10}$ 層 — 各層に 1 点ずつ置くだけで $10^{10}$ 回の解析が要る。7.10 節の次元の呪いが、そのままここに現れる。</p>
+<p><strong>この壁を回避するのが 13.5 節である。</strong> 全次元の組み合わせを層化するのをあきらめ、<strong>各座標だけを層化する。</strong></p>
 <h2 id="c13-13-5">13.5 Latin Hypercube Sampling</h2>
+<p>13.4.5 項の層化は、次元が上がると層の数が指数的に増えて使えなくなる。<strong>各座標だけを層化する</strong>という妥協が、実務では広く使われている。</p>
 <p>McKay, Beckman &amp; Conover (1979) は、$d$ 次元で各座標だけを層化する方法を提案した。</p>
 <blockquote>
 <p><strong>定義 13.2 (Latin Hypercube Sampling, LHS)</strong> 各座標 $j = 1, \dots, d$ について $[0,1]$ を $n$ 等分し、独立な置換 $\pi_j$ と一様乱数 $V_{ij}$ で</p>
@@ -28558,6 +28756,7 @@ $$</p>
 </table>
 <p>実務の流れは、FORM で設計点 $u^*$ と $\beta$ を求め (第 3 章の一次近似)、$u^*$ を中心とした標準正規 $N(u^*, I)$ を提案分布として重点サンプリングで $P_f$ を精密化する、である。図 13.4 の設定はまさにこれで、1 次元・線形の限界状態なら重み $w = \exp(-\beta z + \beta^2/2)$ の閉じた式が出る。国内でも構造設計に確率・統計的手法を持ち込む流れは 1980 年代から論じられている<sup id="c13-fnref:7"><a class="footnote-ref" href="#c13-fn:7">7</a></sup>。第 3 章で与えた $\beta$ の定義と、第 8 章のベイズ更新 (検査結果による $R$ の分布の更新) はこの数値計算の上で組み合わさる。</p>
 <h2 id="c13-13-7">13.7 EM アルゴリズム</h2>
+<p>13.3〜13.6 節は乱数を使う計算だった。<strong>ここからは乱数を使わない数値計算に移る。</strong> 最初は、<strong>尤度に「見えない変数」が入っているときの最大化</strong>である。打ち切りデータ (10.3 節)、混合分布、欠測 (13.10 節) がすべてこの形をしている。</p>
 <h3 id="c13-13-7-1">13.7.1 問題設定</h3>
 <p>観測 $Y$ に対し尤度 $L(\theta) = p(Y \mid \theta)$ を最大化したいが、<strong>潜在変数</strong> $Z$ (欠測値、混合成分のラベル、打ち切り前の真値) を入れた完全データ尤度 $p(Y, Z \mid \theta)$ の方がずっと扱いやすい、という状況が多い。Dempster, Laird &amp; Rubin (1977) の EM は、この完全データ尤度を「現在のパラメータで予想した $Z$ の分布」で平均して最大化する手続きである。</p>
 <blockquote>
@@ -28566,7 +28765,47 @@ $$</p>
 <p><strong>M ステップ</strong>: $\theta^{(t+1)} = \arg\max_\theta Q(\theta \mid \theta^{(t)})$</p>
 <p>を収束まで繰り返す。</p>
 </blockquote>
+<p><strong>打ち切りデータで動かしてみる。</strong> 30 本の試験片を $C = 200$ 万回で打ち切ったところ、22 本が破断、8 本が未破断だったとする (寿命は指数分布と仮定)。</p>
+<p><strong>完全データなら簡単である。</strong> 30 本すべての寿命 $T_i$ が分かっていれば $\hat\theta = \bar T$ (平均寿命) で終わりである。しかし 8 本については「$200$ より大きい」しか分からない。</p>
+<p>EM はこの 8 本を<strong>期待値で埋めながら</strong>反復する。指数分布の無記憶性 (2.6.3 項) から、$200$ を超えたと分かっている個体の期待寿命は $200 + \theta$ である。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">反復</th>
+<th style="text-align: right;">平均寿命の推定値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0 (初期値)</td>
+<td style="text-align: right;">100.000</td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">133.452</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">142.372</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">144.751</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">145.385</td>
+</tr>
+<tr>
+<td style="text-align: right;">収束</td>
+<td style="text-align: right;"><strong>145.615</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>閉形式の答え $\sum \text{観測時間} / \text{破断数} = 145.616$ と一致する。</strong> この例では閉形式があるので EM は要らないが、<strong>「見えない値を期待値で埋める → 完全データの式を使う → 埋め直す」</strong>という手順が何をしているかがはっきり見える。</p>
+<p><strong>指数分布でなければ閉形式は無い。</strong> ワイブルや混合正規では EM が実質的に唯一の手段になる。</p>
 <h3 id="c13-13-7-2">13.7.2 単調増加の証明</h3>
+<p>13.7.1 項の手続きは「$Q$ を最大化する」だけで、<strong>元の尤度を直接見ていない。</strong> それで本当に尤度が上がるのか、という疑問に答える。</p>
 <blockquote>
 <p><strong>定理 13.5 (EM の単調性)</strong> 各反復で観測データの対数尤度は減らない: $\ln p(Y \mid \theta^{(t+1)}) \ge \ln p(Y \mid \theta^{(t)})$。</p>
 </blockquote>
@@ -28598,6 +28837,7 @@ $$</p>
 <p><strong>落とし穴。</strong> 増えると言っているのは尤度の値であって、$\theta$ が最大点へ近づくとは言っていない。単調な列が収束するのは尤度が上に有界だからで、その極限が停留点であることには別の条件が要る。図 13.6 右で初期値によって別の点に落ち着くのは、この証明が何も禁じていない振る舞いである。</p></div></details>
 <p>この証明は「$Q$ を最大化する」ことは要求しておらず、<strong>$Q$ を増やせば十分</strong>である (generalized EM)。また、$\ln p(Y \mid \theta) \ge Q(\theta \mid \theta^{(t)}) - H(\theta^{(t)} \mid \theta^{(t)})$ という下界を毎回作って持ち上げているとも読める (MM アルゴリズム、変分ベイズと同じ構図)。収束先は停留点であって大域的最大とは限らず (Wu 1983)、収束は線形 (一次) で、欠測が多いほど遅い。図 13.6 右で 2 つの初期値が別の対数尤度に落ち着くのがその例で、実務では初期値を複数試す。データが大きいときの反復コストを下げるため E ステップを部分的にしか行わない変種も提案されている<sup id="c13-fnref:5"><a class="footnote-ref" href="#c13-fn:5">5</a></sup>。</p>
 <h3 id="c13-13-7-3">13.7.3 混合正規への適用</h3>
+<p>13.7.2 項までの一般論を、最もよく使う例に当てる。<strong>E ステップが「各点がどの成分から来たかの確率」、M ステップが「重み付き平均と分散」</strong>という、きわめて直感的な形になる。</p>
 <p>$K$ 成分の混合正規 $p(y) = \sum_{k=1}^K \pi_k\,\phi(y \mid \mu_k, \sigma_k^2)$。潜在変数 $Z_i \in \{1, \dots, K\}$ を「$y_i$ がどの成分から来たか」とすると完全データ対数尤度は</p>
 <p>$$
 \ln p(Y, Z \mid \theta) = \sum_{i=1}^n \sum_{k=1}^K \mathbb{1}\{Z_i = k\}\big[\ln \pi_k + \ln\phi(y_i \mid \mu_k, \sigma_k^2)\big]
@@ -28613,29 +28853,171 @@ $$</p>
 <p>「ラベルが分かっていれば成分ごとに平均と分散をとるだけ」の計算を、ラベルの代わりに責任度で重み付けしている。図 13.6 左はその収束経過である。$K$-means はこの $\gamma_{ik}$ を 0/1 に丸め $\sigma_k$ を共通・固定した特殊形とみなせる。注意すべき退化: ある成分が 1 点だけを抱えると $\sigma_k \to 0$ で尤度が発散する。分散に下限を置くか、事前分布を入れる (MAP-EM) のが実務の対処である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.6 混合正規への EM。左: 初期値から 3 反復、40 反復での当てはめ。右: 対数尤度は毎回単調に増える (定理 13.5) が、初期値が悪いと別の局所解に落ちる" src="fig/13_em_mixture.png" /><figcaption>図 13.6 混合正規への EM。左: 初期値から 3 反復、40 反復での当てはめ。右: 対数尤度は毎回単調に増える (定理 13.5) が、初期値が悪いと別の局所解に落ちる</figcaption></figure>
 <h3 id="c13-13-7-4">13.7.4 その他の応用</h3>
+<p>13.7.3 項の混合正規以外にも、<strong>「見えない変数を補えば簡単になる」</strong>構造は至るところにある。</p>
 <ul>
 <li><strong>打ち切りデータの最尤</strong>: 疲労試験で $10^7$ 回まで破断しなかった試験片は「$\ge 10^7$」しか分からない (右打ち切り)。$Z$ = 真の破断回数とすれば E ステップは打ち切り点で切った条件付き期待値</li>
 <li><strong>欠測のある多変量正規</strong>: 13.10 節の多重代入の前段。$Z$ = 欠測部分、E ステップは観測部分を与えた条件付き期待値 (回帰の予測値) とその条件付き分散</li>
 <li><strong>隠れマルコフモデル</strong> (第 9 章): E ステップが前向き後向きアルゴリズム (Baum–Welch)</li>
 <li><strong>因子分析</strong>: $Z$ = 因子得点</li>
 </ul>
+<p><strong>共通する構造は 1 つである。</strong> どの応用も「$Z$ が見えていれば簡単に解けるのに、見えない」という形をしている。</p>
+<table>
+<thead>
+<tr>
+<th>応用</th>
+<th>見えない変数 $Z$</th>
+<th>$Z$ があれば何が簡単になるか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>打ち切りデータ (10.3 節)</td>
+<td>真の寿命</td>
+<td>完全データの最尤 ($\bar T$ など)</td>
+</tr>
+<tr>
+<td>混合正規 (13.7.3 項)</td>
+<td>各点の所属成分</td>
+<td>成分ごとに別々の正規の最尤</td>
+</tr>
+<tr>
+<td>欠測データ (13.10 節)</td>
+<td>欠測値そのもの</td>
+<td>完全データの解析</td>
+</tr>
+<tr>
+<td>因子分析 (7.5 節)</td>
+<td>共通因子のスコア</td>
+<td>通常の回帰</td>
+</tr>
+<tr>
+<td>隠れマルコフモデル</td>
+<td>各時点の状態</td>
+<td>状態ごとの計数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>13.7.1 項の打ち切りの例では 5 回で収束した</strong> (平均寿命 $100 \to 145.6$)。収束の速さは「見えない情報の割合」で決まり、<strong>欠測が多いほど遅くなる。</strong> 打ち切りが 8/30 のあの例では速かったが、混合正規で成分が重なっていると数百回かかることもある。</p>
+<p><strong>EM は 2 次収束しない。</strong> 13.8.1 項の Newton 法が有効桁を毎回 2 倍にするのに対し、EM は線形収束 (誤差が毎回一定の割合で減る) である。<strong>代わりに、尤度が必ず増えることが保証され、初期値に対して頑健</strong>である。実務では「EM である程度寄せてから Newton で仕上げる」使い方もされる。</p>
 <h2 id="c13-13-8">13.8 数値最適化と最尤推定</h2>
+<p>13.7 節の EM は構造を利用した特殊な方法だった。<strong>構造が無い一般の尤度をどう最大化するか。</strong> 3.5 節で「数値的に最大化する」と流した部分を、ここで具体化する。</p>
 <h3 id="c13-13-8-1">13.8.1 Newton 法と Fisher スコアリング</h3>
+<p>基本は 2 次近似である。<strong>3.5.2 項のスコアと Fisher 情報量が、そのまま勾配と Hesse 行列として現れる。</strong></p>
 <p>対数尤度 $\ell(\theta)$ の最大化。スコア $s(\theta) = \nabla \ell$、Hesse 行列 $H(\theta) = \nabla^2 \ell$ として Newton 法は</p>
 <p>$$
 \theta^{(t+1)} = \theta^{(t)} - H(\theta^{(t)})^{-1}\,s(\theta^{(t)})
 $$</p>
 <p>解の近くでは二次収束 (桁数が毎回倍になる) するが、$H$ が負定値でないと逆方向に進み得る。$-H$ をその期待値、すなわち Fisher 情報量 $\mathcal{I}(\theta) = -E[H]$ で置き換えたのが <strong>Fisher スコアリング</strong>で、$\mathcal{I}$ は常に半正定値なので安定する。一般化線形モデルの IRLS (第 5 章) はこれである。収束後の $-H(\hat\theta)^{-1}$ (観測情報量の逆) が最尤推定量の分散共分散の推定になり (第 3 章)、標準誤差はその対角の平方根。<strong>最適化の副産物として標準誤差が手に入る</strong>のが、Newton 系を使う統計的な理由である。</p>
+<p><strong>収束の速さを数で見る。</strong> 指数分布 ($n = 50$、MLE $\hat\lambda = 2.07159$) を、わざと遠い初期値 $\lambda = 0.5$ から Newton 法で解く。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">反復</th>
+<th style="text-align: right;">$\lambda$</th>
+<th style="text-align: right;">MLE との誤差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.500000</td>
+<td style="text-align: right;">$1.19$</td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.879320</td>
+<td style="text-align: right;">$6.9\times10^{-1}$</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.385399</td>
+<td style="text-align: right;">$2.3\times10^{-1}$</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.844298</td>
+<td style="text-align: right;">$2.5\times10^{-2}$</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.046654</td>
+<td style="text-align: right;">$3.0\times10^{-4}$</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2.071292</td>
+<td style="text-align: right;">$4.4\times10^{-8}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>誤差の指数部に注目したい。</strong> $10^{-2} \to 10^{-4} \to 10^{-8}$ と、<strong>有効桁数が毎回 2 倍になっている。</strong> これが 2 次収束で、最大化点の近くに入ってしまえば数回で機械精度に達する。</p>
+<p><strong>遠いところでは遅い。</strong> 反復 0〜2 はほとんど進んでいない。2 次近似が当たらない領域では Newton 法は保証を持たず、<strong>ステップが発散することすらある。</strong> 実装では「対数尤度が下がったらステップを半分にする」といった減衰を入れるのが普通である。</p>
+<p><strong>Fisher スコアリングとの違いは Hesse 行列を何で置き換えるか</strong>にある。観測情報量 $-\ell''(\theta)$ は標本ごとに違い、負定値でないこともある。期待情報量 $I(\theta)$ は必ず正定値なので、<strong>発散しにくい代わりに収束が少し遅い。</strong></p>
 <h3 id="c13-13-8-2">13.8.2 準 Newton 法と導関数不要法</h3>
+<p>13.8.1 項は Hesse 行列が計算できる前提だった。<strong>計算できない、あるいは計算が重いとき</strong>の代替を見る。</p>
 <p>$H$ の計算が難しいときは、勾配の差分から $H^{-1}$ の近似を更新する <strong>BFGS</strong> (準 Newton) を使う (<code>scipy.optimize.minimize(method="BFGS")</code>、大規模なら L-BFGS)。勾配も無いなら <strong>Nelder–Mead</strong> (単体法) だが、収束は遅く次元が 10 を超えると当てにならない。実務の手順は (i) 対数尤度を書き、(ii) パラメータを無制約に変換し ($\sigma = e^{\eta}$、$\pi = \mathrm{logit}^{-1}(\zeta)$)、(iii) BFGS で最適化し、(iv) 数値 Hesse 行列 (差分) で標準誤差を出す、で、(v) 初期値を複数試して同じ解に来るか見る。EM と比べると、Newton 系は速いが安定性で劣り、EM は遅いが「尤度が必ず増える」「制約 (分散 &gt; 0、確率の和 = 1) を自然に満たす」利点がある。両者を組み合わせ、EM で大まかに近づけてから Newton で仕上げるのが常套手段である。</p>
 <h3 id="c13-13-8-3">13.8.3 プロファイル尤度と信頼区間</h3>
+<p>最大化が済んだあとの話である。<strong>3.8 節の Wald 型区間には、パラメータの取り方で答えが変わるという弱点がある。</strong> 尤度そのものから区間を作ればそれが消える。</p>
 <p>Wald 区間 $\hat\theta \pm 1.96\,\mathrm{se}$ はパラメータ変換に対して不変でなく、境界近く (分散 $\approx 0$、確率 $\approx 0$) で悪い。一部のパラメータ $\psi$ に注目し、残り $\lambda$ を各 $\psi$ で最大化した<strong>プロファイル尤度</strong> $\ell_p(\psi) = \max_\lambda \ell(\psi, \lambda)$ を使って</p>
 <p>$$
 \{\psi : 2[\ell_p(\hat\psi) - \ell_p(\psi)] \le \chi^2_{1, 0.95}\}
 $$</p>
 <p>とすれば変換不変な区間になる (第 4 章の尤度比検定の反転)。Weibull の形状パラメータのように非対称な区間が自然な場面で使う。</p>
+<p><strong>数で比べる。</strong> 指数分布から $n = 10$ を引いて $\hat\lambda = 2.6604$、$\mathrm{se} = 0.8413$ だったとする。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>95% 区間</th>
+<th style="text-align: right;">幅</th>
+<th>$\hat\lambda$ からの距離 (下/上)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wald ($\hat\lambda \pm 1.96\,\mathrm{se}$)</td>
+<td>$[1.012,\ 4.309]$</td>
+<td style="text-align: right;">3.298</td>
+<td>$1.649$ / $1.649$ (対称)</td>
+</tr>
+<tr>
+<td>プロファイル尤度</td>
+<td>$[1.333,\ 4.666]$</td>
+<td style="text-align: right;">3.333</td>
+<td><strong>$1.327$ / $2.005$</strong> (非対称)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>幅はほぼ同じなのに、位置が違う。</strong> プロファイル尤度の区間は上側に長い — 尤度関数そのものが右に歪んでいるからである。$\lambda$ は正の量なので、下側が 0 に近づくほど制約を受ける。</p>
+<p><strong>変換すると差が決定的になる。</strong> 平均寿命 $1/\lambda$ の区間を作ると</p>
+<table>
+<thead>
+<tr>
+<th>作り方</th>
+<th>区間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1/\lambda$ で直接 Wald</td>
+<td>$[0.143,\ 0.609]$</td>
+</tr>
+<tr>
+<td>$\lambda$ の Wald 区間を $1/\cdot$ で変換</td>
+<td>$[0.232,\ 0.989]$</td>
+</tr>
+<tr>
+<td>$\lambda$ のプロファイル区間を $1/\cdot$ で変換</td>
+<td>$[0.214,\ 0.750]$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wald は「どちらのパラメータで区間を作ったか」で答えが変わる</strong> ($[0.143, 0.609]$ と $[0.232, 0.989]$)。プロファイル尤度は<strong>変換に対して不変</strong>なので、$1/\lambda$ で直接作っても $\lambda$ から変換しても同じ区間になる。</p>
+<p>3.5.4 項で見た最尤推定量の不変性が、<strong>区間についても成り立つのはプロファイル尤度のほうだけ</strong>である。$n$ が小さいときや、分散のように境界 (0) の近くにあるパラメータでは、この差が実際に効く。</p>
 <h2 id="c13-13-9">13.9 標本調査</h2>
+<p>13.2〜13.8 節は「データが手元にある」前提の計算だった。<strong>この節は、そのデータをどう集めるかの話である。</strong> 第 6 章の実験計画が「条件を自分で決められる」場合だったのに対し、ここは<strong>すでに存在する母集団から選び出す</strong>場合になる。</p>
 <h3 id="c13-13-9-1">13.9.1 有限母集団と単純無作為抽出</h3>
+<p>これまでの章では母集団を無限の分布として扱ってきた。<strong>有限個の実体から選ぶ</strong>と話が少し変わる — 分散の式に見慣れない係数が付く。</p>
 <p>$N$ 個の値 $y_1, \dots, y_N$ (固定) から $n$ 個を非復元で等確率に抜く (<strong>単純無作為抽出</strong>, SRS)。母平均 $\bar Y = \frac1N \sum y_i$、母分散を $S^2 = \frac{1}{N-1}\sum (y_i - \bar Y)^2$ と定義する ($N - 1$ で割るのが便利)。</p>
 <blockquote>
 <p><strong>定理 13.6 (SRS の標本平均)</strong> 標本平均 $\bar y$ は $\bar Y$ の不偏推定量で</p>
@@ -28663,7 +29045,42 @@ $$</p>
 <p><strong>$S^2$ の分母を $N-1$ にした理由がここにある。</strong> 共分散に $N-1$ が出てくるので、母分散をそう定義しておくとこの段で綺麗に消える。$N$ で割る定義を使うと余分な因子が残る。</p>
 <p><strong>落とし穴。</strong> $(1 - n/N)$ は「母集団の何割を見たか」を表す量であって、精度そのものではない。$n$ を固定したまま $N$ を大きくすると因子は 1 に近づくだけで、分散は $S^2/n$ に留まる。抽出率を上げても $n$ が小さければ精度は上がらない。</p></div></details>
 <p>$(1 - n/N)$ が<strong>有限母集団修正</strong> (fpc) で、母集団を全部抜けば ($n = N$) 分散 0 になる。$n/N < 5\%$ なら無視して無限母集団の公式 $S^2/n$ を使ってよい。標本分散 $s^2$ は $S^2$ の不偏推定量なので、標準誤差は $\sqrt{(1 - n/N)\,s^2/n}$。重要な帰結: 精度を決めるのは抽出率 $n/N$ ではなく<strong>標本サイズ $n$ そのもの</strong>である。1 億人から 2000 人を抜いても 10 万人から 2000 人を抜いても標準誤差はほぼ同じ。</p>
+<p><strong>有限母集団修正がどれだけ効くかを数で見る。</strong> $N = 500$ 棟の母集団から $n$ 棟を抜くとき</p>
+<table>
+<thead>
+<tr>
+<th>$n$</th>
+<th style="text-align: right;">25</th>
+<th style="text-align: right;">50</th>
+<th style="text-align: right;">100</th>
+<th style="text-align: right;">250</th>
+<th style="text-align: right;">500</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\mathrm{fpc} = (N-n)/(N-1)$</td>
+<td style="text-align: right;">0.952</td>
+<td style="text-align: right;">0.902</td>
+<td style="text-align: right;">0.802</td>
+<td style="text-align: right;">0.501</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr>
+<td>標準誤差が無限母集団の何倍か</td>
+<td style="text-align: right;">0.976</td>
+<td style="text-align: right;">0.950</td>
+<td style="text-align: right;">0.895</td>
+<td style="text-align: right;"><strong>0.708</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>抽出率 $n/N$ が 5% 程度なら修正は 2% 程度で、無視してよい。</strong> 実務で fpc がしばしば省略されるのはこのためである。</p>
+<p><strong>しかし全数調査に近づくと決定的に効く。</strong> $n = N$ なら標準誤差はちょうど 0 — <strong>全部数えたのだから誤差は無い。</strong> 無限母集団の式では $\sigma/\sqrt{N}$ が残ってしまい、これは明らかに誤りである。</p>
+<p><strong>「母集団が有限かどうか」は、問いの立て方で決まる。</strong> 「この 500 棟の平均耐力はいくつか」なら有限母集団で fpc が要る。「この工法で建てた建物一般の平均耐力はいくつか」なら 500 棟は無限母集団からの標本で、fpc は要らない。<strong>同じデータでも、何について語りたいかで式が変わる。</strong></p>
 <h3 id="c13-13-9-2">13.9.2 層化抽出</h3>
+<p>13.9.1 項の単純無作為抽出は、母集団に構造があるときに損をする。<strong>あらかじめ分けてから抜く</strong>と、同じ標本数で精度が上がる。6.5.1 項の乱塊法と同じ理屈である。</p>
 <p>母集団を $H$ 個の層 (size $N_h$、重み $W_h = N_h / N$、層内分散 $S_h^2$) に分け、各層から独立に SRS で $n_h$ 個抜く。推定量と分散は</p>
 <p>$$
 \bar y_{st} = \sum_{h=1}^H W_h\,\bar y_h,\qquad \mathrm{Var}[\bar y_{st}] = \sum_{h=1}^H W_h^2 \left(1 - \frac{n_h}{N_h}\right)\frac{S_h^2}{n_h}
@@ -28696,7 +29113,37 @@ $$</p>
 <p><strong>落とし穴。</strong> 3 は停留点を出しただけで、それが最小であることは別に言う必要がある。$V$ は各 $n_h > 0$ について凸 ($1/n_h$ が凸) なので、停留点が最小になる。また $n_h$ は整数でなければならず、$n_h \le N_h$ という制約もあるので、式が返す値をそのまま使えるとは限らない。</p></div></details>
 <p>最小分散は $\frac1n \left(\sum_h W_h S_h\right)^2$。<strong>ばらつきの大きい層に多く配分する</strong>のが要点で、費用 $c_h$ が層で違うなら $n_h \propto W_h S_h / \sqrt{c_h}$ に一般化される。図 13.7 は 3 層の母集団で、SRS → 比例配分 → Neyman 配分と推定量の標準偏差が縮む様子である。$S_h$ は未知なので前回調査や補助変数から見積もるが、少々間違えても比例配分よりは悪くならない程度に頑健である。建物調査で「構造種別 × 築年代」で層化するのは、この層内で耐震性能のばらつきが小さいからで、層化はまた各層の推定値を報告できる (小地域推定) 副次的利点も持つ。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.7 層化抽出。左: 3 層からなる母集団と n = 300 の配分 (Neyman 配分は分散の大きい第 3 層に厚い)。右: 3000 反復での推定量の分布。SRS → 比例 → Neyman の順に標準偏差が縮む" src="fig/13_stratified.png" /><figcaption>図 13.7 層化抽出。左: 3 層からなる母集団と n = 300 の配分 (Neyman 配分は分散の大きい第 3 層に厚い)。右: 3000 反復での推定量の分布。SRS → 比例 → Neyman の順に標準偏差が縮む</figcaption></figure>
+<p><strong>配分の仕方で何倍違うかを数で見る。</strong> 3 層、層の重み $W = (0.5,\,0.3,\,0.2)$、層内標準偏差 $S = (2,\,5,\,12)$、層の平均 $(30,\,40,\,55)$、総標本 $n = 200$ とすると</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th style="text-align: right;">分散</th>
+<th style="text-align: right;">標準誤差 (SRS 比)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>単純無作為抽出</td>
+<td style="text-align: right;">0.6465</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+<tr>
+<td>比例配分 ($n_h \propto W_h$)</td>
+<td style="text-align: right;">0.1915</td>
+<td style="text-align: right;">0.544</td>
+</tr>
+<tr>
+<td>Neyman 配分 ($n_h \propto W_h S_h$)</td>
+<td style="text-align: right;"><strong>0.1201</strong></td>
+<td style="text-align: right;"><strong>0.431</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>層化するだけで標準誤差が半分になり、配分を工夫するとさらに 2 割縮む。</strong> Neyman 配分の標本数は $(41,\,61,\,98)$ で、<strong>重みが $0.2$ しかない第 3 層に全体の半数を割り当てている</strong> — ばらつきが大きい層を厚く見るからである。</p>
+<p>SRS が大きく損をしているのは、<strong>層の平均が $30$、$40$、$55$ と離れている</strong>ぶんがそのまま分散に入るからである。層化するとこの「層間」の成分が丸ごと消える。<strong>6.2.2 項の平方和の分解と同じ構造</strong>で、層化抽出は「群間変動を設計で消す」手続きにほかならない。</p>
 <h3 id="c13-13-9-3">13.9.3 クラスター抽出と多段抽出</h3>
+<p>13.9.2 項までは「個体の名簿がある」前提だった。<strong>名簿が無く、集団の名簿しか無い</strong>ことが多い。このとき精度は落ちるが、費用が劇的に下がる。</p>
 <p>個体の名簿がなく、集団 (クラスター: 町丁目、学校、建物内の部屋) の名簿だけがあるときは、クラスターを抜いてその中を全数 (または再抽出 = <strong>多段抽出</strong>) 調べる。費用は安いが、同じクラスター内の個体は似ている (<strong>級内相関</strong> $\rho$) ため情報が重複する。</p>
 <blockquote>
 <p><strong>定義 13.4 (設計効果)</strong> 同じ標本サイズ $n$ での分散の比 $\mathrm{deff} = \mathrm{Var}[\hat\theta_{\text{設計}}] / \mathrm{Var}[\hat\theta_{SRS}]$。有効標本数は $n_{eff} = n / \mathrm{deff}$。</p>
@@ -28721,6 +29168,7 @@ $$</p>
 <p>図 13.8 のとおり、$\rho = 0.05$ という小さい相関でも $m = 20$ なら deff = 1.95 で標本の半分が無駄になる。$m = 50$ で $\rho = 0.1$ なら deff ≈ 6。<strong>クラスターは小さく多く</strong>が原則で、分散の推定にはクラスターを単位とした (クラスター間の) 分散を使わねばならず、個体を独立扱いした標準誤差は $\sqrt{\mathrm{deff}}$ 倍過小になる。第 6 章の反復測定・第 11 章のクラスター頑健標準誤差と同じ現象である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.8 設計効果と級内相関。左: deff = 1 + (m − 1)ρ。ρ が小さくてもクラスターサイズ m が大きいと急増する。右: 数値実験 (m = 20、10 クラスター vs 同じ n = 200 の SRS) が理論に乗る" src="fig/13_deff_icc.png" /><figcaption>図 13.8 設計効果と級内相関。左: deff = 1 + (m − 1)ρ。ρ が小さくてもクラスターサイズ m が大きいと急増する。右: 数値実験 (m = 20、10 クラスター vs 同じ n = 200 の SRS) が理論に乗る</figcaption></figure>
 <h3 id="c13-13-9-4">13.9.4 系統抽出</h3>
+<p>13.9.1 項の単純無作為抽出は、現場で実施するのが意外に面倒である。<strong>一定間隔で抜く</strong>という簡便法には、思わぬ利点と危険がある。</p>
 <p>名簿から間隔 $k = N/n$ ごとに 1 個 (最初の位置だけ乱数) 抜く。実施が簡単で、名簿が有意義な順 (住所順・建築年順) に並んでいれば暗黙の層化になって SRS より良い。逆に名簿に周期があり $k$ と共鳴すると (集合住宅で各階の同じ位置の住戸ばかり) 破綻する。標本は 1 つのクラスターに相当するので<strong>分散が標本から不偏推定できない</strong>のが理論的な弱点で、実務では SRS の公式で代用するか、乱数開始点を複数にする (反復系統抽出)。</p>
 <h3 id="c13-13-9-5">13.9.5 非標本誤差</h3>
 <p>抽出に起因する誤差 (標本誤差) は $n$ を増やせば減る。しかし<strong>非標本誤差</strong>は減らない。</p>
@@ -28732,13 +29180,16 @@ $$</p>
 </ul>
 <p>推定値の総誤差は $\text{MSE} = \text{Var} + \text{Bias}^2$ で、$n$ を増やして Var を減らしても Bias は残る。大きな $n$ で小さな標準誤差が付いた偏った推定値は、小さな $n$ の正しい推定値より有害である (Meng 2018 は「ビッグデータのパラドックス」として定式化した)。</p>
 <h3 id="c13-13-9-6">13.9.6 標本サイズの設計</h3>
+<p>13.9.1〜13.9.5 項で抽出の方式が揃った。<strong>何個抜けばよいか</strong>を決める。4.10.2 項の反復数設計と同じ問いである。</p>
 <p>母比率 $p$ を誤差 $e$ (信頼度 95%) で推定したい:</p>
 <p>$$
 n_0 = \frac{1.96^2\,p(1-p)}{e^2},\qquad n = \frac{n_0}{1 + n_0 / N}\ (\text{fpc 補正})
 $$</p>
 <p>$p$ 未知なら最悪の $p = 0.5$ で $n_0 = 0.96 / e^2$。$e = 0.03$ なら約 1070 で、世論調査の $n \approx 1000 \sim 2000$ はここから来る。平均なら $n_0 = (1.96\,S / e)^2$。設計効果があるなら $n = n_0 \times \mathrm{deff}$、回答率 $r$ を見込むなら $n / r$ を配布する。層化・クラスターの効果を先に見積もるのが設計の順序である。</p>
 <h2 id="c13-13-10">13.10 欠測データ</h2>
+<p>13.9 節で設計どおりに標本を抜いても、<strong>全部が回収できるとは限らない。</strong> 計測器が落ちた、回答が得られなかった、試験片が壊れた。<strong>欠測を無視した解析は、多くの場合に偏る。</strong></p>
 <h3 id="c13-13-10-1">13.10.1 欠測メカニズム</h3>
+<p>13.10 節の手当てに入る前に、<strong>なぜ欠けたのか</strong>を分類する。分類が違えば正しい手当ても違い、<strong>しかも分類そのものがデータからは判定できない</strong>ことがある。</p>
 <p>Rubin (1976) は、データ $Y = (Y_{obs}, Y_{mis})$ と欠測指示 $R$ (観測されれば 1) の関係で 3 つに分けた<sup id="c13-fnref:2"><a class="footnote-ref" href="#c13-fn:2">2</a></sup>。</p>
 <blockquote>
 <p><strong>定義 13.5 (欠測メカニズム)</strong></p>
@@ -28750,11 +29201,54 @@ $$</p>
 </blockquote>
 <p>例: センサーが電池切れで無作為に止まる (MCAR)。築年の古い建物ほど図面が残っていない — 築年は記録されている (MAR)。損傷の大きい建物ほど所有者が調査を拒む — 損傷度自体が欠ける (MNAR)。<strong>MCAR と MAR はデータから区別できるが、MAR と MNAR は観測データからは区別できない</strong> (欠けた値を見なければ分からない)。したがって MAR は検証ではなく<strong>仮定</strong>であり、MNAR の可能性は感度分析で扱う<sup id="c13-fnref:6"><a class="footnote-ref" href="#c13-fn:6">6</a></sup>。</p>
 <p>Rubin の主定理: <strong>MAR (と、パラメータの分離性) のもとでは、欠測メカニズムを無視した尤度 $\int p(Y_{obs}, Y_{mis} \mid \theta)\,dY_{mis}$ に基づく推測 (最尤・ベイズ) は正しい</strong>。これが「MAR なら無視可能 (ignorable)」の意味で、EM や多重代入がこの尤度を扱う道具である。</p>
+<p><strong>3 つで何が違うかを数で見る。</strong> $y = 2 + 1.5x + \varepsilon$ で、欠測の仕方だけを変えて完全ケース解析を行う (真の $E[y] = 1.984$、真の傾き $1.5$)。</p>
+<table>
+<thead>
+<tr>
+<th>メカニズム</th>
+<th style="text-align: right;">観測率</th>
+<th style="text-align: right;">$E[y]$ の推定</th>
+<th style="text-align: right;">偏り</th>
+<th style="text-align: right;">傾きの推定</th>
+<th style="text-align: right;">偏り</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MCAR (完全に無作為)</td>
+<td style="text-align: right;">0.60</td>
+<td style="text-align: right;">1.992</td>
+<td style="text-align: right;">$+0.008$</td>
+<td style="text-align: right;">1.506</td>
+<td style="text-align: right;">$+0.006$</td>
+</tr>
+<tr>
+<td>MAR ($x$ に依存)</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">2.779</td>
+<td style="text-align: right;">$+0.795$</td>
+<td style="text-align: right;">1.510</td>
+<td style="text-align: right;"><strong>$+0.010$</strong></td>
+</tr>
+<tr>
+<td>MNAR ($y$ に依存)</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">2.913</td>
+<td style="text-align: right;">$+0.930$</td>
+<td style="text-align: right;">1.351</td>
+<td style="text-align: right;"><strong>$-0.149$</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>MAR の行が重要である。</strong> 平均は $0.795$ も偏るのに、<strong>回帰の傾きはほとんど偏らない。</strong> 欠測が $x$ にしか依存していないので、$x$ で条件付けた関係 ($y$ の $x$ への回帰) は保たれるからである。</p>
+<p><strong>ここから実務的な結論が出る。</strong> 「平均を報告するのか、回帰係数を報告するのか」で、同じ欠測が問題になったりならなかったりする。<strong>欠測メカニズムだけを見て「危ない/安全」とは言えず、何を推定したいかと組み合わせて判断する</strong>ことになる。</p>
+<p>MNAR では傾きまで $-0.149$ 偏る。しかも<strong>MNAR であることはデータからは判定できない</strong> — 観測されなかった $y$ の値は、定義上どこにも無いからである。13.10.5 項の感度分析しか手が無い。</p>
 <h3 id="c13-13-10-2">13.10.2 リストワイズ削除のバイアス</h3>
 <p>欠測を含む行を全部捨てる (リストワイズ削除、complete-case 解析) のが既定の挙動である。MCAR なら不偏だが標本が減るだけ。MAR では<strong>偏る</strong> (図 13.9 の中央: $x$ が大きいほど $y$ が欠ける設定で、観測された $y$ の平均は真値より下にずれる)。ただし回帰係数の推定は、欠測が説明変数 $x$ にだけ依存する MAR なら complete-case でも不偏である (図の傾きが 0.8 のままなのはそのため。条件付き分布 $y \mid x$ が変わっていない)。MNAR では回帰も含めて偏る (図の右側)。</p>
 <p>「平均値で埋める」単一代入はさらに悪い: 分散を過小にし、相関を弱め、標準誤差を偽って小さくする。回帰の予測値で埋めるのも同様で、埋めた値には誤差がないふりをしている。</p>
 <figure><img loading="lazy" decoding="async" alt="図 13.9 欠測メカニズムとリストワイズ削除。MCAR では観測部分は無偏、MAR (x が大きいほど y が欠ける) では y の平均が偏るが回帰の傾きは保たれる、MNAR (y が大きいほど欠ける) では平均も傾きも偏る。右端: MAR に多重代入すると平均の推定が回復する" src="fig/13_missing.png" /><figcaption>図 13.9 欠測メカニズムとリストワイズ削除。MCAR では観測部分は無偏、MAR (x が大きいほど y が欠ける) では y の平均が偏るが回帰の傾きは保たれる、MNAR (y が大きいほど欠ける) では平均も傾きも偏る。右端: MAR に多重代入すると平均の推定が回復する</figcaption></figure>
 <h3 id="c13-13-10-3">13.10.3 多重代入</h3>
+<p>13.10.2 項で「削除は偏る」と分かった。<strong>埋めればよいのだが、1 つの値で埋めると今度は不確かさが消えてしまう。</strong> 複数回埋めて、そのばらつきを最終的な区間に反映させる。</p>
 <p>Rubin (1987) の<strong>多重代入</strong> (multiple imputation, MI) は、欠測値を「もっともらしい値の分布」から $M$ 回引いて $M$ 個の完全データセットを作り、それぞれ普通に解析して結果を統合する。埋めた値の不確かさを、$M$ 個のデータ間のばらつきとして持ち込むのが要点である。</p>
 <blockquote>
 <p><strong>定理 13.9 (Rubin の統合則)</strong> $M$ 個の完全データから推定値 $\hat\theta_m$ と分散推定 $U_m$ を得たとき</p>
@@ -28768,7 +29262,43 @@ $$</p>
 </blockquote>
 <p>導出の要点: ベイズ的に $\theta$ の事後分布は $p(\theta \mid Y_{obs}) = \int p(\theta \mid Y_{obs}, Y_{mis})\,p(Y_{mis} \mid Y_{obs})\,dY_{mis}$。完全データ事後の平均と分散を、代入分布で平均する (全分散の公式) と $\mathrm{Var}[\theta \mid Y_{obs}] = E[U] + \mathrm{Var}[\hat\theta_m] \approx \bar U + B$。$B$ を有限の $M$ で推定する分だけ $B/M$ を足す。$\bar U$ は代入内分散 (完全なら得られたはずの分散)、$B$ は代入間分散 (欠測による情報の損失) で、比 $r = (1 + 1/M)B / \bar U$ が欠測による分散の相対増加、$\lambda = (1 + 1/M)B / T$ が「欠測に起因する情報の割合」である。$M$ は伝統的には 5 で足りるとされたが、$\lambda$ が大きいときは $M = 20 \sim 100$ が推奨される<sup id="c13-fnref:3"><a class="footnote-ref" href="#c13-fn:3">3</a></sup>。</p>
 <p><strong>代入モデルは解析モデルより広く</strong>とる (解析に使う変数、結果変数、補助変数をすべて入れる)。結果変数を代入モデルから外すと、その変数との関係が薄められて回帰係数が 0 側に偏る (第 5 章の「省略変数」の逆)。</p>
+<p><strong>3 つの扱いを数で比べる。</strong> $y = 2 + 1.5x + \varepsilon$ ($x \sim N(0,1)$、$\varepsilon \sim N(0,1)$) で、<strong>$x$ が大きいほど観測されやすい</strong> (MAR) という欠測を入れる。真の $E[y] = 1.982$。</p>
+<table>
+<thead>
+<tr>
+<th>扱い</th>
+<th style="text-align: right;">推定値</th>
+<th style="text-align: right;">偏り</th>
+<th style="text-align: right;">$y$ の分散 (真 3.293)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>完全ケース解析 (欠測行を削除)</td>
+<td style="text-align: right;">2.777</td>
+<td style="text-align: right;"><strong>$+0.795$</strong></td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>単一代入 (条件付き平均で埋める)</td>
+<td style="text-align: right;">1.970</td>
+<td style="text-align: right;">$-0.013$</td>
+<td style="text-align: right;"><strong>2.811</strong></td>
+</tr>
+<tr>
+<td>代入に残差を足す</td>
+<td style="text-align: right;">1.976</td>
+<td style="text-align: right;">$-0.007$</td>
+<td style="text-align: right;">3.336</td>
+</tr>
+</tbody>
+</table>
+<p><strong>読みどころが 2 つある。</strong></p>
+<p>第 1 に、<strong>削除は $+0.795$ も偏る。</strong> $y$ の平均が $1.98$ なのに $2.78$ と答える — 40% の過大評価である。欠測が $y$ そのものではなく $x$ に依存しているだけ (MAR) なのに、$x$ と $y$ が相関しているのでこうなる。</p>
+<p>第 2 に、<strong>単一代入は平均は当てるが、ばらつきを $2.811$ と過小に出す</strong> (真は $3.293$)。条件付き平均で埋めた点は回帰直線の上に乗るので、<strong>その点の散らばりが消えてしまう。</strong> 残差を足せば $3.336$ とほぼ戻る。</p>
+<p><strong>多重代入が $M$ 回繰り返す理由がここにある。</strong> 残差を足した代入を 1 回だけやると、その 1 回の乱数に結果が依存する。$M$ 回やって Rubin の規則で合成すると、<strong>「埋めた値が分からない」という不確かさが区間の幅に反映される。</strong> 1 回で済ませると区間が狭すぎるものになり、8.8.2 項の経験ベイズと同じ失敗をすることになる。</p>
 <h3 id="c13-13-10-4">13.10.4 MICE (連鎖方程式)</h3>
+<p>13.10.3 項の多重代入には「欠測値の分布をどう作るか」という問題が残る。<strong>変数が多いと同時分布を 1 つ書くのは無理</strong>なので、1 変数ずつ順に回す。</p>
 <p>多変量のすべての変数に欠測があるとき、同時分布を 1 つ書くのは難しい。van Buuren &amp; Groothuis-Oudshoorn の <strong>MICE</strong> (multivariate imputation by chained equations) は、変数ごとに「他の全変数を説明変数とする条件付きモデル」を指定し、Gibbs サンプラーのように順に埋め直す<sup id="c13-fnref:1"><a class="footnote-ref" href="#c13-fn:1">1</a></sup>。</p>
 <ol>
 <li>各変数の欠測を仮の値 (観測値からの無作為抽出) で埋める</li>
@@ -28777,6 +29307,19 @@ $$</p>
 <li>これを $M$ 回独立に行い、Rubin の統合則で結ぶ</li>
 </ol>
 <p>条件付きモデルの集まりが整合する同時分布を持つとは限らない (「非互換」問題) が、実用上は安定に働くことが多い。<strong>予測平均マッチング</strong> (PMM: 予測値が近い観測値を実際にコピーする) を使えば、埋めた値が実在の値の範囲に収まり、分布の形も保たれる。代入後は必ず「観測値と代入値の分布を重ねて描く」診断をする。</p>
+<p><strong>手順を数で追うと分かりやすい。</strong> 3 変数 $(x_1, x_2, y)$ にそれぞれ欠測があるとする。MICE の 1 巡は</p>
+<ol>
+<li>まず全部を平均などで仮に埋める</li>
+<li>$x_1$ の欠測だけを外し、<strong>観測されている $x_1$ を $(x_2, y)$ に回帰</strong>して、予測値 + 残差で埋め直す</li>
+<li>同じことを $x_2$ について、$(x_1, y)$ を使って行う</li>
+<li>同じことを $y$ について行う</li>
+<li>2〜4 を 10〜20 巡繰り返す</li>
+</ol>
+<p><strong>これを $M = 5 \sim 20$ 回、別々の乱数で独立に行う。</strong> 各回から得た推定値 $\hat\theta_m$ と分散 $U_m$ を Rubin の規則で合成する。</p>
+<p>$$\bar\theta = \frac1M\sum_m \hat\theta_m, \qquad T = \underbrace{\frac1M\sum_m U_m}_{\text{回内}} + \underbrace{\left(1 + \frac1M\right)\frac{1}{M-1}\sum_m (\hat\theta_m - \bar\theta)^2}_{\text{回間}}$$</p>
+<p><strong>第 2 項が「埋めた値が分からない」ことの代金である。</strong> 13.10.3 項で単一代入の分散が $2.811$ と過小だった ($3.293$ が真) のは、この項が欠けていたからにほかならない。</p>
+<p>$M$ をいくつにするかの目安は、<strong>欠測割合 $\gamma$ に対して $M \ge 100\gamma$</strong>。欠測 20% なら $M = 20$ である。かつては $M = 5$ で十分とされたが、<strong>区間の再現性まで求めるならもっと要る</strong>というのが現在の理解である。</p>
+<p><strong>MICE には理論的な弱点がある。</strong> 1 変数ずつの条件付き分布を並べても、それが 1 つの同時分布から来ている保証が無い (<strong>両立性の問題</strong>)。実用上は問題にならないことが多いが、<strong>「うまく動いているのは経験的に確かめられているから」</strong>であって、定理があるわけではない。</p>
 <h3 id="c13-13-10-5">13.10.5 逆確率重み付けと MNAR</h3>
 <p>MI の代替は<strong>逆確率重み付け</strong> (IPW): 観測される確率 $\pi_i = P(R_i = 1 \mid X_i)$ をモデル化し、観測行に $1/\hat\pi_i$ の重みを付ける (第 11 章の傾向スコア重み付けと同じ)。MNAR には万能な方法がなく、<strong>感度分析</strong>が標準になる: 代入した値を $\delta$ だけずらして (delta-adjustment) 結論がどこまで頑健かを示す、または選択モデル (Heckman) やパターン混合モデルで欠測と値の関係を明示的に仮定する<sup id="c13-fnref2:6"><a class="footnote-ref" href="#c13-fn:6">6</a></sup>。</p>
 <h2 id="c13-13-11">13.11 Python で確かめる</h2>
@@ -29020,7 +29563,7 @@ print(f&quot;真の平均 {yf.mean():.3f}  complete-case {yo.mean():.3f}  MI {th
 <p>より具体的には、<strong>古典的な多項式応答曲面、多項式カオス展開、クリギング</strong>が扱われる。<strong>誤差推定と構成における適応性</strong>の必要が、この種のアプローチを高い効率の水準へ導いたことが示される。最後に、メタモデルの使用を通じた破壊確率の推定における潜在的な偏りの問題を解決する新技術が提示される。</p>
 </blockquote>
 <p>キーワードとして「構造信頼性、不確かさの定量化、メタモデル、代理モデル、多項式カオス展開、クリギング、重点サンプリング」が挙げられている<sup id="c13-fnref2:r1"><a class="footnote-ref" href="#c13-fn:r1">11</a></sup>。</p>
-<h3 id="c13-3">3 つの代理モデルの性格</h3>
+<h3 id="c13-代理モデルは-3-つに分かれる">代理モデルは 3 つに分かれる</h3>
 <p><strong>(1) 多項式応答曲面</strong>: 入力の多項式で出力を近似する。第 6 章の応答曲面法 (6.10 節) がこれである。単純で解釈しやすいが、<strong>次数を上げると係数が爆発</strong>し、高次元では使えない。</p>
 <p><strong>(2) 多項式カオス展開 (PCE)</strong>: 入力の確率分布に<strong>直交する多項式</strong>で展開する。正規入力なら Hermite 多項式、一様入力なら Legendre 多項式。係数が展開係数として意味を持ち、<strong>分散分解 (Sobol 指数) が係数から直接読める</strong>のが強みである。ただし Sudret が指摘するとおり、PCE は<strong>入力の確率モデルに依存する</strong> — 分布を変えると基底が変わり、作り直しになる<sup id="c13-fnref:r2"><a class="footnote-ref" href="#c13-fn:r2">12</a></sup>。</p>
 <p><strong>(3) クリギング (ガウス過程回帰)</strong>: 第12章の GP 回帰 (12.10 節) と同じものである。Sudret は「クリギングは<strong>確率モデルに依存しないメタモデル</strong>を与える」と述べている<sup id="c13-fnref2:r2"><a class="footnote-ref" href="#c13-fn:r2">12</a></sup>。入力分布を後から変えても代理モデルは使い回せる。さらに<strong>予測の分散が出る</strong>ので、「どこを次に計算すべきか」を自動で決められる (適応的サンプリング)。</p>
@@ -29066,7 +29609,7 @@ print(f&quot;真の平均 {yf.mean():.3f}  complete-case {yo.mean():.3f}  MI {th
 <li><strong>適応性がある</strong>と、信用できない領域に計算点を追加して、そこだけ精度を上げられる</li>
 </ul>
 <p>クリギングの予測分散がまさにこれを与える。<strong>予測分散が大きいところに次の点を打つ</strong>という規則 (あるいは限界状態面に近く、かつ分散が大きいところ) で、少ない呼び出し回数で必要な領域だけ精度を上げられる。13.14 節の表で「40 + 200 回」となっていたのは、この適応的な構成の結果である。</p>
-<h3 id="c13-2">2 種類の不確かさを分ける</h3>
+<h3 id="c13-不確かさを-2-種類に分ける">不確かさを 2 種類に分ける</h3>
 <p>代理モデルを使うと、不確かさが 2 つ重なる。Hüllermeier &amp; Waegeman (2021) は機械学習の文脈でこれを整理している。同稿は<strong>偶然的不確かさ (aleatoric)</strong> と<strong>認識的不確かさ (epistemic)</strong> を区別し、後者をどう定量化するかは「まったく自明でない」と述べている。直感的には認識的不確かさは分布の広がりに反映されるはずだが、<strong>エントロピーは良い選択ではない</strong> — 確率質量の再配分に対して不変だからである。同稿は、同じエントロピーを持つが情報の状態がまったく異なる 2 つの分布の例を挙げ、分散のほうが適しているがそれにも別の難点がある、としている<sup id="c13-fnref:r3"><a class="footnote-ref" href="#c13-fn:r3">13</a></sup>。</p>
 <p>構造の言葉に翻訳すると:</p>
 <ul>
@@ -30197,6 +30740,7 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 </code></pre>
 <hr />
 <h2 id="c14-14-2">14.2 題材 1: コンクリート受入検査 — 特性値をいくつと報告するか</h2>
+<p>最初の題材は、第 3 章の推定と第 1 章の頑健性がそのまま効く場面である。<strong>外れ値を除くかどうかという 1 つの判断が、報告する特性値を何 $\mathrm{N/mm^2}$ 動かすか</strong>を見る。</p>
 <p><code>concrete_acceptance.csv</code> (84 行)。3 ロット (A, B, C) の圧縮強度試験の記録である。</p>
 <table>
 <thead>
@@ -30238,6 +30782,7 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 </ol>
 <hr />
 <h2 id="c14-14-3">14.3 題材 2: 配合と強度の回帰 — 1 点で結論が変わる</h2>
+<p>14.2 節は 1 変数だった。<strong>説明変数を入れて回帰に進む</strong>と、5.7.3 項のレバレッジと影響点が現実の問題として現れる。データの端にある 1 点が、傾きをどれだけ動かすかを確かめる。</p>
 <p><code>wc_strength.csv</code> (35 行)。水セメント比 (W/C) と材齢 28 日圧縮強度。備考欄に試験時の記録がある。</p>
 <h3 id="c14-課題-2">課題</h3>
 <ol>
@@ -30252,6 +30797,7 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 </ol>
 <hr />
 <h2 id="c14-14-4">14.4 題材 3: 疲労試験 — 打ち切りを無視するとどうなるか</h2>
+<p>14.3 節までは全部の観測が揃っていた。<strong>第 10 章の打ち切りが実データの形で出てくる。</strong> 10.3.1 項で計算した「捨てる/破断とみなす」の偏りを、自分の手で再現する。</p>
 <p><code>fatigue.csv</code> (48 行)。6 水準の応力振幅について各 8 体。試験機の都合で <strong>2,000,000 回で打ち切り</strong>ており、その場合の結果欄は「打切」である。</p>
 <h3 id="c14-課題-3">課題</h3>
 <ol>
@@ -30268,6 +30814,7 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 </ol>
 <hr />
 <h2 id="c14-14-5">14.5 題材 4: 年最大風速 — 観測の連続性を疑う</h2>
+<p>14.4 節までは、データの取られ方が一貫している前提だった。<strong>観測所の移設や計器の更新があると、10.10.6 項の定常性が壊れる。</strong> そのことがデータのどこに現れるかを探す。</p>
 <p><code>annual_max_wind.csv</code> (46 行、1980〜2025 年)。備考欄に観測の記録がある。</p>
 <h3 id="c14-課題-4">課題</h3>
 <ol>
@@ -30282,6 +30829,7 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 </ol>
 <hr />
 <h2 id="c14-14-6">14.6 題材 5: 構造モニタリング — 季節変動に埋もれた損傷</h2>
+<p>最後は第 9 章の時系列である。<strong>9.2.1 項と同じ形の問い</strong> — 季節の下にある小さな変化を取り出せるか — を、より汚れたデータで扱う。欠測と外れ値が混ざっている。</p>
 <p><code>monitoring.csv</code> (849 行)。ある建物の固有振動数を日次で観測したもの。気温も同時に記録されている。</p>
 <h3 id="c14-課題-5">課題</h3>
 <ol>
@@ -30296,6 +30844,7 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 </ol>
 <hr />
 <h2 id="c14-14-7">14.7 この章の進め方</h2>
+<p>14.2〜14.6 節の 5 つの題材に共通する進め方を、最後にまとめておく。</p>
 <ul>
 <li><strong>一度に全部やらない。</strong> 1 題材につき 1〜2 時間を見込むとよい</li>
 <li>課題 1 から順にやること。前処理を飛ばして手法に行くと、この章の意味がなくなる</li>
@@ -36137,7 +36686,7 @@ window.MathJax = {
 <script>
 (function(){
 "use strict";
-const META = [{"num": "00", "label": "00", "title": "序章 統計学の全体像と学び方", "sections": [{"id": "c00-0-1", "title": "0.1 統計学とは何をする学問か", "lv": 2}, {"id": "c00-0-2", "title": "0.2 本書の章立て", "lv": 2}, {"id": "c00-0-3", "title": "0.3 数学的前提", "lv": 2}, {"id": "c00-0-4", "title": "0.4 学び方", "lv": 2}, {"id": "c00-0-5", "title": "0.5 記法", "lv": 2}], "stars": 0}, {"num": "01", "label": "01", "title": "第1章 記述統計", "sections": [{"id": "c01-1-1", "title": "1.1 この章の目的", "lv": 2}, {"id": "c01-1-2", "title": "1.2 データの種類と尺度", "lv": 2}, {"id": "c01-1-3", "title": "1.3 度数分布とヒストグラム", "lv": 2}, {"id": "c01-1-3-1", "title": "1.3.1 度数分布表", "lv": 3}, {"id": "c01-1-3-2", "title": "1.3.2 階級幅の選び方", "lv": 3}, {"id": "c01-1-3-3", "title": "1.3.3 その他の図", "lv": 3}, {"id": "c01-1-4", "title": "1.4 位置の要約統計量", "lv": 2}, {"id": "c01-1-4-1", "title": "1.4.1 算術平均", "lv": 3}, {"id": "c01-1-4-2", "title": "1.4.2 中央値", "lv": 3}, {"id": "c01-1-4-3", "title": "1.4.3 最頻値、刈り込み平均、その他の平均", "lv": 3}, {"id": "c01-1-4-4", "title": "1.4.4 平均と中央値の関係", "lv": 3}, {"id": "c01-1-5", "title": "1.5 散らばりの要約統計量", "lv": 2}, {"id": "c01-1-5-1", "title": "1.5.1 分散と標準偏差", "lv": 3}, {"id": "c01-1-5-2", "title": "1.5.2 範囲・四分位範囲 — 順位で測る", "lv": 3}, {"id": "c01-1-5-3", "title": "1.5.3 平均絶対偏差・MAD — 二乗をやめる", "lv": 3}, {"id": "c01-1-5-4", "title": "1.5.4 変動係数", "lv": 3}, {"id": "c01-1-6", "title": "1.6 分布の形", "lv": 2}, {"id": "c01-1-6-1", "title": "1.6.1 モーメント", "lv": 3}, {"id": "c01-1-6-2", "title": "1.6.2 箱ひげ図と外れ値", "lv": 3}, {"id": "c01-1-6-3", "title": "1.6.3 標準化とチェビシェフの不等式", "lv": 3}, {"id": "c01-1-7", "title": "1.7 2 変数の記述: 共分散と相関", "lv": 2}, {"id": "c01-1-7-1", "title": "1.7.1 共分散とピアソン相関係数", "lv": 3}, {"id": "c01-1-7-2", "title": "1.7.2 Anscombe の四つ組", "lv": 3}, {"id": "c01-1-7-3", "title": "1.7.3 順位相関", "lv": 3}, {"id": "c01-1-7-4", "title": "1.7.4 分割表 (名義尺度同士)", "lv": 3}, {"id": "c01-1-8", "title": "1.8 頑健性の考え方", "lv": 2}, {"id": "c01-1-9", "title": "1.9 変換", "lv": 2}, {"id": "c01-1-10", "title": "1.10 Python で確かめる", "lv": 2}, {"id": "c01-1-11", "title": "1.11 演習", "lv": 2}, {"id": "c01-1-12", "title": "1.12 参考文献", "lv": 2}, {"id": "c01-1-13", "title": "1.13 発展 ★2: M 推定と影響関数 — 頑健性を式にする", "lv": 2}, {"id": "c01-1-13-1", "title": "1.13.1 M 推定: 平均と中央値を 1 つの式にまとめる", "lv": 3}, {"id": "c01-1-13-2", "title": "1.13.2 影響関数: 1 点の汚染が推定値を動かす量", "lv": 3}, {"id": "c01-1-13-3", "title": "1.13.3 漸近分散と相対効率 — 頑健性の代償", "lv": 3}, {"id": "c01-1-13-4", "title": "1.13.4 効率と破綻点は本当にトレードオフか", "lv": 3}, {"id": "c01-1-13-5", "title": "1.13.5 有限標本での破綻点は漸近値と違う", "lv": 3}, {"id": "c01-1-13-6", "title": "1.13.6 Python で確かめる", "lv": 3}, {"id": "c01-1-13-7", "title": "1.13.7 演習", "lv": 3}, {"id": "c01-1-14", "title": "1.14 発展 ★2: ヒストグラムからカーネル密度推定へ", "lv": 2}, {"id": "c01-1-14-1", "title": "1.14.1 カーネル密度推定", "lv": 3}, {"id": "c01-1-14-2", "title": "1.14.2 バイアスと分散の分解、そして $n^{-1/5}$", "lv": 3}, {"id": "c01-1-14-3", "title": "1.14.3 帯域幅をデータから選ぶ", "lv": 3}, {"id": "c01-1-14-4", "title": "1.14.4 Python で確かめる", "lv": 3}, {"id": "c01-1-14-5", "title": "1.14.5 演習", "lv": 3}, {"id": "c01-1-99", "title": "1.99 演習の解答", "lv": 2}, {"id": "c01-1-11-2", "title": "1.11 演習 (本文 1.11 節)", "lv": 3}, {"id": "c01-1-13-7-2", "title": "1.13.7 演習 (発展 1.13 節: M 推定と影響関数)", "lv": 3}, {"id": "c01-1-14-5-2", "title": "1.14.5 演習 (発展 1.14 節: カーネル密度推定)", "lv": 3}, {"id": "c01-1-100", "title": "1.100 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "02", "label": "02", "title": "第2章 確率論の基礎", "sections": [{"id": "c02-2-1", "title": "2.1 この章の目的", "lv": 2}, {"id": "c02-2-2", "title": "2.2 確率空間と公理", "lv": 2}, {"id": "c02-2-2-1", "title": "2.2.1 標本空間と事象", "lv": 3}, {"id": "c02-2-2-2", "title": "2.2.2 Kolmogorov の公理", "lv": 3}, {"id": "c02-2-2-3", "title": "2.2.3 確率の解釈", "lv": 3}, {"id": "c02-2-3", "title": "2.3 条件付き確率・独立・ベイズの定理", "lv": 2}, {"id": "c02-2-3-1", "title": "2.3.1 条件付き確率", "lv": 3}, {"id": "c02-2-3-2", "title": "2.3.2 全確率の公式とベイズの定理", "lv": 3}, {"id": "c02-2-3-3", "title": "2.3.3 独立", "lv": 3}, {"id": "c02-2-4", "title": "2.4 確率変数と分布", "lv": 2}, {"id": "c02-2-4-1", "title": "2.4.1 確率変数と分布関数", "lv": 3}, {"id": "c02-2-4-2", "title": "2.4.2 離散と連続", "lv": 3}, {"id": "c02-2-4-3", "title": "2.4.3 分位関数", "lv": 3}, {"id": "c02-2-5", "title": "2.5 期待値・分散・母関数", "lv": 2}, {"id": "c02-2-5-1", "title": "2.5.1 期待値", "lv": 3}, {"id": "c02-2-5-2", "title": "2.5.2 分散とモーメント", "lv": 3}, {"id": "c02-2-5-3", "title": "2.5.3 モーメント母関数と特性関数", "lv": 3}, {"id": "c02-2-6", "title": "2.6 主要な分布", "lv": 2}, {"id": "c02-2-6-1", "title": "2.6.1 一覧", "lv": 3}, {"id": "c02-2-6-2", "title": "2.6.2 離散分布", "lv": 3}, {"id": "c02-2-6-3", "title": "2.6.3 連続分布", "lv": 3}, {"id": "c02-2-6-4", "title": "2.6.4 分布間の関係", "lv": 3}, {"id": "c02-2-7", "title": "2.7 多変量分布", "lv": 2}, {"id": "c02-2-7-1", "title": "2.7.1 同時分布・周辺分布・条件付き分布", "lv": 3}, {"id": "c02-2-7-2", "title": "2.7.2 共分散と相関", "lv": 3}, {"id": "c02-2-7-3", "title": "2.7.3 条件付き期待値と全分散の公式", "lv": 3}, {"id": "c02-2-7-4", "title": "2.7.4 多変量正規分布", "lv": 3}, {"id": "c02-2-8", "title": "2.8 変数変換とデルタ法", "lv": 2}, {"id": "c02-2-8-1", "title": "2.8.1 1 変数の変換", "lv": 3}, {"id": "c02-2-8-2", "title": "2.8.2 デルタ法", "lv": 3}, {"id": "c02-2-9", "title": "2.9 不等式", "lv": 2}, {"id": "c02-2-10", "title": "2.10 大数の法則", "lv": 2}, {"id": "c02-2-10-1", "title": "2.10.1 収束の種類", "lv": 3}, {"id": "c02-2-10-2", "title": "2.10.2 弱法則と強法則", "lv": 3}, {"id": "c02-2-11", "title": "2.11 中心極限定理", "lv": 2}, {"id": "c02-2-11-1", "title": "2.11.1 主張", "lv": 3}, {"id": "c02-2-11-2", "title": "2.11.2 特性関数による証明", "lv": 3}, {"id": "c02-2-11-3", "title": "2.11.3 収束の速さ: Berry–Esseen の定理", "lv": 3}, {"id": "c02-2-11-4", "title": "2.11.4 統計への帰結", "lv": 3}, {"id": "c02-2-12", "title": "2.12 極値の漸近: 最大値はどこへ収束するか", "lv": 2}, {"id": "c02-2-12-1", "title": "2.12.1 最大値の分布", "lv": 3}, {"id": "c02-2-12-2", "title": "2.12.2 Fisher–Tippett–Gnedenko の定理", "lv": 3}, {"id": "c02-2-12-3", "title": "2.12.3 中心極限定理との対比と第 10 章への橋", "lv": 3}, {"id": "c02-2-13", "title": "2.13 構造工学への接続", "lv": 2}, {"id": "c02-2-13-1", "title": "2.13.1 荷重の年最大値と Gumbel 分布", "lv": 3}, {"id": "c02-2-13-2", "title": "2.13.2 材料強度と対数正規分布", "lv": 3}, {"id": "c02-2-13-3", "title": "2.13.3 信頼性指標 $\\beta$ と破壊確率", "lv": 3}, {"id": "c02-2-14", "title": "2.14 Python で確かめる", "lv": 2}, {"id": "c02-2-15", "title": "2.15 演習", "lv": 2}, {"id": "c02-2-16", "title": "2.16 参考文献", "lv": 2}, {"id": "c02-2-17", "title": "2.17 補遺A: 数え上げ — 確率を計算する前に必要なもの", "lv": 2}, {"id": "c02-2-17-1", "title": "2.17.1 素朴な確率と「同様に確からしい」", "lv": 3}, {"id": "c02-2-17-2", "title": "2.17.2 乗法原理", "lv": 3}, {"id": "c02-2-17-3", "title": "2.17.3 標本抽出の 4 類型", "lv": 3}, {"id": "c02-2-17-4", "title": "2.17.4 二項係数と重複の調整", "lv": 3}, {"id": "c02-2-17-5", "title": "2.17.5 物語による証明 — 同じものを二通りに数える", "lv": 3}, {"id": "c02-2-17-6", "title": "2.17.6 包除原理と一致問題", "lv": 3}, {"id": "c02-2-17-7", "title": "2.17.7 Python で確かめる (数え上げ)", "lv": 3}, {"id": "c02-2-18", "title": "2.18 補遺B: 条件づけを使いこなす", "lv": 2}, {"id": "c02-2-18-1", "title": "2.18.1 ベイズのオッズ形式", "lv": 3}, {"id": "c02-2-18-2", "title": "2.18.2 検察官の誤謬 — $P(A \\mid B)$ と $P(B \\mid A)$ の取り違え", "lv": 3}, {"id": "c02-2-18-3", "title": "2.18.3 条件付き独立 — 独立とは別物であること", "lv": 3}, {"id": "c02-2-18-4", "title": "2.18.4 モンティ・ホール問題", "lv": 3}, {"id": "c02-2-18-5", "title": "2.18.5 Python で確かめる (条件づけ)", "lv": 3}, {"id": "c02-2-18-6", "title": "2.18.6 発展 ★3: 中心極限定理はどれくらい速く効くのか — Berry–Esseen と Edgeworth", "lv": 2}, {"id": "c02-近づく速さを押さえる-Berry-Esseen-の不等式", "title": "近づく速さを押さえる — Berry–Esseen の不等式", "lv": 3}, {"id": "c02-誤差の中身を書き下す-Edgeworth-展開", "title": "誤差の中身を書き下す — Edgeworth 展開", "lv": 3}, {"id": "c02-工学で効く場面", "title": "工学で効く場面", "lv": 3}, {"id": "c02-2-18-7", "title": "2.18.7 発展 ★3: 集中不等式 — Chebyshev から Hoeffding・Bernstein へ", "lv": 2}, {"id": "c02-仮定を強めると-裾が速く減る", "title": "仮定を強めると、裾が速く減る", "lv": 3}, {"id": "c02-Hoeffding-の不等式は-最適-である", "title": "Hoeffding の不等式は「最適」である", "lv": 3}, {"id": "c02-有界性を外す-sub-Gaussian-と-sub-expo", "title": "有界性を外す — sub-Gaussian と sub-exponential", "lv": 3}, {"id": "c02-二次形式へ-Hanson-Wright", "title": "二次形式へ — Hanson–Wright", "lv": 3}, {"id": "c02-裾がもっと重いとき-sub-Weibull", "title": "裾がもっと重いとき — sub-Weibull", "lv": 3}, {"id": "c02-工学で使うとき", "title": "工学で使うとき", "lv": 3}, {"id": "c02-2-19", "title": "2.19 補遺の演習", "lv": 2}, {"id": "c02-2-20", "title": "2.20 補遺の参考文献", "lv": 2}, {"id": "c02-2-99", "title": "2.99 演習の解答", "lv": 2}, {"id": "c02-2-15-2", "title": "2.15 演習 (本文 2.15 節)", "lv": 3}, {"id": "c02-2-19-2", "title": "2.19 演習 (補遺 2.19 節)", "lv": 3}], "stars": 2}, {"num": "03", "label": "03", "title": "第3章 推定", "sections": [{"id": "c03-3-1", "title": "3.1 この章の目的", "lv": 2}, {"id": "c03-3-2", "title": "3.2 母集団・標本・統計量", "lv": 2}, {"id": "c03-3-2-1", "title": "3.2.1 用語", "lv": 3}, {"id": "c03-3-2-2", "title": "3.2.2 標本平均の標本分布", "lv": 3}, {"id": "c03-3-2-3", "title": "3.2.3 正規母集団: $\\chi^2$ 分布と $t$ 分布", "lv": 3}, {"id": "c03-3-3", "title": "3.3 点推定の評価", "lv": 2}, {"id": "c03-3-3-1", "title": "3.3.1 不偏性・一致性・有効性", "lv": 3}, {"id": "c03-3-3-2", "title": "3.3.2 平均二乗誤差", "lv": 3}, {"id": "c03-3-4", "title": "3.4 モーメント法", "lv": 2}, {"id": "c03-3-5", "title": "3.5 最尤法", "lv": 2}, {"id": "c03-3-5-1", "title": "3.5.1 尤度と最尤推定量", "lv": 3}, {"id": "c03-3-5-2", "title": "3.5.2 スコアと Fisher 情報量", "lv": 3}, {"id": "c03-3-5-3", "title": "3.5.3 最尤推定量の漸近正規性", "lv": 3}, {"id": "c03-3-5-4", "title": "3.5.4 不変性", "lv": 3}, {"id": "c03-3-6", "title": "3.6 Cramér–Rao の下限", "lv": 2}, {"id": "c03-3-7", "title": "3.7 十分統計量と Rao–Blackwell の定理", "lv": 2}, {"id": "c03-3-8", "title": "3.8 区間推定", "lv": 2}, {"id": "c03-3-8-1", "title": "3.8.1 信頼区間とピボット法", "lv": 3}, {"id": "c03-3-8-2", "title": "3.8.2 正規母集団の $\\mu$ と $\\sigma^2$", "lv": 3}, {"id": "c03-3-8-3", "title": "3.8.3 被覆確率の意味", "lv": 3}, {"id": "c03-3-8-4", "title": "3.8.4 二項比率: Wald・Wilson・Clopper–Pearson", "lv": 3}, {"id": "c03-3-8-5", "title": "3.8.5 デルタ法による区間", "lv": 3}, {"id": "c03-3-9", "title": "3.9 ブートストラップ", "lv": 2}, {"id": "c03-3-9-1", "title": "3.9.1 原理", "lv": 3}, {"id": "c03-3-9-2", "title": "3.9.2 3 つの区間", "lv": 3}, {"id": "c03-3-9-3", "title": "3.9.3 被覆の数値実験と限界", "lv": 3}, {"id": "c03-3-10", "title": "3.10 バイアス補正とジャックナイフ", "lv": 2}, {"id": "c03-3-11", "title": "3.11 構造工学への接続: 材料強度の特性値", "lv": 2}, {"id": "c03-3-12", "title": "3.12 Python で確かめる", "lv": 2}, {"id": "c03-3-13", "title": "3.13 演習", "lv": 2}, {"id": "c03-3-14", "title": "3.14 参考文献", "lv": 2}, {"id": "c03-3-15", "title": "3.15 発展 ★2: 二項比率の区間推定 — なぜ Wald は破綻するか", "lv": 2}, {"id": "c03-3-15-1", "title": "3.15.1 Wald 区間とその素朴な導出", "lv": 3}, {"id": "c03-3-15-2", "title": "3.15.2 何が起きるか — 厳密に数えて確かめる", "lv": 3}, {"id": "c03-3-15-3", "title": "3.15.3 二つの病気: 離散性と、標準誤差の置き換え", "lv": 3}, {"id": "c03-3-15-4", "title": "3.15.4 Wilson 区間 — 置き換えをしない", "lv": 3}, {"id": "c03-3-15-5", "title": "3.15.5 どれを使うか", "lv": 3}, {"id": "c03-3-15-6", "title": "3.15.6 不良が 1 件も出なかったとき — 3 の法則", "lv": 3}, {"id": "c03-3-15-7", "title": "3.15.7 Python で確かめる", "lv": 3}, {"id": "c03-3-15-8", "title": "3.15.8 演習", "lv": 3}, {"id": "c03-3-15-9", "title": "3.15.9 参考文献", "lv": 3}, {"id": "c03-3-16", "title": "3.16 発展 ★3: ブートストラップはいつ効き、いつ壊れるか", "lv": 2}, {"id": "c03-効く理由は-連続性-である", "title": "効く理由は「連続性」である", "lv": 3}, {"id": "c03-壊れる場面は整理されている", "title": "壊れる場面は整理されている", "lv": 3}, {"id": "c03-手当て-1-m-out-of-n-ブートストラップ", "title": "手当て 1: $m$ out of $n$ ブートストラップ", "lv": 3}, {"id": "c03-手当て-2-Studentize-して高次の精度を稼ぐ", "title": "手当て 2: Studentize して高次の精度を稼ぐ", "lv": 3}, {"id": "c03-実務のチェックリスト", "title": "実務のチェックリスト", "lv": 3}, {"id": "c03-3-99", "title": "3.99 演習の解答", "lv": 2}, {"id": "c03-3-13-2", "title": "3.13 演習 (本文 3.13 節)", "lv": 3}, {"id": "c03-3-15-8-2", "title": "3.15.8 演習 (発展 3.15 節)", "lv": 3}, {"id": "c03-3-100", "title": "3.100 解答の数値を確かめるコード", "lv": 2}, {"id": "c03-2026-09-21-の実行で見つかった食い違い", "title": "2026-09-21 の実行で見つかった食い違い", "lv": 3}], "stars": 2}, {"num": "04", "label": "04", "title": "第4章 仮説検定", "sections": [{"id": "c04-4-1", "title": "4.1 この章の目的", "lv": 2}, {"id": "c04-4-2", "title": "4.2 検定の枠組み", "lv": 2}, {"id": "c04-4-2-1", "title": "4.2.1 帰無仮説と対立仮説", "lv": 3}, {"id": "c04-4-2-2", "title": "4.2.2 二種類の過誤、有意水準、検出力", "lv": 3}, {"id": "c04-4-2-3", "title": "4.2.3 検定統計量、棄却域、片側と両側", "lv": 3}, {"id": "c04-4-2-4", "title": "4.2.4 Neyman–Pearson の補題", "lv": 3}, {"id": "c04-4-2-5", "title": "4.2.5 尤度比検定・Wald 検定・スコア検定", "lv": 3}, {"id": "c04-4-3", "title": "4.3 p 値", "lv": 2}, {"id": "c04-4-3-1", "title": "4.3.1 定義と帰無分布での一様性", "lv": 3}, {"id": "c04-4-3-2", "title": "4.3.2 正しい解釈と誤用: ASA 声明", "lv": 3}, {"id": "c04-4-3-3", "title": "4.3.3 検定と信頼区間の双対性", "lv": 3}, {"id": "c04-4-4", "title": "4.4 平均の検定: z 検定と t 検定", "lv": 2}, {"id": "c04-4-4-1", "title": "4.4.1 一標本", "lv": 3}, {"id": "c04-4-4-2", "title": "4.4.2 対応のある二標本", "lv": 3}, {"id": "c04-4-4-3", "title": "4.4.3 独立二標本: Welch の t 検定", "lv": 3}, {"id": "c04-4-5", "title": "4.5 分散の検定: χ² 検定と F 検定", "lv": 2}, {"id": "c04-4-5-1", "title": "4.5.1 一標本の分散: χ² 検定", "lv": 3}, {"id": "c04-4-5-2", "title": "4.5.2 二標本の分散比: F 検定", "lv": 3}, {"id": "c04-4-6", "title": "4.6 比率の検定", "lv": 2}, {"id": "c04-4-7", "title": "4.7 分割表の χ² 検定", "lv": 2}, {"id": "c04-4-7-1", "title": "4.7.1 適合度検定と自由度の理由", "lv": 3}, {"id": "c04-4-7-2", "title": "4.7.2 独立性の検定", "lv": 3}, {"id": "c04-4-8", "title": "4.8 正規性の検定", "lv": 2}, {"id": "c04-4-9", "title": "4.9 ノンパラメトリック検定", "lv": 2}, {"id": "c04-4-9-1", "title": "4.9.1 符号検定", "lv": 3}, {"id": "c04-4-9-2", "title": "4.9.2 Wilcoxon 符号順位検定", "lv": 3}, {"id": "c04-4-9-3", "title": "4.9.3 Mann–Whitney (Wilcoxon 順位和) 検定", "lv": 3}, {"id": "c04-4-9-4", "title": "4.9.4 Kruskal–Wallis 検定", "lv": 3}, {"id": "c04-4-9-5", "title": "4.9.5 並べ替え検定", "lv": 3}, {"id": "c04-4-10", "title": "4.10 検出力分析と標本サイズ設計", "lv": 2}, {"id": "c04-4-10-1", "title": "4.10.1 検出力の計算", "lv": 3}, {"id": "c04-4-10-2", "title": "4.10.2 標本サイズの設計", "lv": 3}, {"id": "c04-4-11", "title": "4.11 効果量と信頼区間", "lv": 2}, {"id": "c04-4-11-1", "title": "4.11.1 Cohen の d", "lv": 3}, {"id": "c04-4-11-2", "title": "4.11.2 効果量と p 値・信頼区間の関係", "lv": 3}, {"id": "c04-4-12", "title": "4.12 多重比較", "lv": 2}, {"id": "c04-4-12-1", "title": "4.12.1 問題: 検定を重ねると偽陽性が増える", "lv": 3}, {"id": "c04-4-12-2", "title": "4.12.2 Bonferroni と Holm: FWER の制御", "lv": 3}, {"id": "c04-4-12-3", "title": "4.12.3 Benjamini–Hochberg: FDR の制御", "lv": 3}, {"id": "c04-4-13", "title": "4.13 再現性問題", "lv": 2}, {"id": "c04-4-13-1", "title": "4.13.1 p-hacking", "lv": 3}, {"id": "c04-4-13-2", "title": "4.13.2 出版バイアスと再現率", "lv": 3}, {"id": "c04-4-14", "title": "4.14 構造工学への接続", "lv": 2}, {"id": "c04-4-15", "title": "4.15 Python で確かめる", "lv": 2}, {"id": "c04-4-16", "title": "4.16 演習", "lv": 2}, {"id": "c04-4-17", "title": "4.17 参考文献", "lv": 2}, {"id": "c04-4-18", "title": "4.18 発展 ★2: p 値論争のその後 — 0.005 提案・同等性検定・事前登録", "lv": 2}, {"id": "c04-4-18-1", "title": "4.18.1 出発点: p 値の分布を知る", "lv": 3}, {"id": "c04-4-18-2", "title": "4.18.2 なぜ「p &lt; 0.05 なら 5% しか間違えない」が誤りなのか", "lv": 3}, {"id": "c04-4-18-3", "title": "4.18.3 処方箋その 1: 有意水準を 0.005 に下げる", "lv": 3}, {"id": "c04-4-18-4", "title": "4.18.4 処方箋その 2: 「差がない」を示したいときは同等性検定", "lv": 3}, {"id": "c04-4-18-5", "title": "4.18.5 処方箋その 3: 事前登録 — 自由度を先に縛る", "lv": 3}, {"id": "c04-4-18-6", "title": "4.18.6 「有意だった」結果はどれくらい再現するか", "lv": 3}, {"id": "c04-4-18-7", "title": "4.18.7 まとめ: 何をすればよいか", "lv": 3}, {"id": "c04-4-18-8", "title": "4.18.8 Python で確かめる", "lv": 3}, {"id": "c04-4-18-9", "title": "4.18.9 演習", "lv": 3}, {"id": "c04-4-19", "title": "4.19 発展 ★3: FDR の理論 — 依存下の Benjamini–Yekutieli と e-value", "lv": 2}, {"id": "c04-4-19-1", "title": "4.19.1 何を怖がっているのか", "lv": 3}, {"id": "c04-4-19-2", "title": "4.19.2 検定数が増えるとどれだけ違うのか", "lv": 3}, {"id": "c04-4-19-3", "title": "4.19.3 探索か確証かを先に宣言する", "lv": 3}, {"id": "c04-4-20", "title": "4.20 BH の保証はどこから来るか — 独立と PRDS", "lv": 2}, {"id": "c04-4-20-1", "title": "4.20.1 なぜ直線 $iq/m$ なのか", "lv": 3}, {"id": "c04-4-20-2", "title": "4.20.2 PRDS — 正の回帰従属", "lv": 3}, {"id": "c04-4-20-3", "title": "4.20.3 $m_0$ を推定して取り返す", "lv": 3}, {"id": "c04-4-21", "title": "4.21 依存が崩れると何が起きるか — Benjamini–Yekutieli", "lv": 2}, {"id": "c04-4-21-1", "title": "4.21.1 現実的な正の相関: 平均は守られ、実現値は暴れる", "lv": 3}, {"id": "c04-4-21-2", "title": "4.21.2 BY の補正 — そして BH の最悪値", "lv": 3}, {"id": "c04-4-21-3", "title": "4.21.3 上限は本当に届くのか", "lv": 3}, {"id": "c04-4-21-4", "title": "4.21.4 BY は払いすぎている", "lv": 3}, {"id": "c04-4-21-5", "title": "4.21.5 どの依存なら大丈夫で、どの依存が危ないか", "lv": 3}, {"id": "c04-4-22", "title": "4.22 e 値による多重検定 — 任意の依存に耐える仕組み", "lv": 2}, {"id": "c04-4-22-1", "title": "4.22.1 e 値とは何か", "lv": 3}, {"id": "c04-4-22-2", "title": "4.22.2 p 値との翻訳、そしてその代償", "lv": 3}, {"id": "c04-4-22-3", "title": "4.22.3 e-BH — 3 行で終わる証明", "lv": 3}, {"id": "c04-4-22-4", "title": "4.22.4 いくら得をするのか", "lv": 3}, {"id": "c04-4-22-5", "title": "4.22.5 e 値が自然に出てくる場面", "lv": 3}, {"id": "c04-4-23", "title": "4.23 現場でどう選ぶか", "lv": 2}, {"id": "c04-4-24", "title": "4.24 Python で確かめる", "lv": 2}, {"id": "c04-4-25", "title": "4.25 演習", "lv": 2}, {"id": "c04-4-26", "title": "4.26 参考文献", "lv": 2}, {"id": "c04-4-99", "title": "4.99 演習の解答", "lv": 2}, {"id": "c04-4-16-2", "title": "4.16 演習 (本文 4.16 節)", "lv": 3}, {"id": "c04-4-18-9-2", "title": "4.18.9 演習 (発展 4.18 節)", "lv": 3}, {"id": "c04-4-99-1", "title": "4.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "05", "label": "05", "title": "第5章 回帰分析", "sections": [{"id": "c05-5-1", "title": "5.1 この章の目的", "lv": 2}, {"id": "c05-5-2", "title": "5.2 単回帰", "lv": 2}, {"id": "c05-5-2-1", "title": "5.2.1 モデル", "lv": 3}, {"id": "c05-5-2-2", "title": "5.2.2 最小二乗法の導出", "lv": 3}, {"id": "c05-5-2-3", "title": "5.2.3 残差の性質", "lv": 3}, {"id": "c05-5-2-4", "title": "5.2.4 分散分解と決定係数", "lv": 3}, {"id": "c05-5-3", "title": "5.3 重回帰の行列表現", "lv": 2}, {"id": "c05-5-3-1", "title": "5.3.1 正規方程式", "lv": 3}, {"id": "c05-5-3-2", "title": "5.3.2 ハット行列と射影の幾何", "lv": 3}, {"id": "c05-5-3-3", "title": "5.3.3 自由度と誤差分散の推定", "lv": 3}, {"id": "c05-5-4", "title": "5.4 Gauss–Markov 定理", "lv": 2}, {"id": "c05-5-5", "title": "5.5 係数の分布と推測", "lv": 2}, {"id": "c05-5-5-1", "title": "5.5.1 正規誤差のもとでの分布", "lv": 3}, {"id": "c05-5-5-2", "title": "5.5.2 t 検定と信頼区間", "lv": 3}, {"id": "c05-5-5-3", "title": "5.5.3 F 検定 (複数係数の同時検定)", "lv": 3}, {"id": "c05-5-5-4", "title": "5.5.4 平均応答の信頼区間と予測区間", "lv": 3}, {"id": "c05-5-6", "title": "5.6 多重共線性", "lv": 2}, {"id": "c05-5-7", "title": "5.7 モデル診断", "lv": 2}, {"id": "c05-5-7-1", "title": "5.7.1 残差の標準化", "lv": 3}, {"id": "c05-5-7-2", "title": "5.7.2 残差プロットと QQ プロット", "lv": 3}, {"id": "c05-5-7-3", "title": "5.7.3 レバレッジ・外れ値・影響点", "lv": 3}, {"id": "c05-5-7-4", "title": "5.7.4 不均一分散", "lv": 3}, {"id": "c05-5-8", "title": "5.8 変数選択", "lv": 2}, {"id": "c05-5-8-1", "title": "5.8.1 なぜ「当てはまりの良さ」で選んではいけないか", "lv": 3}, {"id": "c05-5-8-2", "title": "5.8.2 AIC と BIC の考え方", "lv": 3}, {"id": "c05-5-8-3", "title": "5.8.3 ステップワイズ法の問題", "lv": 3}, {"id": "c05-5-9", "title": "5.9 一般化線形モデル", "lv": 2}, {"id": "c05-5-9-1", "title": "5.9.1 動機と構成", "lv": 3}, {"id": "c05-5-9-2", "title": "5.9.2 IRLS による推定", "lv": 3}, {"id": "c05-5-9-3", "title": "5.9.3 ロジスティック回帰", "lv": 3}, {"id": "c05-5-9-4", "title": "5.9.4 ポアソン回帰", "lv": 3}, {"id": "c05-5-10", "title": "5.10 混合効果モデルの紹介", "lv": 2}, {"id": "c05-5-11", "title": "5.11 非線形回帰と多項式・スプラインの入口", "lv": 2}, {"id": "c05-5-11-1", "title": "5.11.1 「線形」の意味", "lv": 3}, {"id": "c05-5-11-2", "title": "5.11.2 非線形最小二乗", "lv": 3}, {"id": "c05-5-11-3", "title": "5.11.3 多項式とスプライン", "lv": 3}, {"id": "c05-5-12", "title": "5.12 Python で確かめる", "lv": 2}, {"id": "c05-5-13", "title": "5.13 演習", "lv": 2}, {"id": "c05-5-14", "title": "5.14 参考文献", "lv": 2}, {"id": "c05-5-15", "title": "5.15 発展 ★2: 頑健標準誤差とクラスター相関 — 不均一分散を見つけたあとで", "lv": 2}, {"id": "c05-5-15-1", "title": "5.15.1 何が壊れて、何が壊れないか", "lv": 3}, {"id": "c05-5-16", "title": "5.16 サンドイッチ推定量 — White から HC3 まで", "lv": 2}, {"id": "c05-5-16-1", "title": "5.16.1 中身だけを推定する", "lv": 3}, {"id": "c05-5-16-2", "title": "5.16.2 なぜ補正が要るか — HC1・HC2・HC3", "lv": 3}, {"id": "c05-5-16-3", "title": "5.16.3 どれを既定にするか", "lv": 3}, {"id": "c05-5-17", "title": "5.17 クラスター相関 — 観測が独立でないとき", "lv": 2}, {"id": "c05-5-17-1", "title": "5.17.1 現場で起きる形", "lv": 3}, {"id": "c05-5-17-2", "title": "5.17.2 どれだけ狂うか — Moulton 係数", "lv": 3}, {"id": "c05-5-17-3", "title": "5.17.3 クラスター頑健分散推定量", "lv": 3}, {"id": "c05-5-17-4", "title": "5.17.4 クラスター数が少ないと破綻する", "lv": 3}, {"id": "c05-5-17-5", "title": "5.17.5 どの水準でクラスターを切るか", "lv": 3}, {"id": "c05-5-18", "title": "5.18 「とりあえず頑健標準誤差」への疑い", "lv": 2}, {"id": "c05-5-18-1", "title": "5.18.1 不均一分散はモデルの誤設定の兆候かもしれない", "lv": 3}, {"id": "c05-5-18-2", "title": "5.18.2 頑健標準誤差は「何を推定しているか」を直さない", "lv": 3}, {"id": "c05-5-18-3", "title": "5.18.3 誤差の扱いで処理するか、モデルの構造で処理するか", "lv": 3}, {"id": "c05-5-18-4", "title": "5.18.4 手順のまとめ", "lv": 3}, {"id": "c05-5-19", "title": "5.19 Python で確かめる", "lv": 2}, {"id": "c05-5-20", "title": "5.20 演習", "lv": 2}, {"id": "c05-5-21", "title": "5.21 参考文献", "lv": 2}, {"id": "c05-5-22", "title": "5.22 発展 ★3: 変数選択のあとで区間を作ってよいか — 選択的推論", "lv": 2}, {"id": "c05-何が壊れているのか", "title": "何が壊れているのか", "lv": 3}, {"id": "c05-手当ての-3-つの系統", "title": "手当ての 3 つの系統", "lv": 3}, {"id": "c05-高次元での別の困難", "title": "高次元での別の困難", "lv": 3}, {"id": "c05-実務でどうするか", "title": "実務でどうするか", "lv": 3}, {"id": "c05-5-99", "title": "5.99 演習の解答", "lv": 2}, {"id": "c05-5-13-2", "title": "5.13 演習 (本文 5.13 節)", "lv": 3}, {"id": "c05-5-99-1", "title": "5.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "06", "label": "06", "title": "第6章 分散分析と実験計画法", "sections": [{"id": "c06-6-1", "title": "6.1 この章の目的", "lv": 2}, {"id": "c06-6-2", "title": "6.2 一元配置分散分析", "lv": 2}, {"id": "c06-6-2-1", "title": "6.2.1 モデルと記法", "lv": 3}, {"id": "c06-6-2-2", "title": "6.2.2 平方和の分解", "lv": 3}, {"id": "c06-6-2-3", "title": "6.2.3 期待平方和と F 統計量", "lv": 3}, {"id": "c06-6-2-4", "title": "6.2.4 回帰との等価性", "lv": 3}, {"id": "c06-6-3", "title": "6.3 多重比較", "lv": 2}, {"id": "c06-6-3-1", "title": "6.3.1 なぜ t 検定を繰り返してはいけないか", "lv": 3}, {"id": "c06-6-3-2", "title": "6.3.2 Bonferroni", "lv": 3}, {"id": "c06-6-3-3", "title": "6.3.3 Tukey の HSD", "lv": 3}, {"id": "c06-6-3-4", "title": "6.3.4 Dunnett と Scheffé", "lv": 3}, {"id": "c06-6-4", "title": "6.4 二元配置と交互作用", "lv": 2}, {"id": "c06-6-4-1", "title": "6.4.1 モデル", "lv": 3}, {"id": "c06-6-4-2", "title": "6.4.2 交互作用図の読み方", "lv": 3}, {"id": "c06-6-4-3", "title": "6.4.3 構造工学への接続: 配合設計の要因実験", "lv": 3}, {"id": "c06-6-5", "title": "6.5 乱塊法と分割法", "lv": 2}, {"id": "c06-6-5-1", "title": "6.5.1 乱塊法", "lv": 3}, {"id": "c06-6-5-2", "title": "6.5.2 分割法 (split-plot)", "lv": 3}, {"id": "c06-6-6", "title": "6.6 固定効果と変量効果", "lv": 2}, {"id": "c06-6-6-1", "title": "6.6.1 二つの見方", "lv": 3}, {"id": "c06-6-6-2", "title": "6.6.2 期待平均平方と分散成分の推定", "lv": 3}, {"id": "c06-6-6-3", "title": "6.6.3 構造工学への接続: 材料強度のばらつきの階層", "lv": 3}, {"id": "c06-6-7", "title": "6.7 実験計画の三原則", "lv": 2}, {"id": "c06-6-8", "title": "6.8 要因配置と $2^k$ 計画", "lv": 2}, {"id": "c06-6-8-1", "title": "6.8.1 $2^k$ 計画", "lv": 3}, {"id": "c06-6-8-2", "title": "6.8.2 効果の有意性判定", "lv": 3}, {"id": "c06-6-8-3", "title": "6.8.3 構造工学への接続: 溶接条件の最適化", "lv": 3}, {"id": "c06-6-9", "title": "6.9 一部実施計画と直交表", "lv": 2}, {"id": "c06-6-9-1", "title": "6.9.1 一部実施と交絡", "lv": 3}, {"id": "c06-6-9-2", "title": "6.9.2 直交表 L8・L9", "lv": 3}, {"id": "c06-6-9-3", "title": "6.9.3 田口メソッドと SN 比の位置づけ", "lv": 3}, {"id": "c06-6-10", "title": "6.10 応答曲面法の入口", "lv": 2}, {"id": "c06-6-11", "title": "6.11 検出力と反復数の設計", "lv": 2}, {"id": "c06-6-11-1", "title": "6.11.1 一元配置の検出力", "lv": 3}, {"id": "c06-6-11-2", "title": "6.11.2 反復数の目安", "lv": 3}, {"id": "c06-6-11-3", "title": "6.11.3 構造工学への接続: 材料試験の反復数設計", "lv": 3}, {"id": "c06-6-12", "title": "6.12 Python で確かめる", "lv": 2}, {"id": "c06-6-13", "title": "6.13 演習", "lv": 2}, {"id": "c06-6-14", "title": "6.14 参考文献", "lv": 2}, {"id": "c06-6-15", "title": "6.15 発展 ★3: 最適計画理論 — 「どこで測るか」を最適化する", "lv": 2}, {"id": "c06-基準は情報行列の関数である", "title": "基準は情報行列の関数である", "lv": 3}, {"id": "c06-非線形モデルでは-母数を知らないと計画できない", "title": "非線形モデルでは「母数を知らないと計画できない」", "lv": 3}, {"id": "c06-ベイズ-D-最適と事前分布の選択", "title": "ベイズ D-最適と事前分布の選択", "lv": 3}, {"id": "c06-計算機実験では適応的に点を足す", "title": "計算機実験では適応的に点を足す", "lv": 3}, {"id": "c06-田口メソッドとの関係", "title": "田口メソッドとの関係", "lv": 3}, {"id": "c06-実務での勧め", "title": "実務での勧め", "lv": 3}, {"id": "c06-6-16", "title": "6.16 発展 ★3: 逐次・適応的実験 — 途中で計画を変えてよいか", "lv": 2}, {"id": "c06-何が問題になるのか", "title": "何が問題になるのか", "lv": 3}, {"id": "c06-いつ止めてもよい検定-e-値", "title": "いつ止めてもよい検定 — e 値", "lv": 3}, {"id": "c06-次にどこを測るか-ベイズ最適化", "title": "次にどこを測るか — ベイズ最適化", "lv": 3}, {"id": "c06-構造分野での実例-フラジリティ曲線", "title": "構造分野での実例 — フラジリティ曲線", "lv": 3}, {"id": "c06-実務での注意", "title": "実務での注意", "lv": 3}, {"id": "c06-6-99", "title": "6.99 演習の解答", "lv": 2}, {"id": "c06-6-13-2", "title": "6.13 演習 (本文 6.13 節)", "lv": 3}, {"id": "c06-6-99-1", "title": "6.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "07", "label": "07", "title": "第7章 多変量解析", "sections": [{"id": "c07-7-1", "title": "7.1 この章の目的", "lv": 2}, {"id": "c07-7-2", "title": "7.2 多変量データの記述", "lv": 2}, {"id": "c07-7-2-1", "title": "7.2.1 データ行列・平均ベクトル・共分散行列", "lv": 3}, {"id": "c07-7-2-2", "title": "7.2.2 Mahalanobis 距離", "lv": 3}, {"id": "c07-7-3", "title": "7.3 多変量正規分布", "lv": 2}, {"id": "c07-7-4", "title": "7.4 主成分分析 (PCA)", "lv": 2}, {"id": "c07-7-4-1", "title": "7.4.1 分散最大化の定式化と固有値問題", "lv": 3}, {"id": "c07-7-4-2", "title": "7.4.2 寄与率とスクリープロット", "lv": 3}, {"id": "c07-7-4-3", "title": "7.4.3 標準化の要否", "lv": 3}, {"id": "c07-7-4-4", "title": "7.4.4 SVD との関係", "lv": 3}, {"id": "c07-7-4-5", "title": "7.4.5 主成分負荷量とバイプロット", "lv": 3}, {"id": "c07-7-5", "title": "7.5 因子分析", "lv": 2}, {"id": "c07-7-5-1", "title": "7.5.1 共通因子モデル", "lv": 3}, {"id": "c07-7-5-2", "title": "7.5.2 PCA との違い", "lv": 3}, {"id": "c07-7-5-3", "title": "7.5.3 回転の不定性と単純構造", "lv": 3}, {"id": "c07-7-6", "title": "7.6 クラスター分析", "lv": 2}, {"id": "c07-7-6-1", "title": "7.6.1 距離", "lv": 3}, {"id": "c07-7-6-2", "title": "7.6.2 階層的クラスタリング", "lv": 3}, {"id": "c07-7-6-3", "title": "7.6.3 k-means", "lv": 3}, {"id": "c07-7-7", "title": "7.7 判別分析", "lv": 2}, {"id": "c07-7-7-1", "title": "7.7.1 Fisher の線形判別", "lv": 3}, {"id": "c07-7-7-2", "title": "7.7.2 正規分布からの導出と二次判別", "lv": 3}, {"id": "c07-7-7-3", "title": "7.7.3 ロジスティック回帰との関係", "lv": 3}, {"id": "c07-7-8", "title": "7.8 正準相関分析 (紹介)", "lv": 2}, {"id": "c07-7-9", "title": "7.9 多次元尺度法 (紹介)", "lv": 2}, {"id": "c07-7-10", "title": "7.10 次元の呪い", "lv": 2}, {"id": "c07-7-11", "title": "7.11 構造工学への接続", "lv": 2}, {"id": "c07-7-11-1", "title": "7.11.1 多点計測の PCA と損傷検知", "lv": 3}, {"id": "c07-7-11-2", "title": "7.11.2 地震動指標のクラスタリング", "lv": 3}, {"id": "c07-7-12", "title": "7.12 Python で確かめる", "lv": 2}, {"id": "c07-7-13", "title": "7.13 演習", "lv": 2}, {"id": "c07-7-14", "title": "7.14 参考文献", "lv": 2}, {"id": "c07-7-15", "title": "7.15 発展 ★3: 高次元 PCA — 固有値は嘘をつく", "lv": 2}, {"id": "c07-何が起きているのか-Marchenko-Pastur", "title": "何が起きているのか — Marchenko–Pastur", "lv": 3}, {"id": "c07-最大固有値のゆらぎ-Tracy-Widom", "title": "最大固有値のゆらぎ — Tracy–Widom", "lv": 3}, {"id": "c07-スパイク模型と検出限界", "title": "スパイク模型と検出限界", "lv": 3}, {"id": "c07-モニタリングデータへの翻訳", "title": "モニタリングデータへの翻訳", "lv": 3}, {"id": "c07-7-16", "title": "7.16 発展 ★3: 非線形次元削減 (t-SNE・UMAP) の統計的な読み方", "lv": 2}, {"id": "c07-t-SNE-は何をしているのか", "title": "t-SNE は何をしているのか", "lv": 3}, {"id": "c07-だから図の読み方に制約がつく", "title": "だから図の読み方に制約がつく", "lv": 3}, {"id": "c07-表現学習という文脈", "title": "表現学習という文脈", "lv": 3}, {"id": "c07-次元削減は-何のために-で選ぶ", "title": "次元削減は「何のために」で選ぶ", "lv": 3}, {"id": "c07-モニタリングデータでの使い方", "title": "モニタリングデータでの使い方", "lv": 3}, {"id": "c07-7-99", "title": "7.99 演習の解答", "lv": 2}, {"id": "c07-7-13-2", "title": "7.13 演習 (本文 7.13 節)", "lv": 3}, {"id": "c07-7-99-1", "title": "7.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "08", "label": "08", "title": "第8章 ベイズ統計", "sections": [{"id": "c08-8-1", "title": "8.1 この章の目的", "lv": 2}, {"id": "c08-8-2", "title": "8.2 ベイズの定理と三つの分布", "lv": 2}, {"id": "c08-8-2-1", "title": "8.2.1 事前・尤度・事後", "lv": 3}, {"id": "c08-8-2-2", "title": "8.2.2 逐次更新", "lv": 3}, {"id": "c08-8-2-3", "title": "8.2.3 頻度論との対比: 何に確率が付くか", "lv": 3}, {"id": "c08-8-3", "title": "8.3 共役事前分布", "lv": 2}, {"id": "c08-8-3-1", "title": "8.3.1 ベータ–二項", "lv": 3}, {"id": "c08-8-3-2", "title": "8.3.2 ガンマ–ポアソン", "lv": 3}, {"id": "c08-8-3-3", "title": "8.3.3 正規–正規", "lv": 3}, {"id": "c08-8-4", "title": "8.4 事前分布の選び方", "lv": 2}, {"id": "c08-8-4-1", "title": "8.4.1 無情報事前分布と不変性の問題", "lv": 3}, {"id": "c08-8-4-2", "title": "8.4.2 Jeffreys 事前分布", "lv": 3}, {"id": "c08-8-4-3", "title": "8.4.3 弱情報事前分布 (実務の標準)", "lv": 3}, {"id": "c08-8-5", "title": "8.5 事後予測分布", "lv": 2}, {"id": "c08-8-5-1", "title": "8.5.1 事後予測チェック", "lv": 3}, {"id": "c08-8-6", "title": "8.6 点推定と損失関数", "lv": 2}, {"id": "c08-8-7", "title": "8.7 モデル比較", "lv": 2}, {"id": "c08-8-7-1", "title": "8.7.1 ベイズ因子", "lv": 3}, {"id": "c08-8-7-2", "title": "8.7.2 予測性能による比較: WAIC と LOO", "lv": 3}, {"id": "c08-8-8", "title": "8.8 階層モデル", "lv": 2}, {"id": "c08-8-8-1", "title": "8.8.1 部分プーリング", "lv": 3}, {"id": "c08-8-8-2", "title": "8.8.2 完全ベイズと経験ベイズ", "lv": 3}, {"id": "c08-8-9", "title": "8.9 事後分布の計算", "lv": 2}, {"id": "c08-8-9-1", "title": "8.9.1 グリッド近似", "lv": 3}, {"id": "c08-8-9-2", "title": "8.9.2 Markov 連鎖 Monte Carlo (MCMC)", "lv": 3}, {"id": "c08-8-9-3", "title": "8.9.3 収束診断", "lv": 3}, {"id": "c08-8-9-4", "title": "8.9.4 変分推論 (一言)", "lv": 3}, {"id": "c08-8-10", "title": "8.10 構造工学への接続", "lv": 2}, {"id": "c08-8-11", "title": "8.11 Python で確かめる", "lv": 2}, {"id": "c08-8-12", "title": "8.12 演習", "lv": 2}, {"id": "c08-8-13", "title": "8.13 参考文献", "lv": 2}, {"id": "c08-8-14", "title": "8.14 発展 ★2: 事前分布の選び方 — 弱情報事前分布と感度分析", "lv": 2}, {"id": "c08-8-14-1", "title": "8.14.1 「無情報」はどこで破れるか", "lv": 3}, {"id": "c08-8-14-2", "title": "8.14.2 弱情報事前分布 — 「何も言わない」ではなく「あり得ない値を排除する」", "lv": 3}, {"id": "c08-8-14-3", "title": "8.14.3 事前予測チェック — 事前分布をデータの言葉に翻訳する", "lv": 3}, {"id": "c08-8-14-4", "title": "8.14.4 分散パラメータの事前分布 — 階層モデルで最も敏感な場所", "lv": 3}, {"id": "c08-8-14-5", "title": "8.14.5 感度分析 — 何を動かし、どれだけ動いたら問題か", "lv": 3}, {"id": "c08-8-14-6", "title": "8.14.6 データがどれだけあれば事前は流されるか", "lv": 3}, {"id": "c08-8-14-7", "title": "8.14.7 構造設計の現場では — 供試体 5 本、記録 20 年", "lv": 3}, {"id": "c08-8-14-8", "title": "8.14.8 まとめ: 何をすればよいか", "lv": 3}, {"id": "c08-8-14-9", "title": "8.14.9 Python で確かめる", "lv": 3}, {"id": "c08-8-14-10", "title": "8.14.10 演習", "lv": 3}, {"id": "c08-8-15", "title": "8.15 発展 ★3: ベイズワークフロー — 「走った」と「信じてよい」の間", "lv": 2}, {"id": "c08-何を報告すべきか-報告ガイドライン", "title": "何を報告すべきか — 報告ガイドライン", "lv": 3}, {"id": "c08-事後予測検査と-データの二重使用", "title": "事後予測検査と「データの二重使用」", "lv": 3}, {"id": "c08-図で見る予測検査", "title": "図で見る予測検査", "lv": 3}, {"id": "c08-事前分布も検査の対象である", "title": "事前分布も検査の対象である", "lv": 3}, {"id": "c08-ワークフローとして並べると", "title": "ワークフローとして並べると", "lv": 3}, {"id": "c08-8-99", "title": "8.99 演習の解答", "lv": 2}, {"id": "c08-8-12-2", "title": "8.12 演習 (本文 8.12 節)", "lv": 3}, {"id": "c08-8-99-1", "title": "8.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "09", "label": "09", "title": "第9章 時系列解析", "sections": [{"id": "c09-9-1", "title": "9.1 この章の目的", "lv": 2}, {"id": "c09-9-2", "title": "9.2 時系列の成分", "lv": 2}, {"id": "c09-9-2-1", "title": "9.2.1 加法モデルと乗法モデル", "lv": 3}, {"id": "c09-9-2-2", "title": "9.2.2 移動平均によるトレンド推定", "lv": 3}, {"id": "c09-9-3", "title": "9.3 定常性", "lv": 2}, {"id": "c09-9-3-1", "title": "9.3.1 弱定常の定義", "lv": 3}, {"id": "c09-9-3-2", "title": "9.3.2 ランダムウォークと単位根", "lv": 3}, {"id": "c09-9-3-3", "title": "9.3.3 単位根検定 (Dickey–Fuller / ADF)", "lv": 3}, {"id": "c09-9-4", "title": "9.4 自己共分散と自己相関", "lv": 2}, {"id": "c09-9-4-1", "title": "9.4.1 定義と性質", "lv": 3}, {"id": "c09-9-4-2", "title": "9.4.2 ホワイトノイズ", "lv": 3}, {"id": "c09-9-4-3", "title": "9.4.3 標本自己相関と Bartlett の帯", "lv": 3}, {"id": "c09-9-4-4", "title": "9.4.4 偏自己相関 (PACF)", "lv": 3}, {"id": "c09-9-5", "title": "9.5 AR・MA・ARMA モデル", "lv": 2}, {"id": "c09-9-5-1", "title": "9.5.1 移動平均 MA(q)", "lv": 3}, {"id": "c09-9-5-2", "title": "9.5.2 可逆性", "lv": 3}, {"id": "c09-9-5-3", "title": "9.5.3 自己回帰 AR(p) と定常条件", "lv": 3}, {"id": "c09-9-5-4", "title": "9.5.4 Yule–Walker 方程式", "lv": 3}, {"id": "c09-9-5-5", "title": "9.5.5 ARMA(p, q) と次数の見分け方", "lv": 3}, {"id": "c09-9-6", "title": "9.6 ARIMA と差分、季節 ARIMA", "lv": 2}, {"id": "c09-9-6-1", "title": "9.6.1 差分と ARIMA(p, d, q)", "lv": 3}, {"id": "c09-9-6-2", "title": "9.6.2 季節 ARIMA", "lv": 3}, {"id": "c09-9-7", "title": "9.7 Box–Jenkins 法とモデル選択", "lv": 2}, {"id": "c09-9-7-1", "title": "9.7.1 同定・推定・診断", "lv": 3}, {"id": "c09-9-7-2", "title": "9.7.2 AIC によるモデル選択", "lv": 3}, {"id": "c09-9-8", "title": "9.8 予測と予測区間", "lv": 2}, {"id": "c09-9-8-1", "title": "9.8.1 最小平均二乗誤差予測", "lv": 3}, {"id": "c09-9-8-2", "title": "9.8.2 予測区間", "lv": 3}, {"id": "c09-9-9", "title": "9.9 状態空間モデルとカルマンフィルタ", "lv": 2}, {"id": "c09-9-9-1", "title": "9.9.1 線形ガウス状態空間モデル", "lv": 3}, {"id": "c09-9-9-2", "title": "9.9.2 カルマンフィルタ", "lv": 3}, {"id": "c09-9-9-3", "title": "9.9.3 局所レベルモデル", "lv": 3}, {"id": "c09-9-10", "title": "9.10 スペクトル解析", "lv": 2}, {"id": "c09-9-10-1", "title": "9.10.1 スペクトル密度と Wiener–Khinchin の関係", "lv": 3}, {"id": "c09-9-10-2", "title": "9.10.2 ペリオドグラム", "lv": 3}, {"id": "c09-9-11", "title": "9.11 GARCH の紹介", "lv": 2}, {"id": "c09-9-12", "title": "9.12 見せかけの回帰", "lv": 2}, {"id": "c09-9-12-1", "title": "9.12.1 Granger–Newbold の実験", "lv": 3}, {"id": "c09-9-12-2", "title": "9.12.2 なぜ起きるか", "lv": 3}, {"id": "c09-9-13", "title": "9.13 構造工学への接続", "lv": 2}, {"id": "c09-9-14", "title": "9.14 Python で確かめる", "lv": 2}, {"id": "c09-9-15", "title": "9.15 演習", "lv": 2}, {"id": "c09-9-16", "title": "9.16 参考文献", "lv": 2}, {"id": "c09-9-17", "title": "9.17 発展 ★3: 単位根と共和分 — 見せかけの回帰の先にあるもの", "lv": 2}, {"id": "c09-差分は問題を消すが-情報も消す", "title": "差分は問題を消すが、情報も消す", "lv": 3}, {"id": "c09-共和分-差が定常になる組合せ", "title": "共和分 — 差が定常になる組合せ", "lv": 3}, {"id": "c09-推定の効率を上げる工夫", "title": "推定の効率を上げる工夫", "lv": 3}, {"id": "c09-構造変化との区別", "title": "構造変化との区別", "lv": 3}, {"id": "c09-モニタリングデータでの手順", "title": "モニタリングデータでの手順", "lv": 3}, {"id": "c09-9-18", "title": "9.18 発展 ★3: 予測をどう評価するか — スコアリングルールと予測分布", "lv": 2}, {"id": "c09-何を最大化すべきか-較正と鋭さ", "title": "何を最大化すべきか — 較正と鋭さ", "lv": 3}, {"id": "c09-適正なスコアとは何か", "title": "適正なスコアとは何か", "lv": 3}, {"id": "c09-二値予測での具体例", "title": "二値予測での具体例", "lv": 3}, {"id": "c09-連続変数では-CRPS", "title": "連続変数では CRPS", "lv": 3}, {"id": "c09-構造-モニタリングでの使いどころ", "title": "構造・モニタリングでの使いどころ", "lv": 3}, {"id": "c09-9-99", "title": "9.99 演習の解答", "lv": 2}, {"id": "c09-9-15-2", "title": "9.15 演習 (本文 9.15 節)", "lv": 3}, {"id": "c09-9-99-1", "title": "9.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "10", "label": "10", "title": "第10章 生存時間解析・信頼性・極値統計", "sections": [{"id": "c10-10-1", "title": "10.1 この章の目的", "lv": 2}, {"id": "c10-10-2", "title": "10.2 生存関数・ハザード・累積ハザード", "lv": 2}, {"id": "c10-10-2-1", "title": "10.2.1 定義", "lv": 3}, {"id": "c10-10-2-2", "title": "10.2.2 4 つの関数の関係", "lv": 3}, {"id": "c10-10-2-3", "title": "10.2.3 代表的な分布", "lv": 3}, {"id": "c10-10-3", "title": "10.3 打ち切りと尤度", "lv": 2}, {"id": "c10-10-3-1", "title": "10.3.1 打ち切りの種類", "lv": 3}, {"id": "c10-10-3-2", "title": "10.3.2 打ち切りを含む尤度", "lv": 3}, {"id": "c10-10-4", "title": "10.4 Kaplan–Meier 推定量", "lv": 2}, {"id": "c10-10-4-1", "title": "10.4.1 導出", "lv": 3}, {"id": "c10-10-4-2", "title": "10.4.2 Greenwood の分散", "lv": 3}, {"id": "c10-10-4-3", "title": "10.4.3 Nelson–Aalen 推定量", "lv": 3}, {"id": "c10-10-5", "title": "10.5 ログランク検定", "lv": 2}, {"id": "c10-10-6", "title": "10.6 Cox 比例ハザードモデル", "lv": 2}, {"id": "c10-10-6-1", "title": "10.6.1 モデル", "lv": 3}, {"id": "c10-10-6-2", "title": "10.6.2 部分尤度", "lv": 3}, {"id": "c10-10-6-3", "title": "10.6.3 比例性の検証", "lv": 3}, {"id": "c10-10-7", "title": "10.7 パラメトリック生存モデルと AFT", "lv": 2}, {"id": "c10-10-7-1", "title": "10.7.1 パラメトリック回帰", "lv": 3}, {"id": "c10-10-7-2", "title": "10.7.2 加速寿命モデル (AFT)", "lv": 3}, {"id": "c10-10-7-3", "title": "10.7.3 どれを使うか", "lv": 3}, {"id": "c10-10-8", "title": "10.8 信頼性工学", "lv": 2}, {"id": "c10-10-8-1", "title": "10.8.1 バスタブ曲線と Weibull", "lv": 3}, {"id": "c10-10-8-2", "title": "10.8.2 MTTF・MTBF・B10 寿命", "lv": 3}, {"id": "c10-10-8-3", "title": "10.8.3 Weibull 確率紙", "lv": 3}, {"id": "c10-10-8-4", "title": "10.8.4 直列系・並列系・$k$-out-of-$n$", "lv": 3}, {"id": "c10-10-9", "title": "10.9 極値統計 I: 最大値の極限分布", "lv": 2}, {"id": "c10-10-9-1", "title": "10.9.1 問題設定", "lv": 3}, {"id": "c10-10-9-2", "title": "10.9.2 Fisher–Tippett–Gnedenko の定理", "lv": 3}, {"id": "c10-10-9-3", "title": "10.9.3 どの分布がどの型に引き寄せられるか", "lv": 3}, {"id": "c10-10-10", "title": "10.10 極値統計 II: 年最大値法・再現期間・POT", "lv": 2}, {"id": "c10-10-10-1", "title": "10.10.1 年最大値法と再現期間", "lv": 3}, {"id": "c10-10-10-2", "title": "10.10.2 推定法", "lv": 3}, {"id": "c10-10-10-3", "title": "10.10.3 POT と一般化パレート分布", "lv": 3}, {"id": "c10-10-10-4", "title": "10.10.4 閾値の選択", "lv": 3}, {"id": "c10-10-10-5", "title": "10.10.5 POT による再現レベル", "lv": 3}, {"id": "c10-10-10-6", "title": "10.10.6 定常性の仮定", "lv": 3}, {"id": "c10-10-11", "title": "10.11 構造信頼性", "lv": 2}, {"id": "c10-10-11-1", "title": "10.11.1 基本問題 $g = R - S$", "lv": 3}, {"id": "c10-10-11-2", "title": "10.11.2 安全率との関係", "lv": 3}, {"id": "c10-10-11-3", "title": "10.11.3 FORM の概要", "lv": 3}, {"id": "c10-10-11-4", "title": "10.11.4 部分係数との関係", "lv": 3}, {"id": "c10-10-11-5", "title": "10.11.5 この章の 3 つの話題の接続", "lv": 3}, {"id": "c10-10-12", "title": "10.12 Python で確かめる", "lv": 2}, {"id": "c10-10-13", "title": "10.13 演習", "lv": 2}, {"id": "c10-10-14", "title": "10.14 参考文献", "lv": 2}, {"id": "c10-10-15", "title": "10.15 発展 ★3: 非定常極値 — 気候変動下の再現期待値", "lv": 2}, {"id": "c10-10-15-1", "title": "10.15.1 定常性はどこで効いていたか", "lv": 3}, {"id": "c10-10-15-2", "title": "10.15.2 共変量で GEV を非定常にする", "lv": 3}, {"id": "c10-10-15-3", "title": "10.15.3 再現期間が一意でなくなる — この節の山", "lv": 3}, {"id": "c10-10-15-4", "title": "10.15.4 設計にどう読み替えるか", "lv": 3}, {"id": "c10-10-15-5", "title": "10.15.5 傾向は見えるか — 検出力の問題", "lv": 3}, {"id": "c10-10-15-6", "title": "10.15.6 50 年の記録から非定常に外挿するということ", "lv": 3}, {"id": "c10-10-15-7", "title": "10.15.7 観測所の移転と気候変動は別物である", "lv": 3}, {"id": "c10-10-15-8", "title": "10.15.8 まとめ: 何をすればよいか", "lv": 3}, {"id": "c10-10-15-9", "title": "10.15.9 Python で確かめる", "lv": 3}, {"id": "c10-10-15-10", "title": "10.15.10 演習", "lv": 3}, {"id": "c10-10-16", "title": "10.16 発展 ★3: POT の閾値選択 — 恣意性をどう減らすか", "lv": 2}, {"id": "c10-なぜ閾値の選択が難しいのか", "title": "なぜ閾値の選択が難しいのか", "lv": 3}, {"id": "c10-既存の方法は-3-系統ある", "title": "既存の方法は 3 系統ある", "lv": 3}, {"id": "c10-自動化の試み", "title": "自動化の試み", "lv": 3}, {"id": "c10-日本語の文献から", "title": "日本語の文献から", "lv": 3}, {"id": "c10-実務での勧め", "title": "実務での勧め", "lv": 3}, {"id": "c10-10-17", "title": "10.17 発展 ★3: 多変量極値と空間依存 — 同時に起きる危険をどう評価するか", "lv": 2}, {"id": "c10-尾部依存という概念", "title": "尾部依存という概念", "lv": 3}, {"id": "c10-理論の骨格-安定裾依存関数", "title": "理論の骨格 — 安定裾依存関数", "lv": 3}, {"id": "c10-古典的な枠組みの限界", "title": "古典的な枠組みの限界", "lv": 3}, {"id": "c10-空間へ広げる", "title": "空間へ広げる", "lv": 3}, {"id": "c10-実務での勧め-2", "title": "実務での勧め", "lv": 3}, {"id": "c10-10-99", "title": "10.99 演習の解答", "lv": 2}, {"id": "c10-10-13-2", "title": "10.13 演習 (本文 10.13 節)", "lv": 3}, {"id": "c10-10-99-1", "title": "10.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 3}, {"num": "11", "label": "11", "title": "第11章 因果推論", "sections": [{"id": "c11-11-1", "title": "11.1 この章の目的", "lv": 2}, {"id": "c11-11-2", "title": "11.2 相関と因果が食い違う 4 つの理由", "lv": 2}, {"id": "c11-11-2-1", "title": "11.2.1 Simpson のパラドックス", "lv": 3}, {"id": "c11-11-3", "title": "11.3 潜在結果の枠組み", "lv": 2}, {"id": "c11-11-3-1", "title": "11.3.1 個体因果効果と根本問題", "lv": 3}, {"id": "c11-11-3-2", "title": "11.3.2 SUTVA", "lv": 3}, {"id": "c11-11-3-3", "title": "11.3.3 素朴な比較が何を推定しているか", "lv": 3}, {"id": "c11-11-4", "title": "11.4 無作為化はなぜ効くか", "lv": 2}, {"id": "c11-11-5", "title": "11.5 DAG による識別", "lv": 2}, {"id": "c11-11-5-1", "title": "11.5.1 有向非巡回グラフと d 分離", "lv": 3}, {"id": "c11-11-5-2", "title": "11.5.2 バックドア基準", "lv": 3}, {"id": "c11-11-5-3", "title": "11.5.3 合流点で調整すると何が起こるか", "lv": 3}, {"id": "c11-11-5-4", "title": "11.5.4 潜在結果との対応", "lv": 3}, {"id": "c11-11-6", "title": "11.6 回帰による調整とその限界", "lv": 2}, {"id": "c11-11-7", "title": "11.7 傾向スコア", "lv": 2}, {"id": "c11-11-7-1", "title": "11.7.1 バランシングスコア", "lv": 3}, {"id": "c11-11-7-2", "title": "11.7.2 推定と使い方", "lv": 3}, {"id": "c11-11-7-3", "title": "11.7.3 バランス診断と共通サポート", "lv": 3}, {"id": "c11-11-7-4", "title": "11.7.4 二重頑健推定", "lv": 3}, {"id": "c11-11-7-5", "title": "11.7.5 構造工学への接続: 耐震補強の効果検証", "lv": 3}, {"id": "c11-11-8", "title": "11.8 操作変数法", "lv": 2}, {"id": "c11-11-8-1", "title": "11.8.1 3 条件と 2SLS", "lv": 3}, {"id": "c11-11-8-2", "title": "11.8.2 弱操作変数", "lv": 3}, {"id": "c11-11-8-3", "title": "11.8.3 LATE", "lv": 3}, {"id": "c11-11-9", "title": "11.9 差の差と回帰不連続", "lv": 2}, {"id": "c11-11-9-1", "title": "11.9.1 差の差 (DID)", "lv": 3}, {"id": "c11-11-9-2", "title": "11.9.2 回帰不連続デザイン (RDD)", "lv": 3}, {"id": "c11-11-10", "title": "11.10 感度分析", "lv": 2}, {"id": "c11-11-11", "title": "11.11 Python で確かめる", "lv": 2}, {"id": "c11-11-12", "title": "11.12 演習", "lv": 2}, {"id": "c11-11-13", "title": "11.13 参考文献", "lv": 2}, {"id": "c11-11-14", "title": "11.14 発展 ★3: 二重機械学習 — 機械学習を因果推論に使うときの落とし穴", "lv": 2}, {"id": "c11-なぜ素朴なプラグインが壊れるのか", "title": "なぜ素朴なプラグインが壊れるのか", "lv": 3}, {"id": "c11-直し方は-2-つの成分に分かれる", "title": "直し方は 2 つの成分に分かれる", "lv": 3}, {"id": "c11-何が変わるのか-表にすると", "title": "何が変わるのか、表にすると", "lv": 3}, {"id": "c11-効果の異質性へ", "title": "効果の異質性へ", "lv": 3}, {"id": "c11-工学で使うときの注意", "title": "工学で使うときの注意", "lv": 3}, {"id": "c11-11-15", "title": "11.15 発展 ★3: 未観測交絡をどう扱うか — 感度分析と部分識別", "lv": 2}, {"id": "c11-考え方の出発点", "title": "考え方の出発点", "lv": 3}, {"id": "c11-系統-1-交絡のモデルを置いて解く-Lin-1998", "title": "系統 1: 交絡のモデルを置いて解く (Lin 1998)", "lv": 3}, {"id": "c11-系統-2-1-つの数に要約する-E-値", "title": "系統 2: 1 つの数に要約する — E 値", "lv": 3}, {"id": "c11-系統-3-仮定を緩めて区間を出す-部分識別", "title": "系統 3: 仮定を緩めて区間を出す (部分識別)", "lv": 3}, {"id": "c11-どの系統をどう使い分けるか", "title": "どの系統をどう使い分けるか", "lv": 3}, {"id": "c11-構造分野での使いどころ", "title": "構造分野での使いどころ", "lv": 3}, {"id": "c11-11-99", "title": "11.99 演習の解答", "lv": 2}, {"id": "c11-11-12-2", "title": "11.12 演習 (本文 11.12 節)", "lv": 3}, {"id": "c11-11-99-1", "title": "11.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "12", "label": "12", "title": "第12章 統計的機械学習", "sections": [{"id": "c12-12-1", "title": "12.1 この章の目的", "lv": 2}, {"id": "c12-12-2", "title": "12.2 予測と推論", "lv": 2}, {"id": "c12-12-2-1", "title": "12.2.1 2 つの目的", "lv": 3}, {"id": "c12-12-2-2", "title": "12.2.2 教師あり学習の枠組み", "lv": 3}, {"id": "c12-12-3", "title": "12.3 バイアス–分散分解と過学習", "lv": 2}, {"id": "c12-12-3-1", "title": "12.3.1 分解の導出", "lv": 3}, {"id": "c12-12-3-2", "title": "12.3.2 過学習と汎化", "lv": 3}, {"id": "c12-12-3-3", "title": "12.3.3 訓練誤差と汎化誤差の差の期待値", "lv": 3}, {"id": "c12-12-4", "title": "12.4 交差検証", "lv": 2}, {"id": "c12-12-4-1", "title": "12.4.1 ホールドアウトと k-fold", "lv": 3}, {"id": "c12-12-4-2", "title": "12.4.2 LOO の近道公式", "lv": 3}, {"id": "c12-12-4-3", "title": "12.4.3 情報リーク", "lv": 3}, {"id": "c12-12-5", "title": "12.5 正則化", "lv": 2}, {"id": "c12-12-5-1", "title": "12.5.1 罰則付き最小二乗", "lv": 3}, {"id": "c12-12-5-2", "title": "12.5.2 Ridge 回帰の閉形式", "lv": 3}, {"id": "c12-12-5-3", "title": "12.5.3 Lasso とスパース性", "lv": 3}, {"id": "c12-12-5-4", "title": "12.5.4 Elastic Net", "lv": 3}, {"id": "c12-12-5-5", "title": "12.5.5 λ の選択", "lv": 3}, {"id": "c12-12-6", "title": "12.6 k 近傍法", "lv": 2}, {"id": "c12-12-7", "title": "12.7 決定木", "lv": 2}, {"id": "c12-12-7-1", "title": "12.7.1 CART の再帰分割", "lv": 3}, {"id": "c12-12-7-2", "title": "12.7.2 剪定と木の性質", "lv": 3}, {"id": "c12-12-8", "title": "12.8 アンサンブル学習", "lv": 2}, {"id": "c12-12-8-1", "title": "12.8.1 バギングと分散減少", "lv": 3}, {"id": "c12-12-8-2", "title": "12.8.2 ランダムフォレスト", "lv": 3}, {"id": "c12-12-8-3", "title": "12.8.3 勾配ブースティング", "lv": 3}, {"id": "c12-12-9", "title": "12.9 サポートベクトルマシン", "lv": 2}, {"id": "c12-12-9-1", "title": "12.9.1 マージン最大化", "lv": 3}, {"id": "c12-12-9-2", "title": "12.9.2 カーネルトリック", "lv": 3}, {"id": "c12-12-10", "title": "12.10 ガウス過程回帰", "lv": 2}, {"id": "c12-12-10-1", "title": "12.10.1 関数の上の事前分布", "lv": 3}, {"id": "c12-12-10-2", "title": "12.10.2 事後分布", "lv": 3}, {"id": "c12-12-10-3", "title": "12.10.3 ベイズ線形回帰との関係", "lv": 3}, {"id": "c12-12-10-4", "title": "12.10.4 構造工学への接続: 耐力予測、外挿、少データ", "lv": 3}, {"id": "c12-12-11", "title": "12.11 評価指標", "lv": 2}, {"id": "c12-12-11-1", "title": "12.11.1 回帰の指標", "lv": 3}, {"id": "c12-12-11-2", "title": "12.11.2 混同行列と ROC", "lv": 3}, {"id": "c12-12-11-3", "title": "12.11.3 較正", "lv": 3}, {"id": "c12-12-12", "title": "12.12 統計的学習理論の入口", "lv": 2}, {"id": "c12-12-12-1", "title": "12.12.1 なぜ有限のデータから学べるか", "lv": 3}, {"id": "c12-12-12-2", "title": "12.12.2 VC 次元", "lv": 3}, {"id": "c12-12-13", "title": "12.13 解釈性", "lv": 2}, {"id": "c12-12-13-1", "title": "12.13.1 置換重要度", "lv": 3}, {"id": "c12-12-13-2", "title": "12.13.2 部分依存", "lv": 3}, {"id": "c12-12-14", "title": "12.14 本章のまとめ", "lv": 2}, {"id": "c12-12-15", "title": "12.15 Python で確かめる", "lv": 2}, {"id": "c12-12-16", "title": "12.16 演習", "lv": 2}, {"id": "c12-12-17", "title": "12.17 参考文献", "lv": 2}, {"id": "c12-12-18", "title": "12.18 発展 ★3: 共形予測 — 分布を仮定しない予測区間", "lv": 2}, {"id": "c12-12-18-1", "title": "12.18.1 何を仮定し、何を仮定しないか", "lv": 3}, {"id": "c12-12-18-2", "title": "12.18.2 交換可能性 — i.i.d. より弱い仮定", "lv": 3}, {"id": "c12-12-19", "title": "12.19 分割共形予測", "lv": 2}, {"id": "c12-12-19-1", "title": "12.19.1 手続き", "lv": 3}, {"id": "c12-12-19-2", "title": "12.19.2 なぜ $\\lceil (n+1)(1-\\alpha)\\rceil$ 番目なのか", "lv": 3}, {"id": "c12-12-19-3", "title": "12.19.3 妥当性は無料だが、効率は無料でない", "lv": 3}, {"id": "c12-12-20", "title": "12.20 周辺被覆と条件付き被覆 — この節の山", "lv": 2}, {"id": "c12-12-20-1", "title": "12.20.1 「全体で 90%」と「$x$ ごとに 90%」", "lv": 3}, {"id": "c12-12-20-2", "title": "12.20.2 なぜ条件付き被覆は (ただでは) 得られないか", "lv": 3}, {"id": "c12-12-20-3", "title": "12.20.3 適応的な区間 — 正規化スコアと CQR", "lv": 3}, {"id": "c12-12-20-4", "title": "12.20.4 材料強度・余寿命の予測に使うということ", "lv": 3}, {"id": "c12-12-21", "title": "12.21 交換可能性が壊れるとき", "lv": 2}, {"id": "c12-12-21-1", "title": "12.21.1 分布シフト", "lv": 3}, {"id": "c12-12-21-2", "title": "12.21.2 時系列", "lv": 3}, {"id": "c12-12-21-3", "title": "12.21.3 使う前に確かめること", "lv": 3}, {"id": "c12-12-22", "title": "12.22 Python で確かめる", "lv": 2}, {"id": "c12-12-23", "title": "12.23 演習", "lv": 2}, {"id": "c12-12-24", "title": "12.24 参考文献", "lv": 2}, {"id": "c12-12-25", "title": "12.25 発展 ★3: 二重降下 — 母数を増やしすぎると誤差が下がる、という話", "lv": 2}, {"id": "c12-何が観測されるのか", "title": "何が観測されるのか", "lv": 3}, {"id": "c12-領域は-3-つに分かれる", "title": "領域は 3 つに分かれる", "lv": 3}, {"id": "c12-実務にとっての結論は-正則化せよ", "title": "実務にとっての結論は「正則化せよ」", "lv": 3}, {"id": "c12-Ridge-そのものへの批判も忘れない", "title": "Ridge そのものへの批判も忘れない", "lv": 3}, {"id": "c12-構造分野で意識すべきこと", "title": "構造分野で意識すべきこと", "lv": 3}, {"id": "c12-12-99", "title": "12.99 演習の解答", "lv": 2}, {"id": "c12-12-16-2", "title": "12.16 演習 (本文 12.16 節)", "lv": 3}, {"id": "c12-12-99-1", "title": "12.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "13", "label": "13", "title": "第13章 計算統計と標本調査", "sections": [{"id": "c13-13-1", "title": "13.1 この章の目的", "lv": 2}, {"id": "c13-13-2", "title": "13.2 疑似乱数", "lv": 2}, {"id": "c13-13-2-1", "title": "13.2.1 疑似乱数とは何か", "lv": 3}, {"id": "c13-13-2-2", "title": "13.2.2 線形合同法 (LCG)", "lv": 3}, {"id": "c13-13-2-3", "title": "13.2.3 Mersenne Twister", "lv": 3}, {"id": "c13-13-2-4", "title": "13.2.4 PCG と現代の既定", "lv": 3}, {"id": "c13-13-2-5", "title": "13.2.5 種の管理", "lv": 3}, {"id": "c13-13-3", "title": "13.3 一様乱数から任意の分布へ", "lv": 2}, {"id": "c13-13-3-1", "title": "13.3.1 逆関数法", "lv": 3}, {"id": "c13-13-3-2", "title": "13.3.2 棄却法", "lv": 3}, {"id": "c13-13-3-3", "title": "13.3.3 Box–Muller 法の導出", "lv": 3}, {"id": "c13-13-3-4", "title": "13.3.4 その他の道具", "lv": 3}, {"id": "c13-13-4", "title": "13.4 モンテカルロ積分", "lv": 2}, {"id": "c13-13-4-1", "title": "13.4.1 基本定理と $n^{-1/2}$", "lv": 3}, {"id": "c13-13-4-2", "title": "13.4.2 稀事象の問題", "lv": 3}, {"id": "c13-13-4-3", "title": "13.4.3 対照変量", "lv": 3}, {"id": "c13-13-4-4", "title": "13.4.4 重点サンプリング", "lv": 3}, {"id": "c13-13-4-5", "title": "13.4.5 層化サンプリング", "lv": 3}, {"id": "c13-13-5", "title": "13.5 Latin Hypercube Sampling", "lv": 2}, {"id": "c13-13-6", "title": "13.6 構造信頼性への接続: $P_f = 10^{-4}$ を数える", "lv": 2}, {"id": "c13-13-7", "title": "13.7 EM アルゴリズム", "lv": 2}, {"id": "c13-13-7-1", "title": "13.7.1 問題設定", "lv": 3}, {"id": "c13-13-7-2", "title": "13.7.2 単調増加の証明", "lv": 3}, {"id": "c13-13-7-3", "title": "13.7.3 混合正規への適用", "lv": 3}, {"id": "c13-13-7-4", "title": "13.7.4 その他の応用", "lv": 3}, {"id": "c13-13-8", "title": "13.8 数値最適化と最尤推定", "lv": 2}, {"id": "c13-13-8-1", "title": "13.8.1 Newton 法と Fisher スコアリング", "lv": 3}, {"id": "c13-13-8-2", "title": "13.8.2 準 Newton 法と導関数不要法", "lv": 3}, {"id": "c13-13-8-3", "title": "13.8.3 プロファイル尤度と信頼区間", "lv": 3}, {"id": "c13-13-9", "title": "13.9 標本調査", "lv": 2}, {"id": "c13-13-9-1", "title": "13.9.1 有限母集団と単純無作為抽出", "lv": 3}, {"id": "c13-13-9-2", "title": "13.9.2 層化抽出", "lv": 3}, {"id": "c13-13-9-3", "title": "13.9.3 クラスター抽出と多段抽出", "lv": 3}, {"id": "c13-13-9-4", "title": "13.9.4 系統抽出", "lv": 3}, {"id": "c13-13-9-5", "title": "13.9.5 非標本誤差", "lv": 3}, {"id": "c13-13-9-6", "title": "13.9.6 標本サイズの設計", "lv": 3}, {"id": "c13-13-10", "title": "13.10 欠測データ", "lv": 2}, {"id": "c13-13-10-1", "title": "13.10.1 欠測メカニズム", "lv": 3}, {"id": "c13-13-10-2", "title": "13.10.2 リストワイズ削除のバイアス", "lv": 3}, {"id": "c13-13-10-3", "title": "13.10.3 多重代入", "lv": 3}, {"id": "c13-13-10-4", "title": "13.10.4 MICE (連鎖方程式)", "lv": 3}, {"id": "c13-13-10-5", "title": "13.10.5 逆確率重み付けと MNAR", "lv": 3}, {"id": "c13-13-11", "title": "13.11 Python で確かめる", "lv": 2}, {"id": "c13-13-12", "title": "13.12 演習", "lv": 2}, {"id": "c13-13-13", "title": "13.13 参考文献", "lv": 2}, {"id": "c13-13-14", "title": "13.14 発展 ★3: 稀事象シミュレーション — $10^{-4}$ の確率をどう数えるか", "lv": 2}, {"id": "c13-素朴な-Monte-Carlo-が効かない理由", "title": "素朴な Monte Carlo が効かない理由", "lv": 3}, {"id": "c13-手法-1-部分集合法-subset-simulation", "title": "手法 1: 部分集合法 (subset simulation)", "lv": 3}, {"id": "c13-手法-2-重点サンプリング", "title": "手法 2: 重点サンプリング", "lv": 3}, {"id": "c13-手法-3-代理モデルを-賢い提案分布-に使う", "title": "手法 3: 代理モデルを「賢い提案分布」に使う", "lv": 3}, {"id": "c13-数字で比べる", "title": "数字で比べる", "lv": 3}, {"id": "c13-選び方の目安", "title": "選び方の目安", "lv": 3}, {"id": "c13-13-15", "title": "13.15 発展 ★3: 代理モデルと不確かさの伝播 — 多項式カオスとクリギング", "lv": 2}, {"id": "c13-何をする道具なのか", "title": "何をする道具なのか", "lv": 3}, {"id": "c13-3", "title": "3 つの代理モデルの性格", "lv": 3}, {"id": "c13--誤差推定と適応性-がなぜ決定的なのか", "title": "「誤差推定と適応性」がなぜ決定的なのか", "lv": 3}, {"id": "c13-2", "title": "2 種類の不確かさを分ける", "lv": 3}, {"id": "c13-モデル形式の不確かさ-いちばん大きくていちばん無視される", "title": "モデル形式の不確かさ — いちばん大きくていちばん無視される", "lv": 3}, {"id": "c13-実務の勧め", "title": "実務の勧め", "lv": 3}, {"id": "c13-13-99", "title": "13.99 演習の解答", "lv": 2}, {"id": "c13-13-12-2", "title": "13.12 演習 (本文 13.12 節)", "lv": 3}, {"id": "c13-13-99-1", "title": "13.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "14", "label": "14", "title": "第14章 実データ演習 — 汚れたデータで手を動かす", "sections": [{"id": "c14-14-1", "title": "14.1 この章の目的", "lv": 2}, {"id": "c14-データについて", "title": "データについて", "lv": 3}, {"id": "c14-14-2", "title": "14.2 題材 1: コンクリート受入検査 — 特性値をいくつと報告するか", "lv": 2}, {"id": "c14-課題", "title": "課題", "lv": 3}, {"id": "c14-14-3", "title": "14.3 題材 2: 配合と強度の回帰 — 1 点で結論が変わる", "lv": 2}, {"id": "c14-課題-2", "title": "課題", "lv": 3}, {"id": "c14-14-4", "title": "14.4 題材 3: 疲労試験 — 打ち切りを無視するとどうなるか", "lv": 2}, {"id": "c14-課題-3", "title": "課題", "lv": 3}, {"id": "c14-14-5", "title": "14.5 題材 4: 年最大風速 — 観測の連続性を疑う", "lv": 2}, {"id": "c14-課題-4", "title": "課題", "lv": 3}, {"id": "c14-14-6", "title": "14.6 題材 5: 構造モニタリング — 季節変動に埋もれた損傷", "lv": 2}, {"id": "c14-課題-5", "title": "課題", "lv": 3}, {"id": "c14-14-7", "title": "14.7 この章の進め方", "lv": 2}, {"id": "c14-14-99", "title": "14.99 演習の解答 (題材 1〜3)", "lv": 2}, {"id": "c14-14-2-2", "title": "14.2 題材 1 の解答", "lv": 3}, {"id": "c14-14-3-2", "title": "14.3 題材 2 の解答", "lv": 3}, {"id": "c14-14-4-2", "title": "14.4 題材 3 の解答", "lv": 3}, {"id": "c14-14-99-1", "title": "14.99.1 解答の数値を確かめるコード (題材 1〜3)", "lv": 2}, {"id": "c14-14-99-2", "title": "14.99 演習の解答 (題材 4〜5)", "lv": 2}, {"id": "c14-14-5-2", "title": "14.5 題材 4 の解答", "lv": 3}, {"id": "c14-14-6-2", "title": "14.6 題材 5 の解答", "lv": 3}, {"id": "c14-14-99-2-2", "title": "14.99.2 解答の数値を確かめるコード (題材 4〜5)", "lv": 2}], "stars": 0}, {"num": "15", "label": "付", "title": "付録 A 英和用語集", "sections": [{"id": "c15-第1章-記述統計", "title": "第1章 記述統計", "lv": 2}, {"id": "c15-第2章-確率論の基礎-補遺-2-17-2-20-を含む", "title": "第2章 確率論の基礎 (補遺 2.17〜2.20 を含む)", "lv": 2}, {"id": "c15-第3章-推定-発展-3-15-を含む", "title": "第3章 推定 (発展 3.15 を含む)", "lv": 2}, {"id": "c15-第4章-仮説検定-発展-4-18-を含む", "title": "第4章 仮説検定 (発展 4.18 を含む)", "lv": 2}, {"id": "c15-第5章-回帰分析", "title": "第5章 回帰分析", "lv": 2}, {"id": "c15-第6章-分散分析と実験計画法", "title": "第6章 分散分析と実験計画法", "lv": 2}, {"id": "c15-第7章-多変量解析", "title": "第7章 多変量解析", "lv": 2}, {"id": "c15-第8章-ベイズ統計", "title": "第8章 ベイズ統計", "lv": 2}, {"id": "c15-第9章-時系列解析", "title": "第9章 時系列解析", "lv": 2}, {"id": "c15-第10章-生存時間解析-信頼性-極値統計", "title": "第10章 生存時間解析・信頼性・極値統計", "lv": 2}, {"id": "c15-第11章-因果推論", "title": "第11章 因果推論", "lv": 2}, {"id": "c15-第12章-統計的機械学習", "title": "第12章 統計的機械学習", "lv": 2}, {"id": "c15-第13章-計算統計と標本調査", "title": "第13章 計算統計と標本調査", "lv": 2}, {"id": "c15-第14章-実データ演習", "title": "第14章 実データ演習", "lv": 2}, {"id": "c15-英語表記を確かめられなかった語", "title": "英語表記を確かめられなかった語", "lv": 2}, {"id": "c15-この付録の作り方-再現手順", "title": "この付録の作り方 (再現手順)", "lv": 2}], "stars": 0}];
+const META = [{"num": "00", "label": "00", "title": "序章 統計学の全体像と学び方", "sections": [{"id": "c00-0-1", "title": "0.1 統計学とは何をする学問か", "lv": 2}, {"id": "c00-0-2", "title": "0.2 本書の章立て", "lv": 2}, {"id": "c00-0-3", "title": "0.3 数学的前提", "lv": 2}, {"id": "c00-0-4", "title": "0.4 学び方", "lv": 2}, {"id": "c00-0-5", "title": "0.5 記法", "lv": 2}], "stars": 0}, {"num": "01", "label": "01", "title": "第1章 記述統計", "sections": [{"id": "c01-1-1", "title": "1.1 この章の目的", "lv": 2}, {"id": "c01-1-2", "title": "1.2 データの種類と尺度", "lv": 2}, {"id": "c01-1-3", "title": "1.3 度数分布とヒストグラム", "lv": 2}, {"id": "c01-1-3-1", "title": "1.3.1 度数分布表", "lv": 3}, {"id": "c01-1-3-2", "title": "1.3.2 階級幅の選び方", "lv": 3}, {"id": "c01-1-3-3", "title": "1.3.3 その他の図", "lv": 3}, {"id": "c01-1-4", "title": "1.4 位置の要約統計量", "lv": 2}, {"id": "c01-1-4-1", "title": "1.4.1 算術平均", "lv": 3}, {"id": "c01-1-4-2", "title": "1.4.2 中央値", "lv": 3}, {"id": "c01-1-4-3", "title": "1.4.3 最頻値、刈り込み平均、その他の平均", "lv": 3}, {"id": "c01-1-4-4", "title": "1.4.4 平均と中央値の関係", "lv": 3}, {"id": "c01-1-5", "title": "1.5 散らばりの要約統計量", "lv": 2}, {"id": "c01-1-5-1", "title": "1.5.1 分散と標準偏差", "lv": 3}, {"id": "c01-1-5-2", "title": "1.5.2 範囲・四分位範囲 — 順位で測る", "lv": 3}, {"id": "c01-1-5-3", "title": "1.5.3 平均絶対偏差・MAD — 二乗をやめる", "lv": 3}, {"id": "c01-1-5-4", "title": "1.5.4 変動係数", "lv": 3}, {"id": "c01-1-6", "title": "1.6 分布の形", "lv": 2}, {"id": "c01-1-6-1", "title": "1.6.1 モーメント", "lv": 3}, {"id": "c01-1-6-2", "title": "1.6.2 箱ひげ図と外れ値", "lv": 3}, {"id": "c01-1-6-3", "title": "1.6.3 標準化とチェビシェフの不等式", "lv": 3}, {"id": "c01-1-7", "title": "1.7 2 変数の記述: 共分散と相関", "lv": 2}, {"id": "c01-1-7-1", "title": "1.7.1 共分散とピアソン相関係数", "lv": 3}, {"id": "c01-1-7-2", "title": "1.7.2 Anscombe の四つ組", "lv": 3}, {"id": "c01-1-7-3", "title": "1.7.3 順位相関", "lv": 3}, {"id": "c01-1-7-4", "title": "1.7.4 分割表 (名義尺度同士)", "lv": 3}, {"id": "c01-1-8", "title": "1.8 頑健性の考え方", "lv": 2}, {"id": "c01-1-9", "title": "1.9 変換", "lv": 2}, {"id": "c01-1-10", "title": "1.10 Python で確かめる", "lv": 2}, {"id": "c01-1-11", "title": "1.11 演習", "lv": 2}, {"id": "c01-1-12", "title": "1.12 参考文献", "lv": 2}, {"id": "c01-1-13", "title": "1.13 発展 ★2: M 推定と影響関数 — 頑健性を式にする", "lv": 2}, {"id": "c01-1-13-1", "title": "1.13.1 M 推定: 平均と中央値を 1 つの式にまとめる", "lv": 3}, {"id": "c01-1-13-2", "title": "1.13.2 影響関数: 1 点の汚染が推定値を動かす量", "lv": 3}, {"id": "c01-1-13-3", "title": "1.13.3 漸近分散と相対効率 — 頑健性の代償", "lv": 3}, {"id": "c01-1-13-4", "title": "1.13.4 効率と破綻点は本当にトレードオフか", "lv": 3}, {"id": "c01-1-13-5", "title": "1.13.5 有限標本での破綻点は漸近値と違う", "lv": 3}, {"id": "c01-1-13-6", "title": "1.13.6 Python で確かめる", "lv": 3}, {"id": "c01-1-13-7", "title": "1.13.7 演習", "lv": 3}, {"id": "c01-1-14", "title": "1.14 発展 ★2: ヒストグラムからカーネル密度推定へ", "lv": 2}, {"id": "c01-1-14-1", "title": "1.14.1 カーネル密度推定", "lv": 3}, {"id": "c01-1-14-2", "title": "1.14.2 バイアスと分散の分解、そして $n^{-1/5}$", "lv": 3}, {"id": "c01-1-14-3", "title": "1.14.3 帯域幅をデータから選ぶ", "lv": 3}, {"id": "c01-1-14-4", "title": "1.14.4 Python で確かめる", "lv": 3}, {"id": "c01-1-14-5", "title": "1.14.5 演習", "lv": 3}, {"id": "c01-1-99", "title": "1.99 演習の解答", "lv": 2}, {"id": "c01-1-11-2", "title": "1.11 演習 (本文 1.11 節)", "lv": 3}, {"id": "c01-1-13-7-2", "title": "1.13.7 演習 (発展 1.13 節: M 推定と影響関数)", "lv": 3}, {"id": "c01-1-14-5-2", "title": "1.14.5 演習 (発展 1.14 節: カーネル密度推定)", "lv": 3}, {"id": "c01-1-100", "title": "1.100 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "02", "label": "02", "title": "第2章 確率論の基礎", "sections": [{"id": "c02-2-1", "title": "2.1 この章の目的", "lv": 2}, {"id": "c02-2-2", "title": "2.2 確率空間と公理", "lv": 2}, {"id": "c02-2-2-1", "title": "2.2.1 標本空間と事象", "lv": 3}, {"id": "c02-2-2-2", "title": "2.2.2 Kolmogorov の公理", "lv": 3}, {"id": "c02-2-2-3", "title": "2.2.3 確率の解釈", "lv": 3}, {"id": "c02-2-3", "title": "2.3 条件付き確率・独立・ベイズの定理", "lv": 2}, {"id": "c02-2-3-1", "title": "2.3.1 条件付き確率", "lv": 3}, {"id": "c02-2-3-2", "title": "2.3.2 全確率の公式とベイズの定理", "lv": 3}, {"id": "c02-2-3-3", "title": "2.3.3 独立", "lv": 3}, {"id": "c02-2-4", "title": "2.4 確率変数と分布", "lv": 2}, {"id": "c02-2-4-1", "title": "2.4.1 確率変数と分布関数", "lv": 3}, {"id": "c02-2-4-2", "title": "2.4.2 離散と連続", "lv": 3}, {"id": "c02-2-4-3", "title": "2.4.3 分位関数", "lv": 3}, {"id": "c02-2-5", "title": "2.5 期待値・分散・母関数", "lv": 2}, {"id": "c02-2-5-1", "title": "2.5.1 期待値", "lv": 3}, {"id": "c02-2-5-2", "title": "2.5.2 分散とモーメント", "lv": 3}, {"id": "c02-2-5-3", "title": "2.5.3 モーメント母関数と特性関数", "lv": 3}, {"id": "c02-2-6", "title": "2.6 主要な分布", "lv": 2}, {"id": "c02-2-6-1", "title": "2.6.1 一覧", "lv": 3}, {"id": "c02-2-6-2", "title": "2.6.2 離散分布", "lv": 3}, {"id": "c02-2-6-3", "title": "2.6.3 連続分布", "lv": 3}, {"id": "c02-2-6-4", "title": "2.6.4 分布間の関係", "lv": 3}, {"id": "c02-2-7", "title": "2.7 多変量分布", "lv": 2}, {"id": "c02-2-7-1", "title": "2.7.1 同時分布・周辺分布・条件付き分布", "lv": 3}, {"id": "c02-2-7-2", "title": "2.7.2 共分散と相関", "lv": 3}, {"id": "c02-2-7-3", "title": "2.7.3 条件付き期待値と全分散の公式", "lv": 3}, {"id": "c02-2-7-4", "title": "2.7.4 多変量正規分布", "lv": 3}, {"id": "c02-2-8", "title": "2.8 変数変換とデルタ法", "lv": 2}, {"id": "c02-2-8-1", "title": "2.8.1 1 変数の変換", "lv": 3}, {"id": "c02-2-8-2", "title": "2.8.2 デルタ法", "lv": 3}, {"id": "c02-2-9", "title": "2.9 不等式", "lv": 2}, {"id": "c02-2-10", "title": "2.10 大数の法則", "lv": 2}, {"id": "c02-2-10-1", "title": "2.10.1 収束の種類", "lv": 3}, {"id": "c02-2-10-2", "title": "2.10.2 弱法則と強法則", "lv": 3}, {"id": "c02-2-11", "title": "2.11 中心極限定理", "lv": 2}, {"id": "c02-2-11-1", "title": "2.11.1 主張", "lv": 3}, {"id": "c02-2-11-2", "title": "2.11.2 特性関数による証明", "lv": 3}, {"id": "c02-2-11-3", "title": "2.11.3 収束の速さ: Berry–Esseen の定理", "lv": 3}, {"id": "c02-2-11-4", "title": "2.11.4 統計への帰結", "lv": 3}, {"id": "c02-2-12", "title": "2.12 極値の漸近: 最大値はどこへ収束するか", "lv": 2}, {"id": "c02-2-12-1", "title": "2.12.1 最大値の分布", "lv": 3}, {"id": "c02-2-12-2", "title": "2.12.2 Fisher–Tippett–Gnedenko の定理", "lv": 3}, {"id": "c02-2-12-3", "title": "2.12.3 中心極限定理との対比と第 10 章への橋", "lv": 3}, {"id": "c02-2-13", "title": "2.13 構造工学への接続", "lv": 2}, {"id": "c02-2-13-1", "title": "2.13.1 荷重の年最大値と Gumbel 分布", "lv": 3}, {"id": "c02-2-13-2", "title": "2.13.2 材料強度と対数正規分布", "lv": 3}, {"id": "c02-2-13-3", "title": "2.13.3 信頼性指標 $\\beta$ と破壊確率", "lv": 3}, {"id": "c02-2-14", "title": "2.14 Python で確かめる", "lv": 2}, {"id": "c02-2-15", "title": "2.15 演習", "lv": 2}, {"id": "c02-2-16", "title": "2.16 参考文献", "lv": 2}, {"id": "c02-2-17", "title": "2.17 補遺A: 数え上げ — 確率を計算する前に必要なもの", "lv": 2}, {"id": "c02-2-17-1", "title": "2.17.1 素朴な確率と「同様に確からしい」", "lv": 3}, {"id": "c02-2-17-2", "title": "2.17.2 乗法原理", "lv": 3}, {"id": "c02-2-17-3", "title": "2.17.3 標本抽出の 4 類型", "lv": 3}, {"id": "c02-2-17-4", "title": "2.17.4 二項係数と重複の調整", "lv": 3}, {"id": "c02-2-17-5", "title": "2.17.5 物語による証明 — 同じものを二通りに数える", "lv": 3}, {"id": "c02-2-17-6", "title": "2.17.6 包除原理と一致問題", "lv": 3}, {"id": "c02-2-17-7", "title": "2.17.7 Python で確かめる (数え上げ)", "lv": 3}, {"id": "c02-2-18", "title": "2.18 補遺B: 条件づけを使いこなす", "lv": 2}, {"id": "c02-2-18-1", "title": "2.18.1 ベイズのオッズ形式", "lv": 3}, {"id": "c02-2-18-2", "title": "2.18.2 検察官の誤謬 — $P(A \\mid B)$ と $P(B \\mid A)$ の取り違え", "lv": 3}, {"id": "c02-2-18-3", "title": "2.18.3 条件付き独立 — 独立とは別物であること", "lv": 3}, {"id": "c02-2-18-4", "title": "2.18.4 モンティ・ホール問題", "lv": 3}, {"id": "c02-2-18-5", "title": "2.18.5 Python で確かめる (条件づけ)", "lv": 3}, {"id": "c02-2-18-6", "title": "2.18.6 発展 ★3: 中心極限定理はどれくらい速く効くのか — Berry–Esseen と Edgeworth", "lv": 2}, {"id": "c02-近づく速さを押さえる-Berry-Esseen-の不等式", "title": "近づく速さを押さえる — Berry–Esseen の不等式", "lv": 3}, {"id": "c02-誤差の中身を書き下す-Edgeworth-展開", "title": "誤差の中身を書き下す — Edgeworth 展開", "lv": 3}, {"id": "c02-工学で効く場面", "title": "工学で効く場面", "lv": 3}, {"id": "c02-2-18-7", "title": "2.18.7 発展 ★3: 集中不等式 — Chebyshev から Hoeffding・Bernstein へ", "lv": 2}, {"id": "c02-仮定を強めると-裾が速く減る", "title": "仮定を強めると、裾が速く減る", "lv": 3}, {"id": "c02-Hoeffding-の不等式は-最適-である", "title": "Hoeffding の不等式は「最適」である", "lv": 3}, {"id": "c02-有界性を外す-sub-Gaussian-と-sub-expo", "title": "有界性を外す — sub-Gaussian と sub-exponential", "lv": 3}, {"id": "c02-二次形式へ-Hanson-Wright", "title": "二次形式へ — Hanson–Wright", "lv": 3}, {"id": "c02-裾がもっと重いとき-sub-Weibull", "title": "裾がもっと重いとき — sub-Weibull", "lv": 3}, {"id": "c02-工学で使うとき", "title": "工学で使うとき", "lv": 3}, {"id": "c02-2-19", "title": "2.19 補遺の演習", "lv": 2}, {"id": "c02-2-20", "title": "2.20 補遺の参考文献", "lv": 2}, {"id": "c02-2-99", "title": "2.99 演習の解答", "lv": 2}, {"id": "c02-2-15-2", "title": "2.15 演習 (本文 2.15 節)", "lv": 3}, {"id": "c02-2-19-2", "title": "2.19 演習 (補遺 2.19 節)", "lv": 3}], "stars": 2}, {"num": "03", "label": "03", "title": "第3章 推定", "sections": [{"id": "c03-3-1", "title": "3.1 この章の目的", "lv": 2}, {"id": "c03-3-2", "title": "3.2 母集団・標本・統計量", "lv": 2}, {"id": "c03-3-2-1", "title": "3.2.1 用語", "lv": 3}, {"id": "c03-3-2-2", "title": "3.2.2 標本平均の標本分布", "lv": 3}, {"id": "c03-3-2-3", "title": "3.2.3 正規母集団: $\\chi^2$ 分布と $t$ 分布", "lv": 3}, {"id": "c03-3-3", "title": "3.3 点推定の評価", "lv": 2}, {"id": "c03-3-3-1", "title": "3.3.1 不偏性・一致性・有効性", "lv": 3}, {"id": "c03-3-3-2", "title": "3.3.2 平均二乗誤差", "lv": 3}, {"id": "c03-3-4", "title": "3.4 モーメント法", "lv": 2}, {"id": "c03-3-5", "title": "3.5 最尤法", "lv": 2}, {"id": "c03-3-5-1", "title": "3.5.1 尤度と最尤推定量", "lv": 3}, {"id": "c03-3-5-2", "title": "3.5.2 スコアと Fisher 情報量", "lv": 3}, {"id": "c03-3-5-3", "title": "3.5.3 最尤推定量の漸近正規性", "lv": 3}, {"id": "c03-3-5-4", "title": "3.5.4 不変性", "lv": 3}, {"id": "c03-3-6", "title": "3.6 Cramér–Rao の下限", "lv": 2}, {"id": "c03-3-7", "title": "3.7 十分統計量と Rao–Blackwell の定理", "lv": 2}, {"id": "c03-3-8", "title": "3.8 区間推定", "lv": 2}, {"id": "c03-3-8-1", "title": "3.8.1 信頼区間とピボット法", "lv": 3}, {"id": "c03-3-8-2", "title": "3.8.2 正規母集団の $\\mu$ と $\\sigma^2$", "lv": 3}, {"id": "c03-3-8-3", "title": "3.8.3 被覆確率の意味", "lv": 3}, {"id": "c03-3-8-4", "title": "3.8.4 二項比率: Wald・Wilson・Clopper–Pearson", "lv": 3}, {"id": "c03-3-8-5", "title": "3.8.5 デルタ法による区間", "lv": 3}, {"id": "c03-3-9", "title": "3.9 ブートストラップ", "lv": 2}, {"id": "c03-3-9-1", "title": "3.9.1 原理", "lv": 3}, {"id": "c03-3-9-2", "title": "3.9.2 3 つの区間", "lv": 3}, {"id": "c03-3-9-3", "title": "3.9.3 被覆の数値実験と限界", "lv": 3}, {"id": "c03-3-10", "title": "3.10 バイアス補正とジャックナイフ", "lv": 2}, {"id": "c03-3-11", "title": "3.11 構造工学への接続: 材料強度の特性値", "lv": 2}, {"id": "c03-3-12", "title": "3.12 Python で確かめる", "lv": 2}, {"id": "c03-3-13", "title": "3.13 演習", "lv": 2}, {"id": "c03-3-14", "title": "3.14 参考文献", "lv": 2}, {"id": "c03-3-15", "title": "3.15 発展 ★2: 二項比率の区間推定 — なぜ Wald は破綻するか", "lv": 2}, {"id": "c03-3-15-1", "title": "3.15.1 Wald 区間とその素朴な導出", "lv": 3}, {"id": "c03-3-15-2", "title": "3.15.2 何が起きるか — 厳密に数えて確かめる", "lv": 3}, {"id": "c03-3-15-3", "title": "3.15.3 二つの病気: 離散性と、標準誤差の置き換え", "lv": 3}, {"id": "c03-3-15-4", "title": "3.15.4 Wilson 区間 — 置き換えをしない", "lv": 3}, {"id": "c03-3-15-5", "title": "3.15.5 どれを使うか", "lv": 3}, {"id": "c03-3-15-6", "title": "3.15.6 不良が 1 件も出なかったとき — 3 の法則", "lv": 3}, {"id": "c03-3-15-7", "title": "3.15.7 Python で確かめる", "lv": 3}, {"id": "c03-3-15-8", "title": "3.15.8 演習", "lv": 3}, {"id": "c03-3-15-9", "title": "3.15.9 参考文献", "lv": 3}, {"id": "c03-3-16", "title": "3.16 発展 ★3: ブートストラップはいつ効き、いつ壊れるか", "lv": 2}, {"id": "c03-効く理由は-連続性-である", "title": "効く理由は「連続性」である", "lv": 3}, {"id": "c03-壊れる場面は整理されている", "title": "壊れる場面は整理されている", "lv": 3}, {"id": "c03-手当て-1-m-out-of-n-ブートストラップ", "title": "手当て 1: $m$ out of $n$ ブートストラップ", "lv": 3}, {"id": "c03-手当て-2-Studentize-して高次の精度を稼ぐ", "title": "手当て 2: Studentize して高次の精度を稼ぐ", "lv": 3}, {"id": "c03-実務のチェックリスト", "title": "実務のチェックリスト", "lv": 3}, {"id": "c03-3-99", "title": "3.99 演習の解答", "lv": 2}, {"id": "c03-3-13-2", "title": "3.13 演習 (本文 3.13 節)", "lv": 3}, {"id": "c03-3-15-8-2", "title": "3.15.8 演習 (発展 3.15 節)", "lv": 3}, {"id": "c03-3-100", "title": "3.100 解答の数値を確かめるコード", "lv": 2}, {"id": "c03-2026-09-21-の実行で見つかった食い違い", "title": "2026-09-21 の実行で見つかった食い違い", "lv": 3}], "stars": 2}, {"num": "04", "label": "04", "title": "第4章 仮説検定", "sections": [{"id": "c04-4-1", "title": "4.1 この章の目的", "lv": 2}, {"id": "c04-4-2", "title": "4.2 検定の枠組み", "lv": 2}, {"id": "c04-4-2-1", "title": "4.2.1 帰無仮説と対立仮説", "lv": 3}, {"id": "c04-4-2-2", "title": "4.2.2 二種類の過誤、有意水準、検出力", "lv": 3}, {"id": "c04-4-2-3", "title": "4.2.3 検定統計量、棄却域、片側と両側", "lv": 3}, {"id": "c04-4-2-4", "title": "4.2.4 Neyman–Pearson の補題", "lv": 3}, {"id": "c04-4-2-5", "title": "4.2.5 尤度比検定・Wald 検定・スコア検定", "lv": 3}, {"id": "c04-4-3", "title": "4.3 p 値", "lv": 2}, {"id": "c04-4-3-1", "title": "4.3.1 定義と帰無分布での一様性", "lv": 3}, {"id": "c04-4-3-2", "title": "4.3.2 正しい解釈と誤用: ASA 声明", "lv": 3}, {"id": "c04-4-3-3", "title": "4.3.3 検定と信頼区間の双対性", "lv": 3}, {"id": "c04-4-4", "title": "4.4 平均の検定: z 検定と t 検定", "lv": 2}, {"id": "c04-4-4-1", "title": "4.4.1 一標本", "lv": 3}, {"id": "c04-4-4-2", "title": "4.4.2 対応のある二標本", "lv": 3}, {"id": "c04-4-4-3", "title": "4.4.3 独立二標本: Welch の t 検定", "lv": 3}, {"id": "c04-4-5", "title": "4.5 分散の検定: χ² 検定と F 検定", "lv": 2}, {"id": "c04-4-5-1", "title": "4.5.1 一標本の分散: χ² 検定", "lv": 3}, {"id": "c04-4-5-2", "title": "4.5.2 二標本の分散比: F 検定", "lv": 3}, {"id": "c04-4-6", "title": "4.6 比率の検定", "lv": 2}, {"id": "c04-4-7", "title": "4.7 分割表の χ² 検定", "lv": 2}, {"id": "c04-4-7-1", "title": "4.7.1 適合度検定と自由度の理由", "lv": 3}, {"id": "c04-4-7-2", "title": "4.7.2 独立性の検定", "lv": 3}, {"id": "c04-4-8", "title": "4.8 正規性の検定", "lv": 2}, {"id": "c04-4-9", "title": "4.9 ノンパラメトリック検定", "lv": 2}, {"id": "c04-4-9-1", "title": "4.9.1 符号検定", "lv": 3}, {"id": "c04-4-9-2", "title": "4.9.2 Wilcoxon 符号順位検定", "lv": 3}, {"id": "c04-4-9-3", "title": "4.9.3 Mann–Whitney (Wilcoxon 順位和) 検定", "lv": 3}, {"id": "c04-4-9-4", "title": "4.9.4 Kruskal–Wallis 検定", "lv": 3}, {"id": "c04-4-9-5", "title": "4.9.5 並べ替え検定", "lv": 3}, {"id": "c04-4-10", "title": "4.10 検出力分析と標本サイズ設計", "lv": 2}, {"id": "c04-4-10-1", "title": "4.10.1 検出力の計算", "lv": 3}, {"id": "c04-4-10-2", "title": "4.10.2 標本サイズの設計", "lv": 3}, {"id": "c04-4-11", "title": "4.11 効果量と信頼区間", "lv": 2}, {"id": "c04-4-11-1", "title": "4.11.1 Cohen の d", "lv": 3}, {"id": "c04-4-11-2", "title": "4.11.2 効果量と p 値・信頼区間の関係", "lv": 3}, {"id": "c04-4-12", "title": "4.12 多重比較", "lv": 2}, {"id": "c04-4-12-1", "title": "4.12.1 問題: 検定を重ねると偽陽性が増える", "lv": 3}, {"id": "c04-4-12-2", "title": "4.12.2 Bonferroni と Holm: FWER の制御", "lv": 3}, {"id": "c04-4-12-3", "title": "4.12.3 Benjamini–Hochberg: FDR の制御", "lv": 3}, {"id": "c04-4-13", "title": "4.13 再現性問題", "lv": 2}, {"id": "c04-4-13-1", "title": "4.13.1 p-hacking", "lv": 3}, {"id": "c04-4-13-2", "title": "4.13.2 出版バイアスと再現率", "lv": 3}, {"id": "c04-4-14", "title": "4.14 構造工学への接続", "lv": 2}, {"id": "c04-4-15", "title": "4.15 Python で確かめる", "lv": 2}, {"id": "c04-4-16", "title": "4.16 演習", "lv": 2}, {"id": "c04-4-17", "title": "4.17 参考文献", "lv": 2}, {"id": "c04-4-18", "title": "4.18 発展 ★2: p 値論争のその後 — 0.005 提案・同等性検定・事前登録", "lv": 2}, {"id": "c04-4-18-1", "title": "4.18.1 出発点: p 値の分布を知る", "lv": 3}, {"id": "c04-4-18-2", "title": "4.18.2 なぜ「p &lt; 0.05 なら 5% しか間違えない」が誤りなのか", "lv": 3}, {"id": "c04-4-18-3", "title": "4.18.3 処方箋その 1: 有意水準を 0.005 に下げる", "lv": 3}, {"id": "c04-4-18-4", "title": "4.18.4 処方箋その 2: 「差がない」を示したいときは同等性検定", "lv": 3}, {"id": "c04-4-18-5", "title": "4.18.5 処方箋その 3: 事前登録 — 自由度を先に縛る", "lv": 3}, {"id": "c04-4-18-6", "title": "4.18.6 「有意だった」結果はどれくらい再現するか", "lv": 3}, {"id": "c04-4-18-7", "title": "4.18.7 まとめ: 何をすればよいか", "lv": 3}, {"id": "c04-4-18-8", "title": "4.18.8 Python で確かめる", "lv": 3}, {"id": "c04-4-18-9", "title": "4.18.9 演習", "lv": 3}, {"id": "c04-4-19", "title": "4.19 発展 ★3: FDR の理論 — 依存下の Benjamini–Yekutieli と e-value", "lv": 2}, {"id": "c04-4-19-1", "title": "4.19.1 何を怖がっているのか", "lv": 3}, {"id": "c04-4-19-2", "title": "4.19.2 検定数が増えるとどれだけ違うのか", "lv": 3}, {"id": "c04-4-19-3", "title": "4.19.3 探索か確証かを先に宣言する", "lv": 3}, {"id": "c04-4-20", "title": "4.20 BH の保証はどこから来るか — 独立と PRDS", "lv": 2}, {"id": "c04-4-20-1", "title": "4.20.1 なぜ直線 $iq/m$ なのか", "lv": 3}, {"id": "c04-4-20-2", "title": "4.20.2 PRDS — 正の回帰従属", "lv": 3}, {"id": "c04-4-20-3", "title": "4.20.3 $m_0$ を推定して取り返す", "lv": 3}, {"id": "c04-4-21", "title": "4.21 依存が崩れると何が起きるか — Benjamini–Yekutieli", "lv": 2}, {"id": "c04-4-21-1", "title": "4.21.1 現実的な正の相関: 平均は守られ、実現値は暴れる", "lv": 3}, {"id": "c04-4-21-2", "title": "4.21.2 BY の補正 — そして BH の最悪値", "lv": 3}, {"id": "c04-4-21-3", "title": "4.21.3 上限は本当に届くのか", "lv": 3}, {"id": "c04-4-21-4", "title": "4.21.4 BY は払いすぎている", "lv": 3}, {"id": "c04-4-21-5", "title": "4.21.5 どの依存なら大丈夫で、どの依存が危ないか", "lv": 3}, {"id": "c04-4-22", "title": "4.22 e 値による多重検定 — 任意の依存に耐える仕組み", "lv": 2}, {"id": "c04-4-22-1", "title": "4.22.1 e 値とは何か", "lv": 3}, {"id": "c04-4-22-2", "title": "4.22.2 p 値との翻訳、そしてその代償", "lv": 3}, {"id": "c04-4-22-3", "title": "4.22.3 e-BH — 3 行で終わる証明", "lv": 3}, {"id": "c04-4-22-4", "title": "4.22.4 いくら得をするのか", "lv": 3}, {"id": "c04-4-22-5", "title": "4.22.5 e 値が自然に出てくる場面", "lv": 3}, {"id": "c04-4-23", "title": "4.23 現場でどう選ぶか", "lv": 2}, {"id": "c04-4-24", "title": "4.24 Python で確かめる", "lv": 2}, {"id": "c04-4-25", "title": "4.25 演習", "lv": 2}, {"id": "c04-4-26", "title": "4.26 参考文献", "lv": 2}, {"id": "c04-4-99", "title": "4.99 演習の解答", "lv": 2}, {"id": "c04-4-16-2", "title": "4.16 演習 (本文 4.16 節)", "lv": 3}, {"id": "c04-4-18-9-2", "title": "4.18.9 演習 (発展 4.18 節)", "lv": 3}, {"id": "c04-4-99-1", "title": "4.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "05", "label": "05", "title": "第5章 回帰分析", "sections": [{"id": "c05-5-1", "title": "5.1 この章の目的", "lv": 2}, {"id": "c05-5-2", "title": "5.2 単回帰", "lv": 2}, {"id": "c05-5-2-1", "title": "5.2.1 モデル", "lv": 3}, {"id": "c05-5-2-2", "title": "5.2.2 最小二乗法の導出", "lv": 3}, {"id": "c05-5-2-3", "title": "5.2.3 残差の性質", "lv": 3}, {"id": "c05-5-2-4", "title": "5.2.4 分散分解と決定係数", "lv": 3}, {"id": "c05-5-3", "title": "5.3 重回帰の行列表現", "lv": 2}, {"id": "c05-5-3-1", "title": "5.3.1 正規方程式", "lv": 3}, {"id": "c05-5-3-2", "title": "5.3.2 ハット行列と射影の幾何", "lv": 3}, {"id": "c05-5-3-3", "title": "5.3.3 自由度と誤差分散の推定", "lv": 3}, {"id": "c05-5-4", "title": "5.4 Gauss–Markov 定理", "lv": 2}, {"id": "c05-5-5", "title": "5.5 係数の分布と推測", "lv": 2}, {"id": "c05-5-5-1", "title": "5.5.1 正規誤差のもとでの分布", "lv": 3}, {"id": "c05-5-5-2", "title": "5.5.2 t 検定と信頼区間", "lv": 3}, {"id": "c05-5-5-3", "title": "5.5.3 F 検定 (複数係数の同時検定)", "lv": 3}, {"id": "c05-5-5-4", "title": "5.5.4 平均応答の信頼区間と予測区間", "lv": 3}, {"id": "c05-5-6", "title": "5.6 多重共線性", "lv": 2}, {"id": "c05-5-7", "title": "5.7 モデル診断", "lv": 2}, {"id": "c05-5-7-1", "title": "5.7.1 残差の標準化", "lv": 3}, {"id": "c05-5-7-2", "title": "5.7.2 残差プロットと QQ プロット", "lv": 3}, {"id": "c05-5-7-3", "title": "5.7.3 レバレッジ・外れ値・影響点", "lv": 3}, {"id": "c05-5-7-4", "title": "5.7.4 不均一分散", "lv": 3}, {"id": "c05-5-8", "title": "5.8 変数選択", "lv": 2}, {"id": "c05-5-8-1", "title": "5.8.1 なぜ「当てはまりの良さ」で選んではいけないか", "lv": 3}, {"id": "c05-5-8-2", "title": "5.8.2 AIC と BIC の考え方", "lv": 3}, {"id": "c05-5-8-3", "title": "5.8.3 ステップワイズ法の問題", "lv": 3}, {"id": "c05-5-9", "title": "5.9 一般化線形モデル", "lv": 2}, {"id": "c05-5-9-1", "title": "5.9.1 動機と構成", "lv": 3}, {"id": "c05-5-9-2", "title": "5.9.2 IRLS による推定", "lv": 3}, {"id": "c05-5-9-3", "title": "5.9.3 ロジスティック回帰", "lv": 3}, {"id": "c05-5-9-4", "title": "5.9.4 ポアソン回帰", "lv": 3}, {"id": "c05-5-10", "title": "5.10 混合効果モデルの紹介", "lv": 2}, {"id": "c05-5-11", "title": "5.11 非線形回帰と多項式・スプラインの入口", "lv": 2}, {"id": "c05-5-11-1", "title": "5.11.1 「線形」の意味", "lv": 3}, {"id": "c05-5-11-2", "title": "5.11.2 非線形最小二乗", "lv": 3}, {"id": "c05-5-11-3", "title": "5.11.3 多項式とスプライン", "lv": 3}, {"id": "c05-5-12", "title": "5.12 Python で確かめる", "lv": 2}, {"id": "c05-5-13", "title": "5.13 演習", "lv": 2}, {"id": "c05-5-14", "title": "5.14 参考文献", "lv": 2}, {"id": "c05-5-15", "title": "5.15 発展 ★2: 頑健標準誤差とクラスター相関 — 不均一分散を見つけたあとで", "lv": 2}, {"id": "c05-5-15-1", "title": "5.15.1 何が壊れて、何が壊れないか", "lv": 3}, {"id": "c05-5-16", "title": "5.16 サンドイッチ推定量 — White から HC3 まで", "lv": 2}, {"id": "c05-5-16-1", "title": "5.16.1 中身だけを推定する", "lv": 3}, {"id": "c05-5-16-2", "title": "5.16.2 なぜ補正が要るか — HC1・HC2・HC3", "lv": 3}, {"id": "c05-5-16-3", "title": "5.16.3 どれを既定にするか", "lv": 3}, {"id": "c05-5-17", "title": "5.17 クラスター相関 — 観測が独立でないとき", "lv": 2}, {"id": "c05-5-17-1", "title": "5.17.1 現場で起きる形", "lv": 3}, {"id": "c05-5-17-2", "title": "5.17.2 どれだけ狂うか — Moulton 係数", "lv": 3}, {"id": "c05-5-17-3", "title": "5.17.3 クラスター頑健分散推定量", "lv": 3}, {"id": "c05-5-17-4", "title": "5.17.4 クラスター数が少ないと破綻する", "lv": 3}, {"id": "c05-5-17-5", "title": "5.17.5 どの水準でクラスターを切るか", "lv": 3}, {"id": "c05-5-18", "title": "5.18 「とりあえず頑健標準誤差」への疑い", "lv": 2}, {"id": "c05-5-18-1", "title": "5.18.1 不均一分散はモデルの誤設定の兆候かもしれない", "lv": 3}, {"id": "c05-5-18-2", "title": "5.18.2 頑健標準誤差は「何を推定しているか」を直さない", "lv": 3}, {"id": "c05-5-18-3", "title": "5.18.3 誤差の扱いで処理するか、モデルの構造で処理するか", "lv": 3}, {"id": "c05-5-18-4", "title": "5.18.4 手順のまとめ", "lv": 3}, {"id": "c05-5-19", "title": "5.19 Python で確かめる", "lv": 2}, {"id": "c05-5-20", "title": "5.20 演習", "lv": 2}, {"id": "c05-5-21", "title": "5.21 参考文献", "lv": 2}, {"id": "c05-5-22", "title": "5.22 発展 ★3: 変数選択のあとで区間を作ってよいか — 選択的推論", "lv": 2}, {"id": "c05-何が壊れているのか", "title": "何が壊れているのか", "lv": 3}, {"id": "c05-手当ての-3-つの系統", "title": "手当ての 3 つの系統", "lv": 3}, {"id": "c05-高次元での別の困難", "title": "高次元での別の困難", "lv": 3}, {"id": "c05-実務でどうするか", "title": "実務でどうするか", "lv": 3}, {"id": "c05-5-99", "title": "5.99 演習の解答", "lv": 2}, {"id": "c05-5-13-2", "title": "5.13 演習 (本文 5.13 節)", "lv": 3}, {"id": "c05-5-99-1", "title": "5.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "06", "label": "06", "title": "第6章 分散分析と実験計画法", "sections": [{"id": "c06-6-1", "title": "6.1 この章の目的", "lv": 2}, {"id": "c06-6-2", "title": "6.2 一元配置分散分析", "lv": 2}, {"id": "c06-6-2-1", "title": "6.2.1 モデルと記法", "lv": 3}, {"id": "c06-6-2-2", "title": "6.2.2 平方和の分解", "lv": 3}, {"id": "c06-6-2-3", "title": "6.2.3 期待平方和と F 統計量", "lv": 3}, {"id": "c06-6-2-4", "title": "6.2.4 回帰との等価性", "lv": 3}, {"id": "c06-6-3", "title": "6.3 多重比較", "lv": 2}, {"id": "c06-6-3-1", "title": "6.3.1 なぜ t 検定を繰り返してはいけないか", "lv": 3}, {"id": "c06-6-3-2", "title": "6.3.2 Bonferroni", "lv": 3}, {"id": "c06-6-3-3", "title": "6.3.3 Tukey の HSD", "lv": 3}, {"id": "c06-6-3-4", "title": "6.3.4 Dunnett と Scheffé", "lv": 3}, {"id": "c06-6-4", "title": "6.4 二元配置と交互作用", "lv": 2}, {"id": "c06-6-4-1", "title": "6.4.1 モデル", "lv": 3}, {"id": "c06-6-4-2", "title": "6.4.2 交互作用図の読み方", "lv": 3}, {"id": "c06-6-4-3", "title": "6.4.3 構造工学への接続: 配合設計の要因実験", "lv": 3}, {"id": "c06-6-5", "title": "6.5 乱塊法と分割法", "lv": 2}, {"id": "c06-6-5-1", "title": "6.5.1 乱塊法", "lv": 3}, {"id": "c06-6-5-2", "title": "6.5.2 分割法 (split-plot)", "lv": 3}, {"id": "c06-6-6", "title": "6.6 固定効果と変量効果", "lv": 2}, {"id": "c06-6-6-1", "title": "6.6.1 二つの見方", "lv": 3}, {"id": "c06-6-6-2", "title": "6.6.2 期待平均平方と分散成分の推定", "lv": 3}, {"id": "c06-6-6-3", "title": "6.6.3 構造工学への接続: 材料強度のばらつきの階層", "lv": 3}, {"id": "c06-6-7", "title": "6.7 実験計画の三原則", "lv": 2}, {"id": "c06-6-8", "title": "6.8 要因配置と $2^k$ 計画", "lv": 2}, {"id": "c06-6-8-1", "title": "6.8.1 $2^k$ 計画", "lv": 3}, {"id": "c06-6-8-2", "title": "6.8.2 効果の有意性判定", "lv": 3}, {"id": "c06-6-8-3", "title": "6.8.3 構造工学への接続: 溶接条件の最適化", "lv": 3}, {"id": "c06-6-9", "title": "6.9 一部実施計画と直交表", "lv": 2}, {"id": "c06-6-9-1", "title": "6.9.1 一部実施と交絡", "lv": 3}, {"id": "c06-6-9-2", "title": "6.9.2 直交表 L8・L9", "lv": 3}, {"id": "c06-6-9-3", "title": "6.9.3 田口メソッドと SN 比の位置づけ", "lv": 3}, {"id": "c06-6-10", "title": "6.10 応答曲面法の入口", "lv": 2}, {"id": "c06-6-11", "title": "6.11 検出力と反復数の設計", "lv": 2}, {"id": "c06-6-11-1", "title": "6.11.1 一元配置の検出力", "lv": 3}, {"id": "c06-6-11-2", "title": "6.11.2 反復数の目安", "lv": 3}, {"id": "c06-6-11-3", "title": "6.11.3 構造工学への接続: 材料試験の反復数設計", "lv": 3}, {"id": "c06-6-12", "title": "6.12 Python で確かめる", "lv": 2}, {"id": "c06-6-13", "title": "6.13 演習", "lv": 2}, {"id": "c06-6-14", "title": "6.14 参考文献", "lv": 2}, {"id": "c06-6-15", "title": "6.15 発展 ★3: 最適計画理論 — 「どこで測るか」を最適化する", "lv": 2}, {"id": "c06-基準は情報行列の関数である", "title": "基準は情報行列の関数である", "lv": 3}, {"id": "c06-非線形モデルでは-母数を知らないと計画できない", "title": "非線形モデルでは「母数を知らないと計画できない」", "lv": 3}, {"id": "c06-ベイズ-D-最適と事前分布の選択", "title": "ベイズ D-最適と事前分布の選択", "lv": 3}, {"id": "c06-計算機実験では適応的に点を足す", "title": "計算機実験では適応的に点を足す", "lv": 3}, {"id": "c06-田口メソッドとの関係", "title": "田口メソッドとの関係", "lv": 3}, {"id": "c06-実務での勧め", "title": "実務での勧め", "lv": 3}, {"id": "c06-6-16", "title": "6.16 発展 ★3: 逐次・適応的実験 — 途中で計画を変えてよいか", "lv": 2}, {"id": "c06-何が問題になるのか", "title": "何が問題になるのか", "lv": 3}, {"id": "c06-いつ止めてもよい検定-e-値", "title": "いつ止めてもよい検定 — e 値", "lv": 3}, {"id": "c06-次にどこを測るか-ベイズ最適化", "title": "次にどこを測るか — ベイズ最適化", "lv": 3}, {"id": "c06-構造分野での実例-フラジリティ曲線", "title": "構造分野での実例 — フラジリティ曲線", "lv": 3}, {"id": "c06-実務での注意", "title": "実務での注意", "lv": 3}, {"id": "c06-6-99", "title": "6.99 演習の解答", "lv": 2}, {"id": "c06-6-13-2", "title": "6.13 演習 (本文 6.13 節)", "lv": 3}, {"id": "c06-6-99-1", "title": "6.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "07", "label": "07", "title": "第7章 多変量解析", "sections": [{"id": "c07-7-1", "title": "7.1 この章の目的", "lv": 2}, {"id": "c07-7-2", "title": "7.2 多変量データの記述", "lv": 2}, {"id": "c07-7-2-1", "title": "7.2.1 データ行列・平均ベクトル・共分散行列", "lv": 3}, {"id": "c07-7-2-2", "title": "7.2.2 Mahalanobis 距離", "lv": 3}, {"id": "c07-7-3", "title": "7.3 多変量正規分布", "lv": 2}, {"id": "c07-7-4", "title": "7.4 主成分分析 (PCA)", "lv": 2}, {"id": "c07-7-4-1", "title": "7.4.1 分散最大化の定式化と固有値問題", "lv": 3}, {"id": "c07-7-4-2", "title": "7.4.2 寄与率とスクリープロット", "lv": 3}, {"id": "c07-7-4-3", "title": "7.4.3 標準化の要否", "lv": 3}, {"id": "c07-7-4-4", "title": "7.4.4 SVD との関係", "lv": 3}, {"id": "c07-7-4-5", "title": "7.4.5 主成分負荷量とバイプロット", "lv": 3}, {"id": "c07-7-5", "title": "7.5 因子分析", "lv": 2}, {"id": "c07-7-5-1", "title": "7.5.1 共通因子モデル", "lv": 3}, {"id": "c07-7-5-2", "title": "7.5.2 PCA との違い", "lv": 3}, {"id": "c07-7-5-3", "title": "7.5.3 回転の不定性と単純構造", "lv": 3}, {"id": "c07-7-6", "title": "7.6 クラスター分析", "lv": 2}, {"id": "c07-7-6-1", "title": "7.6.1 距離", "lv": 3}, {"id": "c07-7-6-2", "title": "7.6.2 階層的クラスタリング", "lv": 3}, {"id": "c07-7-6-3", "title": "7.6.3 k-means", "lv": 3}, {"id": "c07-7-7", "title": "7.7 判別分析", "lv": 2}, {"id": "c07-7-7-1", "title": "7.7.1 Fisher の線形判別", "lv": 3}, {"id": "c07-7-7-2", "title": "7.7.2 正規分布からの導出と二次判別", "lv": 3}, {"id": "c07-7-7-3", "title": "7.7.3 ロジスティック回帰との関係", "lv": 3}, {"id": "c07-7-8", "title": "7.8 正準相関分析 (紹介)", "lv": 2}, {"id": "c07-7-9", "title": "7.9 多次元尺度法 (紹介)", "lv": 2}, {"id": "c07-7-10", "title": "7.10 次元の呪い", "lv": 2}, {"id": "c07-7-11", "title": "7.11 構造工学への接続", "lv": 2}, {"id": "c07-7-11-1", "title": "7.11.1 多点計測の PCA と損傷検知", "lv": 3}, {"id": "c07-7-11-2", "title": "7.11.2 地震動指標のクラスタリング", "lv": 3}, {"id": "c07-7-12", "title": "7.12 Python で確かめる", "lv": 2}, {"id": "c07-7-13", "title": "7.13 演習", "lv": 2}, {"id": "c07-7-14", "title": "7.14 参考文献", "lv": 2}, {"id": "c07-7-15", "title": "7.15 発展 ★3: 高次元 PCA — 固有値は嘘をつく", "lv": 2}, {"id": "c07-何が起きているのか-Marchenko-Pastur", "title": "何が起きているのか — Marchenko–Pastur", "lv": 3}, {"id": "c07-最大固有値のゆらぎ-Tracy-Widom", "title": "最大固有値のゆらぎ — Tracy–Widom", "lv": 3}, {"id": "c07-スパイク模型と検出限界", "title": "スパイク模型と検出限界", "lv": 3}, {"id": "c07-モニタリングデータへの翻訳", "title": "モニタリングデータへの翻訳", "lv": 3}, {"id": "c07-7-16", "title": "7.16 発展 ★3: 非線形次元削減 (t-SNE・UMAP) の統計的な読み方", "lv": 2}, {"id": "c07-t-SNE-は何をしているのか", "title": "t-SNE は何をしているのか", "lv": 3}, {"id": "c07-だから図の読み方に制約がつく", "title": "だから図の読み方に制約がつく", "lv": 3}, {"id": "c07-表現学習という文脈", "title": "表現学習という文脈", "lv": 3}, {"id": "c07-次元削減は-何のために-で選ぶ", "title": "次元削減は「何のために」で選ぶ", "lv": 3}, {"id": "c07-モニタリングデータでの使い方", "title": "モニタリングデータでの使い方", "lv": 3}, {"id": "c07-7-99", "title": "7.99 演習の解答", "lv": 2}, {"id": "c07-7-13-2", "title": "7.13 演習 (本文 7.13 節)", "lv": 3}, {"id": "c07-7-99-1", "title": "7.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "08", "label": "08", "title": "第8章 ベイズ統計", "sections": [{"id": "c08-8-1", "title": "8.1 この章の目的", "lv": 2}, {"id": "c08-8-2", "title": "8.2 ベイズの定理と三つの分布", "lv": 2}, {"id": "c08-8-2-1", "title": "8.2.1 事前・尤度・事後", "lv": 3}, {"id": "c08-8-2-2", "title": "8.2.2 逐次更新", "lv": 3}, {"id": "c08-8-2-3", "title": "8.2.3 頻度論との対比: 何に確率が付くか", "lv": 3}, {"id": "c08-8-3", "title": "8.3 共役事前分布", "lv": 2}, {"id": "c08-8-3-1", "title": "8.3.1 ベータ–二項", "lv": 3}, {"id": "c08-8-3-2", "title": "8.3.2 ガンマ–ポアソン", "lv": 3}, {"id": "c08-8-3-3", "title": "8.3.3 正規–正規", "lv": 3}, {"id": "c08-8-4", "title": "8.4 事前分布の選び方", "lv": 2}, {"id": "c08-8-4-1", "title": "8.4.1 無情報事前分布と不変性の問題", "lv": 3}, {"id": "c08-8-4-2", "title": "8.4.2 Jeffreys 事前分布", "lv": 3}, {"id": "c08-8-4-3", "title": "8.4.3 弱情報事前分布 (実務の標準)", "lv": 3}, {"id": "c08-8-5", "title": "8.5 事後予測分布", "lv": 2}, {"id": "c08-8-5-1", "title": "8.5.1 事後予測チェック", "lv": 3}, {"id": "c08-8-6", "title": "8.6 点推定と損失関数", "lv": 2}, {"id": "c08-8-7", "title": "8.7 モデル比較", "lv": 2}, {"id": "c08-8-7-1", "title": "8.7.1 ベイズ因子", "lv": 3}, {"id": "c08-8-7-2", "title": "8.7.2 予測性能による比較: WAIC と LOO", "lv": 3}, {"id": "c08-8-8", "title": "8.8 階層モデル", "lv": 2}, {"id": "c08-8-8-1", "title": "8.8.1 部分プーリング", "lv": 3}, {"id": "c08-8-8-2", "title": "8.8.2 完全ベイズと経験ベイズ", "lv": 3}, {"id": "c08-8-9", "title": "8.9 事後分布の計算", "lv": 2}, {"id": "c08-8-9-1", "title": "8.9.1 グリッド近似", "lv": 3}, {"id": "c08-8-9-2", "title": "8.9.2 Markov 連鎖 Monte Carlo (MCMC)", "lv": 3}, {"id": "c08-8-9-3", "title": "8.9.3 収束診断", "lv": 3}, {"id": "c08-8-9-4", "title": "8.9.4 変分推論 (一言)", "lv": 3}, {"id": "c08-8-10", "title": "8.10 構造工学への接続", "lv": 2}, {"id": "c08-8-11", "title": "8.11 Python で確かめる", "lv": 2}, {"id": "c08-8-12", "title": "8.12 演習", "lv": 2}, {"id": "c08-8-13", "title": "8.13 参考文献", "lv": 2}, {"id": "c08-8-14", "title": "8.14 発展 ★2: 事前分布の選び方 — 弱情報事前分布と感度分析", "lv": 2}, {"id": "c08-8-14-1", "title": "8.14.1 「無情報」はどこで破れるか", "lv": 3}, {"id": "c08-8-14-2", "title": "8.14.2 弱情報事前分布 — 「何も言わない」ではなく「あり得ない値を排除する」", "lv": 3}, {"id": "c08-8-14-3", "title": "8.14.3 事前予測チェック — 事前分布をデータの言葉に翻訳する", "lv": 3}, {"id": "c08-8-14-4", "title": "8.14.4 分散パラメータの事前分布 — 階層モデルで最も敏感な場所", "lv": 3}, {"id": "c08-8-14-5", "title": "8.14.5 感度分析 — 何を動かし、どれだけ動いたら問題か", "lv": 3}, {"id": "c08-8-14-6", "title": "8.14.6 データがどれだけあれば事前は流されるか", "lv": 3}, {"id": "c08-8-14-7", "title": "8.14.7 構造設計の現場では — 供試体 5 本、記録 20 年", "lv": 3}, {"id": "c08-8-14-8", "title": "8.14.8 まとめ: 何をすればよいか", "lv": 3}, {"id": "c08-8-14-9", "title": "8.14.9 Python で確かめる", "lv": 3}, {"id": "c08-8-14-10", "title": "8.14.10 演習", "lv": 3}, {"id": "c08-8-15", "title": "8.15 発展 ★3: ベイズワークフロー — 「走った」と「信じてよい」の間", "lv": 2}, {"id": "c08-何を報告すべきか-報告ガイドライン", "title": "何を報告すべきか — 報告ガイドライン", "lv": 3}, {"id": "c08-事後予測検査と-データの二重使用", "title": "事後予測検査と「データの二重使用」", "lv": 3}, {"id": "c08-図で見る予測検査", "title": "図で見る予測検査", "lv": 3}, {"id": "c08-事前分布も検査の対象である", "title": "事前分布も検査の対象である", "lv": 3}, {"id": "c08-ワークフローとして並べると", "title": "ワークフローとして並べると", "lv": 3}, {"id": "c08-8-99", "title": "8.99 演習の解答", "lv": 2}, {"id": "c08-8-12-2", "title": "8.12 演習 (本文 8.12 節)", "lv": 3}, {"id": "c08-8-99-1", "title": "8.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "09", "label": "09", "title": "第9章 時系列解析", "sections": [{"id": "c09-9-1", "title": "9.1 この章の目的", "lv": 2}, {"id": "c09-9-2", "title": "9.2 時系列の成分", "lv": 2}, {"id": "c09-9-2-1", "title": "9.2.1 加法モデルと乗法モデル", "lv": 3}, {"id": "c09-9-2-2", "title": "9.2.2 移動平均によるトレンド推定", "lv": 3}, {"id": "c09-9-3", "title": "9.3 定常性", "lv": 2}, {"id": "c09-9-3-1", "title": "9.3.1 弱定常の定義", "lv": 3}, {"id": "c09-9-3-2", "title": "9.3.2 ランダムウォークと単位根", "lv": 3}, {"id": "c09-9-3-3", "title": "9.3.3 単位根検定 (Dickey–Fuller / ADF)", "lv": 3}, {"id": "c09-9-4", "title": "9.4 自己共分散と自己相関", "lv": 2}, {"id": "c09-9-4-1", "title": "9.4.1 定義と性質", "lv": 3}, {"id": "c09-9-4-2", "title": "9.4.2 ホワイトノイズ", "lv": 3}, {"id": "c09-9-4-3", "title": "9.4.3 標本自己相関と Bartlett の帯", "lv": 3}, {"id": "c09-9-4-4", "title": "9.4.4 偏自己相関 (PACF)", "lv": 3}, {"id": "c09-9-5", "title": "9.5 AR・MA・ARMA モデル", "lv": 2}, {"id": "c09-9-5-1", "title": "9.5.1 移動平均 MA(q)", "lv": 3}, {"id": "c09-9-5-2", "title": "9.5.2 可逆性", "lv": 3}, {"id": "c09-9-5-3", "title": "9.5.3 自己回帰 AR(p) と定常条件", "lv": 3}, {"id": "c09-9-5-4", "title": "9.5.4 Yule–Walker 方程式", "lv": 3}, {"id": "c09-9-5-5", "title": "9.5.5 ARMA(p, q) と次数の見分け方", "lv": 3}, {"id": "c09-9-6", "title": "9.6 ARIMA と差分、季節 ARIMA", "lv": 2}, {"id": "c09-9-6-1", "title": "9.6.1 差分と ARIMA(p, d, q)", "lv": 3}, {"id": "c09-9-6-2", "title": "9.6.2 季節 ARIMA", "lv": 3}, {"id": "c09-9-7", "title": "9.7 Box–Jenkins 法とモデル選択", "lv": 2}, {"id": "c09-9-7-1", "title": "9.7.1 同定・推定・診断", "lv": 3}, {"id": "c09-9-7-2", "title": "9.7.2 AIC によるモデル選択", "lv": 3}, {"id": "c09-9-8", "title": "9.8 予測と予測区間", "lv": 2}, {"id": "c09-9-8-1", "title": "9.8.1 最小平均二乗誤差予測", "lv": 3}, {"id": "c09-9-8-2", "title": "9.8.2 予測区間", "lv": 3}, {"id": "c09-9-9", "title": "9.9 状態空間モデルとカルマンフィルタ", "lv": 2}, {"id": "c09-9-9-1", "title": "9.9.1 線形ガウス状態空間モデル", "lv": 3}, {"id": "c09-9-9-2", "title": "9.9.2 カルマンフィルタ", "lv": 3}, {"id": "c09-9-9-3", "title": "9.9.3 局所レベルモデル", "lv": 3}, {"id": "c09-9-10", "title": "9.10 スペクトル解析", "lv": 2}, {"id": "c09-9-10-1", "title": "9.10.1 スペクトル密度と Wiener–Khinchin の関係", "lv": 3}, {"id": "c09-9-10-2", "title": "9.10.2 ペリオドグラム", "lv": 3}, {"id": "c09-9-11", "title": "9.11 GARCH の紹介", "lv": 2}, {"id": "c09-9-12", "title": "9.12 見せかけの回帰", "lv": 2}, {"id": "c09-9-12-1", "title": "9.12.1 Granger–Newbold の実験", "lv": 3}, {"id": "c09-9-12-2", "title": "9.12.2 なぜ起きるか", "lv": 3}, {"id": "c09-9-13", "title": "9.13 構造工学への接続", "lv": 2}, {"id": "c09-9-14", "title": "9.14 Python で確かめる", "lv": 2}, {"id": "c09-9-15", "title": "9.15 演習", "lv": 2}, {"id": "c09-9-16", "title": "9.16 参考文献", "lv": 2}, {"id": "c09-9-17", "title": "9.17 発展 ★3: 単位根と共和分 — 見せかけの回帰の先にあるもの", "lv": 2}, {"id": "c09-差分は問題を消すが-情報も消す", "title": "差分は問題を消すが、情報も消す", "lv": 3}, {"id": "c09-共和分-差が定常になる組合せ", "title": "共和分 — 差が定常になる組合せ", "lv": 3}, {"id": "c09-推定の効率を上げる工夫", "title": "推定の効率を上げる工夫", "lv": 3}, {"id": "c09-構造変化との区別", "title": "構造変化との区別", "lv": 3}, {"id": "c09-モニタリングデータでの手順", "title": "モニタリングデータでの手順", "lv": 3}, {"id": "c09-9-18", "title": "9.18 発展 ★3: 予測をどう評価するか — スコアリングルールと予測分布", "lv": 2}, {"id": "c09-何を最大化すべきか-較正と鋭さ", "title": "何を最大化すべきか — 較正と鋭さ", "lv": 3}, {"id": "c09-適正なスコアとは何か", "title": "適正なスコアとは何か", "lv": 3}, {"id": "c09-二値予測での具体例", "title": "二値予測での具体例", "lv": 3}, {"id": "c09-連続変数では-CRPS", "title": "連続変数では CRPS", "lv": 3}, {"id": "c09-構造-モニタリングでの使いどころ", "title": "構造・モニタリングでの使いどころ", "lv": 3}, {"id": "c09-9-99", "title": "9.99 演習の解答", "lv": 2}, {"id": "c09-9-15-2", "title": "9.15 演習 (本文 9.15 節)", "lv": 3}, {"id": "c09-9-99-1", "title": "9.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "10", "label": "10", "title": "第10章 生存時間解析・信頼性・極値統計", "sections": [{"id": "c10-10-1", "title": "10.1 この章の目的", "lv": 2}, {"id": "c10-10-2", "title": "10.2 生存関数・ハザード・累積ハザード", "lv": 2}, {"id": "c10-10-2-1", "title": "10.2.1 定義", "lv": 3}, {"id": "c10-10-2-2", "title": "10.2.2 4 つの関数の関係", "lv": 3}, {"id": "c10-10-2-3", "title": "10.2.3 代表的な分布", "lv": 3}, {"id": "c10-10-3", "title": "10.3 打ち切りと尤度", "lv": 2}, {"id": "c10-10-3-1", "title": "10.3.1 打ち切りの種類", "lv": 3}, {"id": "c10-10-3-2", "title": "10.3.2 打ち切りを含む尤度", "lv": 3}, {"id": "c10-10-4", "title": "10.4 Kaplan–Meier 推定量", "lv": 2}, {"id": "c10-10-4-1", "title": "10.4.1 導出", "lv": 3}, {"id": "c10-10-4-2", "title": "10.4.2 Greenwood の分散", "lv": 3}, {"id": "c10-10-4-3", "title": "10.4.3 Nelson–Aalen 推定量", "lv": 3}, {"id": "c10-10-5", "title": "10.5 ログランク検定", "lv": 2}, {"id": "c10-10-6", "title": "10.6 Cox 比例ハザードモデル", "lv": 2}, {"id": "c10-10-6-1", "title": "10.6.1 モデル", "lv": 3}, {"id": "c10-10-6-2", "title": "10.6.2 部分尤度", "lv": 3}, {"id": "c10-10-6-3", "title": "10.6.3 比例性の検証", "lv": 3}, {"id": "c10-10-7", "title": "10.7 パラメトリック生存モデルと AFT", "lv": 2}, {"id": "c10-10-7-1", "title": "10.7.1 パラメトリック回帰", "lv": 3}, {"id": "c10-10-7-2", "title": "10.7.2 加速寿命モデル (AFT)", "lv": 3}, {"id": "c10-10-7-3", "title": "10.7.3 どれを使うか", "lv": 3}, {"id": "c10-10-8", "title": "10.8 信頼性工学", "lv": 2}, {"id": "c10-10-8-1", "title": "10.8.1 バスタブ曲線と Weibull", "lv": 3}, {"id": "c10-10-8-2", "title": "10.8.2 MTTF・MTBF・B10 寿命", "lv": 3}, {"id": "c10-10-8-3", "title": "10.8.3 Weibull 確率紙", "lv": 3}, {"id": "c10-10-8-4", "title": "10.8.4 直列系・並列系・$k$-out-of-$n$", "lv": 3}, {"id": "c10-10-9", "title": "10.9 極値統計 I: 最大値の極限分布", "lv": 2}, {"id": "c10-10-9-1", "title": "10.9.1 問題設定", "lv": 3}, {"id": "c10-10-9-2", "title": "10.9.2 Fisher–Tippett–Gnedenko の定理", "lv": 3}, {"id": "c10-10-9-3", "title": "10.9.3 どの分布がどの型に引き寄せられるか", "lv": 3}, {"id": "c10-10-10", "title": "10.10 極値統計 II: 年最大値法・再現期間・POT", "lv": 2}, {"id": "c10-10-10-1", "title": "10.10.1 年最大値法と再現期間", "lv": 3}, {"id": "c10-10-10-2", "title": "10.10.2 推定法", "lv": 3}, {"id": "c10-10-10-3", "title": "10.10.3 POT と一般化パレート分布", "lv": 3}, {"id": "c10-10-10-4", "title": "10.10.4 閾値の選択", "lv": 3}, {"id": "c10-10-10-5", "title": "10.10.5 POT による再現レベル", "lv": 3}, {"id": "c10-10-10-6", "title": "10.10.6 定常性の仮定", "lv": 3}, {"id": "c10-10-11", "title": "10.11 構造信頼性", "lv": 2}, {"id": "c10-10-11-1", "title": "10.11.1 基本問題 $g = R - S$", "lv": 3}, {"id": "c10-10-11-2", "title": "10.11.2 安全率との関係", "lv": 3}, {"id": "c10-10-11-3", "title": "10.11.3 FORM の概要", "lv": 3}, {"id": "c10-10-11-4", "title": "10.11.4 部分係数との関係", "lv": 3}, {"id": "c10-10-11-5", "title": "10.11.5 この章の 3 つの話題の接続", "lv": 3}, {"id": "c10-10-12", "title": "10.12 Python で確かめる", "lv": 2}, {"id": "c10-10-13", "title": "10.13 演習", "lv": 2}, {"id": "c10-10-14", "title": "10.14 参考文献", "lv": 2}, {"id": "c10-10-15", "title": "10.15 発展 ★3: 非定常極値 — 気候変動下の再現期待値", "lv": 2}, {"id": "c10-10-15-1", "title": "10.15.1 定常性はどこで効いていたか", "lv": 3}, {"id": "c10-10-15-2", "title": "10.15.2 共変量で GEV を非定常にする", "lv": 3}, {"id": "c10-10-15-3", "title": "10.15.3 再現期間が一意でなくなる — この節の山", "lv": 3}, {"id": "c10-10-15-4", "title": "10.15.4 設計にどう読み替えるか", "lv": 3}, {"id": "c10-10-15-5", "title": "10.15.5 傾向は見えるか — 検出力の問題", "lv": 3}, {"id": "c10-10-15-6", "title": "10.15.6 50 年の記録から非定常に外挿するということ", "lv": 3}, {"id": "c10-10-15-7", "title": "10.15.7 観測所の移転と気候変動は別物である", "lv": 3}, {"id": "c10-10-15-8", "title": "10.15.8 まとめ: 何をすればよいか", "lv": 3}, {"id": "c10-10-15-9", "title": "10.15.9 Python で確かめる", "lv": 3}, {"id": "c10-10-15-10", "title": "10.15.10 演習", "lv": 3}, {"id": "c10-10-16", "title": "10.16 発展 ★3: POT の閾値選択 — 恣意性をどう減らすか", "lv": 2}, {"id": "c10-なぜ閾値の選択が難しいのか", "title": "なぜ閾値の選択が難しいのか", "lv": 3}, {"id": "c10-既存の方法は-3-系統ある", "title": "既存の方法は 3 系統ある", "lv": 3}, {"id": "c10-自動化の試み", "title": "自動化の試み", "lv": 3}, {"id": "c10-日本語の文献から", "title": "日本語の文献から", "lv": 3}, {"id": "c10-実務での勧め", "title": "実務での勧め", "lv": 3}, {"id": "c10-10-17", "title": "10.17 発展 ★3: 多変量極値と空間依存 — 同時に起きる危険をどう評価するか", "lv": 2}, {"id": "c10-尾部依存という概念", "title": "尾部依存という概念", "lv": 3}, {"id": "c10-理論の骨格-安定裾依存関数", "title": "理論の骨格 — 安定裾依存関数", "lv": 3}, {"id": "c10-古典的な枠組みの限界", "title": "古典的な枠組みの限界", "lv": 3}, {"id": "c10-空間へ広げる", "title": "空間へ広げる", "lv": 3}, {"id": "c10-実務での勧め-2", "title": "実務での勧め", "lv": 3}, {"id": "c10-10-99", "title": "10.99 演習の解答", "lv": 2}, {"id": "c10-10-13-2", "title": "10.13 演習 (本文 10.13 節)", "lv": 3}, {"id": "c10-10-99-1", "title": "10.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 3}, {"num": "11", "label": "11", "title": "第11章 因果推論", "sections": [{"id": "c11-11-1", "title": "11.1 この章の目的", "lv": 2}, {"id": "c11-11-2", "title": "11.2 相関と因果が食い違う 4 つの理由", "lv": 2}, {"id": "c11-11-2-1", "title": "11.2.1 Simpson のパラドックス", "lv": 3}, {"id": "c11-11-3", "title": "11.3 潜在結果の枠組み", "lv": 2}, {"id": "c11-11-3-1", "title": "11.3.1 個体因果効果と根本問題", "lv": 3}, {"id": "c11-11-3-2", "title": "11.3.2 SUTVA", "lv": 3}, {"id": "c11-11-3-3", "title": "11.3.3 素朴な比較が何を推定しているか", "lv": 3}, {"id": "c11-11-4", "title": "11.4 無作為化はなぜ効くか", "lv": 2}, {"id": "c11-11-5", "title": "11.5 DAG による識別", "lv": 2}, {"id": "c11-11-5-1", "title": "11.5.1 有向非巡回グラフと d 分離", "lv": 3}, {"id": "c11-11-5-2", "title": "11.5.2 バックドア基準", "lv": 3}, {"id": "c11-11-5-3", "title": "11.5.3 合流点で調整すると何が起こるか", "lv": 3}, {"id": "c11-11-5-4", "title": "11.5.4 潜在結果との対応", "lv": 3}, {"id": "c11-11-6", "title": "11.6 回帰による調整とその限界", "lv": 2}, {"id": "c11-11-7", "title": "11.7 傾向スコア", "lv": 2}, {"id": "c11-11-7-1", "title": "11.7.1 バランシングスコア", "lv": 3}, {"id": "c11-11-7-2", "title": "11.7.2 推定と使い方", "lv": 3}, {"id": "c11-11-7-3", "title": "11.7.3 バランス診断と共通サポート", "lv": 3}, {"id": "c11-11-7-4", "title": "11.7.4 二重頑健推定", "lv": 3}, {"id": "c11-11-7-5", "title": "11.7.5 構造工学への接続: 耐震補強の効果検証", "lv": 3}, {"id": "c11-11-8", "title": "11.8 操作変数法", "lv": 2}, {"id": "c11-11-8-1", "title": "11.8.1 3 条件と 2SLS", "lv": 3}, {"id": "c11-11-8-2", "title": "11.8.2 弱操作変数", "lv": 3}, {"id": "c11-11-8-3", "title": "11.8.3 LATE", "lv": 3}, {"id": "c11-11-9", "title": "11.9 差の差と回帰不連続", "lv": 2}, {"id": "c11-11-9-1", "title": "11.9.1 差の差 (DID)", "lv": 3}, {"id": "c11-11-9-2", "title": "11.9.2 回帰不連続デザイン (RDD)", "lv": 3}, {"id": "c11-11-10", "title": "11.10 感度分析", "lv": 2}, {"id": "c11-11-11", "title": "11.11 Python で確かめる", "lv": 2}, {"id": "c11-11-12", "title": "11.12 演習", "lv": 2}, {"id": "c11-11-13", "title": "11.13 参考文献", "lv": 2}, {"id": "c11-11-14", "title": "11.14 発展 ★3: 二重機械学習 — 機械学習を因果推論に使うときの落とし穴", "lv": 2}, {"id": "c11-なぜ素朴なプラグインが壊れるのか", "title": "なぜ素朴なプラグインが壊れるのか", "lv": 3}, {"id": "c11-直し方は-2-つの成分に分かれる", "title": "直し方は 2 つの成分に分かれる", "lv": 3}, {"id": "c11-何が変わるのか-表にすると", "title": "何が変わるのか、表にすると", "lv": 3}, {"id": "c11-効果の異質性へ", "title": "効果の異質性へ", "lv": 3}, {"id": "c11-工学で使うときの注意", "title": "工学で使うときの注意", "lv": 3}, {"id": "c11-11-15", "title": "11.15 発展 ★3: 未観測交絡をどう扱うか — 感度分析と部分識別", "lv": 2}, {"id": "c11-考え方の出発点", "title": "考え方の出発点", "lv": 3}, {"id": "c11-系統-1-交絡のモデルを置いて解く-Lin-1998", "title": "系統 1: 交絡のモデルを置いて解く (Lin 1998)", "lv": 3}, {"id": "c11-系統-2-1-つの数に要約する-E-値", "title": "系統 2: 1 つの数に要約する — E 値", "lv": 3}, {"id": "c11-系統-3-仮定を緩めて区間を出す-部分識別", "title": "系統 3: 仮定を緩めて区間を出す (部分識別)", "lv": 3}, {"id": "c11-どの系統をどう使い分けるか", "title": "どの系統をどう使い分けるか", "lv": 3}, {"id": "c11-構造分野での使いどころ", "title": "構造分野での使いどころ", "lv": 3}, {"id": "c11-11-99", "title": "11.99 演習の解答", "lv": 2}, {"id": "c11-11-12-2", "title": "11.12 演習 (本文 11.12 節)", "lv": 3}, {"id": "c11-11-99-1", "title": "11.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "12", "label": "12", "title": "第12章 統計的機械学習", "sections": [{"id": "c12-12-1", "title": "12.1 この章の目的", "lv": 2}, {"id": "c12-12-2", "title": "12.2 予測と推論", "lv": 2}, {"id": "c12-12-2-1", "title": "12.2.1 2 つの目的", "lv": 3}, {"id": "c12-12-2-2", "title": "12.2.2 教師あり学習の枠組み", "lv": 3}, {"id": "c12-12-3", "title": "12.3 バイアス–分散分解と過学習", "lv": 2}, {"id": "c12-12-3-1", "title": "12.3.1 分解の導出", "lv": 3}, {"id": "c12-12-3-2", "title": "12.3.2 過学習と汎化", "lv": 3}, {"id": "c12-12-3-3", "title": "12.3.3 訓練誤差と汎化誤差の差の期待値", "lv": 3}, {"id": "c12-12-4", "title": "12.4 交差検証", "lv": 2}, {"id": "c12-12-4-1", "title": "12.4.1 ホールドアウトと k-fold", "lv": 3}, {"id": "c12-12-4-2", "title": "12.4.2 LOO の近道公式", "lv": 3}, {"id": "c12-12-4-3", "title": "12.4.3 情報リーク", "lv": 3}, {"id": "c12-12-5", "title": "12.5 正則化", "lv": 2}, {"id": "c12-12-5-1", "title": "12.5.1 罰則付き最小二乗", "lv": 3}, {"id": "c12-12-5-2", "title": "12.5.2 Ridge 回帰の閉形式", "lv": 3}, {"id": "c12-12-5-3", "title": "12.5.3 Lasso とスパース性", "lv": 3}, {"id": "c12-12-5-4", "title": "12.5.4 Elastic Net", "lv": 3}, {"id": "c12-12-5-5", "title": "12.5.5 λ の選択", "lv": 3}, {"id": "c12-12-6", "title": "12.6 k 近傍法", "lv": 2}, {"id": "c12-12-7", "title": "12.7 決定木", "lv": 2}, {"id": "c12-12-7-1", "title": "12.7.1 CART の再帰分割", "lv": 3}, {"id": "c12-12-7-2", "title": "12.7.2 剪定と木の性質", "lv": 3}, {"id": "c12-12-8", "title": "12.8 アンサンブル学習", "lv": 2}, {"id": "c12-12-8-1", "title": "12.8.1 バギングと分散減少", "lv": 3}, {"id": "c12-12-8-2", "title": "12.8.2 ランダムフォレスト", "lv": 3}, {"id": "c12-12-8-3", "title": "12.8.3 勾配ブースティング", "lv": 3}, {"id": "c12-12-9", "title": "12.9 サポートベクトルマシン", "lv": 2}, {"id": "c12-12-9-1", "title": "12.9.1 マージン最大化", "lv": 3}, {"id": "c12-12-9-2", "title": "12.9.2 カーネルトリック", "lv": 3}, {"id": "c12-12-10", "title": "12.10 ガウス過程回帰", "lv": 2}, {"id": "c12-12-10-1", "title": "12.10.1 関数の上の事前分布", "lv": 3}, {"id": "c12-12-10-2", "title": "12.10.2 事後分布", "lv": 3}, {"id": "c12-12-10-3", "title": "12.10.3 ベイズ線形回帰との関係", "lv": 3}, {"id": "c12-12-10-4", "title": "12.10.4 構造工学への接続: 耐力予測、外挿、少データ", "lv": 3}, {"id": "c12-12-11", "title": "12.11 評価指標", "lv": 2}, {"id": "c12-12-11-1", "title": "12.11.1 回帰の指標", "lv": 3}, {"id": "c12-12-11-2", "title": "12.11.2 混同行列と ROC", "lv": 3}, {"id": "c12-12-11-3", "title": "12.11.3 較正", "lv": 3}, {"id": "c12-12-12", "title": "12.12 統計的学習理論の入口", "lv": 2}, {"id": "c12-12-12-1", "title": "12.12.1 なぜ有限のデータから学べるか", "lv": 3}, {"id": "c12-12-12-2", "title": "12.12.2 VC 次元", "lv": 3}, {"id": "c12-12-13", "title": "12.13 解釈性", "lv": 2}, {"id": "c12-12-13-1", "title": "12.13.1 置換重要度", "lv": 3}, {"id": "c12-12-13-2", "title": "12.13.2 部分依存", "lv": 3}, {"id": "c12-12-14", "title": "12.14 本章のまとめ", "lv": 2}, {"id": "c12-12-15", "title": "12.15 Python で確かめる", "lv": 2}, {"id": "c12-12-16", "title": "12.16 演習", "lv": 2}, {"id": "c12-12-17", "title": "12.17 参考文献", "lv": 2}, {"id": "c12-12-18", "title": "12.18 発展 ★3: 共形予測 — 分布を仮定しない予測区間", "lv": 2}, {"id": "c12-12-18-1", "title": "12.18.1 何を仮定し、何を仮定しないか", "lv": 3}, {"id": "c12-12-18-2", "title": "12.18.2 交換可能性 — i.i.d. より弱い仮定", "lv": 3}, {"id": "c12-12-19", "title": "12.19 分割共形予測", "lv": 2}, {"id": "c12-12-19-1", "title": "12.19.1 手続き", "lv": 3}, {"id": "c12-12-19-2", "title": "12.19.2 なぜ $\\lceil (n+1)(1-\\alpha)\\rceil$ 番目なのか", "lv": 3}, {"id": "c12-12-19-3", "title": "12.19.3 妥当性は無料だが、効率は無料でない", "lv": 3}, {"id": "c12-12-20", "title": "12.20 周辺被覆と条件付き被覆 — この節の山", "lv": 2}, {"id": "c12-12-20-1", "title": "12.20.1 「全体で 90%」と「$x$ ごとに 90%」", "lv": 3}, {"id": "c12-12-20-2", "title": "12.20.2 なぜ条件付き被覆は (ただでは) 得られないか", "lv": 3}, {"id": "c12-12-20-3", "title": "12.20.3 適応的な区間 — 正規化スコアと CQR", "lv": 3}, {"id": "c12-12-20-4", "title": "12.20.4 材料強度・余寿命の予測に使うということ", "lv": 3}, {"id": "c12-12-21", "title": "12.21 交換可能性が壊れるとき", "lv": 2}, {"id": "c12-12-21-1", "title": "12.21.1 分布シフト", "lv": 3}, {"id": "c12-12-21-2", "title": "12.21.2 時系列", "lv": 3}, {"id": "c12-12-21-3", "title": "12.21.3 使う前に確かめること", "lv": 3}, {"id": "c12-12-22", "title": "12.22 Python で確かめる", "lv": 2}, {"id": "c12-12-23", "title": "12.23 演習", "lv": 2}, {"id": "c12-12-24", "title": "12.24 参考文献", "lv": 2}, {"id": "c12-12-25", "title": "12.25 発展 ★3: 二重降下 — 母数を増やしすぎると誤差が下がる、という話", "lv": 2}, {"id": "c12-何が観測されるのか", "title": "何が観測されるのか", "lv": 3}, {"id": "c12-領域は-3-つに分かれる", "title": "領域は 3 つに分かれる", "lv": 3}, {"id": "c12-実務にとっての結論は-正則化せよ", "title": "実務にとっての結論は「正則化せよ」", "lv": 3}, {"id": "c12-Ridge-そのものへの批判も忘れない", "title": "Ridge そのものへの批判も忘れない", "lv": 3}, {"id": "c12-構造分野で意識すべきこと", "title": "構造分野で意識すべきこと", "lv": 3}, {"id": "c12-12-99", "title": "12.99 演習の解答", "lv": 2}, {"id": "c12-12-16-2", "title": "12.16 演習 (本文 12.16 節)", "lv": 3}, {"id": "c12-12-99-1", "title": "12.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "13", "label": "13", "title": "第13章 計算統計と標本調査", "sections": [{"id": "c13-13-1", "title": "13.1 この章の目的", "lv": 2}, {"id": "c13-13-2", "title": "13.2 疑似乱数", "lv": 2}, {"id": "c13-13-2-1", "title": "13.2.1 疑似乱数とは何か", "lv": 3}, {"id": "c13-13-2-2", "title": "13.2.2 線形合同法 (LCG)", "lv": 3}, {"id": "c13-13-2-3", "title": "13.2.3 Mersenne Twister", "lv": 3}, {"id": "c13-13-2-4", "title": "13.2.4 PCG と現代の既定", "lv": 3}, {"id": "c13-13-2-5", "title": "13.2.5 種の管理", "lv": 3}, {"id": "c13-13-3", "title": "13.3 一様乱数から任意の分布へ", "lv": 2}, {"id": "c13-13-3-1", "title": "13.3.1 逆関数法", "lv": 3}, {"id": "c13-13-3-2", "title": "13.3.2 棄却法", "lv": 3}, {"id": "c13-13-3-3", "title": "13.3.3 Box–Muller 法の導出", "lv": 3}, {"id": "c13-13-3-4", "title": "13.3.4 その他の道具", "lv": 3}, {"id": "c13-13-4", "title": "13.4 モンテカルロ積分", "lv": 2}, {"id": "c13-13-4-1", "title": "13.4.1 基本定理と $n^{-1/2}$", "lv": 3}, {"id": "c13-13-4-2", "title": "13.4.2 稀事象の問題", "lv": 3}, {"id": "c13-13-4-3", "title": "13.4.3 対照変量", "lv": 3}, {"id": "c13-13-4-4", "title": "13.4.4 重点サンプリング", "lv": 3}, {"id": "c13-13-4-5", "title": "13.4.5 層化サンプリング", "lv": 3}, {"id": "c13-13-5", "title": "13.5 Latin Hypercube Sampling", "lv": 2}, {"id": "c13-13-6", "title": "13.6 構造信頼性への接続: $P_f = 10^{-4}$ を数える", "lv": 2}, {"id": "c13-13-7", "title": "13.7 EM アルゴリズム", "lv": 2}, {"id": "c13-13-7-1", "title": "13.7.1 問題設定", "lv": 3}, {"id": "c13-13-7-2", "title": "13.7.2 単調増加の証明", "lv": 3}, {"id": "c13-13-7-3", "title": "13.7.3 混合正規への適用", "lv": 3}, {"id": "c13-13-7-4", "title": "13.7.4 その他の応用", "lv": 3}, {"id": "c13-13-8", "title": "13.8 数値最適化と最尤推定", "lv": 2}, {"id": "c13-13-8-1", "title": "13.8.1 Newton 法と Fisher スコアリング", "lv": 3}, {"id": "c13-13-8-2", "title": "13.8.2 準 Newton 法と導関数不要法", "lv": 3}, {"id": "c13-13-8-3", "title": "13.8.3 プロファイル尤度と信頼区間", "lv": 3}, {"id": "c13-13-9", "title": "13.9 標本調査", "lv": 2}, {"id": "c13-13-9-1", "title": "13.9.1 有限母集団と単純無作為抽出", "lv": 3}, {"id": "c13-13-9-2", "title": "13.9.2 層化抽出", "lv": 3}, {"id": "c13-13-9-3", "title": "13.9.3 クラスター抽出と多段抽出", "lv": 3}, {"id": "c13-13-9-4", "title": "13.9.4 系統抽出", "lv": 3}, {"id": "c13-13-9-5", "title": "13.9.5 非標本誤差", "lv": 3}, {"id": "c13-13-9-6", "title": "13.9.6 標本サイズの設計", "lv": 3}, {"id": "c13-13-10", "title": "13.10 欠測データ", "lv": 2}, {"id": "c13-13-10-1", "title": "13.10.1 欠測メカニズム", "lv": 3}, {"id": "c13-13-10-2", "title": "13.10.2 リストワイズ削除のバイアス", "lv": 3}, {"id": "c13-13-10-3", "title": "13.10.3 多重代入", "lv": 3}, {"id": "c13-13-10-4", "title": "13.10.4 MICE (連鎖方程式)", "lv": 3}, {"id": "c13-13-10-5", "title": "13.10.5 逆確率重み付けと MNAR", "lv": 3}, {"id": "c13-13-11", "title": "13.11 Python で確かめる", "lv": 2}, {"id": "c13-13-12", "title": "13.12 演習", "lv": 2}, {"id": "c13-13-13", "title": "13.13 参考文献", "lv": 2}, {"id": "c13-13-14", "title": "13.14 発展 ★3: 稀事象シミュレーション — $10^{-4}$ の確率をどう数えるか", "lv": 2}, {"id": "c13-素朴な-Monte-Carlo-が効かない理由", "title": "素朴な Monte Carlo が効かない理由", "lv": 3}, {"id": "c13-手法-1-部分集合法-subset-simulation", "title": "手法 1: 部分集合法 (subset simulation)", "lv": 3}, {"id": "c13-手法-2-重点サンプリング", "title": "手法 2: 重点サンプリング", "lv": 3}, {"id": "c13-手法-3-代理モデルを-賢い提案分布-に使う", "title": "手法 3: 代理モデルを「賢い提案分布」に使う", "lv": 3}, {"id": "c13-数字で比べる", "title": "数字で比べる", "lv": 3}, {"id": "c13-選び方の目安", "title": "選び方の目安", "lv": 3}, {"id": "c13-13-15", "title": "13.15 発展 ★3: 代理モデルと不確かさの伝播 — 多項式カオスとクリギング", "lv": 2}, {"id": "c13-何をする道具なのか", "title": "何をする道具なのか", "lv": 3}, {"id": "c13-代理モデルは-3-つに分かれる", "title": "代理モデルは 3 つに分かれる", "lv": 3}, {"id": "c13--誤差推定と適応性-がなぜ決定的なのか", "title": "「誤差推定と適応性」がなぜ決定的なのか", "lv": 3}, {"id": "c13-不確かさを-2-種類に分ける", "title": "不確かさを 2 種類に分ける", "lv": 3}, {"id": "c13-モデル形式の不確かさ-いちばん大きくていちばん無視される", "title": "モデル形式の不確かさ — いちばん大きくていちばん無視される", "lv": 3}, {"id": "c13-実務の勧め", "title": "実務の勧め", "lv": 3}, {"id": "c13-13-99", "title": "13.99 演習の解答", "lv": 2}, {"id": "c13-13-12-2", "title": "13.12 演習 (本文 13.12 節)", "lv": 3}, {"id": "c13-13-99-1", "title": "13.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "14", "label": "14", "title": "第14章 実データ演習 — 汚れたデータで手を動かす", "sections": [{"id": "c14-14-1", "title": "14.1 この章の目的", "lv": 2}, {"id": "c14-データについて", "title": "データについて", "lv": 3}, {"id": "c14-14-2", "title": "14.2 題材 1: コンクリート受入検査 — 特性値をいくつと報告するか", "lv": 2}, {"id": "c14-課題", "title": "課題", "lv": 3}, {"id": "c14-14-3", "title": "14.3 題材 2: 配合と強度の回帰 — 1 点で結論が変わる", "lv": 2}, {"id": "c14-課題-2", "title": "課題", "lv": 3}, {"id": "c14-14-4", "title": "14.4 題材 3: 疲労試験 — 打ち切りを無視するとどうなるか", "lv": 2}, {"id": "c14-課題-3", "title": "課題", "lv": 3}, {"id": "c14-14-5", "title": "14.5 題材 4: 年最大風速 — 観測の連続性を疑う", "lv": 2}, {"id": "c14-課題-4", "title": "課題", "lv": 3}, {"id": "c14-14-6", "title": "14.6 題材 5: 構造モニタリング — 季節変動に埋もれた損傷", "lv": 2}, {"id": "c14-課題-5", "title": "課題", "lv": 3}, {"id": "c14-14-7", "title": "14.7 この章の進め方", "lv": 2}, {"id": "c14-14-99", "title": "14.99 演習の解答 (題材 1〜3)", "lv": 2}, {"id": "c14-14-2-2", "title": "14.2 題材 1 の解答", "lv": 3}, {"id": "c14-14-3-2", "title": "14.3 題材 2 の解答", "lv": 3}, {"id": "c14-14-4-2", "title": "14.4 題材 3 の解答", "lv": 3}, {"id": "c14-14-99-1", "title": "14.99.1 解答の数値を確かめるコード (題材 1〜3)", "lv": 2}, {"id": "c14-14-99-2", "title": "14.99 演習の解答 (題材 4〜5)", "lv": 2}, {"id": "c14-14-5-2", "title": "14.5 題材 4 の解答", "lv": 3}, {"id": "c14-14-6-2", "title": "14.6 題材 5 の解答", "lv": 3}, {"id": "c14-14-99-2-2", "title": "14.99.2 解答の数値を確かめるコード (題材 4〜5)", "lv": 2}], "stars": 0}, {"num": "15", "label": "付", "title": "付録 A 英和用語集", "sections": [{"id": "c15-第1章-記述統計", "title": "第1章 記述統計", "lv": 2}, {"id": "c15-第2章-確率論の基礎-補遺-2-17-2-20-を含む", "title": "第2章 確率論の基礎 (補遺 2.17〜2.20 を含む)", "lv": 2}, {"id": "c15-第3章-推定-発展-3-15-を含む", "title": "第3章 推定 (発展 3.15 を含む)", "lv": 2}, {"id": "c15-第4章-仮説検定-発展-4-18-を含む", "title": "第4章 仮説検定 (発展 4.18 を含む)", "lv": 2}, {"id": "c15-第5章-回帰分析", "title": "第5章 回帰分析", "lv": 2}, {"id": "c15-第6章-分散分析と実験計画法", "title": "第6章 分散分析と実験計画法", "lv": 2}, {"id": "c15-第7章-多変量解析", "title": "第7章 多変量解析", "lv": 2}, {"id": "c15-第8章-ベイズ統計", "title": "第8章 ベイズ統計", "lv": 2}, {"id": "c15-第9章-時系列解析", "title": "第9章 時系列解析", "lv": 2}, {"id": "c15-第10章-生存時間解析-信頼性-極値統計", "title": "第10章 生存時間解析・信頼性・極値統計", "lv": 2}, {"id": "c15-第11章-因果推論", "title": "第11章 因果推論", "lv": 2}, {"id": "c15-第12章-統計的機械学習", "title": "第12章 統計的機械学習", "lv": 2}, {"id": "c15-第13章-計算統計と標本調査", "title": "第13章 計算統計と標本調査", "lv": 2}, {"id": "c15-第14章-実データ演習", "title": "第14章 実データ演習", "lv": 2}, {"id": "c15-英語表記を確かめられなかった語", "title": "英語表記を確かめられなかった語", "lv": 2}, {"id": "c15-この付録の作り方-再現手順", "title": "この付録の作り方 (再現手順)", "lv": 2}], "stars": 0}];
 const DARKFIGS = new Set(["01_anscombe.png", "01_boxplot_iqr.png", "01_contingency.png", "01_correlation.png", "01_hist_bins.png", "01_iqr_normal.png", "01_log_transform.png", "01_mean_median.png", "01_rank_corr.png", "01_robustness.png", "01_scales.png", "01_spread_breakdown.png", "01d_influence.png", "01d_kde_bandwidth.png", "01d_mise.png", "01d_tradeoff.png", "02_berry_esseen.png", "02_binom_approx.png", "02_bivariate_normal.png", "02_cdf_types.png", "02_clt.png", "02_distributions.png", "02_lln.png", "02_lognormal_tail.png", "02_max_degenerate.png", "02_relations.png", "02_reliability.png", "02_var_decomposition.png", "02c_bijective.png", "02c_derangement.png", "02c_monty.png", "02c_ppv.png", "02c_sampling.png", "03_bias_mse.png", "03_binomial_coverage.png", "03_bootstrap.png", "03_characteristic_value.png", "03_ci_coverage.png", "03_fisher_asymp.png", "03_fit_comparison.png", "03_jackknife.png", "03_likelihood.png", "03_sampling_dist.png", "03d_coverage_methods.png", "03d_coverage_vs_n.png", "03d_coverage_wald_wilson.png", "03d_interval_shape.png", "03d_zero_events.png", "04_alpha_beta.png", "04_chisq_gof.png", "04_multiple_fwer.png", "04_permutation.png", "04_power_curve.png", "04_pvalue_uniform.png", "04_qqplot.png", "04_rejection_regions.png", "04_welch_vs_pooled.png", "04d_alpha_sample_size.png", "04d_false_discovery.png", "04d_phacking.png", "04d_pvalue_dist.png", "04d_replication.png", "04d_tost.png", "04e_ebh.png", "04e_fdp_spread.png", "04e_fwer_vs_fdr.png", "04e_prds.png", "04e_thresholds.png", "04e_worst_case.png", "05_aic_poly.png", "05_ci_pi.png", "05_gauss_markov.png", "05_leverage_cook.png", "05_logistic.png", "05_ls_geometry.png", "05_multicollinearity.png", "05_poisson.png", "05_residual_patterns.png", "05d_cluster_coverage.png", "05d_few_clusters_t.png", "05d_hc_variants.png", "05d_hetero_unbiased.png", "05d_misspecified.png", "05d_moulton.png", "06_cube_2k.png", "06_f_dist.png", "06_interaction.png", "06_power_n.png", "06_rcbd.png", "06_ss_decomposition.png", "06_tukey_hsd.png", "07_biplot.png", "07_dendrogram.png", "07_factor_rotation.png", "07_fisher.png", "07_mahalanobis.png", "07_pca_axes.png", "07_scree.png", "08_bayes_factor.png", "08_conjugate_weight.png", "08_credible_vs_confidence.png", "08_hierarchical_shrinkage.png", "08_mh_trace.png", "08_ppc.png", "08_prior_lik_post.png", "08_sequential_beta.png", "08d_characteristic_value.png", "08d_flat_not_flat.png", "08d_improper_posterior.png", "08d_prior_predictive.png", "08d_prior_washout.png", "08d_sensitivity_grid.png", "08d_variance_priors.png", "09_ar1_acf.png", "09_decomposition.png", "09_forecast.png", "09_kalman.png", "09_ma_pacf.png", "09_periodogram.png", "09_randomwalk_diff.png", "09_spurious.png", "09_stationarity.png", "10_beta_geometry.png", "10_cox_loglog.png", "10_gev.png", "10_km_logrank.png", "10_pot_threshold.png", "10_return_level.png", "10_survival_hazard.png", "10_weibull_paper.png", "10_weibull_shape.png", "10d_design_life.png", "10d_jump_vs_trend.png", "10d_nonstationary_gev.png", "10d_power.png", "10d_return_period_split.png", "10d_uncertainty.png", "11_balance_love.png", "11_collider_experiment.png", "11_dags.png", "11_did.png", "11_iv.png", "11_ps_overlap_ipw.png", "11_rct_vs_obs.png", "11_rdd.png", "11_simpson.png", "12_bias_variance.png", "12_cv_split.png", "12_gp_posterior.png", "12_overfit_poly.png", "12_reg_path.png", "12_ridge_lasso_geom.png", "12_roc_calibration.png", "12_svm_margin.png", "12_tree_forest.png", "12d_adaptive.png", "12d_conditional_gap.png", "12d_rank_coverage.png", "12d_shift_limit.png", "12d_split_scheme.png", "12d_why_conformal.png", "13_box_muller.png", "13_deff_icc.png", "13_em_mixture.png", "13_importance.png", "13_inverse_rejection.png", "13_lhs.png", "13_mc_error.png", "13_missing.png", "13_stratified.png"] || []);   // 暗い版がある図
 const view = document.getElementById('view');
 const tlist = document.getElementById('tlist');

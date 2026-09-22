@@ -1,7 +1,7 @@
 // 枠なし版をオフラインでも読めるようにする。
 // index.html は**毎回まず取りに行く** (中身が更新されるので)。
 // 図と外部の部品は一度取れたら使い回す (数が多く、変わらないので)。
-const V = 'textbook-9202705835';
+const V = 'textbook-2220579620';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
