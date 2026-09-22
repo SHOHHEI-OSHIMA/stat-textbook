@@ -125,30 +125,39 @@ mjx-container:not([display="true"]) svg{max-width:100%}
   pointer-events:none;background:linear-gradient(to right,transparent,var(--bg))}
 .mjx-wide > mjx-container{scrollbar-width:thin}
 
-/* 行間補足 — 本文が 1 行で飛ばした変形を 1 行ずつ埋める折りたたみ。
-   解答 (.blk.ans) とは別物なので、本文の流れの中の傍注として見せる。 */
-details.gap{margin:1rem 0;border-left:3px solid var(--accent);
-  background:var(--sunken);border-radius:0 9px 9px 0}
-details.gap > summary{list-style:none;cursor:pointer;
-  padding:.62rem .8rem;min-height:44px;display:flex;align-items:center;gap:.4rem;
-  font-size:.86rem;font-weight:600;color:var(--accent);line-height:1.5}
-details.gap > summary::-webkit-details-marker{display:none}
-details.gap > summary::before{content:"▸";flex:none;font-size:.85em;transition:transform .15s}
-details.gap[open] > summary::before{transform:rotate(90deg)}
-details.gap > summary:hover{text-decoration:underline}
-.gap-body{padding:0 .8rem .3rem;font-size:.95em}
-.gap-body > :first-child{margin-top:0}
-.gap-body mjx-container[display]{margin:.9rem 0}
+/* 行間補足 — 本文が 1 行で飛ばした変形を 1 行ずつ埋めたもの。
+   **畳まない**。本文の流れの中に開いたまま置き、左の罫で地の文と見分ける。 */
+section.gap{margin:1.2rem 0;padding:.1rem 0 .1rem .9rem;
+  border-left:3px solid var(--accent)}
+.gap-h{margin:0 0 .55rem;font-size:.79rem;font-weight:600;color:var(--accent);
+  letter-spacing:.02em;line-height:1.55}
+.gap-h::before{content:"行間 ";font-weight:400;color:var(--muted)}
+section.gap > :nth-child(2){margin-top:0}
+section.gap mjx-container[display]{margin:.9rem 0}
 
-/* 章の頭に出す「行間補足 N 件」。無い章には出さない */
-#gapbar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
-  margin:.2rem 0 1.1rem;padding:.5rem .7rem;border-radius:9px;
-  background:var(--sunken);font-size:.8rem;color:var(--muted)}
-#gapbar b{color:var(--ink);font-weight:600}
-#gapbar button{font:inherit;font-size:.78rem;padding:.3rem .65rem;border-radius:7px;
-  border:1px solid var(--line);background:var(--surface);color:var(--accent);
-  cursor:pointer;margin-left:auto}
-#gapbar button:hover{background:var(--accent-soft);border-color:var(--accent)}
+/* 頁の肩書き — 1 節 = 1 頁なので、いまどの章のどこかを毎頁で示す */
+.kicker{display:flex;align-items:baseline;gap:.5rem;margin:0 0 1.2rem;
+  padding-bottom:.55rem;border-bottom:1px solid var(--line);
+  font-size:.76rem;color:var(--muted);line-height:1.6}
+.kicker .cn{flex:none;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+.kicker .pos{margin-left:auto;flex:none;font-variant-numeric:tabular-nums}
+
+/* 脚注 — その頁が引いているものだけを末尾に置く */
+ol.fnote{margin:1.6rem 0 0;padding:.9rem 0 0 1.3rem;border-top:1px solid var(--line);
+  font-size:.82rem;color:var(--muted);line-height:1.8}
+ol.fnote li{margin:.3rem 0}
+ol.fnote p{margin:0}
+ol.fnote a{color:var(--accent)}
+
+/* 答えの番号帯 — 解答は 1 問 1 頁なので、番号で行き来できるようにする */
+.ansnav{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 1.15rem}
+.ansnav button{font:inherit;font-size:.76rem;min-width:2.2em;padding:.26rem .4rem;
+  border-radius:6px;border:1px solid var(--line);background:var(--surface);
+  color:var(--muted);cursor:pointer;font-variant-numeric:tabular-nums}
+.ansnav button:hover{border-color:var(--accent);color:var(--accent)}
+.ansnav button.cur{background:var(--accent);border-color:var(--accent);
+  color:var(--on-accent);font-weight:600}
+
 /* SVG の数式は currentColor で描かれるので、ダークでもそのまま読める */
 
 /* 動かせる図 */
@@ -183,12 +192,6 @@ details.gap > summary:hover{text-decoration:underline}
 .iact .key{display:flex;flex-wrap:wrap;gap:.2rem .8rem;margin-top:.45rem;font-size:.75rem}
 .iact .key i{font-style:normal;display:inline-flex;align-items:center;gap:.28rem}
 .iact .key i::before{content:"";width:14px;height:3px;border-radius:2px;background:currentColor}
-
-/* 演習の解答は既定で畳む (自力で解く前に答えが見えないように) */
-.blk.ans > h2{cursor:pointer}
-.blk.ans > h2::before{content:"▸ ";color:var(--muted);font-size:.85em}
-.blk.ans[data-open="1"] > h2::before{content:"▾ "}
-.ans-hint{margin:.2rem 0 0;font-size:.8rem;color:var(--muted)}
 
 /* 図の拡大 (暗幕の上なので、ここだけ固定色) */
 #lb{position:fixed;inset:0;z-index:60;background:#0A0E14;overflow:auto;
@@ -11750,7 +11753,7 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <ul>
 <li><strong>アフィン不変</strong>: $\mathbf y = A\mathbf x + \mathbf b$ ($A$ 正則) としても $d_M$ は変わらない (定理 7.1 (ii) を代入すると $A$ が打ち消し合う)。単位の取り方に依存しない</li>
 <li>$p = 1$ なら $|x - \bar x|/s$、つまり z スコアの絶対値。1 変量の「標準偏差の何倍離れているか」を多変量に拡張したものと読める。Flury &amp; Riedwyl はこの量を「標準距離」と呼び、1 変量の $|\mu_1 - \mu_2|/\sigma$ と多変量の Mahalanobis 距離が同じ概念の両端であることを整理している<sup id="c07-fnref:1"><a class="footnote-ref" href="#c07-fn:1">1</a></sup></li>
-<li>$S = \Lambda$ (対角) なら $d_M^2 = \sum_j (x_j - \bar x_j)^2 / s_{jj}$、つまり各変数を標準化してからのユークリッド距離。相関がある一般の場合は、固有ベクトルの座標系に回してから各軸を $\sqrt{\lambda_j}$ で割ったユークリッド距離になる (図 7.1 右の楕円)</li>
+<li>$S = D$ (対角) なら $d_M^2 = \sum_j (x_j - \bar x_j)^2 / s_{jj}$、つまり各変数を標準化してからのユークリッド距離。相関がある一般の場合は、固有ベクトルの座標系に回してから各軸を $\sqrt{\lambda_j}$ で割ったユークリッド距離になる (図 7.1 右の楕円)</li>
 <li>多変量正規分布 (7.3 節) のもとでは $d_M^2$ (母数を使ったもの) は自由度 $p$ の $\chi^2$ 分布に従う。これが「$d_M^2 > \chi^2_{p}(0.99)$ なら外れ値候補」という規則の根拠。ただし $S$ 自体が外れ値に引きずられる (破綻点 0、第 1 章 1.8 節) ので、外れ値検出には MCD などの頑健な共分散推定を使う</li>
 </ul>
 <details class="gap"><summary>行間: なぜ $S^{-1}$ で重みを付けるのか</summary><div class="gap-body"><p>本文は性質を 4 つ箇条書きにした。3 つ目の「固有ベクトルの座標系に回してから各軸を $\sqrt{\lambda_j}$ で割ったユークリッド距離になる」が最も飛んでいる。そこを開く。</p>
@@ -12065,7 +12068,7 @@ $\displaystyle \bar{\mathbf{x}} = \frac1n \sum_{i=1}^n \mathbf{x}_i, \qquad S = 
 <p><strong>7. 係数を読む。</strong> $\mathbf x$ に掛かっているのは $\Sigma^{-1}(\boldsymbol\mu_1-\boldsymbol\mu_2)$ で、7.7.1 の Fisher 方向と同じ形である。残りは $\mathbf x$ に依らない定数なので、境界の<strong>向き</strong>は変えずに位置だけを動かす。事前確率の項 $\log(\pi_1/\pi_2)$ も同じ働きをする。</p>
 <p><strong>落とし穴。</strong> 打ち消しが起きるのは $\Sigma$ が共通のときだけである。$\Sigma_1\ne\Sigma_2$ なら 4 の第 1 項が $\mathbf x^{\mathsf T}(\Sigma_2^{-1}-\Sigma_1^{-1})\mathbf x$ の形で残り、境界が 2 次曲面になる。これが QDA である。</p></div></details>
 <h3 id="c07-7-7-3">7.7.3 ロジスティック回帰との関係</h3>
-<p>ロジスティック回帰 (第 6 章) も対数オッズ $\log\{P(g=1\mid\mathbf x)/P(g=2\mid\mathbf x)\} = \beta_0 + \boldsymbol\beta^{\mathsf T}\mathbf x$ を線形と置くので、<strong>判別境界の形は LDA と同じ</strong>である。違いは何を推定するか:</p>
+<p>ロジスティック回帰 (5.9.3) も対数オッズ $\log\{P(g=1\mid\mathbf x)/P(g=2\mid\mathbf x)\} = \beta_0 + \boldsymbol\beta^{\mathsf T}\mathbf x$ を線形と置くので、<strong>判別境界の形は LDA と同じ</strong>である。違いは何を推定するか:</p>
 <ul>
 <li>LDA は $\mathbf x$ の分布 ($\boldsymbol\mu_g, \Sigma$) を推定し、Bayes の定理で事後確率を作る (生成モデル)</li>
 <li>ロジスティック回帰は $P(g\mid\mathbf x)$ を直接最尤推定する (識別モデル)。$\mathbf x$ の分布には何も仮定しない</li>
@@ -12785,9 +12788,9 @@ w_pp = np.array([kmeans(Xk, kpp_init(Xk, 4, rng))[1] for _ in range(1000)])
 </div></script>
 <script type="text/plain" data-chap="08"><h1 id="c08">第8章 ベイズ統計</h1>
 <h2 id="c08-8-1">8.1 この章の目的</h2>
-<p>これまでの推定・検定では、母数 $\theta$ は<strong>未知だが固定された定数</strong>であり、確率はデータ側にだけ付いていた。信頼区間の 95% は「同じ手続きを繰り返したとき区間が真値を含む頻度」であって、目の前の区間に付く確率ではない (第 5 章)。ベイズ統計はこの立場を変え、<strong>母数にも確率分布を与えて、データを見た後の分布 (事後分布) で推論する</strong>。</p>
+<p>これまでの推定・検定では、母数 $\theta$ は<strong>未知だが固定された定数</strong>であり、確率はデータ側にだけ付いていた。信頼区間の 95% は「同じ手続きを繰り返したとき区間が真値を含む頻度」であって、目の前の区間に付く確率ではない (3.8.3)。ベイズ統計はこの立場を変え、<strong>母数にも確率分布を与えて、データを見た後の分布 (事後分布) で推論する</strong>。</p>
 <p>この転換で得られるものは三つある。(1) 「$\theta$ がこの範囲にある確率は 95%」という、実務者が本当に欲しかった言い方ができる。(2) 少数のデータしかないとき、過去の知見 (事前分布) を形式的に取り込める — 試験体が 3 本しかない材料強度、点検データが数点しかない既存建物の耐力評価は、まさにこの状況である。(3) 階層モデル・欠測・複雑な尤度も、事後分布を求めるという<strong>一つの計算問題</strong>に帰着する。</p>
-<p>代価は、事前分布という主観的な入力が必要になることと、事後分布の計算が一般に数値積分 (MCMC) を要することである。この章では、前半で解析的に解ける共役の場合を導出して構造を掴み、後半で MCMC の仕組みと収束診断を扱う。第 3 章 (確率分布)、第 5 章 (推定・尤度)、第 7 章 (回帰) を前提とする。</p>
+<p>代価は、事前分布という主観的な入力が必要になることと、事後分布の計算が一般に数値積分 (MCMC) を要することである。この章では、前半で解析的に解ける共役の場合を導出して構造を掴み、後半で MCMC の仕組みと収束診断を扱う。第 2 章 (確率論)、第 3 章 (推定・尤度)、第 5 章 (回帰) を前提とする。</p>
 <h2 id="c08-8-2">8.2 ベイズの定理と三つの分布</h2>
 <h3 id="c08-8-2-1">8.2.1 事前・尤度・事後</h3>
 <blockquote>
@@ -12985,7 +12988,7 @@ $\mu_n = \tau_n^2\left(\mu_0/\tau_0^2 + n\bar y/\sigma^2\right)$ である。</p
 <p>$$\mu_n = w\,\bar y + (1-w)\,\mu_0, \qquad w = \frac{n/\sigma^2}{1/\tau_0^2 + n/\sigma^2}$$</p>
 <p>と<strong>精度を重みとする加重平均</strong>になる。三つの共役対に共通するこの構造 — 「事後平均 = 事前平均と MLE の加重平均、重みは情報量」— が、ベイズ推定を理解する最短の要約である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 8.4 正規–正規の事後平均。左: n が増えるにつれ事後平均 (青) が事前平均 30 から標本平均 (緑) に乗り移り、信用区間が狭まる。右: データ側の重み w。事前の分散 τ₀² が σ²/n と等しくなる n で 1:1 になる" src="fig/08_conjugate_weight.png" /><figcaption>図 8.4 正規–正規の事後平均。左: n が増えるにつれ事後平均 (青) が事前平均 30 から標本平均 (緑) に乗り移り、信用区間が狭まる。右: データ側の重み w。事前の分散 τ₀² が σ²/n と等しくなる n で 1:1 になる</figcaption></figure>
-<p>分散も未知なら、$(\mu, \sigma^2)$ の共役事前は正規–逆ガンマ分布で、事後の周辺分布 $p(\mu \mid y)$ は Student の $t$ 分布になる。平坦な事前 $p(\mu, \sigma^2) \propto 1/\sigma^2$ をとると $\mu \mid y \sim t_{n-1}(\bar y, s^2/n)$ となり、第 5 章の $t$ 区間と数値的に一致する。</p>
+<p>分散も未知なら、$(\mu, \sigma^2)$ の共役事前は正規–逆ガンマ分布で、事後の周辺分布 $p(\mu \mid y)$ は Student の $t$ 分布になる。平坦な事前 $p(\mu, \sigma^2) \propto 1/\sigma^2$ をとると $\mu \mid y \sim t_{n-1}(\bar y, s^2/n)$ となり、3.8.2 の $t$ 区間と数値的に一致する。</p>
 <h2 id="c08-8-4">8.4 事前分布の選び方</h2>
 <h3 id="c08-8-4-1">8.4.1 無情報事前分布と不変性の問題</h3>
 <p>「何も知らない」を表そうとして一様分布 $p(\theta) \propto 1$ を置くと、二つの問題が起きる。(1) 母数の範囲が無限なら積分が発散して確率分布にならない (<strong>非正則事前</strong>)。事後が正則になれば実用上は許されるが、確認が要る。(2) <strong>再パラメータ化で一様でなくなる</strong>: $\theta$ に一様なら $\phi = \theta^2$ には一様でない ($p(\phi) = p(\theta)|d\theta/d\phi| \propto \phi^{-1/2}$)。「無知」が座標の取り方に依存するのは不合理である。</p>
@@ -13110,7 +13113,7 @@ $g'$ は非減少。$g'$ が負から正へ変わる点なので、$g$ はそこ
 平均的に損を最小にする一点」を選んでいるにすぎない。また 3 の $\mathrm{Var}(\theta\mid y)$ は
 $c$ に依らない —— ここを「$c$ で動く」と読むと 4 の議論が立たなくなる。
 事後が左右対称で単峰なら平均・中央値・最頻値は一致するが、歪んだ事後では 3 つとも別の点になる。</p></div></details>
-<p>MAP は事前分布を罰則項とみなした<strong>罰則付き最尤</strong> ($\log p(y \mid \theta) + \log p(\theta)$ の最大化) と同じである: 正規事前なら L2 (リッジ) 罰則、Laplace 事前なら L1 (Lasso) 罰則に対応する (第 7 章)。ただし MAP は再パラメータ化で変わる (密度の最頻値は座標に依存する) 一方、事後平均・中央値は損失の意味が明確なぶん扱いやすい。<strong>非対称損失</strong> (過大評価と過小評価で損失が違う) なら最小化点は分位点になる — 耐力を過大評価する方がはるかに危険な設計判断では、こちらの方が本来の形である。</p>
+<p>MAP は事前分布を罰則項とみなした<strong>罰則付き最尤</strong> ($\log p(y \mid \theta) + \log p(\theta)$ の最大化) と同じである: 正規事前なら L2 (リッジ) 罰則、Laplace 事前なら L1 (Lasso) 罰則に対応する (12.5)。ただし MAP は再パラメータ化で変わる (密度の最頻値は座標に依存する) 一方、事後平均・中央値は損失の意味が明確なぶん扱いやすい。<strong>非対称損失</strong> (過大評価と過小評価で損失が違う) なら最小化点は分位点になる — 耐力を過大評価する方がはるかに危険な設計判断では、こちらの方が本来の形である。</p>
 <h2 id="c08-8-7">8.7 モデル比較</h2>
 <h3 id="c08-8-7-1">8.7.1 ベイズ因子</h3>
 <p>二つのモデル $M_0, M_1$ の事後確率比は、ベイズの定理より</p>
@@ -13129,7 +13132,7 @@ $c$ に依らない —— ここを「$c$ で動く」と読むと 4 の議論�
 <li><strong>WAIC</strong> (Watanabe 2010): $\mathrm{WAIC} = -2\left[\sum_i \log E_{\rm post}[p(y_i \mid \theta)] - \sum_i \mathrm{Var}_{\rm post}[\log p(y_i \mid \theta)]\right]$。第 1 項が当てはまり、第 2 項が実効的な母数の数 (罰則)。事後標本さえあれば計算でき、特異モデル (階層モデル・混合分布) でも漸近的に LOO と一致する</li>
 <li><strong>PSIS-LOO</strong> (Vehtari, Gelman &amp; Gabry 2017): 重点サンプリングで $p(\theta \mid y_{-i})$ を $p(\theta \mid y)$ から近似し、重みの裾を Pareto 分布で平滑化して安定化する。診断量 $\hat k$ が 0.7 を超える観測点は近似が信頼できないと警告される<sup id="c08-fnref:4"><a class="footnote-ref" href="#c08-fn:4">4</a></sup></li>
 </ul>
-<p>AIC (第 7 章) が MLE と母数の個数を使うのに対し、WAIC/LOO は事後分布全体を使う点でベイズ的である。どちらも「どのモデルが真か」ではなく「どのモデルがよく予測するか」を答える。</p>
+<p>AIC (5.8.2) が MLE と母数の個数を使うのに対し、WAIC/LOO は事後分布全体を使う点でベイズ的である。どちらも「どのモデルが真か」ではなく「どのモデルがよく予測するか」を答える。</p>
 <h2 id="c08-8-8">8.8 階層モデル</h2>
 <h3 id="c08-8-8-1">8.8.1 部分プーリング</h3>
 <p>$J$ 個の群 (工場、ロット、建物、地域) からデータがあり、各群の母数 $\theta_j$ を推定したい。三つの立場がある。</p>
@@ -13404,7 +13407,7 @@ chains = np.array(chains)
 for L in [100, 300, 1500]:
     print(&quot;R̂ (最初の %4d 反復) = %.3f&quot; % (L, rhat(chains[:, :L])))
 </code></pre>
-<p>1) は共役の閉形とグリッド近似が一致すること、2) は MH が同じ事後を再現すること (採択率と有効標本数も見る)、3) は Gibbs の結果が第 5 章の $t$ 区間と数値的に一致すること (平坦事前の正規モデルでは信用区間 = 信頼区間)、4) は事前情報の有無で特性値が数 N/mm² 動くこと、5) は $\hat R$ が反復とともに 1 に落ちることを確かめる。</p>
+<p>1) は共役の閉形とグリッド近似が一致すること、2) は MH が同じ事後を再現すること (採択率と有効標本数も見る)、3) は Gibbs の結果が3.8.2 の $t$ 区間と数値的に一致すること (平坦事前の正規モデルでは信用区間 = 信頼区間)、4) は事前情報の有無で特性値が数 N/mm² 動くこと、5) は $\hat R$ が反復とともに 1 に落ちることを確かめる。</p>
 <h2 id="c08-8-12">8.12 演習</h2>
 <ol>
 <li>ガンマ–ポアソン (定理 8.3) の事後平均が $\frac{\beta}{\beta+n}\cdot\frac{\alpha}{\beta} + \frac{n}{\beta+n}\cdot\bar y$ と書けることを示し、$\beta$ を「疑似観測期間」と解釈せよ</li>
@@ -13461,7 +13464,7 @@ for L in [100, 300, 1500]:
 <figure><img loading="lazy" decoding="async" alt="図 8.10 左: 係数 β の尺度では N(0,10²) も Cauchy(0,2.5) も「広い」。右: 成功確率の尺度に移すと、広い正規事前は 0 と 1 に強く肩入れする (縦軸は対数目盛)" src="fig/08d_flat_not_flat.png" /><figcaption>図 8.10 左: 係数 β の尺度では N(0,10²) も Cauchy(0,2.5) も「広い」。右: 成功確率の尺度に移すと、広い正規事前は 0 と 1 に強く肩入れする (縦軸は対数目盛)</figcaption></figure>
 <p><strong>(b) Jeffreys 事前は 1 母数では不変だが、多母数では素直に伸びない。</strong> 定理 8.5 の不変性は 1 母数の話である。正規分布 $N(\mu, \sigma^2)$ を $(\mu, \sigma)$ で母数化すると Fisher 情報行列は $I = \mathrm{diag}(1/\sigma^2,\ 2/\sigma^2)$ で、$\sqrt{\det I} = \sqrt2/\sigma^2$。すなわち Jeffreys 則をそのまま当てはめると</p>
 <p>$$p_J(\mu, \sigma) \propto \frac{1}{\sigma^2}$$</p>
-<p>になる。ところが本文 8.3.3 で「平坦な事前」として使った $p(\mu, \sigma^2) \propto 1/\sigma^2$ は、$\sigma$ の尺度に直すと $p(\mu,\sigma) \propto 1/\sigma$ であって、これとは<strong>別物</strong>である。後者は $\mu$ と $\sigma$ に別々に Jeffreys 則を当ててから掛けた<strong>独立 Jeffreys 事前</strong>で、第 5 章の $t$ 区間と一致するのはこちらのほうである。どちらを「無情報」と呼ぶかで答えが変わる。多母数問題で Jeffreys 則に難点があり、局外母数が多いと導出も解釈も難しくなること、そうした場面では参照事前分布 (reference prior) が選ばれることは、この分野では共通の認識である<sup id="c08-fnref:p4"><a class="footnote-ref" href="#c08-fn:p4">8</a></sup>。</p>
+<p>になる。ところが本文 8.3.3 で「平坦な事前」として使った $p(\mu, \sigma^2) \propto 1/\sigma^2$ は、$\sigma$ の尺度に直すと $p(\mu,\sigma) \propto 1/\sigma$ であって、これとは<strong>別物</strong>である。後者は $\mu$ と $\sigma$ に別々に Jeffreys 則を当ててから掛けた<strong>独立 Jeffreys 事前</strong>で、3.8.2 の $t$ 区間と一致するのはこちらのほうである。どちらを「無情報」と呼ぶかで答えが変わる。多母数問題で Jeffreys 則に難点があり、局外母数が多いと導出も解釈も難しくなること、そうした場面では参照事前分布 (reference prior) が選ばれることは、この分野では共通の認識である<sup id="c08-fnref:p4"><a class="footnote-ref" href="#c08-fn:p4">8</a></sup>。</p>
 <details class="gap"><summary>行間: $\sqrt{\det I} = \sqrt2/\sigma^2$ と $1/\sigma$ が分かれるところ</summary><div class="gap-body"><p>本文は Fisher 情報行列を $\mathrm{diag}(1/\sigma^2,\ 2/\sigma^2)$ と結果だけ置き、そこから
 2 つの「Jeffreys」が出ると書いた。微分と、2 つが分かれる分岐点を開く。</p>
 <p><strong>記号の役割。</strong> 母数は $(\mu,\sigma)$ の 2 つで、<strong>$\sigma^2$ ではなく $\sigma$</strong> を使う。
@@ -13834,7 +13837,7 @@ for lab, pr in hyper:
 <li>正規分布 $N(\mu, \sigma^2)$ の $(\mu, \sigma)$ 母数化で Fisher 情報行列が $\mathrm{diag}(1/\sigma^2, 2/\sigma^2)$ になることを導き、Jeffreys 則が $p_J(\mu,\sigma) \propto 1/\sigma^2$ を与えることを示せ。$(\mu, \sigma^2)$ 母数化で計算しても同じ事前が得られることを、変数変換で確かめよ</li>
 <li>
 <ol>
-<li>の結果と、本文 8.3.3 で使った $p(\mu, \sigma^2) \propto 1/\sigma^2$ (独立 Jeffreys) とで、$\mu$ の事後周辺分布の自由度がどう変わるかを求めよ。どちらが第 5 章の $t$ 区間と一致するか</li>
+<li>の結果と、本文 8.3.3 で使った $p(\mu, \sigma^2) \propto 1/\sigma^2$ (独立 Jeffreys) とで、$\mu$ の事後周辺分布の自由度がどう変わるかを求めよ。どちらが3.8.2 の $t$ 区間と一致するか</li>
 </ol>
 </li>
 <li>定理 8.9 を $\mathrm{Beta}$–二項の場合に書き換えよ。$\mathrm{Beta}(a,b)$ の実効標本数を $n_0 = a+b$ としたとき、事前平均の違いが事後平均に残す量と、それを事後標準偏差で割った量の $n$ 依存性を求めよ</li>
@@ -14784,7 +14787,7 @@ for lab, pr in hyper:
 <li>その構造をどう少数のパラメータで表すか (ARMA・状態空間モデル)</li>
 <li>独立性の仮定を捨てたとき、これまでの推測 (回帰の $t$ 検定など) の何が壊れるか (見せかけの回帰)</li>
 </ol>
-<p>記述統計 (第 1 章) の平均・分散・相関が時間方向に拡張され、回帰 (前章) の残差に相関があるときの補正がここで理解できる。確率論の道具は期待値と分散、線形代数の道具は行列の逆と固有値で足りる。</p>
+<p>記述統計 (第 1 章) の平均・分散・相関が時間方向に拡張され、回帰 (第 5 章) の残差に相関があるときの補正がここで理解できる。確率論の道具は期待値と分散、線形代数の道具は行列の逆と固有値で足りる。</p>
 <h2 id="c09-9-2">9.2 時系列の成分</h2>
 <h3 id="c09-9-2-1">9.2.1 加法モデルと乗法モデル</h3>
 <p>古典的な分解は、観測値を</p>
@@ -27763,15 +27766,101 @@ const lbCap = document.getElementById('lb-cap');
 const lbX = document.getElementById('lb-x');
 
 let cur = -1;                 // いま開いている章の添字
+let curPage = -1;             // いま開いている頁の添字
 let read = Object.create(null);   // 読んだ節: {sectionId: true}
 let last = null;              // しおり {c, s}
 let at = null;                // 最後に保存した時刻 (端末間でどちらが新しいかの判定)
-let ansOpen = new Set();      // 開いたままにしている解答の節 (この端末だけの好み)
 let store = null;             // claude.use("db") の doc。無ければ null
 let saveTimer = null;
 
 const raw = n => (document.querySelector('script[data-chap="'+n+'"]')||{}).textContent||'';
-const totalSections = META.reduce((a,c)=>a+c.sections.filter(s=>s.lv!==3).length,0);
+
+/* ---------- 頁を組む ----------
+   1 章 = 1 頁だと第 2 章が 169,000px (携帯の画面 208 枚) になっていた。
+   **1 節 (h2) = 1 頁**に割る。中央値で 4〜5 画面まで落ちる。
+   演習の解答だけは 1 節に答えが全部入っていて 60,000px あるので、
+   **答え 1 つ = 1 頁**にする (「**3.**」で始まる段落が答えの切れ目)。
+   項 (h3) までは割らない — 1 つの考えが頁をまたぐと、かえって辿れない。 */
+const PAGES = [];                 // {ci, ch, id, title, kind, no, of, html}
+function buildPages(){
+  const host = document.createElement('div');
+  const ansNo = /^(\d+)\.$/;
+  META.forEach((c, ci)=>{
+    host.innerHTML = raw(c.num);
+    // 脚注は章の末尾にまとまっている。頁を割ると遠くへ飛ばされてしまうので、
+    // 本文から外して控えておき、**引いている頁の末尾にだけ**置き直す
+    const notes = {};
+    host.querySelectorAll('li[id*="fn:"]').forEach(li=>{ notes[li.id] = li.outerHTML; });
+    const anyNote = host.querySelector('li[id*="fn:"]');
+    if(anyNote){
+      const ol = anyNote.parentElement;
+      const wrap = ol.parentElement !== host && /footnote/i.test(ol.parentElement.className || '')
+                 ? ol.parentElement : ol;
+      const prev = wrap.previousElementSibling;
+      if(prev && prev.tagName === 'HR') prev.remove();
+      wrap.remove();
+    }
+    let page = null, inAns = false, ansHead = '', ansPages = [];
+    const start = (id, title, kind)=>{
+      page = {ci: ci, ch: c.num, id: id, title: title, kind: kind, html: ''};
+      PAGES.push(page);
+      if(kind === 'ans') ansPages.push(page);
+      return page;
+    };
+    const closeAns = ()=>{
+      ansPages.forEach((p, k)=>{ p.no = k + 1; p.of = ansPages.length; });
+      ansPages = [];
+    };
+    [...host.children].forEach(el=>{
+      if(el.tagName === 'H1') return;                 // 章題は頁ごとに肩書きとして出す
+      if(el.tagName === 'H2'){
+        closeAns();
+        inAns = el.textContent.indexOf('演習の解答') >= 0;
+        ansHead = el.textContent.trim();
+        start(el.id, ansHead, inAns ? 'ansTop' : 'body');
+        page.html += el.outerHTML;
+        return;
+      }
+      if(inAns && el.tagName === 'P'){
+        const f = el.firstElementChild;
+        const m = f && f.tagName === 'STRONG' && ansNo.exec(f.textContent.trim());
+        if(m){                                        // 答え 1 つで 1 頁
+          const id = (page && page.id ? page.id : 'ans') + '-' + m[1];
+          start(id, ansHead + ' ' + m[1], 'ans');
+          page.html += '<h2 id="' + id + '">' + esc(ansHead) + ' ' + m[1] + '</h2>';
+        }
+      }
+      if(!page) start('c' + c.num + '-top', c.title, 'body');   // h2 より前の前書き
+      if(el.tagName === 'HR' && !page.html) return;   // 頁頭の区切り線は落とす
+      page.html += el.outerHTML;
+    });
+    closeAns();
+    // その頁が引いている脚注だけを末尾に付ける (頁ごとに完結させる)
+    PAGES.filter(p=>p.ci === ci).forEach(p=>{
+      const ids = [];
+      p.html.replace(/href="#([^"]*fn:[^"]+)"/g, (m, id)=>{
+        if(notes[id] && ids.indexOf(id) < 0) ids.push(id); return m;
+      });
+      if(ids.length) p.html += '<ol class="fnote">' + ids.map(id=>notes[id]).join('') + '</ol>';
+    });
+  });
+  // 解答の 1 枚目 (見出しだけの頁) は、中身が次の頁に移っているので畳む
+  for(let i = PAGES.length - 1; i >= 0; i--){
+    const p = PAGES[i];
+    if(p.kind === 'ansTop' && PAGES[i+1] && PAGES[i+1].kind === 'ans'
+       && !/<(p|table|ul|ol|figure|blockquote|div)\b/.test(p.html)) PAGES.splice(i, 1);
+  }
+  PAGES.forEach((p, i)=>{ p.i = i; });
+}
+const pageOf = Object.create(null);      // 見出し id → 頁の添字 (章内リンクの行き先)
+function indexPages(){
+  const host = document.createElement('div');
+  PAGES.forEach(p=>{
+    host.innerHTML = p.html;
+    host.querySelectorAll('[id]').forEach(e=>{ if(!(e.id in pageOf)) pageOf[e.id] = p.i; });
+    if(!(p.id in pageOf)) pageOf[p.id] = p.i;
+  });
+}
 
 /* ---------- 保存 (アカウント優先、無ければ端末) ---------- */
 function loadLocal(){
@@ -27782,7 +27871,6 @@ function loadLocal(){
   try{
     const fs = localStorage.getItem('fs'); if(fs) document.documentElement.style.setProperty('--fs', fs);
   }catch(e){}
-  try{ ansOpen = new Set(JSON.parse(localStorage.getItem('ansOpen')||'[]')); }catch(e){}
   try{
     const th = localStorage.getItem('theme');
     if(THEMES.indexOf(th) >= 0){ theme = th; applyTheme(false); }
@@ -27817,22 +27905,22 @@ async function connect(){
     paintTOC(); paintPct();
     // 起動時に自分のしおりからは既に開いている。別の端末でもっと新しい
     // しおりが見つかったときだけ、行き先を変えるか尋ねる
-    const same = last && d.last && d.last.c === last.c && d.last.s === last.s;
+    const same = last && d.last && markToPage(d.last) === markToPage(last);
     if(d.last && !same && (!at || (d.at||'') > at)) offerResume(d.last, true);
   }catch(e){}
 }
 
 /* ---------- 目次 ---------- */
-const lv2 = c => c.sections.filter(s=>s.lv!==3);
+function chapterPages(ci){ return PAGES.filter(p=>p.ci === ci); }
 function chapterPct(i){
-  const s = lv2(META[i]);
-  if(!s.length) return 0;
-  return s.filter(x=>read[x.id]).length / s.length;
+  const ps = chapterPages(i);
+  if(!ps.length) return 0;
+  return ps.filter(p=>read[p.id]).length / ps.length;
 }
 function paintPct(){
-  const done = META.reduce((a,c)=>a+c.sections.filter(s=>s.lv!==3&&read[s.id]).length,0);
-  pct.textContent = Math.round(done/totalSections*100)+'%';
-  pct.title = done+' / '+totalSections+' 節';
+  const done = PAGES.filter(p=>read[p.id]).length;
+  pct.textContent = Math.round(done/PAGES.length*100)+'%';
+  pct.title = done+' / '+PAGES.length+' 頁';
 }
 const expanded = new Set();
 function paintTOC(){
@@ -27853,53 +27941,111 @@ function paintTOC(){
     row.append(b);
     tlist.appendChild(row);
     if(expanded.has(i)){
-      const top = document.createElement('button');
-      top.className = 'sec lv2 top';
-      top.textContent = '章の先頭から読む';
-      top.onclick = ()=>{ closeTOC(); open(i); };
-      tlist.appendChild(top);
+      // 頁を 1 つずつ並べる。解答は答えごとの頁が続くので 1 行にまとめる
+      let shownAns = false;
+      chapterPages(i).forEach(p=>{
+        if(p.kind === 'ans'){
+          if(shownAns) return;
+          shownAns = true;
+        }
+        const sb = document.createElement('button');
+        sb.className = 'sec lv2' + (read[p.id] ? ' read' : '');
+        // 解答は 1 問 1 頁だが目次では 1 行にまとめる。前書きの頁と名前が
+        // 重ならないよう、まとめた行は「答え」とだけ書く
+        sb.textContent = p.kind === 'ans' ? '答え 1〜' + p.of : p.title;
+        sb.onclick = ()=>{ closeTOC(); open(p.i); };
+        tlist.appendChild(sb);
+      });
     }
-    if(expanded.has(i)) c.sections.forEach(s=>{
-      const sb = document.createElement('button');
-      sb.className = 'sec lv'+(s.lv||2)+(s.lv!==3&&read[s.id]?' read':'');
-      sb.textContent = s.title;
-      sb.onclick = ()=>{ closeTOC(); open(i, s.id); };
-      tlist.appendChild(sb);
-    });
   });
 }
 const esc = s => s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
 
-/* ---------- 章を開く ---------- */
+/* ---------- 頁を開く ---------- */
 let io = null;
-function open(i, anchor, silent){
-  if(i<0||i>=META.length) return;
-  cur = i;
-  view.innerHTML = raw(META[i].num);
+function open(pi, anchor, silent){
+  if(pi < 0 || pi >= PAGES.length) return;
+  const p = PAGES[pi];
+  cur = p.ci;
+  curPage = pi;
+  const c = META[p.ci];
+
+  // 肩書き: いまどの章のどこにいるか。頁が短いので毎頁に要る
+  const pagesHere = chapterPages(p.ci);
+  const nth = pagesHere.indexOf(p) + 1;
+  let head = '<p class="kicker"><span class="cn">' + esc(c.label || c.num) + '</span>'
+           + esc(c.title) + '<span class="pos">' + nth + ' / ' + pagesHere.length + '</span></p>';
+  view.innerHTML = head + p.html;
+
   view.querySelectorAll('table').forEach(t=>{
     if(t.parentElement.classList.contains('scroll-x')) return;
-    const w=document.createElement('div'); w.className='scroll-x';
-    t.parentNode.insertBefore(w,t); w.appendChild(t);
+    const w = document.createElement('div'); w.className = 'scroll-x';
+    t.parentNode.insertBefore(w, t); w.appendChild(t);
   });
+  inlineGaps();
   chunk();
-  const pager = document.createElement('div'); pager.id='pager';
+
+  // 答えが続く頁では、番号の帯で飛べるようにする
+  if(p.kind === 'ans' && p.of > 1){
+    const strip = document.createElement('div'); strip.className = 'ansnav';
+    const first = pi - (p.no - 1);
+    for(let k = 0; k < p.of; k++){
+      const b = document.createElement('button');
+      b.textContent = String(k + 1);
+      if(k + 1 === p.no) b.className = 'cur';
+      b.onclick = ()=>{ open(first + k); window.scrollTo(0,0); };
+      strip.appendChild(b);
+    }
+    view.insertBefore(strip, view.children[1] || null);
+  }
+
+  const pager = document.createElement('div'); pager.id = 'pager';
+  const label = j => j < 0 || j >= PAGES.length ? ''
+    : (PAGES[j].ci !== p.ci ? esc(META[PAGES[j].ci].title) + ' / ' : '') + esc(PAGES[j].title);
   pager.innerHTML =
-    '<button '+(i===0?'disabled':'')+' data-go="'+(i-1)+'"><span class="k">前の章</span>'+(i>0?esc(META[i-1].title):'')+'</button>'+
-    '<button '+(i===META.length-1?'disabled':'')+' data-go="'+(i+1)+'"><span class="k">次の章</span>'+(i<META.length-1?esc(META[i+1].title):'')+'</button>';
-  pager.querySelectorAll('button[data-go]').forEach(b=>b.onclick=()=>{ open(+b.dataset.go); window.scrollTo(0,0); });
+    '<button ' + (pi === 0 ? 'disabled' : '') + ' data-go="' + (pi-1) + '">'
+      + '<span class="k">前へ</span>' + label(pi-1) + '</button>'
+    + '<button ' + (pi === PAGES.length-1 ? 'disabled' : '') + ' data-go="' + (pi+1) + '">'
+      + '<span class="k">次へ</span>' + label(pi+1) + '</button>';
+  pager.querySelectorAll('button[data-go]').forEach(b=>
+    b.onclick = ()=>{ open(+b.dataset.go); window.scrollTo(0,0); });
   view.appendChild(pager);
-  document.title = META[i].title + ' — 統計学 自分用教科書';
-  expanded.add(i);
+
+  document.title = p.title + ' — 統計学 自分用教科書';
+  expanded.add(p.ci);
   paintFigs();
   paintInteractive();
   highlight();
   typeset();
-  watchSections();
   paintTOC();
-  paintGaps();
   if(anchor) jump(anchor); else window.scrollTo(0,0);
   figScan();                     // 位置が決まってから (jump の前だと測れない)
-  if(!silent){ last = {c:META[i].num, s:anchor||null}; save(); }
+  markRead();
+  if(!silent){ last = {p: p.id, c: p.ch}; save(); }
+}
+// 読んだ印。**開いただけでは付けない** — 終わりまで来たときに付ける
+// (1 頁が短いので、画面に収まる頁はその場で付く)
+function markRead(){
+  if(curPage < 0) return;
+  const id = PAGES[curPage].id;
+  if(read[id]) return;
+  const bottom = document.body.scrollHeight - innerHeight - scrollY;
+  if(bottom < 220){ read[id] = true; paintPct(); paintTOC(); save(); }
+}
+// 行間補足は畳まない。本文の流れの中に開いたまま置く
+function inlineGaps(){
+  view.querySelectorAll('details.gap').forEach(d=>{
+    const sec = document.createElement('section');
+    sec.className = 'gap';
+    const sum = d.querySelector('summary');
+    const h = document.createElement('p');
+    h.className = 'gap-h';
+    h.textContent = sum ? sum.textContent.replace(/^行間:\s*/, '') : '行間';
+    sec.appendChild(h);
+    const body = d.querySelector('.gap-body');
+    if(body) while(body.firstChild) sec.appendChild(body.firstChild);
+    d.replaceWith(sec);
+  });
 }
 function chunk(){
   // 節 (h2) ごとに div.blk でくるむ。組版を節単位で遅らせるための入れ物で、
@@ -27907,48 +28053,13 @@ function chunk(){
   const kids = [...view.children];
   let cur = null;
   kids.forEach(el=>{
-    if(el.tagName === 'H2' || !cur){
+    if(el.tagName === 'H2' || el.tagName === 'H3' || !cur){
       cur = document.createElement('div');
       cur.className = 'blk';
       view.insertBefore(cur, el);
     }
     cur.appendChild(el);
   });
-  // 解答の節は畳んでおく。見出しだけ残して、中身は別の入れ物に移す
-  view.querySelectorAll(':scope > .blk').forEach(b=>{
-    const h = b.firstElementChild;
-    if(!h || h.tagName !== 'H2' || h.textContent.indexOf('演習の解答') < 0) return;
-    b.classList.add('ans');
-    const body = document.createElement('div');
-    body.className = 'ans-body';
-    while(h.nextSibling) body.appendChild(h.nextSibling);
-    const hint = document.createElement('p');
-    hint.className = 'ans-hint';
-    hint.textContent = 'タップで開く — 自力で解いたあとに';
-    b.append(hint, body);
-    const open = ansOpen.has(h.id);
-    b.dataset.open = open ? '1' : '0';
-    body.hidden = !open;
-    hint.hidden = open;
-    h.setAttribute('role', 'button');
-    h.setAttribute('tabindex', '0');
-    h.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-}
-function toggleAns(b){
-  const h = b.querySelector(':scope > h2');
-  const body = b.querySelector(':scope > .ans-body');
-  const hint = b.querySelector(':scope > .ans-hint');
-  const open = b.dataset.open !== '1';
-  b.dataset.open = open ? '1' : '0';
-  body.hidden = !open;
-  if(hint) hint.hidden = open;
-  h.setAttribute('aria-expanded', open ? 'true' : 'false');
-  if(open) ansOpen.add(h.id); else ansOpen.delete(h.id);
-  try{ localStorage.setItem('ansOpen', JSON.stringify([...ansOpen])); }catch(e){}
-  // 畳んでいる間は組版していないので、開いたときに組版する
-  if(open && !body.querySelector('mjx-container')){ mjQueue.unshift(b); drain(mjToken); }
-  if(open) figScan();                       // 中の図も畳んでいる間は読んでいない
 }
 function isDark(){
   // 自動のときは端末の設定に従う
@@ -28775,45 +28886,9 @@ function highlight(){
 // 画面に近い図は lazy を外して読ませる。効いている端末では、そこはもう
 // 読み込み済みなので二度手間にはならない。遠い図は lazy のまま置いておく。
 /* ---------- 行間補足 ---------- */
-// 開いたままにするかは**章ごとではなく読み方の設定**にする。初読は開いたまま、
-// 復習は畳んだまま、という切り替えが要るだけで、1 つずつ覚える必要は無い
-// (節が増減しても壊れない、という利点もある)。
-let gapOpen = false;
-try{ gapOpen = localStorage.getItem('gapOpen') === '1'; }catch(e){}
+// 畳まない。inlineGaps() が <details> を地の文の節に開いてから描く。
+// 「すべて開く/畳む」も要らなくなった (2026-09-22 ユーザー指示)。
 
-function paintGaps(){
-  const gaps = [...view.querySelectorAll('details.gap')];
-  const old = document.getElementById('gapbar');
-  if(old) old.remove();
-  if(!gaps.length) return;
-  gaps.forEach(g=>{
-    g.open = gapOpen;
-    // 畳んでいる間は幅が測れない (clientWidth が 0)。開いた時点で測り直す
-    g.addEventListener('toggle', ()=>{ if(g.open){ markWide(); figScan(); } });
-  });
-
-  const bar = document.createElement('div');
-  bar.id = 'gapbar';
-  const btn = document.createElement('button');
-  const label = ()=>{ btn.textContent = gapOpen ? 'すべて畳む' : 'すべて開く'; };
-  bar.innerHTML = '本文が飛ばした変形を 1 行ずつ埋めた<b>行間補足</b>が ' +
-                  '<b>' + gaps.length + '</b> 件あります';
-  btn.onclick = ()=>{
-    gapOpen = !gapOpen;
-    try{ localStorage.setItem('gapOpen', gapOpen ? '1' : '0'); }catch(e){}
-    view.querySelectorAll('details.gap').forEach(g=>{ g.open = gapOpen; });
-    label();
-    markWide(); figScan();     // 開いて初めて幅も図も測れる
-  };
-  label();
-  bar.appendChild(btn);
-  const h1 = view.querySelector('h1');
-  if(h1 && h1.nextSibling) h1.parentNode.insertBefore(bar, h1.nextSibling);
-  else view.insertBefore(bar, view.firstChild);
-}
-
-// 画面より広い別行立ての式に、横に送れることの合図 (右端のぼかし) を付ける。
-// 組版が終わってからでないと幅が出ないので、組版の各回の後から呼ぶ。
 function markWide(){
   view.querySelectorAll('mjx-container[display="true"]').forEach(m=>{
     const wide = m.scrollWidth > m.clientWidth + 2;
@@ -28845,8 +28920,7 @@ function typeset(){
   // 数式が生の $ のまま残ることはない。
   if(!window.MathJax || !MathJax.startup || !MathJax.startup.promise) return;
   mjToken++;
-  // 畳んである解答は組版しない (開いたときに toggleAns が積む)
-  mjQueue = [...view.querySelectorAll(':scope > .blk')].filter(b=>b.dataset.open !== '0');
+  mjQueue = [...view.querySelectorAll(':scope > .blk')];
   drain(mjToken);
 }
 async function drain(token){
@@ -28878,23 +28952,27 @@ function jump(id){
   const el = document.getElementById(id);
   if(el) el.scrollIntoView({block:'start'});
 }
-function watchSections(){
-  if(io) io.disconnect();
-  io = new IntersectionObserver(es=>{
-    let changed = false;
-    es.forEach(e=>{
-      if(e.isIntersecting && e.target.id && !read[e.target.id]){
-        read[e.target.id] = true; changed = true;
-      }
-    });
-    if(changed){ paintPct(); paintTOC(); save(); }
-  }, {rootMargin:'-55% 0px -35% 0px'});
-  view.querySelectorAll('h2[id]').forEach(h=>io.observe(h));
+// 章内のリンクは頁をまたぐ。行き先を含む頁へ移ってから飛ぶ
+function goto(id){
+  const pi = pageOf[id];
+  if(pi === undefined) return false;
+  if(pi === curPage){ jump(id); return true; }
+  open(pi, id);
+  return true;
 }
+addEventListener('click', e=>{
+  const a = e.target.closest && e.target.closest('#view a[href^="#"]');
+  if(!a) return;
+  const id = decodeURIComponent(a.getAttribute('href').slice(1));
+  if(goto(id)) e.preventDefault();
+}, true);
+// 読んだ印は markRead() が付ける (頁の終わりまで来たとき)。
+// IntersectionObserver は検証環境で 1 度も発火しなかったので使わない。
 let scrollSave, fabTimer, lastY = 0;
 addEventListener('scroll', ()=>{
   if(!mjBusy && mjQueue.length) drain(mjToken);   // 近づいた節を先に組版する
   figScan();                                      // 近づいた図も読ませる
+  markRead();                                     // 終わりまで来たら読了
   // 下へ読んでいる間は目次のボタンを引っ込める
   const y = scrollY;
   if(y > lastY + 6 && y > 120) fab.classList.add('tuck');
@@ -28940,7 +29018,7 @@ function search(term){
     b.innerHTML='<b>'+(META[h.ci].label||META[h.ci].num)+' '+esc(h.stitle)+'</b><i>…'+
       esc(h.text.slice(from,i))+'<mark>'+esc(h.text.slice(i,i+t.length))+'</mark>'+
       esc(h.text.slice(i+t.length,i+t.length+70))+'…</i>';
-    b.onclick=()=>{ closeTOC(); q.value=''; open(h.ci, h.sid); };
+    b.onclick=()=>{ closeTOC(); q.value=''; goto(h.sid) || open(0); };
     tlist.appendChild(b);
   });
 }
@@ -28948,18 +29026,26 @@ let qt; q.addEventListener('input', ()=>{ clearTimeout(qt); qt=setTimeout(()=>se
 
 /* ---------- しおり ---------- */
 let offered = false;
+// しおりは頁 id。古い {c, s} 形式のしおりからも頁を割り出す
+function markToPage(mark){
+  if(!mark) return -1;
+  if(mark.p !== undefined && pageOf[mark.p] !== undefined) return pageOf[mark.p];
+  if(mark.s && pageOf[mark.s] !== undefined) return pageOf[mark.s];
+  if(mark.c){ const p = PAGES.find(x=>x.ch === mark.c); if(p) return p.i; }
+  return -1;
+}
 function offerResume(mark, force){
   if((offered && !force) || !mark) return;
-  const i = META.findIndex(c=>c.num===mark.c);
-  if(i<0 || (i===0 && !mark.s)) return;          // 1 章の頭ならしおりは要らない
-  const s = mark.s ? (META[i].sections.find(x=>x.id===mark.s)||{}).title : null;
-  resumeT.textContent = '続きから: '+META[i].title+(s?' / '+s:'');
+  const pi = markToPage(mark);
+  if(pi <= 0) return;                            // 先頭ならしおりは要らない
+  const p = PAGES[pi];
+  resumeT.textContent = '続きから: ' + META[p.ci].title + ' / ' + p.title;
   resume.classList.add('on');
   offered = true;
   resume.onclick = e=>{
     resume.classList.remove('on');
     if(e.target.classList.contains('x')) return;
-    open(i, mark.s||undefined);
+    open(pi);
   };
 }
 
@@ -28990,16 +29076,7 @@ function closeLb(){
 }
 view.addEventListener('click', e=>{
   const img = e.target.closest && e.target.closest('figure img');
-  if(img){ openLb(img); return; }
-  const h = e.target.closest && e.target.closest('.blk.ans > h2');
-  if(h) toggleAns(h.parentElement);
-});
-view.addEventListener('keydown', e=>{
-  if(e.key !== 'Enter' && e.key !== ' ') return;
-  const h = e.target.closest && e.target.closest('.blk.ans > h2');
-  if(!h) return;
-  e.preventDefault();
-  toggleAns(h.parentElement);
+  if(img) openLb(img);
 });
 lb.addEventListener('click', closeLb);            // 背景のどこかを叩けば閉じる
 lbImg.addEventListener('click', e=>{ e.stopPropagation(); lb.classList.toggle('zoom'); });
@@ -29089,13 +29166,14 @@ document.getElementById('smaller').onclick = ()=>setFS(nowFS()-1);
 document.getElementById('bigger').onclick = ()=>setFS(nowFS()+1);
 
 /* ---------- 起動 ---------- */
+buildPages();
+indexPages();
 loadLocal();
 const bookmark = last;          // 起動時のしおりを退避 (open が上書きするため)
 paintPct();
 // 開いたら前回の続きから。札を押させると 1 手増えて、開くのが遅く感じる
-const start = bookmark ? META.findIndex(c=>c.num===bookmark.c) : -1;
-if(start >= 0) open(start, bookmark.s||undefined, true);
-else open(0, undefined, true);
+const start = markToPage(bookmark);
+open(start >= 0 ? start : 0, undefined, true);
 paintTOC();
 connect();
 })();
