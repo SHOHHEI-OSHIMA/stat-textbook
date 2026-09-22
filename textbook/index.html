@@ -598,10 +598,14 @@ section.gap mjx-container[display]{margin:.9rem 0}
 <p><strong>3. 中央値から平均へ取り替える (絶対偏差最小性)。</strong> 1.4.2 項の性質の母集団版で、$m$ は $c \mapsto E|X - c|$ を最小にする。$c = \mu$ もその候補の 1 つだから</p>
 <p>$$E|X - m| \le E|X - \mu|.$$</p>
 <p><strong>ここが向きを間違えやすい。</strong> 最小にするのは中央値のほうだから、不等号は「中央値を使ったほう $\le$ 平均を使ったほう」である。</p>
-<p><strong>4. 絶対値を二乗に取り替える。</strong> ここも初等的に出る。任意の確率変数 $W$ について
-<strong>分散は 0 以上</strong>である (1.5 節。二乗の平均だから)。$W = |Z|$ に当てはめると</p>
+<p><strong>4. 絶対値を二乗に取り替える。</strong> ここも初等的に出るが、使う事実が<strong>2 つある</strong>ので順に出す。記号を先に決めておく: 以下 $Z = X - \mu$ (平均からのずれ) と書く。</p>
+<p><strong>4a. 分散の計算式。</strong> 任意の確率変数 $W$ について、分散の定義を展開すると</p>
+<p>$$\mathrm{Var}(W) = E\big[(W - E[W])^2\big] = E[W^2] - 2(E[W])^2 + (E[W])^2 = E[W^2] - \left(E[W]\right)^2$$</p>
+<p>真ん中の等号は、二乗を開いて $E[W\cdot E[W]] = (E[W])^2$ を使っただけである ($E[W]$ は定数なので外へ出せる)。<strong>「二乗の平均 − 平均の二乗」</strong>というこの形は以降くり返し使う。</p>
+<p><strong>4b. 分散は 0 以上。</strong> $\mathrm{Var}(W) = E[(W-E[W])^2]$ は<strong>二乗の平均</strong>なので、中身が常に 0 以上、したがって平均も 0 以上である。</p>
+<p><strong>4c. 2 つを合わせる。</strong> $W = |Z|$ に当てはめる。4a で形を書き、4b で 0 以上と言う:</p>
 <p>$$\mathrm{Var}(|Z|) = E[|Z|^2] - \left(E|Z|\right)^2 \ge 0$$</p>
-<p>$|Z|^2 = Z^2$ だから、移項して $\left(E|Z|\right)^2 \le E[Z^2]$。$Z = X - \mu$ と取り、両辺の平方根をとると</p>
+<p>$|Z|^2 = Z^2$ だから、移項して $\left(E|Z|\right)^2 \le E[Z^2]$。両辺の平方根をとると</p>
 <p>$$E|X - \mu| \le \sqrt{E[(X-\mu)^2]} = \sigma.$$</p>
 <p><strong>5. つなぐ。</strong> 1〜4 を並べて</p>
 <p>$$|\mu - m| \;\le\; E|X - m| \;\le\; E|X - \mu| \;\le\; \sigma.$$</p>
@@ -617,7 +621,7 @@ section.gap mjx-container[display]{margin:.9rem 0}
 </blockquote>
 <p><strong>なぜ $n-1$ で割るのか。</strong> $X_i$ が平均 $\mu$、分散 $\sigma^2$ の独立同分布な確率変数とすると</p>
 <p>$$E\left[\sum_i (X_i - \bar X)^2\right] = E\left[\sum_i (X_i - \mu)^2\right] - n\,E\left[(\bar X - \mu)^2\right] = n\sigma^2 - n\cdot\frac{\sigma^2}{n} = (n-1)\sigma^2$$</p>
-<p>つまり偏差平方和の期待値は $(n-1)\sigma^2$ であり、$n-1$ で割ると $E[s^2] = \sigma^2$ (不偏) になる。直感的には「$\bar X$ を使った時点で自由度を 1 消費している」。$n$ で割った $\tilde s^2$ は最尤推定量 (正規分布のとき) で、平均二乗誤差は $\tilde s^2$ の方が小さい。<strong>どちらが正しいかではなく、何を最適化するかの違い</strong>である。なお $s$ は $\sigma$ の不偏推定量ではない。<strong>分散が 0 以上</strong>という事実だけから出る。$\mathrm{Var}(s) = E[s^2] - (E[s])^2 \ge 0$ を移項すると $(E[s])^2 \le E[s^2] = \sigma^2$、平方根を取って $E[s] \le \sigma$ である。等号は $s$ がまったくばらつかないときだけなので、実際には $E[s] < \sigma$ になる。<strong>二乗の段階で不偏でも、平方根を取ると不偏性は失われる</strong>。</p>
+<p>つまり偏差平方和の期待値は $(n-1)\sigma^2$ であり、$n-1$ で割ると $E[s^2] = \sigma^2$ (不偏) になる。直感的には「$\bar X$ を使った時点で自由度を 1 消費している」。$n$ で割った $\tilde s^2$ は最尤推定量 (正規分布のとき) で、平均二乗誤差は $\tilde s^2$ の方が小さい。<strong>どちらが正しいかではなく、何を最適化するかの違い</strong>である。なお $s$ は $\sigma$ の不偏推定量ではない。使う事実は 2 つで、どちらも初等的である。<strong>(i) 分散の計算式</strong> $\mathrm{Var}(W) = E[W^2] - (E[W])^2$ — 定義 $E[(W-E[W])^2]$ を展開して、$E[W]$ が定数だから外へ出せることを使えば出る。<strong>(ii) 分散は 0 以上</strong> — 二乗の平均だからである。$W = s$ に当てはめて $\mathrm{Var}(s) = E[s^2] - (E[s])^2 \ge 0$ を移項すると $(E[s])^2 \le E[s^2] = \sigma^2$、平方根を取って $E[s] \le \sigma$ である。等号は $s$ がまったくばらつかないときだけなので、実際には $E[s] < \sigma$ になる。<strong>二乗の段階で不偏でも、平方根を取ると不偏性は失われる</strong>。</p>
 <details class="gap"><summary>行間: $(n-1)\sigma^2$ が出るまでを 1 行ずつ</summary><div class="gap-body"><p>本文では等号を 3 つ並べて 1 行で書いた。そこには<strong>恒等式の作り方</strong>と<strong>期待値の取り方</strong>という別々の話が畳み込まれている。順に開く。</p>
 <p>まず記号の役割を決める。ここだけは絶対に曖昧にしない。</p>
 <table>
