@@ -113,8 +113,42 @@ a{color:var(--accent)}
 .footnote{font-size:.85rem;color:var(--muted)}
 sup a{text-decoration:none;padding:0 .15em}
 mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
-mjx-container svg{max-width:100%}
 mjx-container[display]{margin:1.1rem 0}
+/* 幅の広い別行立ての式は**縮めずに横に流す**。
+   2026-09-22 実測: `svg{max-width:100%}` だと 6.2.2 の 18 式のうち 7 式が
+   画面幅に張り付き、実寸 87ex (約 740px) が 347px = 47% まで縮んでいた。
+   数式が半分の大きさになる本は読めないので、はみ出したぶんは指で送る。
+   行の中の式 (display 無し) は行の高さを壊すので従来どおり縮める。 */
+mjx-container:not([display="true"]) svg{max-width:100%}
+.mjx-wide{position:relative}
+.mjx-wide::after{content:"";position:absolute;top:0;right:0;width:26px;height:100%;
+  pointer-events:none;background:linear-gradient(to right,transparent,var(--bg))}
+.mjx-wide > mjx-container{scrollbar-width:thin}
+
+/* 行間補足 — 本文が 1 行で飛ばした変形を 1 行ずつ埋める折りたたみ。
+   解答 (.blk.ans) とは別物なので、本文の流れの中の傍注として見せる。 */
+details.gap{margin:1rem 0;border-left:3px solid var(--accent);
+  background:var(--sunken);border-radius:0 9px 9px 0}
+details.gap > summary{list-style:none;cursor:pointer;
+  padding:.62rem .8rem;min-height:44px;display:flex;align-items:center;gap:.4rem;
+  font-size:.86rem;font-weight:600;color:var(--accent);line-height:1.5}
+details.gap > summary::-webkit-details-marker{display:none}
+details.gap > summary::before{content:"▸";flex:none;font-size:.85em;transition:transform .15s}
+details.gap[open] > summary::before{transform:rotate(90deg)}
+details.gap > summary:hover{text-decoration:underline}
+.gap-body{padding:0 .8rem .3rem;font-size:.95em}
+.gap-body > :first-child{margin-top:0}
+.gap-body mjx-container[display]{margin:.9rem 0}
+
+/* 章の頭に出す「行間補足 N 件」。無い章には出さない */
+#gapbar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
+  margin:.2rem 0 1.1rem;padding:.5rem .7rem;border-radius:9px;
+  background:var(--sunken);font-size:.8rem;color:var(--muted)}
+#gapbar b{color:var(--ink);font-weight:600}
+#gapbar button{font:inherit;font-size:.78rem;padding:.3rem .65rem;border-radius:7px;
+  border:1px solid var(--line);background:var(--surface);color:var(--accent);
+  cursor:pointer;margin-left:auto}
+#gapbar button:hover{background:var(--accent-soft);border-color:var(--accent)}
 /* SVG の数式は currentColor で描かれるので、ダークでもそのまま読める */
 
 /* 動かせる図 */
@@ -9327,7 +9361,37 @@ $$\underbrace{\sum_{i}\sum_{j} (y_{ij} - \bar y_{\cdot\cdot})^2}_{SS_T} = \under
 </blockquote>
 <p>証明: 各偏差を $y_{ij} - \bar y_{\cdot\cdot} = (\bar y_{i\cdot} - \bar y_{\cdot\cdot}) + (y_{ij} - \bar y_{i\cdot})$ と 2 つに割って二乗し、和をとる。交差項は</p>
 <p>$$2\sum_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot}) \sum_j (y_{ij} - \bar y_{i\cdot}) = 0$$</p>
-<p>となる。内側の和が「群平均からの偏差の和」で、第 1 章の平均の性質 1 によりゼロだからである。幾何的には、$N$ 次元の観測ベクトルを「群平均ベクトルの張る $k$ 次元空間」に射影し、残りが直交補空間に落ちるというピタゴラスの定理に過ぎない。自由度はそれぞれの空間の次元 (総平均を引いた分だけ 1 減る) である。</p>
+<p>となる。内側の和が「群平均からの偏差の和」で、第 1 章の平均の性質 1 によりゼロだからである。</p>
+<details class="gap"><summary>行間: 二乗して足すところを 1 行ずつ</summary><div class="gap-body"><p>飛ばしたのは「二乗して和をとる」の中身である。$a = \bar y_{i\cdot} - \bar y_{\cdot\cdot}$、
+$b = y_{ij} - \bar y_{i\cdot}$ と置くと、分けた偏差は $y_{ij} - \bar y_{\cdot\cdot} = a + b$ である。</p>
+<p><strong>1. 二乗する。</strong> $(a+b)^2 = a^2 + 2ab + b^2$ なので</p>
+<p>$$(y_{ij} - \bar y_{\cdot\cdot})^2 = (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2 + 2(\bar y_{i\cdot} - \bar y_{\cdot\cdot})(y_{ij} - \bar y_{i\cdot}) + (y_{ij} - \bar y_{i\cdot})^2.$$</p>
+<p><strong>2. 全観測で足す。</strong> 和は $\sum_i \sum_j$ の二重和である。右辺の 3 項を別々に足す。</p>
+<p>$$\sum_i\sum_j (y_{ij} - \bar y_{\cdot\cdot})^2 = \underbrace{\sum_i\sum_j (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}_{(\text{I})} + \underbrace{2\sum_i\sum_j (\bar y_{i\cdot} - \bar y_{\cdot\cdot})(y_{ij} - \bar y_{i\cdot})}_{(\text{II})} + \underbrace{\sum_i\sum_j (y_{ij} - \bar y_{i\cdot})^2}_{(\text{III})}.$$</p>
+<p><strong>3. (I) の $j$ についての和を先に取る。</strong> 中身に $j$ が入っていないので、同じ値を $n_i$ 回
+足しているだけである。</p>
+<p>$$\sum_j (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2 = n_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2
+\quad\Longrightarrow\quad (\text{I}) = \sum_i n_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2 = SS_B.$$</p>
+<p><strong>ここが $SS_B$ に $n_i$ が付く理由である。</strong> 群の平均が全体平均からどれだけ離れていても、
+その群の観測が 1 個しかなければ全体への効き方は小さい。重みは観測数として自動的に出てくる。</p>
+<p><strong>4. (II) も $j$ の和を先に取る。</strong> $(\bar y_{i\cdot} - \bar y_{\cdot\cdot})$ は $j$ を含まないので、
+定数として和の外に出せる。</p>
+<p>$$(\text{II}) = 2\sum_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot}) \sum_j (y_{ij} - \bar y_{i\cdot}).$$</p>
+<p><strong>外に出せることが要点</strong>で、これで内側の和だけを見ればよくなる。本文が「交差項は」と書いて
+いきなり出している式は、この段階のものである。</p>
+<p><strong>5. 内側の和がゼロ。</strong> $\sum_j (y_{ij} - \bar y_{i\cdot}) = \sum_j y_{ij} - n_i \bar y_{i\cdot}$ で、
+$\bar y_{i\cdot}$ の定義が $\frac{1}{n_i}\sum_j y_{ij}$ だから $n_i \bar y_{i\cdot} = \sum_j y_{ij}$。
+差し引きゼロである。よって (II) $= 0$。</p>
+<p>$\bar y_{\cdot\cdot}$ ではなく<strong>その群の平均</strong> $\bar y_{i\cdot}$ を引いているから消える、という点に注意。
+全体平均を引いた $\sum_j (y_{ij} - \bar y_{\cdot\cdot})$ は一般にゼロではない。</p>
+<p><strong>6. (III) はそのまま。</strong> $\sum_i\sum_j (y_{ij} - \bar y_{i\cdot})^2 = SS_W$。以上で
+$SS_T = SS_B + SS_W$ が出る。</p>
+<p><strong>自由度の $N-1 = (k-1) + (N-k)$ について。</strong> $SS_T$ の $N$ 個の偏差には
+$\sum_i\sum_j (y_{ij} - \bar y_{\cdot\cdot}) = 0$ という制約が 1 つあるので $N-1$。
+$SS_B$ の $k$ 個の偏差にも $\sum_i n_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot}) = 0$ が 1 つあるので $k-1$。
+$SS_W$ は群ごとに制約が 1 つずつ ($k$ 個) あるので $N-k$。<strong>制約の個数だけ自由度が減る</strong>という、
+1.5.1 の $n-1$ と同じ数え方である。</p></div></details>
+<p>幾何的には、$N$ 次元の観測ベクトルを「群平均ベクトルの張る $k$ 次元空間」に射影し、残りが直交補空間に落ちるというピタゴラスの定理に過ぎない。自由度はそれぞれの空間の次元 (総平均を引いた分だけ 1 減る) である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.1 平方和の分解。左: 3 水準の水セメント比の圧縮強度。緑線が群内偏差、赤矢印が群間偏差。右: 総平方和が群間と群内にきれいに分かれる" src="fig/06_ss_decomposition.png" /><figcaption>図 6.1 平方和の分解。左: 3 水準の水セメント比の圧縮強度。緑線が群内偏差、赤矢印が群間偏差。右: 総平方和が群間と群内にきれいに分かれる</figcaption></figure>
 <h3 id="c06-6-2-3">6.2.3 期待平方和と F 統計量</h3>
 <p>平方和を自由度で割ったものを平均平方 (mean square) という: $MS_B = SS_B/(k-1)$、$MS_W = SS_W/(N-k)$。</p>
@@ -25621,6 +25685,7 @@ function open(i, anchor, silent){
   typeset();
   watchSections();
   paintTOC();
+  paintGaps();
   if(anchor) jump(anchor); else window.scrollTo(0,0);
   figScan();                     // 位置が決まってから (jump の前だと測れない)
   if(!silent){ last = {c:META[i].num, s:anchor||null}; save(); }
@@ -25837,6 +25902,59 @@ function highlight(){
 // 図の出ない本は本として成立しないので、数式と同じく自分で位置を測り、
 // 画面に近い図は lazy を外して読ませる。効いている端末では、そこはもう
 // 読み込み済みなので二度手間にはならない。遠い図は lazy のまま置いておく。
+/* ---------- 行間補足 ---------- */
+// 開いたままにするかは**章ごとではなく読み方の設定**にする。初読は開いたまま、
+// 復習は畳んだまま、という切り替えが要るだけで、1 つずつ覚える必要は無い
+// (節が増減しても壊れない、という利点もある)。
+let gapOpen = false;
+try{ gapOpen = localStorage.getItem('gapOpen') === '1'; }catch(e){}
+
+function paintGaps(){
+  const gaps = [...view.querySelectorAll('details.gap')];
+  const old = document.getElementById('gapbar');
+  if(old) old.remove();
+  if(!gaps.length) return;
+  gaps.forEach(g=>{
+    g.open = gapOpen;
+    // 畳んでいる間は幅が測れない (clientWidth が 0)。開いた時点で測り直す
+    g.addEventListener('toggle', ()=>{ if(g.open){ markWide(); figScan(); } });
+  });
+
+  const bar = document.createElement('div');
+  bar.id = 'gapbar';
+  const btn = document.createElement('button');
+  const label = ()=>{ btn.textContent = gapOpen ? 'すべて畳む' : 'すべて開く'; };
+  bar.innerHTML = '本文が飛ばした変形を 1 行ずつ埋めた<b>行間補足</b>が ' +
+                  '<b>' + gaps.length + '</b> 件あります';
+  btn.onclick = ()=>{
+    gapOpen = !gapOpen;
+    try{ localStorage.setItem('gapOpen', gapOpen ? '1' : '0'); }catch(e){}
+    view.querySelectorAll('details.gap').forEach(g=>{ g.open = gapOpen; });
+    label();
+    markWide(); figScan();     // 開いて初めて幅も図も測れる
+  };
+  label();
+  bar.appendChild(btn);
+  const h1 = view.querySelector('h1');
+  if(h1 && h1.nextSibling) h1.parentNode.insertBefore(bar, h1.nextSibling);
+  else view.insertBefore(bar, view.firstChild);
+}
+
+// 画面より広い別行立ての式に、横に送れることの合図 (右端のぼかし) を付ける。
+// 組版が終わってからでないと幅が出ないので、組版の各回の後から呼ぶ。
+function markWide(){
+  view.querySelectorAll('mjx-container[display="true"]').forEach(m=>{
+    const wide = m.scrollWidth > m.clientWidth + 2;
+    const wrapped = m.parentElement && m.parentElement.classList.contains('mjx-wide');
+    if(wide && !wrapped){
+      const w = document.createElement('div'); w.className = 'mjx-wide';
+      m.parentNode.insertBefore(w, m); w.appendChild(m);
+    }else if(!wide && wrapped){
+      const w = m.parentElement; w.parentNode.insertBefore(m, w); w.remove();
+    }
+  });
+}
+
 function figScan(){
   const m = innerHeight * 1.5;
   view.querySelectorAll('img[loading="lazy"]').forEach(img=>{
@@ -25875,6 +25993,7 @@ async function drain(token){
       }
       const batch = near.length ? near : mjQueue.splice(0, 4);
       try{ await MathJax.typesetPromise(batch); }catch(e){}
+      markWide();                               // 幅が出るのは組版のあと
       await new Promise(r=>setTimeout(r, 0));   // ひとまとまりごとに画面へ制御を返す
     }
   }catch(e){}
@@ -26087,7 +26206,12 @@ function setFS(px){
   px = Math.max(14, Math.min(22, px));
   document.documentElement.style.setProperty('--fs', px+'px');
   try{ localStorage.setItem('fs', px+'px'); }catch(e){}
+  markWide();                   // 本文の幅が変われば、はみ出す式も変わる
 }
+// 端末を回しても同じ (幅が変わる)
+addEventListener('resize', ()=>{ clearTimeout(wideTimer); wideTimer = setTimeout(markWide, 200); },
+                 {passive:true});
+let wideTimer = null;
 const nowFS = ()=> parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||17;
 document.getElementById('smaller').onclick = ()=>setFS(nowFS()-1);
 document.getElementById('bigger').onclick = ()=>setFS(nowFS()+1);
