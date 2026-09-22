@@ -180,6 +180,13 @@ section.gap mjx-container[display]{margin:.9rem 0}
 #where ol .cur button{background:var(--accent-soft);color:var(--accent);font-weight:600}
 #where .x{position:sticky;top:0;float:right;font-size:1.1rem;color:var(--muted);
   background:var(--bg);border:0;cursor:pointer;padding:.1rem .4rem}
+/* 本 → 章 → 節 の 4 段。段の頭に細い帯を置いて、階層が目で追えるようにする */
+#where .tier{margin:1.4rem 0 .5rem;font-size:.7rem;letter-spacing:.24em;
+  color:var(--accent);font-weight:600;display:flex;align-items:center;gap:.6rem}
+#where .tier::after{content:"";flex:1;height:1px;background:var(--line)}
+#where .tier:first-of-type{margin-top:.2rem}
+#where ol.sub button{padding-left:1rem;font-size:.8rem}
+#where .aim b{color:var(--accent);font-variant-numeric:tabular-nums}
 
 /* 答えの番号帯 — 解答は 1 問 1 頁なので、番号で行き来できるようにする */
 .ansnav{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 1.15rem}
@@ -32452,6 +32459,18 @@ function open(pi, anchor, silent){
 /* ---------- 現在地 ---------- */
 // 走る見出しを叩くと出る。「この章は何のためにあり、何を前提にし、
 // どの章の前提になっているか」を 1 枚に出す。
+// 前提を辿って「ここまでに要る章」「ここが開く章」を集める (推移的に)
+function reach(num, key){
+  const seen = new Set(), q = [num];
+  while(q.length){
+    const n = q.shift();
+    (ROLE[n] ? ROLE[n][key] : []).forEach(m=>{
+      if(!seen.has(m)){ seen.add(m); q.push(m); }
+    });
+  }
+  return [...seen].sort();
+}
+
 function openWhere(){
   if(curPage < 0) return;
   const p = PAGES[curPage], c = META[p.ci], r = ROLE[p.ch] || {needs:[], feeds:[]};
@@ -32463,36 +32482,63 @@ function openWhere(){
       }).join('')
     : '<span class="none">なし</span>';
 
+  // --- 章の流れ (解答は 1 行にまとめる)
   let shownAns = false;
   const list = chapterPages(p.ci).map(x=>{
-    if(x.kind === 'ans'){                 // 解答は 1 問 1 頁。流れの中では 1 行にまとめる
+    if(x.kind === 'ans'){
       if(shownAns) return '';
       shownAns = true;
-      return '<li class="' + (x.ci === p.ci && p.kind === 'ans' ? 'cur' : '') + '">'
+      return '<li class="' + (p.kind === 'ans' ? 'cur' : '') + '">'
         + '<button data-pg="' + x.i + '">答え 1〜' + x.of + '</button></li>';
     }
     return '<li class="' + (x === p ? 'cur' : '') + '">'
       + '<button data-pg="' + x.i + '">' + esc(x.title) + '</button></li>';
   }).join('');
 
+  // --- 節の中の項 (h3)。いま読んでいる頁の中の小見出し
+  const subs = [...view.querySelectorAll('.blk h3[id]')];
+  const subList = subs.map(h=>'<li><button data-id="' + esc(h.id) + '">'
+    + esc(h.textContent.trim()) + '</button></li>').join('');
+
+  const prev = curPage > 0 ? PAGES[curPage - 1] : null;
+  const next = curPage < PAGES.length - 1 ? PAGES[curPage + 1] : null;
+  const arrow = (pg, mark) => pg
+    ? '<button data-pg="' + pg.i + '">' + mark + ' ' + esc(pg.title) + '</button>'
+    : '<span class="none">' + mark + ' なし</span>';
+
   const d = document.createElement('div');
   d.id = 'where';
   d.innerHTML = '<div class="sheet"><button class="x" aria-label="閉じる">✕</button>'
+
+    + '<p class="tier">本</p>'
+    + '<p class="aim">統計学 自分用教科書 — <b>' + (curPage + 1) + ' / ' + PAGES.length + ' 頁</b></p>'
+    + '<p class="lab">ここまでに要る章</p><div class="chips">' + chip(reach(p.ch, 'needs')) + '</div>'
+    + '<p class="lab">ここが開く章</p><div class="chips">' + chip(reach(p.ch, 'feeds')) + '</div>'
+
+    + '<p class="tier">章</p>'
     + '<h3><span class="num">' + esc(c.label || c.num) + '</span>' + esc(c.title) + '</h3>'
     + (r.aim ? '<p class="aim">' + esc(r.aim) + '</p>' : '')
-    + '<p class="lab">この章が前提にしていること</p><div class="chips">' + chip(r.needs) + '</div>'
-    + '<p class="lab">この章が前提になる章</p><div class="chips">' + chip(r.feeds) + '</div>'
-    + '<p class="lab">この章の流れ</p><ol>' + list + '</ol></div>';
+    + '<p class="lab">すぐ前に要る章</p><div class="chips">' + chip(r.needs) + '</div>'
+    + '<p class="lab">この章の流れ</p><ol>' + list + '</ol>'
+
+    + '<p class="tier">節</p>'
+    + '<h3>' + esc(p.title) + '</h3>'
+    + (subList ? '<p class="lab">この節の中身</p><ol class="sub">' + subList + '</ol>' : '')
+    + '<p class="lab">前後</p><div class="chips">' + arrow(prev, '←') + arrow(next, '→') + '</div>'
+
+    + '</div>';
 
   d.addEventListener('click', e=>{
     const b = e.target.closest('button');
     if(!b || b.classList.contains('x')){ d.remove(); document.body.style.overflow = ''; return; }
+    const done = ()=>{ d.remove(); document.body.style.overflow = ''; };
     if(b.dataset.ch !== undefined){
       const first = PAGES.find(x=>x.ci === +b.dataset.ch);
-      if(first){ d.remove(); document.body.style.overflow = ''; open(first.i); window.scrollTo(0,0); }
+      if(first){ done(); open(first.i); window.scrollTo(0,0); }
     }else if(b.dataset.pg !== undefined){
-      d.remove(); document.body.style.overflow = '';
-      open(+b.dataset.pg); window.scrollTo(0,0);
+      done(); open(+b.dataset.pg); window.scrollTo(0,0);
+    }else if(b.dataset.id){
+      done(); jump(b.dataset.id);
     }
   });
   document.body.appendChild(d);
