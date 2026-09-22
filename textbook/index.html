@@ -467,8 +467,16 @@ section.gap mjx-container[display]{margin:.9rem 0}
 <td>母平均、母分散</td>
 </tr>
 <tr>
-<td>$E[X]$, $V[X]$</td>
-<td>期待値、分散</td>
+<td>$E[X]$</td>
+<td>期待値 (平均)</td>
+</tr>
+<tr>
+<td>$\mathrm{Var}(X)$</td>
+<td>分散。本書では全章でこの書き方に統一する (他書では $V[X]$ や $\sigma^2_X$ とも書かれる)</td>
+</tr>
+<tr>
+<td>$\mathrm{Cov}(X,Y)$</td>
+<td>共分散</td>
 </tr>
 <tr>
 <td>$\hat{\theta}$</td>
@@ -480,7 +488,11 @@ section.gap mjx-container[display]{margin:.9rem 0}
 </tr>
 <tr>
 <td>$\mathbb{1}\{A\}$</td>
-<td>事象 $A$ の指示関数</td>
+<td>事象 $A$ の指示関数 ($A$ が成り立てば 1、成り立たなければ 0)</td>
+</tr>
+<tr>
+<td>$O(a_n)$, $o(a_n)$</td>
+<td>ランダウ記法。$O$ は「$a_n$ の定数倍で抑えられる」、$o$ は「$a_n$ より速く小さくなる」。例: 誤差が $O(n^{-1/2})$ なら $n$ を 4 倍で誤差が半分、$o(1)$ なら 0 に収束する</td>
 </tr>
 </tbody>
 </table></script>
@@ -544,7 +556,7 @@ section.gap mjx-container[display]{margin:.9rem 0}
 <ul>
 <li><strong>幹葉図</strong> (stem-and-leaf): 数値そのものを保ったヒストグラム。Tukey (1977) が広めた</li>
 <li><strong>箱ひげ図</strong> (box plot): 1.5 節</li>
-<li><strong>経験分布関数</strong> $F_n(x) = \frac{1}{n}\sum_i \mathbb{1}\{x_i \le x\}$: 階級に依存しない累積図。推測統計では母分布関数 $F$ の推定量になる (Glivenko–Cantelli の定理により $\sup_x |F_n(x) - F(x)| \to 0$)</li>
+<li><strong>経験分布関数</strong> $F_n(x) = \frac{1}{n}\sum_i \mathbb{1}\{x_i \le x\}$ (ここで $\mathbb{1}\{\cdot\}$ は<strong>指示関数</strong>で、中身が成り立てば 1、成り立たなければ 0 を返す。つまりこの和は「$x$ 以下の観測が何個あるか」を数えている): 階級に依存しない累積図。推測統計では母分布関数 $F$ の推定量になる (Glivenko–Cantelli の定理により $\sup_x |F_n(x) - F(x)| \to 0$)</li>
 </ul>
 <h2 id="c01-1-4">1.4 位置の要約統計量</h2>
 <h3 id="c01-1-4-1">1.4.1 算術平均</h3>
@@ -585,7 +597,7 @@ section.gap mjx-container[display]{margin:.9rem 0}
 <figure><img loading="lazy" decoding="async" alt="図 1.3 左: 右に裾を引く分布での 3 つの代表値の位置。右: 代表値の候補 c を動かしたときの損失。二乗偏差は平均で、絶対偏差は中央値で最小になる" src="fig/01_mean_median.png" /><figcaption>図 1.3 左: 右に裾を引く分布での 3 つの代表値の位置。右: 代表値の候補 c を動かしたときの損失。二乗偏差は平均で、絶対偏差は中央値で最小になる</figcaption></figure>
 <p>分布が右に裾を引く (右歪) とき、典型的には 最頻値 &lt; 中央値 &lt; 平均 となる (所得分布が代表例)。これは経験則であって定理ではない。ただし一般に $|\text{平均} - \text{中央値}| \le \sigma$ が成り立つ (証明は下の行間補足。期待値の単調性と、中央値が絶対偏差を最小にすることだけで出る)。</p>
 <details class="gap"><summary>行間: 平均と中央値の差が $\sigma$ を超えない理由</summary><div class="gap-body"><p>直前の 1 行は、使う道具の名前を 2 つ挙げただけで終わっている。どちらをどの順に、どこへ当てるのかを埋める。</p>
-<p>記号を固定する。$X$ は平均 $\mu = E[X]$、標準偏差 $\sigma$ を持つ確率変数。$m$ は $X$ の中央値で、$X$ の分布から決まる<strong>固定値</strong> (確率変数ではない)。示したいのは $|\mu - m| \le \sigma$ である。不等号を 3 つつないで左から右へ渡していく。</p>
+<p>記号を固定する。$X$ は平均 $\mu = E[X]$、標準偏差 $\sigma$ を持つ確率変数 ($E[\cdot]$ は<strong>期待値</strong>、つまり「その量を無限回観測したときの平均」を表す記号で、第 2 章で正式に定義する)。$m$ は $X$ の中央値で、$X$ の分布から決まる<strong>固定値</strong> (確率変数ではない)。示したいのは $|\mu - m| \le \sigma$ である。不等号を 3 つつないで左から右へ渡していく。</p>
 <p><strong>1. 差を期待値の中へ入れる。</strong> $m$ は定数だから $E[X - m] = \mu - m$。よって</p>
 <p>$$|\mu - m| = |E[X - m]|.$$</p>
 <p><strong>2. 絶対値を期待値の中へ入れる。</strong> 使うのは<strong>期待値の単調性</strong>だけである。どんな確率変数 $Y$ でも、
@@ -599,9 +611,11 @@ section.gap mjx-container[display]{margin:.9rem 0}
 <p>$$E|X - m| \le E|X - \mu|.$$</p>
 <p><strong>ここが向きを間違えやすい。</strong> 最小にするのは中央値のほうだから、不等号は「中央値を使ったほう $\le$ 平均を使ったほう」である。</p>
 <p><strong>4. 絶対値を二乗に取り替える。</strong> ここも初等的に出るが、使う事実が<strong>2 つある</strong>ので順に出す。記号を先に決めておく: 以下 $Z = X - \mu$ (平均からのずれ) と書く。</p>
-<p><strong>4a. 分散の計算式。</strong> 任意の確率変数 $W$ について、分散の定義を展開すると</p>
+<p><strong>4a. 分散の計算式。</strong> まず<strong>分散</strong> $\mathrm{Var}(W)$ という記号を使う。意味は「<strong>平均からのずれの二乗の平均</strong>」で、$\mathrm{Var}(W) = E[(W-E[W])^2]$ と定義される (標本での対応物は 1.5 節で定義 1.3 として改めて扱う)。</p>
+<p>この定義を展開すると、別の形が出る。任意の確率変数 $W$ について</p>
 <p>$$\mathrm{Var}(W) = E\big[(W - E[W])^2\big] = E[W^2] - 2(E[W])^2 + (E[W])^2 = E[W^2] - \left(E[W]\right)^2$$</p>
 <p>真ん中の等号は、二乗を開いて $E[W\cdot E[W]] = (E[W])^2$ を使っただけである ($E[W]$ は定数なので外へ出せる)。<strong>「二乗の平均 − 平均の二乗」</strong>というこの形は以降くり返し使う。</p>
+<p><strong>数値で 1 回確かめておく。</strong> $W$ が 1 と 3 を半々で取るとする。$E[W] = 2$、$E[W^2] = (1+9)/2 = 5$ なので、計算式では $5 - 4 = 1$。定義から直接なら $E[(W-2)^2] = (1+1)/2 = 1$ で一致する。</p>
 <p><strong>4b. 分散は 0 以上。</strong> $\mathrm{Var}(W) = E[(W-E[W])^2]$ は<strong>二乗の平均</strong>なので、中身が常に 0 以上、したがって平均も 0 以上である。</p>
 <p><strong>4c. 2 つを合わせる。</strong> $W = |Z|$ に当てはめる。4a で形を書き、4b で 0 以上と言う:</p>
 <p>$$\mathrm{Var}(|Z|) = E[|Z|^2] - \left(E|Z|\right)^2 \ge 0$$</p>
@@ -999,6 +1013,7 @@ print(&quot;naive:&quot;, (np.sum(big**2) - len(big) * big.mean()**2) / (len(big
 <p>右図は理論の確認である。$n=200$ のデータの 1 点だけを動かし、$n \times (\text{推定値の変化})$ を描くと、左図の影響関数と同じ形が現れる。<strong>影響関数は絵に描いた理屈ではなく、実際に測れる量</strong>だと分かる。</p>
 <h3 id="c01-1-13-3">1.13.3 漸近分散と相対効率 — 頑健性の代償</h3>
 <p>影響関数が分かると、推定量の精度も分かる。</p>
+<p>記号をひとつ先取りする。$\xrightarrow{d}$ は<strong>分布収束</strong>で、「左辺の分布が右辺の分布に近づく」という意味である (2.10 節で正式に定義する。$\xrightarrow{p}$ は確率収束で、値そのものが近づくことを言う)。</p>
 <blockquote>
 <p><strong>定理 1.3</strong> 適当な条件の下で $\sqrt{n}(\hat\mu - \mu) \xrightarrow{d} N(0, V)$、ただし $\displaystyle V = \frac{\int \psi^2 dF}{\left(\int \psi' dF\right)^2} = \int IF(x)^2 dF(x)$</p>
 </blockquote>
@@ -1103,7 +1118,7 @@ print(&quot;Huber  MSE =&quot;, np.mean(np.array([huber_loc(d) for d in D])**2))
 <figure><img loading="lazy" decoding="async" alt="図 1.11 同じ 200 点に対し帯域幅だけを変えた。灰色が真の密度 (2 山)" src="fig/01d_kde_bandwidth.png" /><figcaption>図 1.11 同じ 200 点に対し帯域幅だけを変えた。灰色が真の密度 (2 山)</figcaption></figure>
 <p>$h$ が小さいとデータ 1 点ごとの凹凸を拾い (分散が大きい)、大きいと 2 つの山が溶けて 1 つになる (バイアスが大きい)。<strong>階級幅の選択と同じ綱引き</strong>が、より扱いやすい形で現れている。</p>
 <h3 id="c01-1-14-2">1.14.2 バイアスと分散の分解、そして $n^{-1/5}$</h3>
-<p>$K$ が対称で $\int u^2 K(u) du = \mu_2 < \infty$、$f$ が 2 回連続微分可能なとき、テイラー展開から</p>
+<p>$K$ が対称で $\int u^2 K(u) du = \mu_2 < \infty$、$f$ が 2 回連続微分可能なとき、テイラー展開から次が出る。記号 $o(\cdot)$ は<strong>ランダウ記法</strong>で、$o(h^2)$ は「$h \to 0$ のとき $h^2$ より速く 0 へ行く項」、つまり<strong>書いた主要項に比べて無視できる残り</strong>を意味する。</p>
 <p>$$\mathrm{Bias}[\hat f_h(x)] = \tfrac12 h^2 \mu_2 f''(x) + o(h^2), \qquad \mathrm{Var}[\hat f_h(x)] = \frac{f(x)R(K)}{nh} + o\!\left(\frac{1}{nh}\right)$$</p>
 <p>ただし $R(K) = \int K^2$。両者を足して積分した平均積分二乗誤差 (MISE) の主要項は</p>
 <p>$$\mathrm{AMISE}(h) = \frac{R(K)}{nh} + \frac{h^4 \mu_2^2 R(f'')}{4}$$</p>
@@ -4837,8 +4852,8 @@ print(&quot;溶接 0.995^200 =&quot;, 0.995**200, &quot; 帽子 n=200 =&quot;,
 </blockquote>
 <p>統計量は確率変数であり、標本を取り直せば値が変わる。「標本平均 $\bar X$ がどう散らばるか」を確率分布として捉えるのが推測統計の出発点である。パラメータ $\theta$ を当てるために使う統計量を<strong>推定量</strong> (estimator)、実現値を<strong>推定値</strong> (estimate) と呼び分ける。</p>
 <h3 id="c03-3-2-2">3.2.2 標本平均の標本分布</h3>
-<p>$E[X_i] = \mu$、$V[X_i] = \sigma^2$ とすると、独立性から</p>
-<p>$$E[\bar X] = \mu, \qquad V[\bar X] = \frac{1}{n^2}\sum_{i=1}^n V[X_i] = \frac{\sigma^2}{n}$$</p>
+<p>$E[X_i] = \mu$、$\mathrm{Var}(X_i) = \sigma^2$ とすると、独立性から</p>
+<p>$$E[\bar X] = \mu, \qquad \mathrm{Var}(\bar X) = \frac{1}{n^2}\sum_{i=1}^n \mathrm{Var}(X_i) = \frac{\sigma^2}{n}$$</p>
 <p>標本平均の標準偏差 $\sigma/\sqrt n$ を<strong>標準誤差</strong> (standard error) という。中心極限定理 (第 2 章) により、母集団の形によらず $\sqrt n(\bar X - \mu)/\sigma \xrightarrow{d} N(0,1)$。</p>
 <figure><img loading="lazy" decoding="async" alt="図 3.1 母集団が指数分布 (右に歪む) でも、標本平均の分布は n が増えると正規分布 N(μ, σ²/n) に近づく。標準偏差は σ/√n で縮む" src="fig/03_sampling_dist.png" /><figcaption>図 3.1 母集団が指数分布 (右に歪む) でも、標本平均の分布は n が増えると正規分布 N(μ, σ²/n) に近づく。標準偏差は σ/√n で縮む</figcaption></figure>
 <p>図 3.1 は 2 つのことを同時に見せている。(i) 散らばりが $1/\sqrt n$ で縮む (精度を 10 倍にするには標本を 100 倍にする必要がある)、(ii) 形が正規に近づく。$n = 5$ ではまだ右に歪んでいるが、$n = 30$ で正規近似がかなり良い。この「$n \ge 30$」という経験則は母集団の歪みに依存し、裾の重い分布ではもっと必要になる。</p>
@@ -4890,7 +4905,7 @@ $W_1$ は $\bar X$ の、残りは $S^2$ の、それぞれ関数になってい
 $\sum_i (X_i - \mu)^2/\sigma^2$ ならこれは $\chi^2_n$ であって、$S^2$ とは別物である。
 「$n$ 個足したから自由度 $n$」ではなく、<strong>$\bar X$ を通して 1 本の拘束が入った分だけ減る</strong>、
 と読むこと。</p></div></details>
-<p>「自由度 $n-1$」は、$n$ 個の偏差 $X_i - \bar X$ が拘束 $\sum (X_i - \bar X) = 0$ を 1 本受けて $n-1$ 次元の空間に住んでいる、という幾何の反映である。$\chi^2_k$ の平均は $k$、分散は $2k$ なので、$E[S^2] = \sigma^2$、$V[S^2] = 2\sigma^4/(n-1)$ が直ちに出る。$t_{n-1}$ は $N(0,1)$ より裾が重く、$n \to \infty$ で $N(0,1)$ に収束する。$n = 5$ での 97.5% 点は 2.776 (正規なら 1.960) で、小標本では $\sigma$ を $S$ で置き換えた代償が 4 割増しの幅として現れる。</p>
+<p>「自由度 $n-1$」は、$n$ 個の偏差 $X_i - \bar X$ が拘束 $\sum (X_i - \bar X) = 0$ を 1 本受けて $n-1$ 次元の空間に住んでいる、という幾何の反映である。$\chi^2_k$ の平均は $k$、分散は $2k$ なので、$E[S^2] = \sigma^2$、$\mathrm{Var}(S^2) = 2\sigma^4/(n-1)$ が直ちに出る。$t_{n-1}$ は $N(0,1)$ より裾が重く、$n \to \infty$ で $N(0,1)$ に収束する。$n = 5$ での 97.5% 点は 2.776 (正規なら 1.960) で、小標本では $\sigma$ を $S$ で置き換えた代償が 4 割増しの幅として現れる。</p>
 <h2 id="c03-3-3">3.3 点推定の評価</h2>
 <h3 id="c03-3-3-1">3.3.1 不偏性・一致性・有効性</h3>
 <blockquote>
@@ -4900,8 +4915,8 @@ $\sum_i (X_i - \mu)^2/\sigma^2$ ならこれは $\chi^2_n$ であって、$S^2$ 
 - <strong>有効</strong> (efficient): 同じ条件を満たす推定量の中で分散が最小</p>
 </blockquote>
 <p>$\bar X$ は $\mu$ の不偏推定量であり、大数の法則により一致推定量でもある。$S^2$ は $\sigma^2$ の不偏推定量 (第 1 章)。一方 $S$ は $\sigma$ の不偏推定量ではない ($E[S] < \sigma$、Jensen の不等式)。不偏性は変換で壊れる、と覚えておく。</p>
-<p>一致性の十分条件: $E[\hat\theta] \to \theta$ かつ $V[\hat\theta] \to 0$ ならば一致 (チェビシェフの不等式から)。</p>
-<details class="gap"><summary>行間: 不偏と一致は何が違うのか</summary><div class="gap-body"><p>本文では「$E[\hat\theta] \to \theta$ かつ $V[\hat\theta] \to 0$ ならば一致 (チェビシェフの不等式から)」と
+<p>一致性の十分条件: $E[\hat\theta] \to \theta$ かつ $\mathrm{Var}(\hat\theta) \to 0$ ならば一致 (チェビシェフの不等式から)。</p>
+<details class="gap"><summary>行間: 不偏と一致は何が違うのか</summary><div class="gap-body"><p>本文では「$E[\hat\theta] \to \theta$ かつ $\mathrm{Var}(\hat\theta) \to 0$ ならば一致 (チェビシェフの不等式から)」と
 1 行で書いた。その中身と、そもそも 2 つの性質が何を言っているのかを分ける。</p>
 <p><strong>記号の役割。</strong> $\hat\theta_n$ は $n$ 個の標本から作った推定量で、$n$ ごとに別の確率変数である。
 $\theta$ は固定された未知の<strong>定数</strong>。$b_n = E[\hat\theta_n] - \theta$ はバイアスで、これも
@@ -4910,7 +4925,7 @@ $\theta$ は固定された未知の<strong>定数</strong>。$b_n = E[\hat\thet
 乗っているか」。一致は「$n$ を増やすとき、分布そのものが $\theta$ の一点に<strong>潰れる</strong>か」。
 前者は $n$ を固定した性質、後者は $n \to \infty$ の性質であって、互いに含意しない。</p>
 <p><strong>2. チェビシェフの不等式。</strong> 任意の確率変数 $Y$ と $\varepsilon > 0$ に対し
-$P(|Y - E Y| \ge \varepsilon) \le V[Y]/\varepsilon^2$。$Y = \hat\theta_n$ として使いたいが、
+$P(|Y - E Y| \ge \varepsilon) \le \mathrm{Var}(Y)/\varepsilon^2$。$Y = \hat\theta_n$ として使いたいが、
 中心が $\theta$ ではなく $E[\hat\theta_n]$ であることに注意する。</p>
 <p><strong>3. ずれを 2 つに割る。</strong> 三角不等式より</p>
 <p>$$|\hat\theta_n - \theta| \le |\hat\theta_n - E[\hat\theta_n]| + |b_n|.$$</p>
@@ -4922,8 +4937,8 @@ $P(|Y - E Y| \ge \varepsilon) \le V[Y]/\varepsilon^2$。$Y = \hat\theta_n$ と�
 $|D_n| \ge \varepsilon/2$ でなければならない。事象の包含関係はそのまま確率の大小になるので</p>
 <p>$$P(|\hat\theta_n - \theta| \ge \varepsilon) \ \le\ P(|D_n| \ge \varepsilon/2).$$</p>
 <p><strong>6. 右辺にチェビシェフを当てる。</strong> 2. で $\varepsilon$ を $\varepsilon/2$ とすればよい。</p>
-<p>$$P(|D_n| \ge \varepsilon/2) \ \le\ \frac{4\,V[\hat\theta_n]}{\varepsilon^2}.$$</p>
-<p>分母が $(\varepsilon/2)^2$ なので 4 倍が出る。仮定より $V[\hat\theta_n]\to0$ だから右辺は 0 へ行き、
+<p>$$P(|D_n| \ge \varepsilon/2) \ \le\ \frac{4\,\mathrm{Var}(\hat\theta_n)}{\varepsilon^2}.$$</p>
+<p>分母が $(\varepsilon/2)^2$ なので 4 倍が出る。仮定より $\mathrm{Var}(\hat\theta_n)\to0$ だから右辺は 0 へ行き、
 これが $\hat\theta_n \xrightarrow{p} \theta$ の定義そのものである。</p>
 <p><strong>7. 片方だけでは足りない例を両向きに。</strong></p>
 <ul>
@@ -4933,12 +4948,12 @@ $|D_n| \ge \varepsilon/2$ でなければならない。事象の包含関係は
   $E[\hat\sigma^2] = \frac{n-1}{n}\sigma^2 \ne \sigma^2$ で不偏でないが、バイアス $-\sigma^2/n \to 0$、
   分散も $\to 0$ なので一致</li>
 </ul>
-<p><strong>落とし穴。</strong> 「$V[\hat\theta_n] \to 0$ なら一致」ではない。$\hat\theta_n \equiv 0$ (常に 0 を返す)
+<p><strong>落とし穴。</strong> 「$\mathrm{Var}(\hat\theta_n) \to 0$ なら一致」ではない。$\hat\theta_n \equiv 0$ (常に 0 を返す)
 は分散がちょうど 0 だが、$\theta \ne 0$ なら $\theta$ に収束しない。4. の「バイアスが消える」が
 同時に要る。逆に「不偏なら一致」でもないのは上の $X_1$ のとおりで、<strong>2 つの条件は独立に効く</strong>。</p></div></details>
 <h3 id="c03-3-3-2">3.3.2 平均二乗誤差</h3>
 <blockquote>
-<p><strong>定理 3.2 (MSE の分解)</strong> $\mathrm{MSE}(\hat\theta) = E[(\hat\theta - \theta)^2] = V[\hat\theta] + b(\theta)^2$</p>
+<p><strong>定理 3.2 (MSE の分解)</strong> $\mathrm{MSE}(\hat\theta) = E[(\hat\theta - \theta)^2] = \mathrm{Var}(\hat\theta) + b(\theta)^2$</p>
 </blockquote>
 <p>証明: $\hat\theta - \theta = (\hat\theta - E\hat\theta) + (E\hat\theta - \theta)$ と分けて二乗すると、交差項 $2(E\hat\theta - \theta)E[\hat\theta - E\hat\theta] = 0$。</p>
 <details class="gap"><summary>行間: 交差項がなぜ消えるのか</summary><div class="gap-body"><p>本文では「分けて二乗すると、交差項は $0$」と 1 行で書いた。消える理由は、<strong>2 つに割った片方が
@@ -4960,12 +4975,12 @@ $\hat\theta$ の分布から決まる<strong>数</strong>であって、確率�
 <p>内側の $E[\hat\theta]$ は数なので、その期待値は自分自身である。よって</p>
 <p>$$E[a] = E[\hat\theta] - E[\hat\theta] = 0.$$</p>
 <p>したがって交差項は $2E[ab] = 2b\cdot 0 = 0$。</p>
-<p><strong>6. 残った 2 項に名前を戻す。</strong> $E[a^2] = E[(\hat\theta - E\hat\theta)^2] = V[\hat\theta]$ は分散の定義。
-$E[b^2] = b^2 = b(\theta)^2$ は数の期待値。合わせて $\mathrm{MSE} = V[\hat\theta] + b(\theta)^2$。</p>
+<p><strong>6. 残った 2 項に名前を戻す。</strong> $E[a^2] = E[(\hat\theta - E\hat\theta)^2] = \mathrm{Var}(\hat\theta)$ は分散の定義。
+$E[b^2] = b^2 = b(\theta)^2$ は数の期待値。合わせて $\mathrm{MSE} = \mathrm{Var}(\hat\theta) + b(\theta)^2$。</p>
 <p><strong>落とし穴。</strong> $E[\hat\theta - \theta] = b(\theta)$ であって 0 ではない。「偏差の和はゼロ」という
 第 1 章の性質が使えるのは<strong>標本平均を引いたとき</strong>であり、真値 $\theta$ を引いたときではない。
 消えたのは $E[\hat\theta]$ を引いた方の項だけである。</p></div></details>
-<p>不偏性は MSE の一部 (バイアス²) をゼロにするだけで、分散が大きければ推定量として劣る。<strong>例</strong>: 正規母集団の $\sigma^2$ に対し $SS = \sum (X_i - \bar X)^2$ とし、$SS/c$ の形の推定量を考える。$SS/\sigma^2 \sim \chi^2_{n-1}$ から $E[SS] = (n-1)\sigma^2$、$V[SS] = 2(n-1)\sigma^4$ なので</p>
+<p>不偏性は MSE の一部 (バイアス²) をゼロにするだけで、分散が大きければ推定量として劣る。<strong>例</strong>: 正規母集団の $\sigma^2$ に対し $SS = \sum (X_i - \bar X)^2$ とし、$SS/c$ の形の推定量を考える。$SS/\sigma^2 \sim \chi^2_{n-1}$ から $E[SS] = (n-1)\sigma^2$、$\mathrm{Var}(SS) = 2(n-1)\sigma^4$ なので</p>
 <p>$$\mathrm{MSE}(SS/c) = \frac{2(n-1)\sigma^4}{c^2} + \left(\frac{(n-1)\sigma^2}{c} - \sigma^2\right)^2$$</p>
 <p>$c$ で微分して最小化すると $c = n+1$。つまり $c = n-1$ (不偏)、$c = n$ (最尤) より、<strong>わざと小さめに推定する</strong> $SS/(n+1)$ の方が MSE は小さい。</p>
 <figure><img loading="lazy" decoding="async" alt="図 3.2 正規母集団 σ²=1、n=5 で σ² を 3 通りに推定した標本分布 (左) と MSE の分解 (右)。不偏な s² は分散が最大で MSE も最大。SS/(n+1) はバイアスをもつが MSE 最小" src="fig/03_bias_mse.png" /><figcaption>図 3.2 正規母集団 σ²=1、n=5 で σ² を 3 通りに推定した標本分布 (左) と MSE の分解 (右)。不偏な s² は分散が最大で MSE も最大。SS/(n+1) はバイアスをもつが MSE 最小</figcaption></figure>
@@ -5068,7 +5083,7 @@ $U'(\theta_0)$ で代用してよい。<strong>展開するのは $\ell$ では�
 なので $\sqrt n$ で割ると中心極限定理の形になる。分母は「同分布の項 $n$ 個の和」なので $n$ で割ると
 大数の法則の形になる。狙う極限定理が違うから、割る量も違う。</p>
 <p><strong>5. 分子を見る。</strong> $U(\theta_0) = \sum_i u_i$、$u_i = \partial_\theta\log f(X_i;\theta_0)$ は i.i.d.
-であり、定理 3.3 より $E[u_i] = 0$、$V[u_i] = E[u_i^2] = I(\theta_0)$。中心極限定理から</p>
+であり、定理 3.3 より $E[u_i] = 0$、$\mathrm{Var}(u_i) = E[u_i^2] = I(\theta_0)$。中心極限定理から</p>
 <p>$$\frac{1}{\sqrt n}\sum_i u_i \ \xrightarrow{d}\ N(0,\ I(\theta_0)).$$</p>
 <p><strong>6. 分母を見る。</strong> $-U'(\theta_0)/n = -\frac1n\sum_i \partial_\theta^2\log f(X_i;\theta_0)$ は
 i.i.d. の標本平均なので、大数の法則から $-E[\partial_\theta^2\log f] = I(\theta_0)$ に<strong>確率収束</strong>する
@@ -5099,9 +5114,9 @@ $n$ が小さいとこの置き換えも 2. の 1 次打ち切りも効かない
 <blockquote>
 <p><strong>定理 3.6 (Cramér–Rao の不等式)</strong> 正則条件のもとで、$\theta$ の任意の不偏推定量 $\hat\theta$ について</p>
 <p>$$V_\theta[\hat\theta] \ge \frac{1}{I_n(\theta)} = \frac{1}{n I(\theta)}$$</p>
-<p>より一般に $E[\hat\theta] = \psi(\theta)$ なら $V[\hat\theta] \ge \psi'(\theta)^2 / I_n(\theta)$。</p>
+<p>より一般に $E[\hat\theta] = \psi(\theta)$ なら $\mathrm{Var}(\hat\theta) \ge \psi'(\theta)^2 / I_n(\theta)$。</p>
 </blockquote>
-<p>証明の要点: 不偏性 $\int \hat\theta(\mathbf x)\, L(\mathbf x;\theta)\,d\mathbf x = \theta$ の両辺を $\theta$ で微分すると $\int \hat\theta\, \partial_\theta L\, d\mathbf x = 1$、すなわち $E[\hat\theta\, U] = 1$ ($\partial_\theta L = U L$ を使った)。定理 3.3 の $E[U] = 0$ から $\mathrm{Cov}(\hat\theta, U) = E[\hat\theta U] - E[\hat\theta]E[U] = 1$。Cauchy–Schwarz の不等式 $\mathrm{Cov}(\hat\theta, U)^2 \le V[\hat\theta]\,V[U]$ に $V[U] = I_n(\theta)$ を入れれば $1 \le V[\hat\theta]\, I_n(\theta)$。</p>
+<p>証明の要点: 不偏性 $\int \hat\theta(\mathbf x)\, L(\mathbf x;\theta)\,d\mathbf x = \theta$ の両辺を $\theta$ で微分すると $\int \hat\theta\, \partial_\theta L\, d\mathbf x = 1$、すなわち $E[\hat\theta\, U] = 1$ ($\partial_\theta L = U L$ を使った)。定理 3.3 の $E[U] = 0$ から $\mathrm{Cov}(\hat\theta, U) = E[\hat\theta U] - E[\hat\theta]E[U] = 1$。Cauchy–Schwarz の不等式 $\mathrm{Cov}(\hat\theta, U)^2 \le \mathrm{Var}(\hat\theta)\,\mathrm{Var}(U)$ に $\mathrm{Var}(U) = I_n(\theta)$ を入れれば $1 \le \mathrm{Var}(\hat\theta)\, I_n(\theta)$。</p>
 <details class="gap"><summary>行間: Cramér–Rao の下限が出るところを 1 行ずつ</summary><div class="gap-body"><p>本文では「不偏性の両辺を $\theta$ で微分すると」から Cauchy–Schwarz までを 1 段落で走った。
 その各手を開く。</p>
 <p><strong>記号の役割。</strong> $\mathbf x = (x_1,\dots,x_n)$ は標本、$L(\mathbf x;\theta) = \prod_i f(x_i;\theta)$ は
@@ -5120,13 +5135,13 @@ $\hat\theta(\mathbf x)$ は統計量なので、<strong>$\theta$ を含まない
 <p>$$\mathrm{Cov}(\hat\theta, U) = E[\hat\theta U] - E[\hat\theta]\,E[U] = 1 - \theta\cdot 0 = 1.$$</p>
 <p><strong>「相関がある」のではなく、共分散がちょうど 1 に固定される</strong>のがこの定理の仕掛けである。</p>
 <p><strong>5. Cauchy–Schwarz の不等式。</strong> 任意の 2 つの確率変数に
-$\mathrm{Cov}(A,B)^2 \le V[A]\,V[B]$。$A = \hat\theta$、$B = U$ と置くと</p>
-<p>$$1 = \mathrm{Cov}(\hat\theta,U)^2 \le V[\hat\theta]\,V[U].$$</p>
-<p><strong>6. $V[U]$ が情報量である。</strong> $E[U] = 0$ だから $V[U] = E[U^2] = I_n(\theta)$ (定義 3.5)。
+$\mathrm{Cov}(A,B)^2 \le \mathrm{Var}(A)\,\mathrm{Var}(B)$。$A = \hat\theta$、$B = U$ と置くと</p>
+<p>$$1 = \mathrm{Cov}(\hat\theta,U)^2 \le \mathrm{Var}(\hat\theta)\,\mathrm{Var}(U).$$</p>
+<p><strong>6. $\mathrm{Var}(U)$ が情報量である。</strong> $E[U] = 0$ だから $\mathrm{Var}(U) = E[U^2] = I_n(\theta)$ (定義 3.5)。
 独立性から $I_n(\theta) = n I(\theta)$。</p>
-<p><strong>7. 移項する。</strong> $V[\hat\theta] \ge 1/I_n(\theta) = 1/\{n I(\theta)\}$。</p>
+<p><strong>7. 移項する。</strong> $\mathrm{Var}(\hat\theta) \ge 1/I_n(\theta) = 1/\{n I(\theta)\}$。</p>
 <p><strong>一般形について。</strong> $E[\hat\theta] = \psi(\theta)$ なら、2. の右辺が 1 ではなく $\psi'(\theta)$ に
-なるだけで、あとは同じ手順である。5. が $\psi'(\theta)^2 \le V[\hat\theta]\,I_n(\theta)$ になる。</p>
+なるだけで、あとは同じ手順である。5. が $\psi'(\theta)^2 \le \mathrm{Var}(\hat\theta)\,I_n(\theta)$ になる。</p>
 <p><strong>等号成立が「比例」になる理由。</strong> Cauchy–Schwarz で等号が成り立つのは $A$ と $B$ が
 (定数を除いて) 比例するときに限る。$A - E[A] = \hat\theta - \theta$、$B = U$ なので、
 $U(\theta) = a(\theta)(\hat\theta - \theta)$ と書けるとき、そのときに限る。
@@ -5136,7 +5151,7 @@ $a(\theta)$ は $\mathbf x$ を含まなければよいので、$\theta$ の関�
 「どんな推定量も $1/I_n$ を下回れない」と覚えると誤る。また 2. の微分と積分の交換が
 できない分布 ($U(0,\theta)$ など) では、下限そのものが成り立たない (演習 2)。</p></div></details>
 <p>等号成立は $\hat\theta - \theta$ と $U(\theta)$ が比例するとき、すなわちスコアが $U(\theta) = a(\theta)(\hat\theta - \theta)$ と書けるときで、このとき $\hat\theta$ を<strong>有効推定量</strong>という。</p>
-<p>例: 正規母集団の $\mu$。$I(\mu) = 1/\sigma^2$ なので下限は $\sigma^2/n$。$\bar X$ の分散はちょうど $\sigma^2/n$ であり、$\bar X$ は有効推定量。スコアは $U(\mu) = \frac{n}{\sigma^2}(\bar X - \mu)$ で確かに $(\hat\theta - \theta)$ に比例する。一方 $\sigma^2$ については下限 $2\sigma^4/n$ に対し $V[S^2] = 2\sigma^4/(n-1)$ で、不偏推定量の中に下限を達成するものは存在しない ($S^2$ は不偏推定量の中で分散最小ではあるが、下限には届かない)。</p>
+<p>例: 正規母集団の $\mu$。$I(\mu) = 1/\sigma^2$ なので下限は $\sigma^2/n$。$\bar X$ の分散はちょうど $\sigma^2/n$ であり、$\bar X$ は有効推定量。スコアは $U(\mu) = \frac{n}{\sigma^2}(\bar X - \mu)$ で確かに $(\hat\theta - \theta)$ に比例する。一方 $\sigma^2$ については下限 $2\sigma^4/n$ に対し $\mathrm{Var}(S^2) = 2\sigma^4/(n-1)$ で、不偏推定量の中に下限を達成するものは存在しない ($S^2$ は不偏推定量の中で分散最小ではあるが、下限には届かない)。</p>
 <p>下限の意味: 「このデータからは、どんなに巧い不偏推定量を作っても分散をこれ以下にはできない」。定理 3.4 と合わせると、MLE は $n \to \infty$ でこの限界に到達する。逆に、MLE より分散の小さい不偏推定量を見つけたと思ったら計算を疑うべきである。</p>
 <h2 id="c03-3-7">3.7 十分統計量と Rao–Blackwell の定理</h2>
 <blockquote>
@@ -5144,9 +5159,9 @@ $a(\theta)$ は $\mathbf x$ を含まなければよいので、$\theta$ の関�
 </blockquote>
 <p>「$T$ を知ればデータの残りは $\theta$ について何も語らない」。判定には<strong>分解定理</strong> (Fisher–Neyman): $T$ が十分 $\iff$ 尤度が $L(\theta) = g(T(\mathbf x);\theta)\, h(\mathbf x)$ と分解できる。正規母集団なら $L \propto \sigma^{-n}\exp\{-\frac{1}{2\sigma^2}[\sum x_i^2 - 2\mu\sum x_i + n\mu^2]\}$ なので $(\sum x_i, \sum x_i^2)$、同値に $(\bar X, S^2)$ が $(\mu, \sigma^2)$ の十分統計量。指数分布では $\sum x_i$、Bernoulli では成功数 $\sum x_i$。MLE は十分統計量の関数になる (尤度が $T$ を通してしか $\theta$ に依存しないから)。</p>
 <blockquote>
-<p><strong>定理 3.7 (Rao–Blackwell)</strong> $\hat\theta$ を $\theta$ の不偏推定量、$T$ を十分統計量とすると、$\tilde\theta = E[\hat\theta \mid T]$ は統計量 (十分性から $\theta$ を含まない) であり、不偏で、$V[\tilde\theta] \le V[\hat\theta]$。</p>
+<p><strong>定理 3.7 (Rao–Blackwell)</strong> $\hat\theta$ を $\theta$ の不偏推定量、$T$ を十分統計量とすると、$\tilde\theta = E[\hat\theta \mid T]$ は統計量 (十分性から $\theta$ を含まない) であり、不偏で、$\mathrm{Var}(\tilde\theta) \le \mathrm{Var}(\hat\theta)$。</p>
 </blockquote>
-<p>証明の要点: 繰り返し期待値 $E[\tilde\theta] = E[E[\hat\theta\mid T]] = E[\hat\theta] = \theta$ で不偏。分散の分解 $V[\hat\theta] = E[V[\hat\theta\mid T]] + V[E[\hat\theta\mid T]] \ge V[\tilde\theta]$。</p>
+<p>証明の要点: 繰り返し期待値 $E[\tilde\theta] = E[E[\hat\theta\mid T]] = E[\hat\theta] = \theta$ で不偏。分散の分解 $\mathrm{Var}(\hat\theta) = E[\mathrm{Var}(\hat\theta\mid T)] + \mathrm{Var}(E[\hat\theta\mid T]) \ge \mathrm{Var}(\tilde\theta)$。</p>
 <details class="gap"><summary>行間: 条件付き期待値で分散が減るところを 1 行ずつ</summary><div class="gap-body"><p>直前の証明は、2 つの公式を名前だけで使っている。
 その中身と、なぜ<strong>十分</strong>統計量でなければならないのかを開く。</p>
 <p><strong>記号の役割。</strong> $\hat\theta$ は手持ちの不偏推定量 (確率変数)、$T$ は十分統計量 (確率変数)、
@@ -5161,15 +5176,15 @@ $\theta$ に依らない」ことだったから、その分布で $\hat\theta(\
 (tower property)。これを当てて</p>
 <p>$$E[\tilde\theta] = E\big[E[\hat\theta \mid T]\big] = E[\hat\theta] = \theta.$$</p>
 <p><strong>3. 分散の分解 (全分散の法則)。</strong> 任意の $A, B$ について</p>
-<p>$$V[A] = E\big[V[A \mid B]\big] + V\big[E[A\mid B]\big].$$</p>
+<p>$$\mathrm{Var}(A) = E\big[\mathrm{Var}(A \mid B)\big] + V\big[E[A\mid B]\big].$$</p>
 <p>言葉にすれば「群の中のばらつきの平均」＋「群の平均どうしのばらつき」で、
 6.2.2 の $SS_T = SS_W + SS_B$ と同じ形である ($B$ が群を指す添字だと思えばよい)。</p>
-<p><strong>4. 当てはめる。</strong> $A = \hat\theta$、$B = T$ とすると、右辺の第 2 項が $V[\tilde\theta]$ そのものになる。</p>
-<p>$$V[\hat\theta] = (\text{i}) + (\text{ii}), \qquad (\text{ii}) = V[\tilde\theta].$$</p>
+<p><strong>4. 当てはめる。</strong> $A = \hat\theta$、$B = T$ とすると、右辺の第 2 項が $\mathrm{Var}(\tilde\theta)$ そのものになる。</p>
+<p>$$\mathrm{Var}(\hat\theta) = (\text{i}) + (\text{ii}), \qquad (\text{ii}) = \mathrm{Var}(\tilde\theta).$$</p>
 <p>残った第 1 項は条件付き分散の期待値である。</p>
-<p>$$(\text{i}) = E\big[V[\hat\theta\mid T]\big].$$</p>
-<p><strong>5. (i) は必ず非負。</strong> 中身 $V[\hat\theta\mid T]$ は分散なのでどの $T$ の値でも $\ge 0$、
-その期待値も $\ge 0$。よって $V[\hat\theta] \ge V[\tilde\theta]$。<strong>不等式はこの一点だけから出ている。</strong></p>
+<p>$$(\text{i}) = E\big[\mathrm{Var}(\hat\theta\mid T)\big].$$</p>
+<p><strong>5. (i) は必ず非負。</strong> 中身 $\mathrm{Var}(\hat\theta\mid T)$ は分散なのでどの $T$ の値でも $\ge 0$、
+その期待値も $\ge 0$。よって $\mathrm{Var}(\hat\theta) \ge \mathrm{Var}(\tilde\theta)$。<strong>不等式はこの一点だけから出ている。</strong></p>
 <p><strong>6. 等号はいつか。</strong> (i) $= 0$、すなわち $T$ を知れば $\hat\theta$ の値が定まるとき
 ($\hat\theta$ がすでに $T$ の関数であるとき)。改善できる分はちょうど「$T$ が同じでも $\hat\theta$ が
 動く分」であり、その動きを条件付き平均で潰したのが $\tilde\theta$ である。
@@ -5277,8 +5292,8 @@ $1-\alpha$ のままである。$\mu$ が真ん中に来たのは移項の結果
 <p><strong>2. 期待値。</strong> 右辺は「数 ＋ 数 × (平均がほぼ $\theta$ の確率変数 $-\ \theta$)」なので
 $E[g(\hat\theta)] \approx g(\theta)$。</p>
 <p><strong>3. 分散。</strong> 定数を足しても分散は変わらず、定数倍すると分散は<strong>二乗倍</strong>になる
-($V[aX + b] = a^2 V[X]$)。よって</p>
-<p>$$V[g(\hat\theta)] \approx g'(\theta)^2\, V[\hat\theta] = g'(\theta)^2 \cdot \frac{v}{n}.$$</p>
+($\mathrm{Var}(aX + b) = a^2 \mathrm{Var}(X)$)。よって</p>
+<p>$$\mathrm{Var}(g(\hat\theta)) \approx g'(\theta)^2\, \mathrm{Var}(\hat\theta) = g'(\theta)^2 \cdot \frac{v}{n}.$$</p>
 <p>$g'$ が二乗で入るのは、この 1 手だけによる。<strong>傾きが急な変換ほど元の揺れが拡大される</strong>、
 という一言に尽きる。</p>
 <p><strong>4. 区間にするときの置き換え。</strong> $\theta$ は未知なので $g'(\theta)$ も計算できない。
@@ -5287,17 +5302,17 @@ Slutsky の定理により置き換えてよい: $g(\hat\theta) \pm z\,|g'(\hat\
 絶対値が付くのは標準偏差が非負だからで、$g$ が減少関数 ($g' < 0$) でも区間の<strong>幅</strong>は同じである。</p>
 <p><strong>5. 本文の $\log S$ の例で確かめる。</strong> $\log S = \frac12 \log S^2$ なので、
 $g(u) = \frac12\log u$ を $u = S^2$ に当てる。$g'(u) = 1/(2u)$ だから $g'(\sigma^2)^2 = 1/(4\sigma^4)$。
-定理 3.1 から $V[S^2] = 2\sigma^4/(n-1)$ なので</p>
-<p>$$V[\log S] \approx \frac{1}{4\sigma^4}\cdot \frac{2\sigma^4}{n-1} = \frac{1}{2(n-1)}.$$</p>
+定理 3.1 から $\mathrm{Var}(S^2) = 2\sigma^4/(n-1)$ なので</p>
+<p>$$\mathrm{Var}(\log S) \approx \frac{1}{4\sigma^4}\cdot \frac{2\sigma^4}{n-1} = \frac{1}{2(n-1)}.$$</p>
 <p><strong>$\sigma^4$ が約分で消える</strong>のが要点である。幅が未知母数に依らないので、
 $\log S \pm z/\sqrt{2(n-1)}$ がそのまま引ける。指数を取って戻すと $S$ に対して非対称な区間になり、
 $\chi^2$ の厳密区間に近づく。</p>
 <p><strong>落とし穴 (2 つ)。</strong> ひとつ、$E[g(\hat\theta)] = g(E[\hat\theta])$ ではない。2. は 1 次近似の上での
-等式で、$g$ が曲がっていれば $\frac12 g''(\theta)V[\hat\theta]$ 程度のずれが残る (Jensen の不等式)。
+等式で、$g$ が曲がっていれば $\frac12 g''(\theta)\mathrm{Var}(\hat\theta)$ 程度のずれが残る (Jensen の不等式)。
 $S$ が $\sigma$ の不偏推定量でないのも同じ理由である (3.3.1)。
 もうひとつ、$g'(\theta) = 0$ の点ではこの方法が使えない。1 次の項が消えてしまい、
 3. の分散が 0 になってしまうので、2 次まで展開した別の近似 ($\chi^2$ 型の極限) が要る。</p></div></details>
-<p>使い方は 2 通りある。(a) 変換後の量の区間を直接作る。(b) <strong>区間の性能を上げるために変換してから戻す</strong>: 例えば $\sigma$ の区間なら $\log S$ の方が正規に近いので、$\log S \pm z/\sqrt{2(n-1)}$ (デルタ法: $V[\log S] \approx V[S^2]/(4\sigma^4) = 1/(2(n-1))$) を作って指数をとる。この区間は $S$ に対して非対称になり、$\chi^2$ の厳密区間 (3.8.2 節) に近づく。比率でも $\mathrm{logit}\,\hat p$ に対して区間を作って戻す方法は Wald より被覆が良い。</p>
+<p>使い方は 2 通りある。(a) 変換後の量の区間を直接作る。(b) <strong>区間の性能を上げるために変換してから戻す</strong>: 例えば $\sigma$ の区間なら $\log S$ の方が正規に近いので、$\log S \pm z/\sqrt{2(n-1)}$ (デルタ法: $\mathrm{Var}(\log S) \approx \mathrm{Var}(S^2)/(4\sigma^4) = 1/(2(n-1))$) を作って指数をとる。この区間は $S$ に対して非対称になり、$\chi^2$ の厳密区間 (3.8.2 節) に近づく。比率でも $\mathrm{logit}\,\hat p$ に対して区間を作って戻す方法は Wald より被覆が良い。</p>
 <h2 id="c03-3-9">3.9 ブートストラップ</h2>
 <h3 id="c03-3-9-1">3.9.1 原理</h3>
 <p>ピボット量が見つからない統計量 (中央値、変動係数、相関係数、分位点、複雑なモデルの推定値) の標本分布を、<strong>母集団の代わりに経験分布 $F_n$ から再標本して</strong>近似するのが Efron (1979) のブートストラップである。</p>
@@ -5471,7 +5486,7 @@ for n in [3, 5, 10, 30]:
 <p>1) は定理 3.1 を、4) は定理 3.4・3.6 を数値で「見る」。5) で Wald の被覆が $p = 0.1$、$n = 30$ で 80% 台に落ちることを確認し、6) で中央値のように公式のない統計量に区間を与える。8) は 3.11 節の係数を再計算する。</p>
 <h2 id="c03-3-13">3.13 演習</h2>
 <ol>
-<li>$E[\bar X] = \mu$、$V[\bar X] = \sigma^2/n$ を独立性から導け。さらに $X_i$ が独立でなく相関 $\rho$ をもつ (等相関) とき $V[\bar X] = \frac{\sigma^2}{n}\{1 + (n-1)\rho\}$ となることを示し、$n \to \infty$ でも 0 に収束しないことを確認せよ</li>
+<li>$E[\bar X] = \mu$、$\mathrm{Var}(\bar X) = \sigma^2/n$ を独立性から導け。さらに $X_i$ が独立でなく相関 $\rho$ をもつ (等相関) とき $\mathrm{Var}(\bar X) = \frac{\sigma^2}{n}\{1 + (n-1)\rho\}$ となることを示し、$n \to \infty$ でも 0 に収束しないことを確認せよ</li>
 <li>一様分布 $U(0, \theta)$ からの標本について、モーメント推定量 $\hat\theta_{\rm MM} = 2\bar X$ と最尤推定量 $\hat\theta_{\rm ML} = X_{(n)}$ を導け。$X_{(n)}$ の分布関数 $F(t) = (t/\theta)^n$ から $E[X_{(n)}] = \frac{n}{n+1}\theta$ を求め、不偏化した $\frac{n+1}{n}X_{(n)}$ と $2\bar X$ の分散を比較せよ (この例は正則条件を満たさず、Cramér–Rao の下限を「下回る」ことに注意)</li>
 <li>Poisson 分布 $f(k;\lambda) = e^{-\lambda}\lambda^k/k!$ について、MLE $\hat\lambda = \bar X$、Fisher 情報量 $I(\lambda) = 1/\lambda$ を導き、$\bar X$ が Cramér–Rao の下限を達成する有効推定量であることを示せ</li>
 <li>正規母集団の $\sigma^2$ の推定量 $SS/c$ の MSE を $c$ で最小化し、$c = n+1$ を導け (3.3.2 節の式を微分する)</li>
@@ -5849,11 +5864,11 @@ $x = 0,1,\dots,n$ の $n+1$ 通りを数え上げた<strong>厳密値</strong>�
 <p><strong>1.</strong> $\bar X$ の平均と分散、および等相関のときの分散。</p>
 <p>期待値には独立性は要らない。線形性だけから</p>
 <p>$$E[\bar X] = E\!\left[\frac1n\sum_{i=1}^n X_i\right] = \frac1n\sum_{i=1}^n E[X_i] = \frac{n\mu}{n} = \mu$$</p>
-<p>分散は共分散まで込めて展開する。$V\!\left[\sum a_i X_i\right] = \sum_i a_i^2 V[X_i] + \sum_{i \ne j} a_i a_j \mathrm{Cov}(X_i, X_j)$ に $a_i = 1/n$ を入れて</p>
-<p>$$V[\bar X] = \frac{1}{n^2}\left[\sum_{i=1}^n V[X_i] + \sum_{i \ne j}\mathrm{Cov}(X_i, X_j)\right]$$</p>
-<p>独立なら $i \ne j$ の共分散はすべて 0 なので $V[\bar X] = n\sigma^2/n^2 = \sigma^2/n$。<strong>ここで初めて独立性を使った</strong>。</p>
+<p>分散は共分散まで込めて展開する。$V\!\left[\sum a_i X_i\right] = \sum_i a_i^2 \mathrm{Var}(X_i) + \sum_{i \ne j} a_i a_j \mathrm{Cov}(X_i, X_j)$ に $a_i = 1/n$ を入れて</p>
+<p>$$\mathrm{Var}(\bar X) = \frac{1}{n^2}\left[\sum_{i=1}^n \mathrm{Var}(X_i) + \sum_{i \ne j}\mathrm{Cov}(X_i, X_j)\right]$$</p>
+<p>独立なら $i \ne j$ の共分散はすべて 0 なので $\mathrm{Var}(\bar X) = n\sigma^2/n^2 = \sigma^2/n$。<strong>ここで初めて独立性を使った</strong>。</p>
 <p>等相関 $\mathrm{Cov}(X_i, X_j) = \rho\sigma^2$ ($i \ne j$) のとき、順序対 $(i,j)$, $i \ne j$ は $n(n-1)$ 個あるから</p>
-<p>$$V[\bar X] = \frac{1}{n^2}\left[n\sigma^2 + n(n-1)\rho\sigma^2\right] = \frac{\sigma^2}{n}\bigl\{1 + (n-1)\rho\bigr\}$$</p>
+<p>$$\mathrm{Var}(\bar X) = \frac{1}{n^2}\left[n\sigma^2 + n(n-1)\rho\sigma^2\right] = \frac{\sigma^2}{n}\bigl\{1 + (n-1)\rho\bigr\}$$</p>
 <p>極限を見る。右辺を分けると</p>
 <p>$$\frac{\sigma^2}{n}\bigl\{1 + (n-1)\rho\bigr\} = \frac{\sigma^2}{n} + \frac{n-1}{n}\rho\sigma^2 \ \xrightarrow{\ n \to \infty\ }\ \rho\sigma^2$$</p>
 <p>$\rho > 0$ なら 0 に収束しない。<strong>$\bar X$ は $\mu$ の一致推定量ですらなくなる</strong>。</p>
@@ -5889,8 +5904,8 @@ $x = 0,1,\dots,n$ の $n+1$ 通りを数え上げた<strong>厳密値</strong>�
 </tbody>
 </table>
 <p>$n$ をいくら増やしても $n_{\rm eff}$ は $1/\rho$ で頭打ちになる。</p>
-<p>補足 (相関の取りうる範囲)。共分散行列は $\sigma^2\{(1-\rho)I + \rho J\}$ ($J$ は全要素 1) で、固有値は $\sigma^2(1-\rho)$ (重複度 $n-1$) と $\sigma^2\{1+(n-1)\rho\}$。半正定値であるためには $-\frac{1}{n-1} \le \rho \le 1$ が必要で、下端 $\rho = -1/(n-1)$ では $V[\bar X] = 0$ (和が定数になる) になる。負の相関は分散を<strong>減らす</strong>方向に働く。</p>
-<p><strong>答え</strong>: $E[\bar X] = \mu$、独立なら $V[\bar X] = \sigma^2/n$、等相関なら $V[\bar X] = \frac{\sigma^2}{n}\{1+(n-1)\rho\} \to \rho\sigma^2 \ne 0$。</p>
+<p>補足 (相関の取りうる範囲)。共分散行列は $\sigma^2\{(1-\rho)I + \rho J\}$ ($J$ は全要素 1) で、固有値は $\sigma^2(1-\rho)$ (重複度 $n-1$) と $\sigma^2\{1+(n-1)\rho\}$。半正定値であるためには $-\frac{1}{n-1} \le \rho \le 1$ が必要で、下端 $\rho = -1/(n-1)$ では $\mathrm{Var}(\bar X) = 0$ (和が定数になる) になる。負の相関は分散を<strong>減らす</strong>方向に働く。</p>
+<p><strong>答え</strong>: $E[\bar X] = \mu$、独立なら $\mathrm{Var}(\bar X) = \sigma^2/n$、等相関なら $\mathrm{Var}(\bar X) = \frac{\sigma^2}{n}\{1+(n-1)\rho\} \to \rho\sigma^2 \ne 0$。</p>
 <p>構造での意味: 同一バッチのコンクリート供試体、同一ロットの鋼材、同一作業員の溶接部は正の相関をもつ。試験体を増やしても母平均の精度は $1/\rho$ 体分で頭打ちになるので、<strong>体数を増やすよりバッチ (ロット) を分ける</strong>方が効く。</p>
 <hr />
 <p><strong>2.</strong> $U(0,\theta)$ のモーメント推定量と最尤推定量。</p>
@@ -5904,20 +5919,20 @@ $x = 0,1,\dots,n$ の $n+1$ 通りを数え上げた<strong>厳密値</strong>�
 <p>バイアスは $-\theta/(n+1)$ で、常に過小評価する (最大値が $\theta$ を超えることはないのだから当然)。不偏化した推定量は $\tilde\theta = \frac{n+1}{n}X_{(n)}$。</p>
 <p><strong>分散の比較</strong>。まず 2 次モーメント</p>
 <p>$$E[X_{(n)}^2] = \int_0^\theta t^2\cdot\frac{n t^{n-1}}{\theta^n}\,dt = \frac{n}{\theta^n}\cdot\frac{\theta^{n+2}}{n+2} = \frac{n}{n+2}\theta^2$$</p>
-<p>$$V[X_{(n)}] = \frac{n}{n+2}\theta^2 - \frac{n^2}{(n+1)^2}\theta^2 = \frac{n\theta^2\{(n+1)^2 - n(n+2)\}}{(n+2)(n+1)^2} = \frac{n\theta^2}{(n+2)(n+1)^2}$$</p>
+<p>$$\mathrm{Var}(X_{(n)}) = \frac{n}{n+2}\theta^2 - \frac{n^2}{(n+1)^2}\theta^2 = \frac{n\theta^2\{(n+1)^2 - n(n+2)\}}{(n+2)(n+1)^2} = \frac{n\theta^2}{(n+2)(n+1)^2}$$</p>
 <p>(分子の括弧は $n^2+2n+1 - n^2-2n = 1$)。したがって</p>
-<p>$$V[\tilde\theta] = \frac{(n+1)^2}{n^2}\cdot\frac{n\theta^2}{(n+2)(n+1)^2} = \frac{\theta^2}{n(n+2)}$$</p>
-<p>一方 $V[X] = \theta^2/12$ なので</p>
-<p>$$V[2\bar X] = 4\cdot\frac{\theta^2/12}{n} = \frac{\theta^2}{3n}$$</p>
+<p>$$\mathrm{Var}(\tilde\theta) = \frac{(n+1)^2}{n^2}\cdot\frac{n\theta^2}{(n+2)(n+1)^2} = \frac{\theta^2}{n(n+2)}$$</p>
+<p>一方 $\mathrm{Var}(X) = \theta^2/12$ なので</p>
+<p>$$\mathrm{Var}(2\bar X) = 4\cdot\frac{\theta^2/12}{n} = \frac{\theta^2}{3n}$$</p>
 <p>比をとると</p>
-<p>$$\frac{V[\tilde\theta]}{V[2\bar X]} = \frac{\theta^2/\{n(n+2)\}}{\theta^2/(3n)} = \frac{3}{n+2}$$</p>
+<p>$$\frac{\mathrm{Var}(\tilde\theta)}{\mathrm{Var}(2\bar X)} = \frac{\theta^2/\{n(n+2)\}}{\theta^2/(3n)} = \frac{3}{n+2}$$</p>
 <p>$n \ge 2$ で MLE 系が厳密に優れ、$n$ とともに差が開く。数値で ($\theta = 1$):</p>
 <table>
 <thead>
 <tr>
 <th>$n$</th>
-<th>$V[2\bar X] = \frac{1}{3n}$</th>
-<th>$V[\tilde\theta] = \frac{1}{n(n+2)}$</th>
+<th>$\mathrm{Var}(2\bar X) = \frac{1}{3n}$</th>
+<th>$\mathrm{Var}(\tilde\theta) = \frac{1}{n(n+2)}$</th>
 <th>比 $3/(n+2)$</th>
 </tr>
 </thead>
@@ -5942,11 +5957,11 @@ $x = 0,1,\dots,n$ の $n+1$ 通りを数え上げた<strong>厳密値</strong>�
 </tr>
 </tbody>
 </table>
-<p>本質的な違いは<strong>収束の速さ</strong>である。$V[2\bar X] = O(1/n)$ に対し $V[\tilde\theta] = O(1/n^2)$。すなわち $\tilde\theta - \theta$ は $1/\sqrt n$ ではなく $1/n$ のオーダーで縮む (「超効率」)。</p>
-<p><strong>Cramér–Rao との関係 (注意点)</strong>。形式的に計算すると $\log f = -\log\theta$、$\partial_\theta \log f = -1/\theta$ なので $I(\theta) = 1/\theta^2$、下限は $\theta^2/n$ となる。ところが $V[\tilde\theta] = \theta^2/\{n(n+2)\}$ はこれを大きく<strong>下回る</strong> ($n=10$ なら 0.0083 対 0.100)。矛盾ではない。定理 3.6 の正則条件「台が $\theta$ に依存しない」がここでは破れているからである。証明で使った</p>
+<p>本質的な違いは<strong>収束の速さ</strong>である。$\mathrm{Var}(2\bar X) = O(1/n)$ に対し $\mathrm{Var}(\tilde\theta) = O(1/n^2)$。すなわち $\tilde\theta - \theta$ は $1/\sqrt n$ ではなく $1/n$ のオーダーで縮む (「超効率」)。</p>
+<p><strong>Cramér–Rao との関係 (注意点)</strong>。形式的に計算すると $\log f = -\log\theta$、$\partial_\theta \log f = -1/\theta$ なので $I(\theta) = 1/\theta^2$、下限は $\theta^2/n$ となる。ところが $\mathrm{Var}(\tilde\theta) = \theta^2/\{n(n+2)\}$ はこれを大きく<strong>下回る</strong> ($n=10$ なら 0.0083 対 0.100)。矛盾ではない。定理 3.6 の正則条件「台が $\theta$ に依存しない」がここでは破れているからである。証明で使った</p>
 <p>$$\frac{\partial}{\partial\theta}\int \hat\theta(\mathbf x)L(\mathbf x;\theta)\,d\mathbf x = \int \hat\theta(\mathbf x)\,\partial_\theta L(\mathbf x;\theta)\,d\mathbf x$$</p>
 <p>は、積分範囲の端が $\theta$ に依存するため成立しない (Leibniz の規則で境界項が出る)。<strong>Cramér–Rao の下限は「どんな場合でも効く壁」ではない</strong>ことを示す標準的な反例である。</p>
-<p><strong>答え</strong>: $\hat\theta_{\rm MM} = 2\bar X$、$\hat\theta_{\rm ML} = X_{(n)}$、$E[X_{(n)}] = \frac{n}{n+1}\theta$、$V\!\left[\frac{n+1}{n}X_{(n)}\right] = \frac{\theta^2}{n(n+2)} < V[2\bar X] = \frac{\theta^2}{3n}$ ($n \ge 2$)。</p>
+<p><strong>答え</strong>: $\hat\theta_{\rm MM} = 2\bar X$、$\hat\theta_{\rm ML} = X_{(n)}$、$E[X_{(n)}] = \frac{n}{n+1}\theta$、$V\!\left[\frac{n+1}{n}X_{(n)}\right] = \frac{\theta^2}{n(n+2)} < \mathrm{Var}(2\bar X) = \frac{\theta^2}{3n}$ ($n \ge 2$)。</p>
 <hr />
 <p><strong>3.</strong> Poisson 分布の MLE と Fisher 情報量。</p>
 <p>方針: 対数尤度をスコアの形 $a(\lambda)(\bar X - \lambda)$ に整理すると、MLE も有効性 (等号条件) も同時に見える。</p>
@@ -5957,11 +5972,11 @@ $x = 0,1,\dots,n$ の $n+1$ 通りを数え上げた<strong>厳密値</strong>�
 <p><strong>Fisher 情報量</strong>。1 観測の対数密度は $\log f = -\lambda + k\log\lambda - \log k!$ で</p>
 <p>$$\partial_\lambda \log f = -1 + \frac{k}{\lambda} = \frac{k-\lambda}{\lambda}, \qquad \partial_\lambda^2 \log f = -\frac{k}{\lambda^2}$$</p>
 <p>定理 3.3 の 2 通りの表現の両方で確かめる。</p>
-<p>$$I(\lambda) = E\!\left[\left(\frac{K-\lambda}{\lambda}\right)^2\right] = \frac{V[K]}{\lambda^2} = \frac{\lambda}{\lambda^2} = \frac1\lambda$$
+<p>$$I(\lambda) = E\!\left[\left(\frac{K-\lambda}{\lambda}\right)^2\right] = \frac{\mathrm{Var}(K)}{\lambda^2} = \frac{\lambda}{\lambda^2} = \frac1\lambda$$
 $$I(\lambda) = -E\!\left[-\frac{K}{\lambda^2}\right] = \frac{E[K]}{\lambda^2} = \frac{\lambda}{\lambda^2} = \frac1\lambda$$</p>
 <p>Poisson は平均と分散がともに $\lambda$ なので、2 つの表現が同じ道筋で一致する。$n$ 観測では $I_n(\lambda) = n/\lambda$。</p>
 <p><strong>有効性</strong>。Cramér–Rao の下限は $1/I_n(\lambda) = \lambda/n$。一方</p>
-<p>$$V[\bar X] = \frac{V[X_1]}{n} = \frac{\lambda}{n}$$</p>
+<p>$$\mathrm{Var}(\bar X) = \frac{\mathrm{Var}(X_1)}{n} = \frac{\lambda}{n}$$</p>
 <p>で<strong>ちょうど下限に一致する</strong>。したがって $\bar X$ は $\lambda$ の有効推定量。等号条件 (3.6 節) も直接確認できる: 上で求めたスコアは</p>
 <p>$$U(\lambda) = \frac{n}{\lambda}(\bar X - \lambda) = I_n(\lambda)\,(\hat\lambda - \lambda)$$</p>
 <p>の形、すなわち $a(\lambda) = I_n(\lambda)$ として $U = a(\lambda)(\hat\theta - \theta)$ を満たしている。Cauchy–Schwarz の等号成立条件そのものである。</p>
@@ -5971,7 +5986,7 @@ $$I(\lambda) = -E\!\left[-\frac{K}{\lambda^2}\right] = \frac{E[K]}{\lambda^2} = 
 <tr>
 <th>$\lambda$</th>
 <th>$n$</th>
-<th>$V[\bar X]$ (実測)</th>
+<th>$\mathrm{Var}(\bar X)$ (実測)</th>
 <th>$\lambda/n$ (下限)</th>
 </tr>
 </thead>
@@ -5996,11 +6011,11 @@ $$I(\lambda) = -E\!\left[-\frac{K}{\lambda^2}\right] = \frac{E[K]}{\lambda^2} = 
 </tr>
 </tbody>
 </table>
-<p><strong>答え</strong>: $\hat\lambda_{\rm ML} = \bar X$、$I(\lambda) = 1/\lambda$、$V[\bar X] = \lambda/n = 1/I_n(\lambda)$ で下限を達成、$\bar X$ は有効推定量。</p>
+<p><strong>答え</strong>: $\hat\lambda_{\rm ML} = \bar X$、$I(\lambda) = 1/\lambda$、$\mathrm{Var}(\bar X) = \lambda/n = 1/I_n(\lambda)$ で下限を達成、$\bar X$ は有効推定量。</p>
 <hr />
 <p><strong>4.</strong> $\mathrm{MSE}(SS/c)$ を $c$ で最小化する。</p>
-<p>方針: 3.3.2 節の式をそのまま $c$ の関数として整理し、微分する。以下 $m = n-1$ と書く ($SS/\sigma^2 \sim \chi^2_m$ なので $E[SS] = m\sigma^2$、$V[SS] = 2m\sigma^4$)。</p>
-<p>$$g(c) \equiv \mathrm{MSE}(SS/c) = \frac{V[SS]}{c^2} + \left(\frac{E[SS]}{c} - \sigma^2\right)^2 = \frac{2m\sigma^4}{c^2} + \sigma^4\left(\frac mc - 1\right)^2$$</p>
+<p>方針: 3.3.2 節の式をそのまま $c$ の関数として整理し、微分する。以下 $m = n-1$ と書く ($SS/\sigma^2 \sim \chi^2_m$ なので $E[SS] = m\sigma^2$、$\mathrm{Var}(SS) = 2m\sigma^4$)。</p>
+<p>$$g(c) \equiv \mathrm{MSE}(SS/c) = \frac{\mathrm{Var}(SS)}{c^2} + \left(\frac{E[SS]}{c} - \sigma^2\right)^2 = \frac{2m\sigma^4}{c^2} + \sigma^4\left(\frac mc - 1\right)^2$$</p>
 <p>展開して $c$ についてまとめる。</p>
 <p>$$g(c) = \sigma^4\left[\frac{2m}{c^2} + \frac{m^2}{c^2} - \frac{2m}{c} + 1\right] = \sigma^4\left[\frac{m^2+2m}{c^2} - \frac{2m}{c} + 1\right]$$</p>
 <p>$c > 0$ で微分する。</p>
@@ -6054,11 +6069,11 @@ $$I(\lambda) = -E\!\left[-\frac{K}{\lambda^2}\right] = \frac{E[K]}{\lambda^2} = 
 $$U(p) = \ell'(p) = \frac{\sum_i x_i}{p} - \frac{n - \sum_i x_i}{1-p} = \frac{(1-p)\sum_i x_i - p\bigl(n-\sum_i x_i\bigr)}{p(1-p)} = \frac{n(\bar X - p)}{p(1-p)}$$</p>
 <p>$U(p) = 0$ より $\hat p = \bar X$。</p>
 <p><strong>Fisher 情報量</strong>。$\partial_p \log f = \frac{x-p}{p(1-p)}$ (上の計算を 1 観測にしたもの) から</p>
-<p>$$I(p) = E\!\left[\left(\frac{X-p}{p(1-p)}\right)^2\right] = \frac{V[X]}{\{p(1-p)\}^2} = \frac{p(1-p)}{\{p(1-p)\}^2} = \frac{1}{p(1-p)}$$</p>
+<p>$$I(p) = E\!\left[\left(\frac{X-p}{p(1-p)}\right)^2\right] = \frac{\mathrm{Var}(X)}{\{p(1-p)\}^2} = \frac{p(1-p)}{\{p(1-p)\}^2} = \frac{1}{p(1-p)}$$</p>
 <p>もう一つの表現でも同じ: $\partial_p^2\log f = -\frac{x}{p^2} - \frac{1-x}{(1-p)^2}$ より $-E[\cdot] = \frac{p}{p^2} + \frac{1-p}{(1-p)^2} = \frac1p + \frac{1}{1-p} = \frac{1}{p(1-p)}$。</p>
 <p><strong>定理 3.4 の道筋を埋める</strong>。証明の要点の式は</p>
 <p>$$\sqrt n(\hat p - p) \approx \frac{U(p)/\sqrt n}{-U'(p)/n}$$</p>
-<p>分子: $U(p)/\sqrt n = \dfrac{\sqrt n(\bar X - p)}{p(1-p)}$。$V[X_i] = p(1-p)$ なので中心極限定理より $\sqrt n(\bar X - p) \xrightarrow{d} N(0, p(1-p))$、よって</p>
+<p>分子: $U(p)/\sqrt n = \dfrac{\sqrt n(\bar X - p)}{p(1-p)}$。$\mathrm{Var}(X_i) = p(1-p)$ なので中心極限定理より $\sqrt n(\bar X - p) \xrightarrow{d} N(0, p(1-p))$、よって</p>
 <p>$$\frac{U(p)}{\sqrt n} \xrightarrow{d} N\!\left(0,\ \frac{p(1-p)}{\{p(1-p)\}^2}\right) = N\bigl(0,\ I(p)\bigr)$$</p>
 <p>分母: $U'(p) = -\dfrac{\sum_i x_i}{p^2} - \dfrac{n-\sum_i x_i}{(1-p)^2}$ なので</p>
 <p>$$-\frac{U'(p)}{n} = \frac{\bar X}{p^2} + \frac{1-\bar X}{(1-p)^2} \ \xrightarrow{p}\ \frac{p}{p^2} + \frac{1-p}{(1-p)^2} = \frac{1}{p(1-p)} = I(p)$$</p>
@@ -7614,8 +7629,8 @@ $k$ 次元ベクトルで、$\sum_j p_j = 1$ だから<strong>長さ 1</strong> 
 <p>$$\chi^2 = \sum_j Z_j^2 = \|\mathbf Z\|^2.$$</p>
 <p>「$E_j$ で割る」のではなく「$\sqrt{E_j}$ で割ってから二乗する」と読み替えるのが第一手である。</p>
 <p><strong>2. 1 成分ずつの分布。</strong> $O_j \sim \mathrm{Bin}(n, p_j)$ なので $E[O_j] = np_j = E_j$、
-$V[O_j] = np_j(1-p_j) = E_j(1-p_j)$。$\sqrt{E_j}$ で割ると分散は $E_j$ で割れるので</p>
-<p>$$E[Z_j] = 0, \qquad V[Z_j] = 1 - p_j.$$</p>
+$\mathrm{Var}(O_j) = np_j(1-p_j) = E_j(1-p_j)$。$\sqrt{E_j}$ で割ると分散は $E_j$ で割れるので</p>
+<p>$$E[Z_j] = 0, \qquad \mathrm{Var}(Z_j) = 1 - p_j.$$</p>
 <p><strong>分散が 1 ではなく $1-p_j$</strong> である。ここが以下のすべての出発点になる。</p>
 <p><strong>3. 制約が 1 本ある。</strong> 合計が固定されているので $\sum_j O_j = n = \sum_j E_j$、すなわち
 $\sum_j (O_j - E_j) = 0$。$O_j - E_j = \sqrt{np_j}\,Z_j$ を代入すると</p>
@@ -7642,7 +7657,7 @@ $k$ から抜いた 1 本を引いた $k-1$ である。</p>
 <p><strong>7. 母数を推定した場合。</strong> $p_j$ の中の $r$ 個をデータから推定すると、その推定式が
 制約としてさらに $r$ 本加わる。動ける次元が $k-1-r$ になるので、自由度も $k-1-r$ になる。</p>
 <p><strong>落とし穴。</strong> 「$Z_j$ はどれも近似的に $N(0,1)$ だから、二乗和は $\chi^2_k$」は誤りである。
-2. のとおり $V[Z_j] = 1-p_j < 1$ であり、しかも 5. のように互いに負の相関をもつ。
+2. のとおり $\mathrm{Var}(Z_j) = 1-p_j < 1$ であり、しかも 5. のように互いに負の相関をもつ。
 <strong>周辺分布だけを見て二乗和の分布を決めることはできない。</strong>
 図 4.5 で自由度 6 の曲線が合わないのは、この誤りを絵にしたものである。</p></div></details>
 <figure><img loading="lazy" decoding="async" alt="図 4.5 6 カテゴリ一様の多項分布からの χ² 統計量 (n=120, 20000 回)。自由度 5 の χ² が合い、自由度 6 は合わない。「合計が固定」という制約が 1 自由度を奪う" src="fig/04_chisq_gof.png" /><figcaption>図 4.5 6 カテゴリ一様の多項分布からの χ² 統計量 (n=120, 20000 回)。自由度 5 の χ² が合い、自由度 6 は合わない。「合計が固定」という制約が 1 自由度を奪う</figcaption></figure>
@@ -7664,7 +7679,7 @@ $k$ から抜いた 1 本を引いた $k-1$ である。</p>
 <p>対の差 $D_i$ の中央値が 0 か ($H_0$)。$D_i > 0$ の個数 $S$ は $H_0$ の下で $\mathrm{Bin}(n, 1/2)$。分布への仮定が「対称性」すら要らない最も素朴な検定だが、差の大きさを捨てるので検出力は低い。</p>
 <h3 id="c04-4-9-2">4.9.2 Wilcoxon 符号順位検定</h3>
 <p>$|D_i|$ に順位をつけ、正の $D_i$ の順位の和 $W^+$ を統計量とする (Wilcoxon, 1945)。$H_0$ (差の分布が 0 の周りで対称) の下で各順位は独立に確率 $1/2$ で正側に入るので</p>
-<p>$$E[W^+] = \frac{n(n+1)}{4}, \qquad V[W^+] = \frac{n(n+1)(2n+1)}{24}$$</p>
+<p>$$E[W^+] = \frac{n(n+1)}{4}, \qquad \mathrm{Var}(W^+) = \frac{n(n+1)(2n+1)}{24}$$</p>
 <p>導出: $W^+ = \sum_{i=1}^n i\, B_i$、$B_i \sim \mathrm{Bernoulli}(1/2)$ 独立、として $\sum i = n(n+1)/2$、$\sum i^2 = n(n+1)(2n+1)/6$ を代入する。$n \ge 20$ 程度で正規近似が使え、小さい $n$ では $2^n$ 通りの符号の割り当てを列挙して厳密分布を得る。</p>
 <details class="gap"><summary>行間: 順位和の平均と分散を 1 行ずつ</summary><div class="gap-body"><p>本文では「$\sum i$ と $\sum i^2$ を代入する」と 1 行で書いた。その代入を開く。</p>
 <p><strong>記号の役割。</strong> $i = 1,\dots,n$ は<strong>順位</strong>を走る添字であって、観測の番号ではない
@@ -7675,14 +7690,14 @@ $k$ から抜いた 1 本を引いた $k-1$ である。</p>
 順位 $i$ を $B_i$ で拾うか捨てるかと読める。</p>
 <p>$$W^+ = \sum_{i=1}^n i\,B_i.$$</p>
 <p><strong>2. 1 つの $B_i$ の平均と分散。</strong> $E[B_i] = 1/2$。$B_i$ は 0 か 1 なので $B_i^2 = B_i$ であり、</p>
-<p>$$V[B_i] = E[B_i^2] - E[B_i]^2 = \tfrac12 - \tfrac14 = \tfrac14.$$</p>
+<p>$$\mathrm{Var}(B_i) = E[B_i^2] - E[B_i]^2 = \tfrac12 - \tfrac14 = \tfrac14.$$</p>
 <p><strong>3. 平均。</strong> 期待値は和と定数倍を素通りするので</p>
 <p>$$E[W^+] = \sum_i i\,E[B_i] = \frac12 \sum_{i=1}^n i.$$</p>
 <p>$\sum_{i=1}^n i = n(n+1)/2$ を入れて $E[W^+] = n(n+1)/4$。</p>
 <p><strong>4. 分散。</strong> <strong>独立だから和の分散が分散の和になる</strong> (相関があれば共分散の項が残る)。
 定数倍は二乗で外に出るので</p>
-<p>$$V[W^+] = \sum_i i^2\,V[B_i] = \frac14 \sum_{i=1}^n i^2.$$</p>
-<p>$\sum_{i=1}^n i^2 = n(n+1)(2n+1)/6$ を入れて $V[W^+] = n(n+1)(2n+1)/24$。</p>
+<p>$$\mathrm{Var}(W^+) = \sum_i i^2\,\mathrm{Var}(B_i) = \frac14 \sum_{i=1}^n i^2.$$</p>
+<p>$\sum_{i=1}^n i^2 = n(n+1)(2n+1)/6$ を入れて $\mathrm{Var}(W^+) = n(n+1)(2n+1)/24$。</p>
 <p><strong>5. 母集団の分布がどこにも出てこない。</strong> 1.〜4. で使ったのは「符号が確率 $1/2$ で独立に決まる」
 ことだけである。$D_i$ がどんな分布から来たかは一切効いていない。
 <strong>これがノンパラメトリック検定の「分布に依らない」の中身</strong>であって、
@@ -7694,7 +7709,7 @@ $H_0$ を「中央値が 0」だけに弱めると符号と順位が絡んで独
 $\sum i^2$ の値が変わり、分散に補正が要る。</p></div></details>
 <h3 id="c04-4-9-3">4.9.3 Mann–Whitney (Wilcoxon 順位和) 検定</h3>
 <p>独立 2 群 ($n_1$、$n_2$) を混ぜて順位をつけ、群 1 の順位和 $R_1$ (Wilcoxon) または $U = R_1 - n_1(n_1+1)/2$ (Mann &amp; Whitney, 1947) を統計量とする。$U$ は「群 1 の観測値が群 2 の観測値より大きい対の数」に等しく、$H_0$ (2 群の分布が同じ) の下で</p>
-<p>$$E[U] = \frac{n_1 n_2}{2}, \qquad V[U] = \frac{n_1 n_2 (n_1 + n_2 + 1)}{12}$$</p>
+<p>$$E[U] = \frac{n_1 n_2}{2}, \qquad \mathrm{Var}(U) = \frac{n_1 n_2 (n_1 + n_2 + 1)}{12}$$</p>
 <p>$U / (n_1 n_2)$ は $P(X > Y)$ の推定量であり、これ自体が分布の形に依らない効果量になる (4.11 節)。この検定が検出するのは「平均の差」ではなく「一方が他方より大きくなりやすいか」であり、分散の違う 2 群では平均が等しくても棄却され得る。</p>
 <h3 id="c04-4-9-4">4.9.4 Kruskal–Wallis 検定</h3>
 <p>3 群以上への拡張 (Kruskal &amp; Wallis, 1952)。全 $N$ 個に順位をつけ、群 $i$ の平均順位 $\bar R_i$ から</p>
@@ -9112,7 +9127,7 @@ print(&quot;   → 期待値は厳密に 1 だが、分布は右に極端に歪�
 </table>
 <p>$w=5$ を中心に左右対称になっている。したがって</p>
 <p>$$P(W^+\ge9)=P(W^+=9)+P(W^+=10)=\frac{1+1}{16}=\frac{2}{16}=\mathbf{0.125}$$</p>
-<p><strong>答え: $P(W^+\ge9)=1/8=0.125$。</strong> 検算すると $E[W^+]=5.0$、$V[W^+]=7.5$ で、4.9.2 の公式 $n(n+1)/4=4\cdot5/4=5$、$n(n+1)(2n+1)/24=4\cdot5\cdot9/24=7.5$ に一致する。</p>
+<p><strong>答え: $P(W^+\ge9)=1/8=0.125$。</strong> 検算すると $E[W^+]=5.0$、$\mathrm{Var}(W^+)=7.5$ で、4.9.2 の公式 $n(n+1)/4=4\cdot5/4=5$、$n(n+1)(2n+1)/24=4\cdot5\cdot9/24=7.5$ に一致する。</p>
 <p>実務上の含意として、$n=4$ での片側 p 値の最小値は $P(W^+\ge10)=1/16=0.0625$ であり、<strong>データがどれほど極端でも片側 5% では棄却できない</strong>。符号順位検定を使うなら最低でも $n=5$ ($1/32=0.031$) が要る。問 3 で見た離散検定の保守性の、最も極端な現れ方である。</p>
 <p><strong>8.</strong> $m=5$、$p=\{0.001,0.012,0.020,0.030,0.400\}$、$\alpha=0.05$。</p>
 <p><strong>Holm</strong> (閾値 $\alpha/(m-i+1)$、初めて破れたところで停止し、それ以降は棄却しない):</p>
