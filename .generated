@@ -11,11 +11,13 @@ stat110/index.html
 sw.js
 textbook/fig/01_anscombe.png
 textbook/fig/01_boxplot_iqr.png
+textbook/fig/01_contingency.png
 textbook/fig/01_correlation.png
 textbook/fig/01_hist_bins.png
 textbook/fig/01_iqr_normal.png
 textbook/fig/01_log_transform.png
 textbook/fig/01_mean_median.png
+textbook/fig/01_rank_corr.png
 textbook/fig/01_robustness.png
 textbook/fig/01_scales.png
 textbook/fig/01_spread_breakdown.png
