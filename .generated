@@ -160,6 +160,7 @@ textbook/fig/08d_characteristic_value.png
 textbook/fig/08d_flat_not_flat.png
 textbook/fig/08d_improper_posterior.png
 textbook/fig/08d_prior_predictive.png
+textbook/fig/08d_prior_predictive_negative.png
 textbook/fig/08d_prior_washout.png
 textbook/fig/08d_sensitivity_grid.png
 textbook/fig/08d_variance_priors.png
@@ -398,6 +399,7 @@ textbook/fig/dark/08d_characteristic_value.png
 textbook/fig/dark/08d_flat_not_flat.png
 textbook/fig/dark/08d_improper_posterior.png
 textbook/fig/dark/08d_prior_predictive.png
+textbook/fig/dark/08d_prior_predictive_negative.png
 textbook/fig/dark/08d_prior_washout.png
 textbook/fig/dark/08d_sensitivity_grid.png
 textbook/fig/dark/08d_variance_priors.png
