@@ -6822,6 +6822,62 @@ $B$ を 10 万回にして減るのは乱数の揺れだけである。</p></div
 <p>図 3.10 右は「ブートストラップなら小標本でも正確」という期待への注意である。指数分布 $n = 15$ の平均について、$t$ 区間 91%、パーセンタイル 88%、基本 86%、BCa 90% で、いずれも名目 95% を割る。理由は、$n = 15$ の経験分布が母集団の右裾を十分に再現できないことにある。ブートストラップは<strong>分布形の仮定を外す</strong>代わりに<strong>$n$ が十分大きい</strong>ことを前提にしており、小標本では万能ではない。被覆をさらに改善する手段としては、ブートストラップ $t$ 法 (再標本ごとに標準誤差も推定してピボット化)、二重ブートストラップ (区間の被覆をもう一段のブートストラップで補正) がある。二重ブートストラップに匹敵する被覆補正を、より軽い計算で行う提案も続いている<sup id="c03-fnref:4"><a class="footnote-ref" href="#c03-fn:4">4</a></sup>。</p>
 <h2 id="c03-3-10">3.10 バイアス補正とジャックナイフ</h2>
 <p>3.9 節は分布全体を再標本で近似する方法だった。<strong>バイアスと分散だけが欲しいなら、乱数を使わずに済む軽い方法がある。</strong> 歴史的にはこちらが先で、3.9.2 項の BCa の中でも使われている。</p>
+<p><strong>先に数で見る。</strong> 3.2.1 項の 6 本に戻る。</p>
+<p>$$34.2,\quad 36.8,\quad 31.5,\quad 38.1,\quad 35.4,\quad 33.0$$</p>
+<p>分散を<strong>最尤法どおり $n$ で割って</strong>計算すると $\hat\sigma^2 = SS/6 = 4.956$ である。いっぽう $n-1$ で割った不偏分散は $S^2 = 5.947$ で、$0.991$ 小さい。</p>
+<p><strong>この $0.991$ を、「$n-1$ で割るのが正しい」という知識抜きに、データだけから出せるだろうか。</strong> 出せるなら、正解の分かっていない統計量にも同じ手が使える。</p>
+<p>やることは単純で、<strong>1 本ずつ抜いて 6 回計算し直す</strong>だけである。</p>
+<table>
+<thead>
+<tr>
+<th>抜いた本</th>
+<th style="text-align: right;">残り 5 本の平均</th>
+<th style="text-align: right;">残り 5 本の $SS/5$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$34.2$</td>
+<td style="text-align: right;">$34.96$</td>
+<td style="text-align: right;">$5.850$</td>
+</tr>
+<tr>
+<td>$36.8$</td>
+<td style="text-align: right;">$34.44$</td>
+<td style="text-align: right;">$5.018$</td>
+</tr>
+<tr>
+<td>$31.5$</td>
+<td style="text-align: right;">$35.50$</td>
+<td style="text-align: right;">$3.280$</td>
+</tr>
+<tr>
+<td>$38.1$</td>
+<td style="text-align: right;">$34.18$</td>
+<td style="text-align: right;">$3.386$</td>
+</tr>
+<tr>
+<td>$35.4$</td>
+<td style="text-align: right;">$34.72$</td>
+<td style="text-align: right;">$5.870$</td>
+</tr>
+<tr>
+<td>$33.0$</td>
+<td style="text-align: right;">$35.20$</td>
+<td style="text-align: right;">$5.140$</td>
+</tr>
+<tr>
+<td><strong>平均 $\bar\theta_{(\cdot)}$</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">$\mathbf{4.757}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>6 通りの平均 $4.757$ が、全部使った $4.956$ より $0.198$ 小さい。</strong> これがジャックナイフの手がかりである。標本を 1 個減らすとバイアスが少し大きくなる — その「大きくなり方」からバイアスの大きさを逆算する。$n-1 = 5$ 倍して</p>
+<p>$$\hat b_{\rm jack} = (n-1)\big(\bar\theta_{(\cdot)} - \hat\theta\big) = 5 \times (4.757 - 4.956) = -0.991$$</p>
+<p><strong>引き算すると $4.956 - (-0.991) = 5.947$</strong> で、$S^2$ に<strong>ぴったり一致する</strong>。$n-1$ で割れと教わらなくても、1 個抜きを 6 回やるだけで同じ場所に着いた。</p>
+<p>この一致は丸めの偶然ではない。$\hat\sigma^2 = SS/n$ については $n\hat\theta - (n-1)\bar\theta_{(\cdot)} = S^2$ が<strong>恒等式として成り立つ</strong> (標本によらず厳密に一致する)。さらに $\hat b_{\rm jack} = -S^2/n$ でもあり、理論上のバイアス $-\sigma^2/n$ の $\sigma^2$ を $S^2$ で置いた形になっている。<strong>もともと欲しかった補正を、統計量の中身を知らない手続きが再発見している。</strong></p>
+<p>以下はこの手続きを一般の統計量 $\hat\theta$ に対して書いたものである。</p>
 <p><strong>ジャックナイフ</strong> (Quenouille 1949、Tukey 1958) はブートストラップに先立つ再標本法で、$i$ 番目を除いた $n-1$ 個から計算した $\hat\theta_{(-i)}$ を使う。</p>
 <ul>
 <li><strong>バイアス推定</strong>: $\hat b_{\rm jack} = (n-1)\big(\bar\theta_{(\cdot)} - \hat\theta\big)$、ただし $\bar\theta_{(\cdot)} = \frac1n\sum_i \hat\theta_{(-i)}$。バイアス補正推定量は $\hat\theta - \hat b_{\rm jack} = n\hat\theta - (n-1)\bar\theta_{(\cdot)}$</li>
@@ -12160,6 +12216,78 @@ $$\hat{\boldsymbol\beta} = (\mathbf X^\top \mathbf X)^{-1} \mathbf X^\top \mathb
 <p><strong>$2p/n$ を目安にするのは、平均の 2 倍という意味である。</strong> ここでは $0.20$ で、$x=55$ の点はその 3 倍を超える。<strong>外れ値の検出に生の残差を使ってはいけない</strong>のは、てこ比の高い点ほど残差が構造的に小さくなるからで、$e_i/\sqrt{s^2(1-h_{ii})}$ と標準化する必要がある。</p>
 <h2 id="c05-5-4">5.4 Gauss–Markov 定理</h2>
 <p>5.2〜5.3 節では「二乗和を最小にする」と決め打ちしてきた。<strong>なぜ二乗和なのか。</strong> 絶対値の和ではいけないのか。この節はその問いに、<strong>誤差の分布を一切仮定せずに</strong>答える。</p>
+<p><strong>先に数で見る。</strong> $x$ を $0$ から $1$ まで等間隔に $20$ 点取り、$y = 1 + 2x + \varepsilon$ ($\sigma = 1$) というデータを考える。傾き $2$ を推定したい。思いつく手は 1 つではない。</p>
+<table>
+<thead>
+<tr>
+<th>推定量</th>
+<th>やり方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OLS</strong></td>
+<td>二乗和を最小にする</td>
+</tr>
+<tr>
+<td><strong>端点 2 点の差</strong></td>
+<td>$(y_{20} - y_1)/(x_{20} - x_1)$。2 点だけ見る</td>
+</tr>
+<tr>
+<td><strong>前半/後半の平均の差</strong></td>
+<td>前 10 点と後 10 点の $y$ の平均差を、$x$ の平均差で割る</td>
+</tr>
+<tr>
+<td><strong>OLS + 直交ノイズ</strong></td>
+<td>OLS の重みに、$\mathbf X$ の列と直交するベクトルを足す</td>
+</tr>
+</tbody>
+</table>
+<p><strong>4 つとも「$y$ の線形結合」で、4 つとも不偏である。</strong> どれも重み $\mathbf c$ が $\mathbf c^\top\mathbf X = (0,\ 1)$ を満たしていて、$E[\mathbf c^\top\mathbf y] = \mathbf c^\top\mathbf X\boldsymbol\beta = \beta_1$ になる。つまり<strong>不偏という条件だけでは 1 つに絞れない。</strong></p>
+<p>分散を計算すると、そこで差がつく ($\sigma = 1$ なので $\operatorname{Var}(\mathbf c^\top\mathbf y) = \lVert\mathbf c\rVert^2$)。</p>
+<table>
+<thead>
+<tr>
+<th>推定量</th>
+<th style="text-align: right;">分散</th>
+<th style="text-align: right;">標準偏差</th>
+<th style="text-align: right;">OLS の何倍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OLS</strong></td>
+<td style="text-align: right;">$\mathbf{0.543}$</td>
+<td style="text-align: right;">$0.737$</td>
+<td style="text-align: right;">$1.00$</td>
+</tr>
+<tr>
+<td>前半/後半の平均の差</td>
+<td style="text-align: right;">$0.722$</td>
+<td style="text-align: right;">$0.850$</td>
+<td style="text-align: right;">$1.33$</td>
+</tr>
+<tr>
+<td>OLS + 直交ノイズ</td>
+<td style="text-align: right;">$0.738$</td>
+<td style="text-align: right;">$0.859$</td>
+<td style="text-align: right;">$1.36$</td>
+</tr>
+<tr>
+<td>端点 2 点の差</td>
+<td style="text-align: right;">$2.000$</td>
+<td style="text-align: right;">$1.414$</td>
+<td style="text-align: right;">$3.68$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>OLS が最小である</strong> — これが定理 5.5 (Gauss–Markov) の主張で、図 5.3 はこの 4 つの分布を重ねたものである。</p>
+<p><strong>「なぜ最小か」も、この表の中に見えている。</strong> 不偏な線形推定量の重みは必ず</p>
+<p>$$\mathbf c = \mathbf c_{\rm OLS} + \mathbf d, \qquad \mathbf d^\top\mathbf X = \mathbf 0$$</p>
+<p>と書ける (どちらも $\mathbf c^\top\mathbf X = (0,1)$ なので、差 $\mathbf d$ は $\mathbf X$ の列と直交する)。$\mathbf c_{\rm OLS}$ 自身は $\mathbf X$ の列空間の中にあるので $\mathbf c_{\rm OLS}^\top\mathbf d = 0$ となり、ピタゴラスの定理で</p>
+<p>$$\lVert\mathbf c\rVert^2 = \lVert\mathbf c_{\rm OLS}\rVert^2 + \lVert\mathbf d\rVert^2$$</p>
+<p><strong>超過分は $\lVert\mathbf d\rVert^2$ ちょうどである。</strong> 実際、$0.722 - 0.543 = 0.179$ は前半/後半の $\mathbf d$ の二乗長さと、$2.000 - 0.543 = 1.457$ は端点差の $\mathbf d$ の二乗長さと、小数点以下まで一致する。<strong>OLS より良くしようと重みをいじると、それは必ず「余計な方向」を足すことになり、分散はその長さのぶんだけ増える。</strong> 減らす余地は無い。</p>
+<p>以下はこれを一般の形で書いたものである。</p>
 <p>推定量の性質を述べるには誤差の仮定が要る。</p>
 <ul>
 <li><strong>(E)</strong> $E[\boldsymbol\varepsilon] = \mathbf 0$</li>
@@ -14536,6 +14664,181 @@ $$E[MS_W] = \sigma^2, \qquad E[MS_B] = \sigma^2 + n\,\sigma_A^2$$</p>
 $$\text{効果} = \frac{2}{2^k}\sum_{\text{run}} (\text{列の符号}) \times y$$
 という一つの式で計算できる</p>
 </blockquote>
+<p><strong>この式を 1 回通してみる。</strong> 図 6.8 の溶接の $2^3$ 計画 (A = 電流、B = 速度、C = ガス流量、応答は引張強さ $\mathrm{N/mm^2}$) の 8 個がこれである。</p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th style="text-align: right;">A</th>
+<th style="text-align: right;">B</th>
+<th style="text-align: right;">C</th>
+<th style="text-align: right;">AB</th>
+<th style="text-align: right;">AC</th>
+<th style="text-align: right;">BC</th>
+<th style="text-align: right;">ABC</th>
+<th style="text-align: right;">$y$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$442.00$</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$442.70$</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$425.73$</td>
+</tr>
+<tr>
+<td>4</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$422.24$</td>
+</tr>
+<tr>
+<td>5</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$442.94$</td>
+</tr>
+<tr>
+<td>6</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$446.56$</td>
+</tr>
+<tr>
+<td>7</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$-$</td>
+<td style="text-align: right;">$446.30$</td>
+</tr>
+<tr>
+<td>8</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$+$</td>
+<td style="text-align: right;">$448.17$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A の主効果を、定義どおり 2 通りで計算する。</strong> まず「高水準の平均 − 低水準の平均」。A が $+$ なのは No.5〜8 で</p>
+<p>$$\frac{442.94 + 446.56 + 446.30 + 448.17}{4} - \frac{442.00 + 442.70 + 425.73 + 422.24}{4} = 445.99 - 433.17 = 12.83$$</p>
+<p>次に「符号 $\times y$ の和 $\div\ 2^{k-1}$」。A 列の符号を掛けて足すと $-442.00 - 442.70 - 425.73 - 422.24 + 442.94 + 446.56 + 446.30 + 448.17 = 51.30$ で、$51.30 / 4 = 12.83$。<strong>同じ値である</strong> — 平均の差を取るのと、符号を掛けて足すのは、同じ計算を 2 通りに書いただけである。</p>
+<p>あとは列を変えるだけで、<strong>同じ 8 個の数から 7 つの効果が全部出る。</strong></p>
+<table>
+<thead>
+<tr>
+<th>効果</th>
+<th style="text-align: right;">高水準の平均</th>
+<th style="text-align: right;">低水準の平均</th>
+<th style="text-align: right;">効果</th>
+<th style="text-align: right;">真の効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A (電流)</strong></td>
+<td style="text-align: right;">$445.99$</td>
+<td style="text-align: right;">$433.17$</td>
+<td style="text-align: right;">$\mathbf{+12.83}$</td>
+<td style="text-align: right;">$+12$</td>
+</tr>
+<tr>
+<td><strong>B (速度)</strong></td>
+<td style="text-align: right;">$435.61$</td>
+<td style="text-align: right;">$443.55$</td>
+<td style="text-align: right;">$\mathbf{-7.94}$</td>
+<td style="text-align: right;">$-8$</td>
+</tr>
+<tr>
+<td>C (ガス流量)</td>
+<td style="text-align: right;">$439.92$</td>
+<td style="text-align: right;">$439.24$</td>
+<td style="text-align: right;">$+0.68$</td>
+<td style="text-align: right;">$0$</td>
+</tr>
+<tr>
+<td><strong>AB</strong></td>
+<td style="text-align: right;">$444.79$</td>
+<td style="text-align: right;">$434.37$</td>
+<td style="text-align: right;">$\mathbf{+10.43}$</td>
+<td style="text-align: right;">$+10$</td>
+</tr>
+<tr>
+<td>AC</td>
+<td style="text-align: right;">$440.62$</td>
+<td style="text-align: right;">$438.55$</td>
+<td style="text-align: right;">$+2.07$</td>
+<td style="text-align: right;">$0$</td>
+</tr>
+<tr>
+<td>BC</td>
+<td style="text-align: right;">$438.84$</td>
+<td style="text-align: right;">$440.32$</td>
+<td style="text-align: right;">$-1.49$</td>
+<td style="text-align: right;">$0$</td>
+</tr>
+<tr>
+<td>ABC</td>
+<td style="text-align: right;">$439.89$</td>
+<td style="text-align: right;">$439.28$</td>
+<td style="text-align: right;">$+0.61$</td>
+<td style="text-align: right;">$0$</td>
+</tr>
+</tbody>
+</table>
+<p>(このデータは $\sigma = 1$ の誤差を乗せて作ってある。C・AC・BC・ABC は真の効果が $0$ で、出ている $0.6 \sim 2.1$ はその誤差である。)</p>
+<p><strong>ここに $2^k$ 計画の得が全部入っている。</strong> 8 回の実験で、3 つの主効果と 4 つの交互作用、合わせて 7 つを<strong>どれも 4 個ずつの平均の差として</strong>推定できた。一因子ずつ振る実験なら、A の効果を見るのに B・C を固定した 2 回しか使えない。ここでは<strong>8 個すべてが 7 つの効果のどれの推定にも使われている</strong>。</p>
+<p><strong>そして AB が $+10.43$ と大きい。</strong> 電流の効き方が速度によって変わる、という意味である。もし「電流を振る実験」と「速度を振る実験」を別々にやっていたら、この $10.43$ は一度も見えない (6.4 節)。</p>
 <p>回帰の言葉では、モデル $y = \beta_0 + \sum \beta_i x_i + \sum \beta_{ij} x_i x_j + \dots$ において<strong>効果 = $2\beta$</strong>。計画行列 $X$ の列は互いに直交し $X^\top X = 2^k I$ なので、$\hat\beta = X^\top y / 2^k$ と逆行列なしで求まり、すべての推定量が同じ分散 $\sigma^2/2^k$ を持ち互いに無相関である。これが「直交計画」の意味である。</p>
 <figure><img loading="lazy" decoding="async" alt="図 6.8 溶接条件の 2³ 計画。左: 電流 A・速度 B・ガス流量 C の 8 隅点で得た引張強さ。右: 8 個の観測から求めた 7 つの効果。A、B、AB が大きく、C と高次交互作用はノイズ程度 (真値と一致)" src="fig/06_cube_2k.png" /><figcaption>図 6.8 溶接条件の 2³ 計画。左: 電流 A・速度 B・ガス流量 C の 8 隅点で得た引張強さ。右: 8 個の観測から求めた 7 つの効果。A、B、AB が大きく、C と高次交互作用はノイズ程度 (真値と一致)</figcaption></figure>
 <h3 id="c06-6-8-2">6.8.2 効果の有意性判定</h3>
@@ -16387,6 +16690,144 @@ $\Sigma$ は正定値である。定義 2.11 の $n$ を $p$ に読み替えれ�
 <li><strong>群平均法</strong>: 全対の平均距離</li>
 <li><strong>Ward 法</strong>: 併合によるクラスタ内平方和 $\sum_{\mathbf x \in A\cup B}\|\mathbf x - \bar{\mathbf x}_{A\cup B}\|^2$ の増分が最小の対を併合する。増分は $\frac{n_A n_B}{n_A + n_B}\|\bar{\mathbf x}_A - \bar{\mathbf x}_B\|^2$ と閉じた形で書け (Ward 1963)、k-means と同じ目的関数を貪欲に最小化していることになる</li>
 </ul>
+<p><strong>「選び方だけで結果が変わる」を 5 点で見る。</strong> 5 つの地震動記録を、短周期側の強さ $x_1$ と長周期側の強さ $x_2$ という 2 つの指標 (基準化済み) で表したとする。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">A</th>
+<th style="text-align: right;">B</th>
+<th style="text-align: right;">C</th>
+<th style="text-align: right;">D</th>
+<th style="text-align: right;">E</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$x_1$</td>
+<td style="text-align: right;">$6.5$</td>
+<td style="text-align: right;">$6.5$</td>
+<td style="text-align: right;">$3.5$</td>
+<td style="text-align: right;">$3.5$</td>
+<td style="text-align: right;">$1.5$</td>
+</tr>
+<tr>
+<td>$x_2$</td>
+<td style="text-align: right;">$2.0$</td>
+<td style="text-align: right;">$4.5$</td>
+<td style="text-align: right;">$2.0$</td>
+<td style="text-align: right;">$0.0$</td>
+<td style="text-align: right;">$4.5$</td>
+</tr>
+</tbody>
+</table>
+<p>ユークリッド距離を全対について計算する。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">A</th>
+<th style="text-align: right;">B</th>
+<th style="text-align: right;">C</th>
+<th style="text-align: right;">D</th>
+<th style="text-align: right;">E</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td style="text-align: right;">$0$</td>
+<td style="text-align: right;">$2.50$</td>
+<td style="text-align: right;">$3.00$</td>
+<td style="text-align: right;">$3.61$</td>
+<td style="text-align: right;">$5.59$</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">$0$</td>
+<td style="text-align: right;">$3.91$</td>
+<td style="text-align: right;">$5.41$</td>
+<td style="text-align: right;">$5.00$</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">$0$</td>
+<td style="text-align: right;">$2.00$</td>
+<td style="text-align: right;">$3.20$</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">$0$</td>
+<td style="text-align: right;">$4.92$</td>
+</tr>
+<tr>
+<td><strong>E</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">$0$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最初の 2 回は、どの方式でも同じである。</strong> 最小は $d(C,D) = 2.00$ なので $\{C,D\}$、次が $d(A,B) = 2.50$ なので $\{A,B\}$。ここまでは単連結も完全連結も Ward も一致する。</p>
+<p><strong>3 回目で分かれる。</strong> 残る候補は 3 つで、方式ごとに「クラスタ間の距離」の中身が違う。</p>
+<table>
+<thead>
+<tr>
+<th>候補</th>
+<th style="text-align: right;">単連結 ($\min$)</th>
+<th style="text-align: right;">完全連結 ($\max$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\{C,D\}$ と $\{A,B\}$</td>
+<td style="text-align: right;">$\mathbf{3.00}$ ← 最小</td>
+<td style="text-align: right;">$5.41$</td>
+</tr>
+<tr>
+<td>$E$ と $\{C,D\}$</td>
+<td style="text-align: right;">$3.20$</td>
+<td style="text-align: right;">$\mathbf{4.92}$ ← 最小</td>
+</tr>
+<tr>
+<td>$E$ と $\{A,B\}$</td>
+<td style="text-align: right;">$5.00$</td>
+<td style="text-align: right;">$5.59$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>単連結は $\{C,D\}$ と $\{A,B\}$ をつなぐ。</strong> $C$ と $A$ が $3.00$ と近いからで、$D$ と $B$ が $5.41$ 離れていることは見ない。<strong>完全連結は $E$ を $\{C,D\}$ に入れる。</strong> いちばん遠い対で測ると $E$–$\{C,D\}$ が $4.92$ で、$\{C,D\}$–$\{A,B\}$ の $5.41$ より小さいからである。</p>
+<p>結果、<strong>2 群に切ったときの答えが正反対になる。</strong></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>2 群に切った結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>単連結</td>
+<td>$\{A, B, C, D\}$ と $\{E\}$</td>
+</tr>
+<tr>
+<td>完全連結</td>
+<td>$\{A, B\}$ と $\{C, D, E\}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>同じ距離表から、同じ「階層的クラスタリング」という手続きで、違う答えが出ている。</strong> $C$ が $\{A,B\}$ と $E$ の<strong>中間にある</strong>ために起きたことで、単連結はその $C$ を橋として左右をつなぎ ($E$ だけが余る)、完全連結は橋を渡らない。7.6.1 項で距離を選んだだけでは決まらず、<strong>ここでもう一度選んでいる</strong>ことを忘れないでほしい。</p>
+<p><strong>Ward の増分も 1 つ計算しておく。</strong> $\{C,D\}$ に $E$ を足す場合、$\{C,D\}$ の重心は $(3.5,\ 1.0)$、$E$ は $(1.5,\ 4.5)$ なので</p>
+<p>$$\frac{n_A n_B}{n_A + n_B}\lVert\bar{\mathbf x}_A - \bar{\mathbf x}_B\rVert^2 = \frac{2 \times 1}{2 + 1}\big(2.0^2 + 3.5^2\big) = \frac{2}{3} \times 16.25 = 10.83$$</p>
+<p>3 候補を同じように計算すると $E$ と $\{C,D\}$ が $10.83$、$\{C,D\}$ と $\{A,B\}$ が $14.06$、$E$ と $\{A,B\}$ が $17.71$ で、<strong>Ward は完全連結と同じ選択をする。</strong> なお $10.83$ は、実際に併合前後の群内平方和を引き算しても同じ値になる — 閉じた式はその引き算を重心だけで書き直したものである。</p>
 <details class="gap"><summary>行間: Ward 法の増分が閉じた形になるところ</summary><div class="gap-body"><p>本文は増分が $\frac{n_A n_B}{n_A + n_B}\|\bar{\mathbf x}_A - \bar{\mathbf x}_B\|^2$ と「書ける」と 1 行で述べた。なぜ 2 つの重心の距離だけで決まるのかを開く。</p>
 <p><strong>記号。</strong> クラスタ $A$ は $n_A$ 個、$B$ は $n_B$ 個の点からなり、共通部分はない。$\bar{\mathbf x}_A, \bar{\mathbf x}_B$ は各重心 ($p\times1$)、$\bar{\mathbf x}$ は $A\cup B$ 全体の重心。クラスタ内平方和を $W(A) = \sum_{\mathbf x\in A}\|\mathbf x-\bar{\mathbf x}_A\|^2$ と書き、増分を $\Delta = W(A\cup B) - W(A) - W(B)$ とする。</p>
 <p><strong>1. 全体の重心は重み付き平均。</strong> 定義から</p>
@@ -16454,6 +16895,37 @@ $\Sigma$ は正定値である。定義 2.11 の $n$ を $p$ に読み替えれ�
 <p><strong>定理 7.6 (Fisher の線形判別)</strong> $J(\mathbf w)$ を最大にする方向は $\mathbf w \propto S_W^{-1}(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)$</p>
 </blockquote>
 <p>証明の要点: $J$ は $\mathbf w$ のスケールに依らない (分子分母とも 2 次) ので、$\mathbf w^{\mathsf T} S_W\mathbf w = 1$ の制約下で分子を最大化する。Lagrange 条件は $S_B\mathbf w = \lambda S_W\mathbf w$ (一般化固有値問題)。$S_B\mathbf w = (\bar{\mathbf x}_1 - \bar{\mathbf x}_2)\{(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)^{\mathsf T}\mathbf w\}$ はスカラー倍の $(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)$ なので、$S_W\mathbf w \propto \bar{\mathbf x}_1 - \bar{\mathbf x}_2$、すなわち $\mathbf w \propto S_W^{-1}(\bar{\mathbf x}_1 - \bar{\mathbf x}_2)$。$S_B$ のランクが 1 なので解は 1 方向に限られる ($G$ 群なら $G - 1$ 方向まで取れる)。</p>
+<p><strong>$2 \times 2$ で 1 回計算してみる。</strong> 図 7.10 と同じ設定で、2 群の平均と共通の群内共分散が</p>
+<p>$$\bar{\mathbf x}_1 = \begin{pmatrix}0\\0\end{pmatrix},\quad \bar{\mathbf x}_2 = \begin{pmatrix}2\\0\end{pmatrix},\quad S_W = \begin{pmatrix}3 & 2.6\\ 2.6 & 3\end{pmatrix}$$</p>
+<p>だとする。<strong>平均が違うのは $x_1$ の方向だけである。</strong> ならば $x_1$ をそのまま見て分ければよさそうに思える。その方向 $\mathbf w = (1, 0)^{\mathsf T}$ で $J$ を計算すると</p>
+<p>$$J = \frac{(\mathbf w^{\mathsf T}(\bar{\mathbf x}_1 - \bar{\mathbf x}_2))^2}{\mathbf w^{\mathsf T} S_W \mathbf w} = \frac{2^2}{3} = 1.33$$</p>
+<p><strong>この素朴な案が、なぜ最良でないのか。</strong> $S_W$ の非対角が $2.6$ と大きく、群内の散らばりが $(1,1)$ 方向へ細長く伸びているからである。$x_1$ 方向は<strong>その伸びている向きと重なっている</strong>ので、平均差 $2$ を稼ぐ代わりに群内分散 $3$ も背負い込む。</p>
+<p>定理 7.6 の方向を計算する。$\det S_W = 9 - 2.6^2 = 2.24$ なので</p>
+<p>$$S_W^{-1} = \frac{1}{2.24}\begin{pmatrix}3 & -2.6\\ -2.6 & 3\end{pmatrix}, \qquad
+S_W^{-1}(\bar{\mathbf x}_2 - \bar{\mathbf x}_1) = \frac{1}{2.24}\begin{pmatrix}6\\ -5.2\end{pmatrix} = \begin{pmatrix}2.679\\ -2.321\end{pmatrix}$$</p>
+<p>長さを $1$ に直すと $\mathbf w \propto (0.756,\ -0.655)^{\mathsf T}$ である。この方向で</p>
+<p>$$J = \frac{(0.756 \times 2)^2}{\mathbf w^{\mathsf T} S_W\mathbf w} = 5.36$$</p>
+<table>
+<thead>
+<tr>
+<th>射影する方向</th>
+<th style="text-align: right;">$J$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>平均差の方向 $(1,\ 0)$</td>
+<td style="text-align: right;">$1.33$</td>
+</tr>
+<tr>
+<td><strong>Fisher 方向 $(0.756,\ -0.655)$</strong></td>
+<td style="text-align: right;">$\mathbf{5.36}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$4.02$ 倍である。</strong> 同じデータを、ただ違う向きに潰しただけでこれだけ変わる。</p>
+<p><strong>注目したいのは $\mathbf w$ の第 2 成分が負であることである。</strong> 2 群の平均は $x_2$ について<strong>まったく差がない</strong>のに、判別には $x_2$ を (しかもマイナスの重みで) 使うほうが良い。$x_1$ と $x_2$ が群内で強く正に相関しているので、$x_1 - x_2$ の向きに取れば<strong>群内のばらつきだけが打ち消し合って消え</strong>、平均差は残るからである。Fisher 方向は平均差の方向から $40.9^\circ$ 傾いていて、散らばりが伸びた向きを避けるようにずれている (図 7.10)。</p>
+<p><strong>「差がある変数だけを使えばよい」は正しくない</strong> — これが判別分析の最初の教訓である。</p>
 <details class="gap"><summary>行間: Fisher 方向が $S_W^{-1}(\bar{\mathbf x}_1-\bar{\mathbf x}_2)$ になるまで</summary><div class="gap-body"><p>本文は一般化固有値問題を経由して答えへ飛んだ。$S_B$ の階数が 1 であることがどこで効くのかを開く。</p>
 <p><strong>記号と次元。</strong> $\mathbf w$ は $p\times1$ の射影方向、$S_W$ は $p\times p$ の群内散布行列 (正則とする)、$\mathbf m = \bar{\mathbf x}_1-\bar{\mathbf x}_2$ ($p\times1$) として $S_B = \mathbf m\mathbf m^{\mathsf T}$ ($p\times p$)。$J(\mathbf w)$ はスカラーである。</p>
 <p><strong>1. 分子が $S_B$ で書けること。</strong> 射影後の平均差はスカラー $\mathbf w^{\mathsf T}\mathbf m$ で、その二乗は</p>
@@ -17879,6 +18351,37 @@ $$\theta \mid y \sim \mathrm{Beta}(a + y,\; b + n - y)$$</p>
 <p>解釈: 事前分布 $\mathrm{Beta}(a,b)$ は「$a$ 回の成功と $b$ 回の失敗を事前に見た」のと同じ効き方をする (<strong>疑似観測</strong>)。事後平均は</p>
 <p>$$E[\theta \mid y] = \frac{a + y}{a + b + n} = \frac{a+b}{a+b+n}\cdot\frac{a}{a+b} + \frac{n}{a+b+n}\cdot\frac{y}{n}$$</p>
 <p>すなわち<strong>事前平均 $a/(a+b)$ と MLE $y/n$ の、疑似観測数 $a+b$ と実観測数 $n$ を重みとする加重平均</strong>である。</p>
+<p><strong>数を 1 組通してみる。</strong> コンクリートの受入検査で、同じ配合の過去の実績が<strong>40 本中 2 本が不合格</strong>だったとする。これをそのまま事前分布にすると $\mathrm{Beta}(2,\ 38)$ で、事前平均は $2/40 = 0.05$ である。</p>
+<p>今回の打設で <strong>20 本中 3 本が不合格</strong>だった。定理 8.2 は「足すだけ」と言っている。</p>
+<p>$$\theta \mid y \sim \mathrm{Beta}(2 + 3,\ 38 + 20 - 3) = \mathrm{Beta}(5,\ 55)$$</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>事前平均 $a/(a+b)$</td>
+<td style="text-align: right;">$0.050$</td>
+</tr>
+<tr>
+<td>今回だけの MLE $y/n$</td>
+<td style="text-align: right;">$0.150$</td>
+</tr>
+<tr>
+<td><strong>事後平均 $(a+y)/(a+b+n)$</strong></td>
+<td style="text-align: right;">$\mathbf{0.0833}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$0.0833$ は $0.05$ と $0.15$ のあいだにあり、事前寄りである。</strong> 加重平均の式がそのまま出ている。</p>
+<p>$$\frac{40}{40 + 20}\times 0.05 + \frac{20}{40 + 20}\times 0.15 = \frac23 \times 0.05 + \frac13 \times 0.15 = 0.0833$$</p>
+<p>過去が 40 本、今回が 20 本なので、重みが $2 : 1$ になった。<strong>「過去 40 本の実績があるところに 20 本の新しい結果が来たら、2 対 1 で混ぜる」</strong> — 定理 8.2 が言っているのはそれだけである。</p>
+<p><strong>ここで 1 つ、意外なことが起きている。</strong> 事後の標準偏差は $0.0354$ で、事前の $0.0340$ より<strong>わずかに大きい</strong>。95% 信用区間も $[0.006,\ 0.135]$ から $[0.028,\ 0.165]$ へと幅が増えている。データを 20 本足したのに、である。</p>
+<p>からくりは、$\mathrm{Beta}$ の標準偏差が $\sqrt{\mu(1-\mu)/(a+b+1)}$ と<strong>平均にも依る</strong>ことにある。疑似観測数は $40 \to 60$ と増えたが、平均が $0.05 \to 0.083$ と上がったぶん $\mu(1-\mu)$ が大きくなり、差し引きで少し広がった。<strong>「データを足せば事後は必ず狭くなる」は成り立たない</strong> — 狭くなるのは「同じところに集まるデータ」を足したときだけである。今回のデータは事前と食い違っていた (MLE $0.15$ 対 事前平均 $0.05$) ので、その食い違いのぶん不確かさが残る。</p>
+<p>実務で効くのはここで、$P(\theta > 0.10)$ は事前の $0.088$ から事後の $0.285$ へ上がる。<strong>「不合格率が 10% を超えている」可能性が 3 倍以上になった</strong>、というのがこの 20 本から読むべき中身である。</p>
 <details class="gap"><summary>行間: 1 本の分数が、なぜ加重平均に化けるのか</summary><div class="gap-body"><p>上の式は等号 1 つで書いたが、分子を分けるところに一手ある。$m = a+b$ (疑似観測数) と置く。</p>
 <p><strong>1. 分子をそのまま 2 つに分ける。</strong> これは何もしていない。</p>
 <p>$$E[\theta \mid y] = \frac{a + y}{m + n}$$</p>
@@ -17909,6 +18412,34 @@ $a$ が事前の疑似観測の<strong>総数</strong>、$y$ が実観測の成�
 $$\lambda \mid y \sim \mathrm{Gamma}\!\left(\alpha + \textstyle\sum y_i,\; \beta + n\right)$$</p>
 </blockquote>
 <p>証明: $\prod_i \lambda^{y_i} e^{-\lambda} \cdot \lambda^{\alpha-1}e^{-\beta\lambda} = \lambda^{\alpha + \sum y_i - 1} e^{-(\beta+n)\lambda}$。事後平均は $(\alpha + \sum y_i)/(\beta + n)$ で、これも事前平均 $\alpha/\beta$ と MLE $\bar y$ を $\beta : n$ で混ぜた加重平均である。$\beta$ は「事前に観測した期間の長さ」、$\alpha$ は「その間の件数」と読める。地震・落雷・事故など<strong>稀な事象の発生率</strong>を、少ない実績と過去の統計から推定する標準形である。</p>
+<p><strong>こちらも数を 1 組通す。</strong> ある橋梁群で、<strong>過去 5 年に 12 件</strong>のひび割れ報告があったとする。これを事前分布にすると $\mathrm{Gamma}(\alpha, \beta) = \mathrm{Gamma}(12,\ 5)$ で、事前平均は $12/5 = 2.4$ 件/年である。</p>
+<p>その後<strong>3 年間で 3 件</strong>が報告された。定理 8.3 も足すだけで、</p>
+<p>$$\lambda \mid y \sim \mathrm{Gamma}(12 + 3,\ 5 + 3) = \mathrm{Gamma}(15,\ 8)$$</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>事前平均 $\alpha/\beta$</td>
+<td style="text-align: right;">$2.40$ 件/年</td>
+</tr>
+<tr>
+<td>今回だけの MLE $\bar y$</td>
+<td style="text-align: right;">$1.00$ 件/年</td>
+</tr>
+<tr>
+<td><strong>事後平均 $(\alpha + \sum y_i)/(\beta + n)$</strong></td>
+<td style="text-align: right;">$\mathbf{1.875}$ 件/年</td>
+</tr>
+</tbody>
+</table>
+<p>$$\frac{5}{5 + 3}\times 2.40 + \frac{3}{5 + 3}\times 1.00 = 0.625 \times 2.40 + 0.375 \times 1.00 = 1.875$$</p>
+<p><strong>ベータ–二項で「本数」だった重みが、ここでは「年数」になっている。</strong> $\beta$ は疑似観測の<strong>期間</strong>で、$5$ 年ぶんの事前情報に $3$ 年の観測を $5 : 3$ で混ぜた。事後の 95% 信用区間は $[1.05,\ 2.94]$ 件/年である。</p>
+<p><strong>3 年で 3 件しか出ていないのに、事後平均が $1.00$ まで下がらないのが要点である。</strong> 3 年という観測はまだ短く、過去 5 年の実績を捨てるには足りない。逆に観測を 20 年続ければ重みは $5 : 20$ になり、事前の影響は $1/5$ に落ちる。<strong>$\beta$ と $n$ の比を見れば、事前がいつ効かなくなるかが最初から分かる。</strong></p>
 <details class="gap"><summary>行間: 共役性を確かめる「核だけ見る」操作を 1 手ずつ</summary><div class="gap-body"><p>本文は $\prod_i \lambda^{y_i}e^{-\lambda}\cdot\lambda^{\alpha-1}e^{-\beta\lambda}$ を 1 行で
 整理して「事後平均は」へ飛んだ。その 1 行を開く。共役性の確認はどの対でも同じ 4 手なので、
 ここで覚えておけば 8.3.1 も 8.3.3 も同じ手が効く。</p>
@@ -20973,6 +21504,60 @@ $\theta = -1$ はその端そのものである。だから<strong>差分した�
 <p>$$\mathrm{Var}(X_{n+h} - \hat X_{n+h}) = \sigma^2\,\frac{1-\phi^{2h}}{1-\phi^2} = \sigma^2(1 + \phi^2 + \dots + \phi^{2(h-1)})$$</p>
 </blockquote>
 <p>証明: $X_{n+h} = \phi^h X_n + \sum_{j=0}^{h-1}\phi^j\varepsilon_{n+h-j}$ で、第 2 項は $\mathcal F_n$ と無相関かつ平均 0 なので条件付き期待値は第 1 項。分散は無相関和の分散の和。</p>
+<p><strong>数で歩いてみる。</strong> 図 9.8 と同じ設定で、$\phi = 0.8$、$\sigma = 1$、系列の平均が $5$ だとする。いま $X_n = 7$、つまり<strong>平均より $2$ だけ上</strong>にいる。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">$h$</th>
+<th style="text-align: right;">$\phi^h$</th>
+<th style="text-align: right;">点予測 $5 + \phi^h \times 2$</th>
+<th style="text-align: right;">予測誤差の sd</th>
+<th style="text-align: right;">95% 予測区間の半幅</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">$1$</td>
+<td style="text-align: right;">$0.800$</td>
+<td style="text-align: right;">$6.60$</td>
+<td style="text-align: right;">$1.000$</td>
+<td style="text-align: right;">$\pm 1.96$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$2$</td>
+<td style="text-align: right;">$0.640$</td>
+<td style="text-align: right;">$6.28$</td>
+<td style="text-align: right;">$1.281$</td>
+<td style="text-align: right;">$\pm 2.51$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$5$</td>
+<td style="text-align: right;">$0.328$</td>
+<td style="text-align: right;">$5.66$</td>
+<td style="text-align: right;">$1.575$</td>
+<td style="text-align: right;">$\pm 3.09$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$30$</td>
+<td style="text-align: right;">$0.001$</td>
+<td style="text-align: right;">$5.00$</td>
+<td style="text-align: right;">$1.667$</td>
+<td style="text-align: right;">$\pm 3.27$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$\infty$</td>
+<td style="text-align: right;">$0$</td>
+<td style="text-align: right;">$5.00$</td>
+<td style="text-align: right;">$1.667$</td>
+<td style="text-align: right;">$\pm 3.27$</td>
+</tr>
+</tbody>
+</table>
+<p>(手で追えるように $\phi = 0.8$ ちょうどで計算した。図 9.8 は同じ系列から推定した $\hat\phi = 0.78$ を使っているので、細かい数は少し違う。)</p>
+<p><strong>2 つのことが同時に起きている。</strong></p>
+<p><strong>1 つめ: 点予測は平均へ戻る。</strong> いま $2$ だけ上にいるという情報は、$1$ 期先では $1.6$ ぶん、$5$ 期先では $0.66$ ぶんしか残らない。$\phi^h$ が幾何的に消えるからで、<strong>30 期先には「いまが平均より上か下か」を知っている意味がなくなる</strong>。長期予測は標本平均そのものになる。</p>
+<p><strong>2 つめ: 区間の幅は頭打ちになる。</strong> $1$ 期先の $\pm 1.96$ から $30$ 期先の $\pm 3.27$ まで、<strong>$1.67$ 倍にしかならない</strong>。$h = 5$ の時点ですでに上限 $\pm 3.27$ の $94.5\%$ に達している。$\sigma^2(1 + \phi^2 + \dots)$ は等比級数なので $\sigma^2/(1-\phi^2) = 2.78$ で止まり、そこは<strong>この系列の無条件分散</strong>である。予測のできなさには天井があり、それは「何も知らずに予測したときの不確かさ」を超えない。</p>
+<p><strong>この頭打ちは定常性から来ている。</strong> 同じことをランダムウォーク ($\phi = 1$) でやると、誤差分散は $\sigma^2 h$ で頭打ちにならず、$30$ 期先の半幅は $\pm 1.96\sqrt{30} = \pm 10.7$ まで広がる。<strong>「予測が当たらなくなる速さ」が、定常か単位根かでまったく違う</strong> — 9.6 節で単位根を気にしたのは、ここに効くからである。</p>
 <details class="gap"><summary>行間: $h$ 歩先まで代入を繰り返すところ</summary><div class="gap-body"><p>本文は $X_{n+h}$ の分解をいきなり書いた。その式を作る代入の繰り返しと、
 有限等比級数が閉じるところを開く。</p>
 <p><strong>記号の役割。</strong> $n$ は「いま」の時刻で固定。$h \ge 1$ が何歩先を予測するかで、
@@ -25973,6 +26558,61 @@ $Z$ を別の操作変数に取り替えれば遵守者の集まりも変わり�
 <p><strong>定理 11.9 (DID による ATT の識別)</strong> 平行トレンド仮定 $E[Y_{\text{後}}(0) - Y_{\text{前}}(0) \mid T=1] = E[Y_{\text{後}}(0) - Y_{\text{前}}(0) \mid T=0]$ (処置が無ければ両群は同じだけ変化した) の下で、$\tau_{DID} = E[Y_{\text{後}}(1) - Y_{\text{後}}(0) \mid T=1] = \mathrm{ATT}$</p>
 </blockquote>
 <p>証明: $E[Y_{\text{後}} \mid T=1] = E[Y_{\text{後}}(1) \mid T=1]$、それ以外の 3 項は $Y(0)$ の観測値。$\tau_{DID} = E[Y_{\text{後}}(1) \mid T=1] - E[Y_{\text{前}}(0) \mid T=1] - E[Y_{\text{後}}(0) - Y_{\text{前}}(0) \mid T=0]$ に平行トレンドを代入すると、最後の項が $E[Y_{\text{後}}(0) - Y_{\text{前}}(0) \mid T=1]$ に置き換わり、$E[Y_{\text{後}}(1) - Y_{\text{後}}(0) \mid T=1]$ が残る。</p>
+<p><strong>4 つの数で 1 回やってみる。</strong> ある施工会社が年度途中で溶接手順を変更した。変更した現場 (処置群) と、変更しなかった他社の現場 (対照群) の不具合率が次のようだったとする。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">変更前</th>
+<th style="text-align: right;">変更後</th>
+<th style="text-align: right;">前後の差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>処置群</strong> (手順を変えた)</td>
+<td style="text-align: right;">$8.00\%$ (1200 本中 96 件)</td>
+<td style="text-align: right;">$5.20\%$ (1250 本中 65 件)</td>
+<td style="text-align: right;">$\mathbf{-2.80}$</td>
+</tr>
+<tr>
+<td><strong>対照群</strong> (変えなかった)</td>
+<td style="text-align: right;">$4.50\%$ (2000 本中 90 件)</td>
+<td style="text-align: right;">$3.30\%$ (2000 本中 66 件)</td>
+<td style="text-align: right;">$-1.20$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>素朴な読み方は 2 つあり、どちらも外れる。</strong></p>
+<p><strong>(a) 処置群の前後だけを見る。</strong> $8.00 \to 5.20$ で $2.80$ ポイント下がった。しかし対照群も同じ期間に $1.20$ ポイント下がっている。<strong>手順と無関係に下がるぶん</strong>が含まれている。</p>
+<p><strong>(b) 変更後の 2 群を比べる。</strong> $5.20\%$ 対 $3.30\%$ で、処置群のほうが $1.9$ ポイント<strong>高い</strong>。これを読むと「手順を変えた現場のほうが不具合が多い」となり、<strong>符号まで逆になる</strong>。元々この現場の水準が高かった ($8.00$ 対 $4.50$) ことを無視しているからである。</p>
+<p><strong>差をもう一度取る。</strong></p>
+<p>$$\hat\tau_{DID} = (5.20 - 8.00) - (3.30 - 4.50) = -2.80 - (-1.20) = \mathbf{-1.60}\ \text{ポイント}$$</p>
+<p><strong>反実仮想として読むほうが分かりやすい。</strong> 平行トレンドを仮定すると、「手順を変えなかったら処置群はどうなっていたか」は、元の水準 $8.00$ に対照群の変化 $-1.20$ を足した $6.80\%$ である。実際は $5.20\%$ だったので、差の $1.60$ ポイントが手順変更の効果である (元の水準比で $24\%$ の低減)。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手順を変えなかった場合の予想 (反実仮想)</td>
+<td style="text-align: right;">$6.80\%$</td>
+</tr>
+<tr>
+<td>実際</td>
+<td style="text-align: right;">$5.20\%$</td>
+</tr>
+<tr>
+<td><strong>差 = ATT</strong></td>
+<td style="text-align: right;">$\mathbf{-1.60}$ ポイント</td>
+</tr>
+</tbody>
+</table>
+<p><strong>水準の差 $8.00$ 対 $4.50$ は、最後まで一度も邪魔をしていない。</strong> 前後の差を取った時点で消えるからで、これが「変更を決めた現場が元々不具合率の高い現場でもよい」という DID の強みである。</p>
+<p><strong>ただし平行トレンドは仮定であって、この 4 つの数からは確かめられない。</strong> もし処置群が元々「改善の途中」で、手順に関係なく<strong>対照群より $2$ ポイント多く</strong>下がる勢いだったなら、反実仮想は $6.80$ ではなく $4.80\%$ であり、本当の効果は $-1.60$ ではなく $5.20 - 4.80 = +0.40$ (悪化) ですらありうる。2 時点しかないと、この心配を<strong>データで潰す手がない</strong>。</p>
 <details class="gap"><summary>行間: 4 つの平均のうち、反実仮想はどれか</summary><div class="gap-body"><p>上の証明は代入と打ち消しを 1 文で済ませている。どの項がどの潜在結果かを先に固定してから追う。</p>
 <p><strong>記号の役割。</strong> 群は $T \in \{0,1\}$、時点は前と後の 2 つ。潜在結果は時点ごとに 2 つずつある。
 $Y_{\text{後}}(1)$ は「後の時点で処置を受けた場合の結果」、$Y_{\text{後}}(0)$ は「受けなかった場合の結果」。
@@ -28123,7 +28763,193 @@ print(&quot;問9 強さ E-value の交絡が説明できる最大の RR = %.6f (
 <p>領域 $R$ の不純度を、回帰なら二乗偏差和 $Q(R) = \sum_{i \in R}(y_i - \bar y_R)^2$、分類なら <strong>Gini 不純度</strong> $G(R) = \sum_k \hat p_k(1 - \hat p_k)$ または<strong>エントロピー</strong> $-\sum_k \hat p_k\log\hat p_k$ ($\hat p_k$ は領域内のクラス $k$ の割合) で測る。分割は、変数 $j$ としきい値 $t$ について</p>
 <p>$$(j^*, t^*) = \arg\min_{j, t}\; Q(\{x_j \le t\}) + Q(\{x_j > t\})$$</p>
 <p>を全変数・全しきい値候補 (各変数のソート済み観測値の中点) について総当たりで求める。これを各子領域で繰り返し、深さ・葉の最小サンプル数・不純度の改善量のいずれかが閾値に達したら止める。貪欲法なので大域最適ではないが、計算量は各層で $O(pn\log n)$ と手頃である。</p>
+<p><strong>「総当たり」を 8 点で 1 回やってみる。</strong> 桁に沿って $5\,\mathrm{m}$ 間隔でひずみゲージを 8 つ並べ、載荷時のひずみを測ったとする ($x$ は桁上の位置 $\mathrm{m}$、$y$ はひずみ $\mu$)。</p>
+<table>
+<thead>
+<tr>
+<th>$x$</th>
+<th style="text-align: right;">$5$</th>
+<th style="text-align: right;">$10$</th>
+<th style="text-align: right;">$15$</th>
+<th style="text-align: right;">$20$</th>
+<th style="text-align: right;">$25$</th>
+<th style="text-align: right;">$30$</th>
+<th style="text-align: right;">$35$</th>
+<th style="text-align: right;">$40$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$y$</td>
+<td style="text-align: right;">$22$</td>
+<td style="text-align: right;">$24$</td>
+<td style="text-align: right;">$23$</td>
+<td style="text-align: right;">$26$</td>
+<td style="text-align: right;">$34$</td>
+<td style="text-align: right;">$35$</td>
+<td style="text-align: right;">$33$</td>
+<td style="text-align: right;">$36$</td>
+</tr>
+</tbody>
+</table>
+<p>全体の平均は $29.125$、二乗偏差和は $Q = 244.88$ である。<strong>切る場所の候補は隣り合う $x$ の中点で、7 つしかない。</strong> その 7 つを全部試す。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">しきい値 $t$</th>
+<th style="text-align: right;">左の平均</th>
+<th style="text-align: right;">$Q(\text{左})$</th>
+<th style="text-align: right;">右の平均</th>
+<th style="text-align: right;">$Q(\text{右})$</th>
+<th style="text-align: right;">和</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">$7.5$</td>
+<td style="text-align: right;">$22.00$</td>
+<td style="text-align: right;">$0.00$</td>
+<td style="text-align: right;">$30.14$</td>
+<td style="text-align: right;">$186.86$</td>
+<td style="text-align: right;">$186.86$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$12.5$</td>
+<td style="text-align: right;">$23.00$</td>
+<td style="text-align: right;">$2.00$</td>
+<td style="text-align: right;">$31.17$</td>
+<td style="text-align: right;">$142.83$</td>
+<td style="text-align: right;">$144.83$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$17.5$</td>
+<td style="text-align: right;">$23.00$</td>
+<td style="text-align: right;">$2.00$</td>
+<td style="text-align: right;">$32.80$</td>
+<td style="text-align: right;">$62.80$</td>
+<td style="text-align: right;">$64.80$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$\mathbf{22.5}$</td>
+<td style="text-align: right;">$23.75$</td>
+<td style="text-align: right;">$8.75$</td>
+<td style="text-align: right;">$34.50$</td>
+<td style="text-align: right;">$5.00$</td>
+<td style="text-align: right;">$\mathbf{13.75}$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$27.5$</td>
+<td style="text-align: right;">$25.80$</td>
+<td style="text-align: right;">$92.80$</td>
+<td style="text-align: right;">$34.67$</td>
+<td style="text-align: right;">$4.67$</td>
+<td style="text-align: right;">$97.47$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$32.5$</td>
+<td style="text-align: right;">$27.33$</td>
+<td style="text-align: right;">$163.33$</td>
+<td style="text-align: right;">$34.50$</td>
+<td style="text-align: right;">$4.50$</td>
+<td style="text-align: right;">$167.83$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$37.5$</td>
+<td style="text-align: right;">$28.14$</td>
+<td style="text-align: right;">$190.86$</td>
+<td style="text-align: right;">$36.00$</td>
+<td style="text-align: right;">$0.00$</td>
+<td style="text-align: right;">$190.86$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$t = 22.5$ で $13.75$ となり、$244.88$ の $5.6\%$ まで落ちる。</strong> 1 本引いただけでばらつきの $94\%$ が説明された。$x \le 22.5$ では平均 $23.75$、$x > 22.5$ では $34.50$ を予測する、というのがこの木の深さ 1 の答えである。</p>
+<p><strong>両隣を見ておくと、この規則の性格が分かる。</strong> $17.5$ で切ると $64.80$、$27.5$ で切ると $97.47$ で、<strong>たった $5\,\mathrm{m}$ ずらすだけで 5 倍以上悪くなる。</strong> 段差の位置を 1 点でも跨いで数えると、左右どちらかに「違う水準の点」が混ざり、その領域の $Q$ が一気に膨らむからである。$Q$ は最良の位置で鋭く尖っていて、だからこそ貪欲な総当たりでも段差を正確に拾える。</p>
+<p><strong>同時に、これは木の弱点でもある。</strong> $x = 25$ の 1 点が $34$ ではなく $28$ だったとして計算し直すと、最良は $t = 22.5$ (和 $46.8$) ではなく $t = 27.5$ (和 $27.9$) に<strong>移る</strong>。<strong>たった 1 点の値で、根の分割位置が $5\,\mathrm{m}$ ずれる</strong> — 根がずれればその下の分割もすべて変わる。12.7.2 項で扱う木の不安定さは、ここから来ている。</p>
 <p>Gini 不純度を使う理由: 2 クラスで $G = 2p(1 - p)$ は、その領域からランダムに 1 点を取り出し、領域のクラス比に従ってランダムにラベルを付けたときの誤分類率である。誤分類率 $\min(p, 1 - p)$ そのものを不純度にすると、$p$ について区分線形で「純度が上がっても子の誤分類率の和が変わらない」分割が多発するため、厳密に凹な Gini やエントロピーの方が分割に敏感で使いやすい。</p>
+<p><strong>分類でも 1 回やっておく。</strong> 10 個の溶接部を欠陥指標の大きさ順に並べ、$1$ が「再検査で不合格」だとする。</p>
+<table>
+<thead>
+<tr>
+<th>$x$</th>
+<th>$1$</th>
+<th>$2$</th>
+<th>$3$</th>
+<th>$4$</th>
+<th>$5$</th>
+<th>$6$</th>
+<th>$7$</th>
+<th>$8$</th>
+<th>$9$</th>
+<th>$10$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ラベル</td>
+<td>$0$</td>
+<td>$0$</td>
+<td>$0$</td>
+<td>$1$</td>
+<td>$0$</td>
+<td>$1$</td>
+<td>$1$</td>
+<td>$1$</td>
+<td>$1$</td>
+<td>$1$</td>
+</tr>
+</tbody>
+</table>
+<p>親の Gini は $2 \times 0.6 \times 0.4 = 0.480$ である。子の不純度は<strong>各領域の点数で重み付けて</strong>足す。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">しきい値</th>
+<th style="text-align: right;">左の $p_1$</th>
+<th style="text-align: right;">$G(\text{左})$</th>
+<th style="text-align: right;">右の $p_1$</th>
+<th style="text-align: right;">$G(\text{右})$</th>
+<th style="text-align: right;">重み付き $G$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">$3.5$</td>
+<td style="text-align: right;">$0.000$</td>
+<td style="text-align: right;">$0.000$</td>
+<td style="text-align: right;">$0.857$</td>
+<td style="text-align: right;">$0.245$</td>
+<td style="text-align: right;">$0.171$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$4.5$</td>
+<td style="text-align: right;">$0.250$</td>
+<td style="text-align: right;">$0.375$</td>
+<td style="text-align: right;">$0.833$</td>
+<td style="text-align: right;">$0.278$</td>
+<td style="text-align: right;">$0.317$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$\mathbf{5.5}$</td>
+<td style="text-align: right;">$0.200$</td>
+<td style="text-align: right;">$0.320$</td>
+<td style="text-align: right;">$1.000$</td>
+<td style="text-align: right;">$0.000$</td>
+<td style="text-align: right;">$\mathbf{0.160}$</td>
+</tr>
+<tr>
+<td style="text-align: right;">$6.5$</td>
+<td style="text-align: right;">$0.333$</td>
+<td style="text-align: right;">$0.444$</td>
+<td style="text-align: right;">$1.000$</td>
+<td style="text-align: right;">$0.000$</td>
+<td style="text-align: right;">$0.267$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最良は $x \le 5.5$ で、$x \le 3.5$ ではない。</strong> これは一見おかしく見える。$x \le 3.5$ なら<strong>左が完全に純</strong>になる ($G = 0$) のに、選ばれないのである。</p>
+<p>理由は重み付けにある。$x \le 3.5$ は純な領域を作るが、残る 7 点に $0$ が 1 つ混ざったまま ($G = 0.245$) で、しかもその 7 点が重みの $7/10$ を占める。$x \le 5.5$ は左に $0$ を 1 つ残すが ($G = 0.320$、重み $5/10$)、<strong>右 5 点を完全に純にする</strong>。合計では後者が勝つ。</p>
+<p><strong>「片方を純にする分割」より「両方を合わせて純度が上がる分割」を選ぶ</strong> — 貪欲といっても、目先の純粋さに飛びつくわけではない。</p>
 <figure><img loading="lazy" decoding="async" alt="図 12.8 決定木とバギング。左: 深さ 2 の分類木は軸に平行な 2 本の境界で円 (破線) を近似する。中: 深さ 8 では境界が細かく刻まれ、ノイズ点まで囲む (過学習)。右: 60 点の回帰データにブートストラップ標本ごとの回帰木 (灰) を 40 本描き、その平均 (赤) が滑らかに真の関数に近づく" src="fig/12_tree_forest.png" /><figcaption>図 12.8 決定木とバギング。左: 深さ 2 の分類木は軸に平行な 2 本の境界で円 (破線) を近似する。中: 深さ 8 では境界が細かく刻まれ、ノイズ点まで囲む (過学習)。右: 60 点の回帰データにブートストラップ標本ごとの回帰木 (灰) を 40 本描き、その平均 (赤) が滑らかに真の関数に近づく</figcaption></figure>
 <h3 id="c12-12-7-2">12.7.2 剪定と木の性質</h3>
 <p>12.7.1 項の貪欲な分割は、<strong>放っておくと訓練データに完全適合するまで育つ。</strong> 12.3.2 項の過学習そのものなので、複雑さを抑える仕組みが要る。</p>
