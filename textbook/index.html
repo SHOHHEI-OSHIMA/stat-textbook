@@ -17933,6 +17933,71 @@ $p_J(\theta)$ の値と $|J|$ 倍だけ違う。密度の値が一致すると�
 <h3 id="c08-8-4-3">8.4.3 弱情報事前分布 (実務の標準)</h3>
 <p>8.4.1〜8.4.2 項は「何も知らない」を表そうとする試みだった。<strong>現代の実務はその追求をやめている。</strong> 「何も知らない」のではなく「常識的な範囲は知っている」を素直に書くほうが、結果が安定するからである。</p>
 <p>現代の実務では、真の無情報を追うより<strong>弱情報事前</strong> (weakly informative prior) を置くことが多い。物理的にあり得る範囲を緩く覆い、あり得ない値 (負の強度、桁違いの係数) を排除する程度の事前である。階層モデルの分散パラメータに逆ガンマ $(\epsilon, \epsilon)$ を「無情報」のつもりで置くと、$\epsilon$ の選び方に事後が強く依存することが知られており、半 Cauchy などの弱情報事前が推奨される<sup id="c08-fnref:2"><a class="footnote-ref" href="#c08-fn:2">2</a></sup>。事前分布が結果を左右するときは、<strong>複数の事前で結果を出して感度を報告する</strong>のが誠実な手続きである。</p>
+<p><strong>事前がどれだけ効くかを数で見る。</strong> 母標準偏差 $\sigma = 3$ が既知の正規母集団で、事前 $N(28, \tau^2)$ のもとに標本平均 $32$ が得られたとする。事後平均は</p>
+<p>$$w\,\mu_0 + (1-w)\,\bar x, \qquad w = \frac{\sigma^2/n}{\tau^2 + \sigma^2/n}$$</p>
+<figure><img loading="lazy" decoding="async" alt="図 8.5 左: 事後平均が $n$ とともにデータ側へ寄っていく様子。$\tau$ が小さい (強い事前) ほど寄るのが遅い。右: $\sigma$ に平坦な事前と Jeffreys 事前。塗った面積が $P(\sigma < 1)$" src="fig/08_prior_influence.png" /><figcaption>図 8.5 左: 事後平均が $n$ とともにデータ側へ寄っていく様子。$\tau$ が小さい (強い事前) ほど寄るのが遅い。右: $\sigma$ に平坦な事前と Jeffreys 事前。塗った面積が $P(\sigma < 1)$</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>$n$</th>
+<th style="text-align: right;">$\tau=1$ (強い)</th>
+<th style="text-align: right;">$\tau=3$ (中)</th>
+<th style="text-align: right;">$\tau=10$ (弱い)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td style="text-align: right;">$29.00$</td>
+<td style="text-align: right;">$31.00$</td>
+<td style="text-align: right;">$31.88$</td>
+</tr>
+<tr>
+<td>6</td>
+<td style="text-align: right;">$29.60$</td>
+<td style="text-align: right;">$31.43$</td>
+<td style="text-align: right;">$31.94$</td>
+</tr>
+<tr>
+<td>20</td>
+<td style="text-align: right;">$30.76$</td>
+<td style="text-align: right;">$31.81$</td>
+<td style="text-align: right;">$31.98$</td>
+</tr>
+<tr>
+<td>100</td>
+<td style="text-align: right;">$31.67$</td>
+<td style="text-align: right;">$31.96$</td>
+<td style="text-align: right;">$32.00$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$\tau = 1$ の列を上から下へ読むと、事前が消えていく速さが分かる。</strong> $n = 3$ では事前の重みが $0.75$ もあり、事後平均 $29.0$ はデータの $32$ より事前の $28$ に近い。$n = 100$ で重みは $0.083$ まで落ちる。<strong>「事前の重み」は疑似観測 $\sigma^2/\tau^2 = 9$ 本ぶんに相当する</strong> — 9 本の試験結果と同じ強さで主張している、と読めば選び方の見当がつく。</p>
+<p><strong>右の図が、もっと厄介な話である。</strong> $\sigma$ について「何も知らない」と言いたいとき、$p(\sigma) \propto 1$ と置くのは自然に見える。ところが</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">$P(\sigma < 1)$</th>
+<th style="text-align: right;">$P(\sigma > 5)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$p(\sigma) \propto 1$ (平坦)</td>
+<td style="text-align: right;">$0.099$</td>
+<td style="text-align: right;">$0.501$</td>
+</tr>
+<tr>
+<td>$p(\sigma) \propto 1/\sigma$ (Jeffreys)</td>
+<td style="text-align: right;">$\mathbf{0.667}$</td>
+<td style="text-align: right;">$0.100$</td>
+</tr>
+</tbody>
+</table>
+<p>($\sigma \in (0, 10)$ に切って計算した。)</p>
+<p><strong>同じ「無情報」のつもりで、$\sigma$ が 1 より小さい確率が 0.099 と 0.667 で 7 倍違う。</strong> 平坦な事前は「$\sigma$ が大きい」ほうに強く賭けている。$\log\sigma$ に平坦にすると Jeffreys 事前になり、$\sigma$ と $1/\sigma$ で対称になる。</p>
+<p><strong>「無情報事前」という言い方が誤解を招くのはここである。</strong> 情報が無いのではなく、<strong>どの変数で平坦にするかという情報が入っている</strong>。尺度母数なら $\log$ で、確率なら logit で平坦にするのが慣例なのは、その変換で不変になるからである。</p>
 <h2 id="c08-8-5">8.5 事後予測分布</h2>
 <p>8.2〜8.4 節では母数 $\theta$ の事後分布を求めてきた。<strong>しかし実務で知りたいのは、次の 1 本がどうなるかである。</strong> 5.5.4 項の予測区間に対応するものを、ベイズの枠組みで作る。母数の不確かさと観測のばらつきが、<strong>1 つの積分の中で自動的に合成される</strong>のが利点である。</p>
 <blockquote>
@@ -18060,6 +18125,38 @@ $g'$ は非減少。$g'$ が負から正へ変わる点なので、$g$ はそこ
 $c$ に依らない —— ここを「$c$ で動く」と読むと 4 の議論が立たなくなる。
 事後が左右対称で単峰なら平均・中央値・最頻値は一致するが、歪んだ事後では 3 つとも別の点になる。</p></div></details>
 <p>MAP は事前分布を罰則項とみなした<strong>罰則付き最尤</strong> ($\log p(y \mid \theta) + \log p(\theta)$ の最大化) と同じである: 正規事前なら L2 (リッジ) 罰則、Laplace 事前なら L1 (Lasso) 罰則に対応する (12.5)。ただし MAP は再パラメータ化で変わる (密度の最頻値は座標に依存する) 一方、事後平均・中央値は損失の意味が明確なぶん扱いやすい。<strong>非対称損失</strong> (過大評価と過小評価で損失が違う) なら最小化点は分位点になる — 耐力を過大評価する方がはるかに危険な設計判断では、こちらの方が本来の形である。</p>
+<p><strong>3 つがどれだけ離れるかを、歪んだ事後で見る。</strong> 事後が対数正規 ($\mu = 0$、$\sigma = 0.8$) のとき</p>
+<figure><img loading="lazy" decoding="async" alt="図 8.7 左: 歪んだ事後と 3 つの点推定。右: 報告する数を動かしたときの事後期待損失。二乗損失は平均で、絶対損失は中央値で最小になる" src="fig/08_loss_estimate.png" /><figcaption>図 8.7 左: 歪んだ事後と 3 つの点推定。右: 報告する数を動かしたときの事後期待損失。二乗損失は平均で、絶対損失は中央値で最小になる</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>損失</th>
+<th>最小にする値</th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$0$–$1$ 損失</td>
+<td>MAP (最頻値)</td>
+<td style="text-align: right;">$0.527$</td>
+</tr>
+<tr>
+<td>絶対損失</td>
+<td>中央値</td>
+<td style="text-align: right;">$1.000$</td>
+</tr>
+<tr>
+<td>二乗損失</td>
+<td>平均</td>
+<td style="text-align: right;">$1.377$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>平均は MAP の 2.61 倍である。</strong> 「最も確からしい値」と「平均的な値」が 2.6 倍違うのだから、どちらを報告するかは好みでは済まない。</p>
+<p><strong>右の図で、2 本の谷が別の場所にあることを確かめてほしい。</strong> 赤 (二乗損失) の谷は $1.377$、青 (絶対損失) の谷は $1.000$ にある。<strong>どちらの曲線も、相手の最小点では 1 より上にいる</strong> — 一方にとって最適な報告は、他方にとって最適ではない。</p>
+<p><strong>工学での使い分けは損の形で決まる。</strong> 「外れた量に比例して損をする」(材料を余分に使う) なら絶対損失で中央値。「外れた量の二乗で損をする」(制御のずれ) なら二乗損失で平均。<strong>「当たるか外れるか」だけなら</strong> MAP だが、連続量でこれを使う場面は実は少ない。</p>
+<p><strong>安全側の判断は、このどれでもない。</strong> 破壊確率や特性値は「分布の裾」を問うているので、点推定ではなく<strong>分位点</strong>を報告する (8.10 節)。損失関数で言えば非対称なピンボール損失に対応する。</p>
 <h2 id="c08-8-7">8.7 モデル比較</h2>
 <p>8.2〜8.6 節では 1 つのモデルの中で話が閉じていた。<strong>候補が複数あるとき、どれを選ぶか。</strong> 5.8 節の AIC・BIC に対応する問いだが、ベイズには 2 通りの答え方があり、しかも<strong>一方は事前分布に極端に敏感</strong>である。</p>
 <h3 id="c08-8-7-1">8.7.1 ベイズ因子</h3>
@@ -18347,6 +18444,48 @@ $k \le T-1$ までで、しかもラグが大きいところの $\hat\rho_k$ は
 <p><strong>少数試験体の材料強度。</strong> 新しい材料や既存建物のコア供試体は $n = 3 \sim 6$ 本が普通で、$t$ 分布に基づく 5% 下限値 (特性値) は $n$ が小さいと極端に低くなる。同種材料の過去の試験統計を事前分布に使えば、母平均と分散の事後分布が得られ、特性値は<strong>事後予測分布の 5% 分位点</strong>として定義できる。JCSS の Probabilistic Model Code や Eurocode 0 附属書 D の「事前知識がある場合 ($V_X$ 既知)」の式は、まさに正規–正規更新の適用であり、$n$ が小さいときの疑似観測数 $n'$ という形で事前情報の重みが表現されている (8.11 節 4))。</p>
 <p><strong>既存建物のベイズ更新。</strong> 設計時の耐力評価は事前分布である。竣工後の振動計測 (固有周期)・載荷試験・ひび割れ観察・腐食量測定は「モニタリング情報 $y$」であり、モデルの母数 (剛性、有効断面、境界条件) の事後分布へ更新する (Beck &amp; Katafygiotis 1998 の枠組み)。計測は尤度 $p(y \mid \theta)$ を通じて効くので、計測誤差の分布を明示する必要がある。更新後の耐力分布から信頼性指標 $\beta$ を再計算すれば「点検で安全側に更新された」を定量的に言える。8.2.2 の逐次更新により、点検のたびに事後を事前として繰り返せばよい。</p>
 <p><strong>信頼性解析の事前情報。</strong> 荷重・抵抗の確率モデルの母数自体に不確かさがある (統計的不確かさ) とき、事後予測分布で母数を積分した破壊確率 $P_f = \int P_f(\theta)\, p(\theta \mid y)\, d\theta$ が、母数の点推定を代入した値より大きくなる。試験体が少ないほどこの差は大きく、部分安全係数の根拠になる。</p>
+<p><strong>「$n$ が小さいと特性値が極端に低くなる」を数で確かめる。</strong> 真の母集団が $N(30, 3^2)$ のとき、5% 下限値 (特性値) の期待値を $n$ ごとに比べる。</p>
+<figure><img loading="lazy" decoding="async" alt="図 8.12 $n$ に対する特性値 (予測分布の 5% 下限) の期待値。赤が頻度論の $t$ 分布による下限、青と緑が事前情報を疑似観測 $n'$ 本ぶん持つベイズ" src="fig/08_characteristic_value.png" /><figcaption>図 8.12 $n$ に対する特性値 (予測分布の 5% 下限) の期待値。赤が頻度論の $t$ 分布による下限、青と緑が事前情報を疑似観測 $n'$ 本ぶん持つベイズ</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>$n$</th>
+<th style="text-align: right;">頻度論 ($t$)</th>
+<th style="text-align: right;">ベイズ $n'=5$</th>
+<th style="text-align: right;">ベイズ $n'=20$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td style="text-align: right;">$\mathbf{19.88}$</td>
+<td style="text-align: right;">$24.77$</td>
+<td style="text-align: right;">$24.96$</td>
+</tr>
+<tr>
+<td>6</td>
+<td style="text-align: right;">$23.47$</td>
+<td style="text-align: right;">$24.85$</td>
+<td style="text-align: right;">$24.97$</td>
+</tr>
+<tr>
+<td>10</td>
+<td style="text-align: right;">$24.23$</td>
+<td style="text-align: right;">$24.90$</td>
+<td style="text-align: right;">$24.98$</td>
+</tr>
+<tr>
+<td>30</td>
+<td style="text-align: right;">$24.82$</td>
+<td style="text-align: right;">$24.99$</td>
+<td style="text-align: right;">$25.02$</td>
+</tr>
+</tbody>
+</table>
+<p>(真の分布の 5% 分位点は $25.06$。)</p>
+<p><strong>$n = 3$ での頻度論の値 $19.88$ は、真値より $5.2\,\mathrm{N/mm^2}$ も低い。</strong> $t_{0.95,2} = 2.92$ が効いているためで、<strong>安全側ではあるが 17% も切り捨てている</strong>。既存建物のコア供試体でこれをやると、実際には使える構造が「基準を満たさない」と判定されうる。</p>
+<p><strong>事前情報を 5 本ぶん持つだけで $24.77$ まで戻る。</strong> 同種材料の過去の試験統計は、たいてい数十本ぶんの情報を持っている。<strong>$n = 3$ の新しい試験に、過去の 5 本を足して 8 本として扱う</strong> — ベイズ更新がやっているのは、突き詰めればそれである。</p>
+<p><strong>ただし「事前が正しい」が前提である。</strong> 上の表は事前平均が真値 $30$ に一致している場合で、事前がずれていれば特性値もずれる。過去の材料と今回の材料が本当に同じ母集団かを問うのが、この手法を使う前にやるべきことである。8.15 節の事前予測検査はその点検にあたる。</p>
 <h2 id="c08-8-11">8.11 Python で確かめる</h2>
 <pre><code class="language-python">import numpy as np
 from scipy import stats
@@ -18896,6 +19035,38 @@ for lab, pr in hyper:
 <h3 id="c08-事前分布も検査の対象である">事前分布も検査の対象である</h3>
 <p>8.14 節で事前分布の感度分析を扱った。ワークフローの文脈では、これは<strong>事前予測検査</strong>として位置づけられる。事前分布からパラメータを引き、そこからデータを生成して、<strong>物理的にありえない値が出ないか</strong>を見る。</p>
 <p>コンクリート強度の例なら、事前予測から負の強度や 200 N/mm² が頻繁に出るなら、その事前分布は「無情報」ではなく「間違った情報」を入れている。<strong>弱情報事前分布の妥当性は、事前予測を見れば判定できる。</strong></p>
+<p><strong>事前予測検査を 1 つやってみる。</strong> コンクリートの圧縮強度を $y = \alpha + \beta\,(w/c - 0.5)$ で表し、$w/c$ は $0.4 \sim 0.7$ とする。事前分布だけからデータを生成して、<strong>何が起こりうると言っているのか</strong>を見る。</p>
+<figure><img loading="lazy" decoding="async" alt="図 8.20 左: 「平坦なつもり」の事前が生む圧縮強度。半分が負になる。中: 弱情報の事前。右: 弱情報の事前が生む「ありうる実験結果」" src="fig/08d_prior_predictive.png" /><figcaption>図 8.20 左: 「平坦なつもり」の事前が生む圧縮強度。半分が負になる。中: 弱情報の事前。右: 弱情報の事前が生む「ありうる実験結果」</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>事前</th>
+<th>生成される強度の 1〜99%</th>
+<th style="text-align: right;">負になる割合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\alpha \sim N(0, 100^2)$, $\beta \sim N(0, 100^2)$</td>
+<td>$[-234,\ 239]$</td>
+<td style="text-align: right;">$\mathbf{0.50}$</td>
+</tr>
+<tr>
+<td>$\alpha \sim N(30, 10^2)$, $\beta \sim N(0, 50^2)$</td>
+<td>$[4,\ 56]$</td>
+<td style="text-align: right;">$0.00$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>上の行は「強度が負のコンクリート」を半分の確率で主張している。</strong> 「事前は平坦にしておけば安全」という直感がどれだけ危ういかが、この 1 行で分かる。$n$ が十分なら事後はデータに引かれて問題は表面化しないが、<strong>$n$ が小さいときや階層モデルの上位母数では、この馬鹿げた事前がそのまま事後に残る。</strong></p>
+<p><strong>下の行は控えめな仮定しか置いていない。</strong> 「強度はだいたい 30 前後」「$w/c$ が 0.1 変わると強度は 5 程度動きうる」という、設計者なら誰でも同意する範囲である。それでも生成される強度は $[4, 56]$ に収まり、<strong>負は 1 つも出ない。</strong></p>
+<p><strong>事前予測検査の手順は 3 行で済む。</strong></p>
+<ol>
+<li>データを見ずに、事前分布からパラメータを引く</li>
+<li>そのパラメータで、<strong>観測しうるデータ</strong>を生成する</li>
+<li>生成されたデータが物理的にありうるかを目で見る</li>
+</ol>
+<p><strong>「事前分布が妥当か」は直接は判断しにくいが、「生成されたデータがありうるか」なら判断できる。</strong> 母数の空間での議論を、観測の空間での議論に翻訳するのがこの検査の値打ちである。</p>
 <h3 id="c08-ワークフローとして並べると">ワークフローとして並べると</h3>
 <table>
 <thead>
@@ -22198,6 +22369,43 @@ $f, S, h, H$ はすべて $\theta$ に依存する既知の形の関数。個体
 <p><strong>例 (指数分布).</strong> $h = \lambda$, $H = \lambda t$ なので $\log L = d \log\lambda - \lambda \sum_i t_i$ ($d = \sum \delta_i$ はイベント数)。微分して</p>
 <p>$$\hat\lambda = \frac{d}{\sum_i t_i} = \frac{\text{イベント数}}{\text{総観測時間}}$$</p>
 <p>打ち切られた個体も分母に<strong>観測した時間だけ</strong>寄与する。Fisher 情報は $d/\lambda^2$ なので $\mathrm{SE}(\hat\lambda) \approx \hat\lambda/\sqrt{d}$ となり、精度を決めるのは標本数ではなく<strong>イベント数</strong>である。打ち切り率の高い試験では、いくら供試体を増やしても壊れなければ情報は増えない。</p>
+<p><strong>打ち切りを誤って扱うとどうなるかを数で見る。</strong> 真の寿命が指数分布 (平均 100)、供試体 100 本、時刻 $C$ で試験を打ち切る。3 通りのやり方で平均寿命を推定する。</p>
+<figure><img loading="lazy" decoding="async" alt="図 10.2 左: $C=50$ で打ち切ったときに見えなくなる部分。右: 打ち切り率に対する推定値。青が打ち切り尤度、赤が「打ち切りを故障とみなす」、緑が「打ち切りを捨てる」" src="fig/10_censoring_bias.png" /><figcaption>図 10.2 左: $C=50$ で打ち切ったときに見えなくなる部分。右: 打ち切り率に対する推定値。青が打ち切り尤度、赤が「打ち切りを故障とみなす」、緑が「打ち切りを捨てる」</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>打ち切り率</th>
+<th style="text-align: right;">打ち切り尤度 (正しい)</th>
+<th style="text-align: right;">故障とみなす</th>
+<th style="text-align: right;">捨てる</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$0.14$ ($C=200$)</td>
+<td style="text-align: right;">$100.2$</td>
+<td style="text-align: right;">$86.4$</td>
+<td style="text-align: right;">$68.8$</td>
+</tr>
+<tr>
+<td>$0.37$ ($C=100$)</td>
+<td style="text-align: right;">$100.8$</td>
+<td style="text-align: right;">$63.1$</td>
+<td style="text-align: right;">$41.7$</td>
+</tr>
+<tr>
+<td>$0.61$ ($C=50$)</td>
+<td style="text-align: right;">$\mathbf{102.2}$</td>
+<td style="text-align: right;">$39.4$</td>
+<td style="text-align: right;">$22.9$</td>
+</tr>
+</tbody>
+</table>
+<p>(真の平均寿命は $100$。)</p>
+<p><strong>打ち切り率 0.61 で、誤った 2 つは $39.4$ と $22.9$ — 真値の 4 割と 2 割である。</strong> 打ち切り尤度は $102.2$ とほぼ当たっている。</p>
+<p><strong>2 つの誤りは向きが同じで、どちらも「短すぎる」側へ偏る。</strong> 「打ち切りを故障とみなす」は、まだ壊れていないものを壊れたことにするので当然である。<strong>「打ち切りを捨てる」のほうがもっと悪い</strong>のは、捨てられるのが長生きした個体ばかりだからで、<strong>残るのは短命なものだけ</strong>という選択が起きている。</p>
+<p><strong>信頼性評価では、この向きの偏りが実務上の害になる。</strong> 平均寿命を短く見積もれば「安全側」と思いがちだが、点検間隔や交換周期を短く決めすぎればコストが跳ね上がる。逆にこの偏りを見越して係数で戻そうとすれば恣意的になる。<strong>打ち切り尤度は「余分な仮定」ではなく、情報を捨てないための最小限の道具</strong>である。</p>
+<p><strong>なお 14% 程度の打ち切りでも $86.4$ と $68.8$ である。</strong> 「ほとんど壊れたから無視してよい」と言える水準は、思ったより低い。</p>
 <h2 id="c10-10-4">10.4 Kaplan–Meier 推定量</h2>
 <p>10.3 節で尤度の書き方は決まったが、<strong>分布形を仮定していた。</strong> 形を仮定せずに生存関数を推定できるか — できる、というのがこの節である。1.4 節の経験分布関数の、打ち切り対応版にあたる。</p>
 <h3 id="c10-10-4-1">10.4.1 導出</h3>
@@ -22237,7 +22445,7 @@ $\log L$ を $h_j$ で微分すると $j$ 番目の項しか残らない。二�
 $1 - d_j/n_j$ を単独で取り出しても意味を持たず、掛け合わせて初めて $S(t)$ になる。
 直前の 1 行が言う望遠鏡式の潰れ方も、$n_{j+1} = n_j - d_j$ が成り立つとき、
 すなわち途中で誰も抜けないときに限った話である。</p></div></details>
-<figure><img loading="lazy" decoding="async" alt="図 10.2 左: 打ち切りを含む Weibull データの Kaplan–Meier 推定と Greenwood の 95% 信頼帯。縦棒は打ち切り時刻で、そこでは階段は下がらずリスク集合が減るだけである。右: 2 群のログランク検定" src="fig/10_km_logrank.png" /><figcaption>図 10.2 左: 打ち切りを含む Weibull データの Kaplan–Meier 推定と Greenwood の 95% 信頼帯。縦棒は打ち切り時刻で、そこでは階段は下がらずリスク集合が減るだけである。右: 2 群のログランク検定</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.3 左: 打ち切りを含む Weibull データの Kaplan–Meier 推定と Greenwood の 95% 信頼帯。縦棒は打ち切り時刻で、そこでは階段は下がらずリスク集合が減るだけである。右: 2 群のログランク検定" src="fig/10_km_logrank.png" /><figcaption>図 10.3 左: 打ち切りを含む Weibull データの Kaplan–Meier 推定と Greenwood の 95% 信頼帯。縦棒は打ち切り時刻で、そこでは階段は下がらずリスク集合が減るだけである。右: 2 群のログランク検定</figcaption></figure>
 <h3 id="c10-10-4-2">10.4.2 Greenwood の分散</h3>
 <p>10.4.1 項で点推定は得られた。<strong>幅を付けるには分散が要る。</strong> 掛け算の形なので、対数を取ってデルタ法 (2.8.2 項) を当てる。</p>
 <blockquote>
@@ -22397,7 +22605,34 @@ $n_{Aj}$ は群 A のリスク数、$n_j$ は両群あわせたリスク数、$d
 ある時刻で A が多く別の時刻で B が多ければ、差は打ち消し合って $Z$ は 0 に近づく。
 2 本の生存曲線が交差する状況でログランク検定の感度が落ちるのは、この打ち消しが起きるからである。
 差が小さいことと「どの時刻でも差が無い」ことは、この統計量では区別できない。</p></div></details>
-<p>「ログランク」の名は、これが順位に基づく検定 (Mantel 1966、Peto &amp; Peto 1972) だからである。全時刻に等しい重み 1 を置くのがログランク、重み $n_j$ を置くのが Gehan–Wilcoxon (早期の差に敏感)、$\hat S(t_{(j)})$ を置くのが Peto–Prentice である。ログランク検定は<strong>比例ハザードのもとで最も検出力が高い</strong> — 図 10.2 右の 2 曲線が交差するような場合は感度が落ちる。</p>
+<p>「ログランク」の名は、これが順位に基づく検定 (Mantel 1966、Peto &amp; Peto 1972) だからである。全時刻に等しい重み 1 を置くのがログランク、重み $n_j$ を置くのが Gehan–Wilcoxon (早期の差に敏感)、$\hat S(t_{(j)})$ を置くのが Peto–Prentice である。ログランク検定は<strong>比例ハザードのもとで最も検出力が高い</strong> — 図 10.3 右の 2 曲線が交差するような場合は感度が落ちる。</p>
+<p><strong>ログランク検定がいつ効くかを、2 つの設定で測る。</strong> 各群 60 本、打ち切り率はおよそ 3 割。</p>
+<figure><img loading="lazy" decoding="async" alt="図 10.4 左: 交差するハザードの例。前半は群 A の故障が多く、後半は群 B に集中する。右: 2 つの設定での検出力" src="fig/10_logrank.png" /><figcaption>図 10.4 左: 交差するハザードの例。前半は群 A の故障が多く、後半は群 B に集中する。右: 2 つの設定での検出力</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th style="text-align: right;">ログランク検定</th>
+<th style="text-align: right;">観測時間の $t$ 検定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>比例ハザード ($\mathrm{HR}=0.6$)</td>
+<td style="text-align: right;">$\mathbf{0.568}$</td>
+<td style="text-align: right;">$0.403$</td>
+</tr>
+<tr>
+<td>交差するハザード</td>
+<td style="text-align: right;">$0.062$</td>
+<td style="text-align: right;">$0.058$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>比例ハザードのもとでは、ログランクが $t$ 検定より 4 割ほど強い。</strong> 打ち切りを正しく扱い、時間の順序だけを使うので、寿命の分布形に依存しないためである。</p>
+<p><strong>交差するハザードでは、どちらも 0.05 のまま — つまり何も検出できない。</strong> 左の図を見れば理由は明らかで、<strong>前半の差と後半の差が逆向きで打ち消し合う</strong>。ログランクは全時点の差を足し上げるので、和がゼロに近くなる。</p>
+<p><strong>「有意差なし」を「差がない」と読んではいけない典型例である。</strong> 左の 2 本の曲線は明らかに違う形をしている。<strong>違いはあるが、ログランクが測っている種類の違いではない</strong>、というだけである。</p>
+<p><strong>交差が疑われるときの手当ては 3 つある。</strong> (i) 生存曲線を必ず描いて目で確かめる、(ii) 時点を区切って別々に比べる (ただし区切りは事前に決める)、(iii) 重み付きログランク検定 (Fleming–Harrington) で前半または後半に重みを置く。<strong>いずれにせよ、まず図を描くことが出発点になる。</strong></p>
 <h2 id="c10-10-6">10.6 Cox 比例ハザードモデル</h2>
 <p>10.5 節までは群が 2 つの話だった。<strong>応力振幅・温度・表面処理といった連続量や複数の要因を同時に扱う</strong>には回帰が要る。第 5 章の回帰をハザードに当てるのだが、<strong>ベースラインの形を一切仮定しない</strong>という離れ業が可能になる。</p>
 <h3 id="c10-10-6-1">10.6.1 モデル</h3>
@@ -22460,12 +22695,12 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p>10.6.1 項の比例ハザードは<strong>仮定</strong>である。5.7 節でやったのと同じく、<strong>仮定が成り立っているかを点検する</strong>手順が要る。</p>
 <p>比例ハザードは仮定であって、破れれば $\hat\beta$ は「時間平均したハザード比」のような解釈しにくい量になる。検証法:</p>
 <ol>
-<li><strong>log-log プロット</strong>: $S(t \mid x) = S_0(t)^{e^{\beta x}}$ の両辺に $\log(-\log)$ をとると $\log(-\log S(t \mid x)) = \log(-\log S_0(t)) + \beta x$。群ごとの Kaplan–Meier 推定でこれを描き、<strong>曲線が平行</strong>なら比例性が成り立つ。図 10.3</li>
+<li><strong>log-log プロット</strong>: $S(t \mid x) = S_0(t)^{e^{\beta x}}$ の両辺に $\log(-\log)$ をとると $\log(-\log S(t \mid x)) = \log(-\log S_0(t)) + \beta x$。群ごとの Kaplan–Meier 推定でこれを描き、<strong>曲線が平行</strong>なら比例性が成り立つ。図 10.5</li>
 <li><strong>Schoenfeld 残差</strong>: 各イベントについて $x_{i_j} - \bar x_j(\hat\beta)$ を時間に対してプロットし、傾きが 0 かを検定する (Grambsch &amp; Therneau 1994)</li>
 <li><strong>時間依存共変量</strong> $x \cdot \log t$ を加えて係数が 0 か検定</li>
 </ol>
-<figure><img loading="lazy" decoding="async" alt="図 10.3 log(−log S) プロット。左: 比例ハザードが成り立てば曲線は縦に log HR だけ平行移動する。右: Weibull の形状が群で異なると曲線は交差し、ハザード比が時間で変わる" src="fig/10_cox_loglog.png" /><figcaption>図 10.3 log(−log S) プロット。左: 比例ハザードが成り立てば曲線は縦に log HR だけ平行移動する。右: Weibull の形状が群で異なると曲線は交差し、ハザード比が時間で変わる</figcaption></figure>
-<p>破れの典型は「形状が違う」場合である。図 10.3 右のように 2 群の Weibull 形状 $k$ が違えば、ハザード比 $\propto t^{k_1 - k_2}$ は時間とともに単調に変化する。非比例ハザードへの拡張として、基準ハザードの形状パラメータ自体を共変量で回帰する二重 Cox モデルが提案されており、シミュレーションで推定バイアスと被覆率が調べられている<sup id="c10-fnref:5"><a class="footnote-ref" href="#c10-fn:5">5</a></sup>。</p>
+<figure><img loading="lazy" decoding="async" alt="図 10.5 log(−log S) プロット。左: 比例ハザードが成り立てば曲線は縦に log HR だけ平行移動する。右: Weibull の形状が群で異なると曲線は交差し、ハザード比が時間で変わる" src="fig/10_cox_loglog.png" /><figcaption>図 10.5 log(−log S) プロット。左: 比例ハザードが成り立てば曲線は縦に log HR だけ平行移動する。右: Weibull の形状が群で異なると曲線は交差し、ハザード比が時間で変わる</figcaption></figure>
+<p>破れの典型は「形状が違う」場合である。図 10.5 右のように 2 群の Weibull 形状 $k$ が違えば、ハザード比 $\propto t^{k_1 - k_2}$ は時間とともに単調に変化する。非比例ハザードへの拡張として、基準ハザードの形状パラメータ自体を共変量で回帰する二重 Cox モデルが提案されており、シミュレーションで推定バイアスと被覆率が調べられている<sup id="c10-fnref:5"><a class="footnote-ref" href="#c10-fn:5">5</a></sup>。</p>
 <h2 id="c10-10-7">10.7 パラメトリック生存モデルと AFT</h2>
 <p>10.6 節の Cox モデルはベースラインを捨てたので、<strong>寿命そのものは予測できない。</strong> 「この部材は何年もつか」に答えるには、捨てたものを取り戻す必要がある。</p>
 <h3 id="c10-10-7-1">10.7.1 パラメトリック回帰</h3>
@@ -22585,11 +22820,40 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 </table>
 <p><strong>「答えられない」が Kaplan–Meier の正直さである。</strong> 打ち切りの先は観測していないので、何も言わない。Weibull の $S(300) = 0.014$ は<strong>仮定に支えられた外挿</strong>で、数字が出ること自体は精度を意味しない。</p>
 <p>実務での使い分けは順序が決まっている。<strong>まず Kaplan–Meier で描いて形を見る</strong> (仮定なし)。<strong>次に Cox で共変量の効果を測る</strong> (分布形の仮定なし)。<strong>最後に、外挿や寿命予測が要るときだけ Weibull に進む</strong> (仮定が最も重い)。仮定の軽いほうから重いほうへ、というのが 5.7 節のモデル診断と同じ作法である。</p>
+<p><strong>AFT と比例ハザードが「同じことを別の言葉で言っている」のは、Weibull のときだけである。</strong></p>
+<figure><img loading="lazy" decoding="async" alt="図 10.6 左: 基準が Weibull ($k=1.8$) のとき、時間を 0.5 倍に縮める AFT と、ハザードを 3.48 倍にする PH は完全に重なる。右: 基準が対数正規だと、同じ 2 つが別の曲線になる" src="fig/10_aft_ph.png" /><figcaption>図 10.6 左: 基準が Weibull ($k=1.8$) のとき、時間を 0.5 倍に縮める AFT と、ハザードを 3.48 倍にする PH は完全に重なる。右: 基準が対数正規だと、同じ 2 つが別の曲線になる</figcaption></figure>
+<p><strong>左で 2 本が重なるのは偶然ではない。</strong> Weibull の生存関数 $S(t) = \exp\{-(t/\lambda)^k\}$ で時間を $\phi$ 倍に縮めると</p>
+<p>$$S(t/\phi) = \exp\{-(t/(\phi\lambda))^k\} = \left[S(t)\right]^{\phi^{-k}}$$</p>
+<p>となり、<strong>時間の伸縮が、ハザードを $\phi^{-k}$ 倍にすることと厳密に一致する</strong>。$\phi = 0.5$、$k = 1.8$ なら $\mathrm{HR} = 2^{1.8} = 3.48$ である。</p>
+<p><strong>右では重ならない。</strong> 対数正規には上の等式が成り立たないので、「寿命が半分になる」と「ハザードが 3.48 倍になる」は別の主張になる。中央値を揃えても曲線の形が違う。</p>
+<p><strong>どちらを使うかは、何を言いたいかで決める。</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>主張の形</th>
+<th>向いている場面</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AFT</td>
+<td>「この条件では寿命が $\phi$ 倍になる」</td>
+<td>加速試験、温度・応力による寿命の短縮</td>
+</tr>
+<tr>
+<td>比例ハザード</td>
+<td>「この条件では瞬間故障率が $\mathrm{HR}$ 倍になる」</td>
+<td>共変量の効果、Cox 回帰</td>
+</tr>
+</tbody>
+</table>
+<p><strong>工学では AFT のほうが言葉が通じやすい。</strong> 「応力を 2 倍にすると寿命が 1/8 になる」は設計者に伝わるが、「ハザードが 8 倍」は伝わりにくい。<strong>加速試験の Arrhenius 則や Basquin 則は、そのまま AFT の形</strong>をしている (5.11 節)。</p>
 <h2 id="c10-10-8">10.8 信頼性工学</h2>
 <p>10.2〜10.7 節は 1 つの品目の寿命の話だった。<strong>実務では、部品が集まった系の信頼度と、保全の計画に答えなければならない。</strong> 使う数学は同じで、<strong>言葉と問いの立て方</strong>が工学の側に寄る。</p>
 <h3 id="c10-10-8-1">10.8.1 バスタブ曲線と Weibull</h3>
 <p>製品全体の故障率を時間に対して描くと、多くの場合バスタブ (浴槽) の形になる。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.4 左: Weibull ハザードは形状 k の 1 との大小で単調減少/一定/単調増加を切り替える。右: 初期故障 (k&lt;1)・偶発故障 (k≈1)・摩耗故障 (k&gt;1) の 3 つの Weibull ハザードの和がバスタブ曲線になる" src="fig/10_weibull_shape.png" /><figcaption>図 10.4 左: Weibull ハザードは形状 k の 1 との大小で単調減少/一定/単調増加を切り替える。右: 初期故障 (k&lt;1)・偶発故障 (k≈1)・摩耗故障 (k&gt;1) の 3 つの Weibull ハザードの和がバスタブ曲線になる</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.7 左: Weibull ハザードは形状 k の 1 との大小で単調減少/一定/単調増加を切り替える。右: 初期故障 (k&lt;1)・偶発故障 (k≈1)・摩耗故障 (k&gt;1) の 3 つの Weibull ハザードの和がバスタブ曲線になる" src="fig/10_weibull_shape.png" /><figcaption>図 10.7 左: Weibull ハザードは形状 k の 1 との大小で単調減少/一定/単調増加を切り替える。右: 初期故障 (k&lt;1)・偶発故障 (k≈1)・摩耗故障 (k&gt;1) の 3 つの Weibull ハザードの和がバスタブ曲線になる</figcaption></figure>
 <ul>
 <li><strong>初期故障期</strong> ($k < 1$): 製造不良・据付不良が早期に露呈する。バーンイン (慣らし運転) で取り除く</li>
 <li><strong>偶発故障期</strong> ($k \approx 1$): ハザード一定、指数分布。この期間の設計が「故障率 $\lambda$ [1/h]」で語られる</li>
@@ -22609,7 +22873,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 <p>$F(t) = 1 - \exp\{-(t/\lambda)^k\}$ の両辺を 2 回対数変換すると</p>
 <p>$$\log\{-\log(1 - F(t))\} = k \log t - k\log\lambda$$</p>
 <p>縦軸に $\log(-\log(1-F))$、横軸に $\log t$ をとれば Weibull データは直線に乗り、傾きが $k$、$F = 0.632$ との交点が $\lambda$ を与える。$F$ には順序統計量の中央値順位 (Benard の近似 $(i - 0.3)/(n + 0.4)$) を入れる。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.5 Weibull 確率紙。疲労寿命 30 本のデータが直線に乗り、傾きから形状 k̂、F=63.2% との交点から特性寿命 λ̂ が読める。直線から系統的に外れれば分布形か混合 (2 つの故障モード) を疑う" src="fig/10_weibull_paper.png" /><figcaption>図 10.5 Weibull 確率紙。疲労寿命 30 本のデータが直線に乗り、傾きから形状 k̂、F=63.2% との交点から特性寿命 λ̂ が読める。直線から系統的に外れれば分布形か混合 (2 つの故障モード) を疑う</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.8 Weibull 確率紙。疲労寿命 30 本のデータが直線に乗り、傾きから形状 k̂、F=63.2% との交点から特性寿命 λ̂ が読める。直線から系統的に外れれば分布形か混合 (2 つの故障モード) を疑う" src="fig/10_weibull_paper.png" /><figcaption>図 10.8 Weibull 確率紙。疲労寿命 30 本のデータが直線に乗り、傾きから形状 k̂、F=63.2% との交点から特性寿命 λ̂ が読める。直線から系統的に外れれば分布形か混合 (2 つの故障モード) を疑う</figcaption></figure>
 <p>確率紙は「分布形の目視検査」と「粗い推定」を同時に行う道具である。正確な推定は最尤法 ($k$ について 1 次元の方程式を数値的に解く) で行い、打ち切りがあっても定理 10.2 で扱える。直線が途中で折れるなら故障モードが 2 つ混じっている (混合 Weibull) 兆候であり、$k < 1$ と $k > 1$ の線分が見えればバスタブそのものである。</p>
 <h3 id="c10-10-8-4">10.8.4 直列系・並列系・$k$-out-of-$n$</h3>
 <p>10.8.3 項までは 1 つの部品だった。<strong>部品を組み合わせた系の信頼度</strong>は、2.2.2 項で見た確率の乗法と加法だけで組める。構造の冗長性 (代替荷重経路) の議論が、ここに対応する。</p>
@@ -22645,7 +22909,7 @@ Cox モデルが答えるのは「どちらが何倍危ないか」であって�
 </blockquote>
 <p><strong>証明の要点.</strong> 極限 $G$ は <strong>max 安定</strong>でなければならない: $M_{nk}$ は $k$ 個の $M_n$ の最大値なので、$G^k(x) = G(\alpha_k x + \beta_k)$ を満たす定数 $\alpha_k, \beta_k$ が存在する。この関数方程式を解く。$-\log(-\log G)$ を $\psi$ とおくと $\psi(\alpha_k x + \beta_k) - \psi(x) = -\log k$ となり、$\alpha_k \equiv 1$ なら $\psi$ は線形 (Gumbel)、$\alpha_k \ne 1$ なら固定点 $x_0$ のまわりで $\psi$ は $\log|x - x_0|$ の線形関数 (Fréchet または Weibull)。関数方程式の解が「加法的か乗法的か」の二択に帰着するのが本質で、初等的な導出も知られている<sup id="c10-fnref:1"><a class="footnote-ref" href="#c10-fn:1">1</a></sup>。$\square$</p>
 <p>3 型を 1 つの式にまとめたのが GEV で (von Mises 1936、Jenkinson 1955)、<strong>データから型を選ばずに $\xi$ を推定できる</strong>のが実用上の利点である。$\xi < 0$ のときは上限 $\mu - \sigma/\xi$ が存在する (これより大きい値は起きない)。$\xi > 0$ では裾がベキ的に重く、$k$ 次モーメントは $k < 1/\xi$ でしか存在しない。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.6 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである" src="fig/10_gev.png" /><figcaption>図 10.6 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.9 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである" src="fig/10_gev.png" /><figcaption>図 10.9 GEV の 3 型 (μ=0, σ=1)。ξ&lt;0 は上限をもち、ξ&gt;0 は裾が重い。ξ=0 の Gumbel はその境界で、年最大風速など多くの気象量の既定モデルである</figcaption></figure>
 <p><strong>$\xi$ の符号が何を意味するかを数で見る。</strong> 位置 $\mu = 32$、尺度 $\sigma = 4.5$ を固定し、$\xi$ だけ変えて 100 年再現レベルを計算すると</p>
 <table>
 <thead>
@@ -22745,7 +23009,7 @@ $n$ について単調に減るので、最も起こりやすい $n$ は 1 — �
 </blockquote>
 <p><strong>証明の要点.</strong> $G(z_T) = 1 - 1/T$ を GEV の式に代入し、$[1 + \xi(z_T - \mu)/\sigma]^{-1/\xi} = y_T$ を $z_T$ について解く。$\xi \to 0$ は $(y^{-\xi} - 1)/\xi \to -\log y$ の極限。$\square$</p>
 <p>Gumbel なら $z_T$ は $-\log y_T \approx \log T$ (大きい $T$ で) に対して線形なので、横軸を $-\log(-\log(1 - 1/T))$ にした <strong>Gumbel 確率紙</strong>上でデータが直線に乗る。$\xi > 0$ なら上に凸に離れ、$\xi < 0$ なら上限に頭打ちになる。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.7 年最大風速 40 年分への当てはめ。左: GEV と Gumbel の最尤当てはめ。右: 再現レベル曲線。経験値は Gringorten の順位で描いた。50 年・500 年再現レベルの読み取りと、外挿の幅が ξ̂ に敏感なことが分かる" src="fig/10_return_level.png" /><figcaption>図 10.7 年最大風速 40 年分への当てはめ。左: GEV と Gumbel の最尤当てはめ。右: 再現レベル曲線。経験値は Gringorten の順位で描いた。50 年・500 年再現レベルの読み取りと、外挿の幅が ξ̂ に敏感なことが分かる</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.10 年最大風速 40 年分への当てはめ。左: GEV と Gumbel の最尤当てはめ。右: 再現レベル曲線。経験値は Gringorten の順位で描いた。50 年・500 年再現レベルの読み取りと、外挿の幅が ξ̂ に敏感なことが分かる" src="fig/10_return_level.png" /><figcaption>図 10.10 年最大風速 40 年分への当てはめ。左: GEV と Gumbel の最尤当てはめ。右: 再現レベル曲線。経験値は Gringorten の順位で描いた。50 年・500 年再現レベルの読み取りと、外挿の幅が ξ̂ に敏感なことが分かる</figcaption></figure>
 <h3 id="c10-10-10-2">10.10.2 推定法</h3>
 <p>10.10.1 項でモデルとデータが決まった。<strong>3 つのパラメータをどう推定するか。</strong> 第 3 章の最尤法が基本だが、$\xi$ の推定は $N = 40$ 程度では驚くほど不安定である。</p>
 <ol>
@@ -22753,7 +23017,7 @@ $n$ について単調に減るので、最も起こりやすい $n$ は 1 — �
 <li><strong>確率重み付きモーメント / L-モーメント</strong> (Hosking et al. 1985): 順序統計量の線形結合でパラメータを解く。小標本で最尤より安定で、水文学の標準</li>
 <li><strong>Gumbel 法</strong> (最小二乗): 確率紙上の直線当てはめ。粗いが $\xi = 0$ を仮定するので外挿が暴れない</li>
 </ol>
-<p>$\xi$ を 0 に固定する (Gumbel を使う) か推定するかは、統計学的には「分散を減らすためにバイアスを許容するか」の問題である。40 年のデータで 500 年再現レベルを推定するのは $\xi$ に賭けることであり、図 10.7 右の GEV と Gumbel の 500 年での差がその賭けの大きさを示す。物理的な上限がある量 (地形で決まる津波高さ) では $\xi < 0$ の根拠があるが、風速や降水では $\xi \approx 0$ から少し正が経験的に多い。</p>
+<p>$\xi$ を 0 に固定する (Gumbel を使う) か推定するかは、統計学的には「分散を減らすためにバイアスを許容するか」の問題である。40 年のデータで 500 年再現レベルを推定するのは $\xi$ に賭けることであり、図 10.10 右の GEV と Gumbel の 500 年での差がその賭けの大きさを示す。物理的な上限がある量 (地形で決まる津波高さ) では $\xi < 0$ の根拠があるが、風速や降水では $\xi \approx 0$ から少し正が経験的に多い。</p>
 <h3 id="c10-10-10-3">10.10.3 POT と一般化パレート分布</h3>
 <p>10.10.1 項の年最大値法は、<strong>1 年に 1 個しかデータを使わない。</strong> 同じ年に起きた 2 番目・3 番目に大きい嵐は捨てられる。その無駄をなくす方法がある。</p>
 <p>年最大値法は 1 年に 1 個しかデータを使わない。2 番目・3 番目に大きい嵐の情報は捨てられる。<strong>閾値超過法 (POT, peaks over threshold)</strong> は高い閾値 $u$ を超えたすべての観測値を使う。</p>
@@ -22802,7 +23066,7 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 <p>は $u$ の<strong>線形関数</strong>である。</p>
 </blockquote>
 <p><strong>証明の要点.</strong> GP の平均は $\tilde\sigma/(1-\xi)$。GP の閾値安定性 (定理 10.11 の $\tilde\sigma_u = \tilde\sigma_{u_0} + \xi(u - u_0)$) を代入する。$\square$</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.8 POT の閾値選択。左: 平均超過プロットは GP が成り立つ閾値 u₀ から直線になる。右: 閾値を動かしたときの ξ̂ の安定性。ξ̂ が一定になり始める最小の u を選ぶ" src="fig/10_pot_threshold.png" /><figcaption>図 10.8 POT の閾値選択。左: 平均超過プロットは GP が成り立つ閾値 u₀ から直線になる。右: 閾値を動かしたときの ξ̂ の安定性。ξ̂ が一定になり始める最小の u を選ぶ</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.11 POT の閾値選択。左: 平均超過プロットは GP が成り立つ閾値 u₀ から直線になる。右: 閾値を動かしたときの ξ̂ の安定性。ξ̂ が一定になり始める最小の u を選ぶ" src="fig/10_pot_threshold.png" /><figcaption>図 10.11 POT の閾値選択。左: 平均超過プロットは GP が成り立つ閾値 u₀ から直線になる。右: 閾値を動かしたときの ξ̂ の安定性。ξ̂ が一定になり始める最小の u を選ぶ</figcaption></figure>
 <ul>
 <li><strong>平均超過プロット</strong>: $e(u)$ が直線になり始める $u$ を選ぶ。傾きは $\xi/(1-\xi)$ なので、右上がりなら $\xi > 0$</li>
 <li><strong>パラメータ安定性プロット</strong>: 閾値を変えて $\hat\xi$ (と修正尺度 $\tilde\sigma_u - \xi u$) を描き、一定になる最小の $u$ を選ぶ</li>
@@ -22871,7 +23135,7 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 </blockquote>
 <p><strong>証明の要点.</strong> 正規の場合、$g = R - S$ は正規 $N(\mu_R - \mu_S, \sigma_R^2 + \sigma_S^2)$ なので $P(g < 0) = \Phi(-\beta)$。対数正規の場合は $\log R - \log S$ が正規で、対数正規のパラメータを $\mu, V$ で書き直す ($\sigma_{\log}^2 = \log(1 + V^2)$、$\mu_{\log} = \log\mu - \sigma_{\log}^2/2$)。$\square$</p>
 <p>$\beta$ は「平均的な余裕を、余裕のばらつきで割った値」であり、標準偏差何個分の余裕があるかを表す。$\beta = 3$ で $P_f = 1.3 \times 10^{-3}$、$\beta = 4$ で $3.2 \times 10^{-5}$。目標信頼性指標は規準や限界状態の種類 (終局か使用か)・破壊の帰結・供用期間で異なり、<strong>例えば</strong> 50 年基準期間の終局限界状態で $\beta \approx 3.8$ 程度、1 年基準期間で $\beta \approx 4.7$ 程度といった値が信頼性設計の文献に見られる (具体の規準値は各規準の原本で確認すること)。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.9 左: R と S の密度。灰色の重なりは P_f ではない (P_f は g=R−S&lt;0 の確率であり、重なりの面積より小さい)。右: 標準正規空間での β の幾何。限界状態面 g=0 への原点からの最短距離が β、その足が設計点 u*" src="fig/10_beta_geometry.png" /><figcaption>図 10.9 左: R と S の密度。灰色の重なりは P_f ではない (P_f は g=R−S&lt;0 の確率であり、重なりの面積より小さい)。右: 標準正規空間での β の幾何。限界状態面 g=0 への原点からの最短距離が β、その足が設計点 u*</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.12 左: R と S の密度。灰色の重なりは P_f ではない (P_f は g=R−S&lt;0 の確率であり、重なりの面積より小さい)。右: 標準正規空間での β の幾何。限界状態面 g=0 への原点からの最短距離が β、その足が設計点 u*" src="fig/10_beta_geometry.png" /><figcaption>図 10.12 左: R と S の密度。灰色の重なりは P_f ではない (P_f は g=R−S&lt;0 の確率であり、重なりの面積より小さい)。右: 標準正規空間での β の幾何。限界状態面 g=0 への原点からの最短距離が β、その足が設計点 u*</figcaption></figure>
 <h3 id="c10-10-11-2">10.11.2 安全率との関係</h3>
 <p>伝統的な設計は中央安全率 $\nu = \mu_R/\mu_S$ で語られてきた。対数正規で $V_R, V_S$ が小さいとき定理 10.13 は</p>
 <p>$$\beta \approx \frac{\log\nu}{\sqrt{V_R^2 + V_S^2}}$$</p>
@@ -22884,7 +23148,7 @@ GP の当てはまりが悪くなる。一方で $u$ を上げれば超過数が
 <p>$$\beta = \min_{g(u) = 0}\|u\|, \qquad u^* = \arg\min$$</p>
 <p>$u^*$ を<strong>設計点</strong> (最確破壊点) という。</p>
 </blockquote>
-<p><strong>証明の要点 (なぜ最短距離か).</strong> 標準正規密度 $\propto \exp(-\|u\|^2/2)$ は原点から遠いほど指数的に小さいので、破壊域 $g(u) < 0$ の確率質量は原点に最も近い点 $u^*$ の近傍に集中する。$g$ を $u^*$ で線形化すると、破壊域は原点からの距離 $\beta$ の半空間になり、その確率は $\Phi(-\beta)$。$g = R - S$ が線形で $R, S$ 正規のときはこれが定義 10.7 と一致する (図 10.9 右)。$\square$</p>
+<p><strong>証明の要点 (なぜ最短距離か).</strong> 標準正規密度 $\propto \exp(-\|u\|^2/2)$ は原点から遠いほど指数的に小さいので、破壊域 $g(u) < 0$ の確率質量は原点に最も近い点 $u^*$ の近傍に集中する。$g$ を $u^*$ で線形化すると、破壊域は原点からの距離 $\beta$ の半空間になり、その確率は $\Phi(-\beta)$。$g = R - S$ が線形で $R, S$ 正規のときはこれが定義 10.7 と一致する (図 10.12 右)。$\square$</p>
 <p><strong>FORM</strong> (first-order reliability method) は $P_f \approx \Phi(-\beta_{HL})$ で近似する方法である。設計点の探索は Rackwitz–Fiessler の反復</p>
 <p>$$u_{k+1} = \frac{\nabla g(u_k)^\top u_k - g(u_k)}{\|\nabla g(u_k)\|^2}\,\nabla g(u_k)$$</p>
 <p>で行う (勾配方向へ射影して面に乗せる Newton 型)。設計点での単位法線 $\alpha = \nabla g(u^*)/\|\nabla g(u^*)\|$ の成分 $\alpha_i$ は<strong>感度係数</strong>で、$\sum\alpha_i^2 = 1$ を満たし、各変数の不確かさが $P_f$ にどれだけ効いているかを表す。限界状態面の曲率を 2 次まで取り入れるのが SORM である。$g$ の評価に有限要素解析が要る場合は 1 回の評価が高価なので、応答曲面・多項式カオス・クリギングなどの代理モデルで $g$ を近似してから FORM やモンテカルロを回す手法が発達している<sup id="c10-fnref:3"><a class="footnote-ref" href="#c10-fn:3">3</a></sup>。</p>
@@ -23103,7 +23367,7 @@ print(f&quot;   設計点 R* = {R_star:.2f}, S* = {S_star:.2f} → 部分係数 
 </ol>
 <p>日本の建築分野でも、再現期間は「年最大値が $x$ を超えるまでの平均待ち時間」として定義され、その逆関数 $F(x_T) = 1 - 1/T$ を満たす $x_T$ を <strong>$T$ 年再現期待値</strong>と呼んできた<sup id="c10-fnref:n1"><a class="footnote-ref" href="#c10-fn:n1">8</a></sup>。つまり 2 番の流儀である。4 通りが一致しているあいだは、どの流儀を採っても実務上の違いは生じない。</p>
 <p>分布が動くとこの一致が壊れる。気候変動の文脈で統計学の側から見た難しさは、これが単なる推定精度の問題ではないという点にある。気候の将来予測は「過去に存在しなかった温室効果ガス濃度のもとでの気候についての言明」であり、本質的に外挿である — それでも数十年もつ橋や堤防を設計しなければならない、という問いは統計学の側からも正面から提起されている<sup id="c10-fnref:n2"><a class="footnote-ref" href="#c10-fn:n2">9</a></sup>。また、気候影響研究の多くが平均の変化に注目してきたため、変動性と極端現象の頻度変化まで含めれば影響は過小評価されている可能性がある、とも論じられている<sup id="c10-fnref:n3"><a class="footnote-ref" href="#c10-fn:n3">10</a></sup>。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.10 左: 位置パラメータ μ(t) が 100 年で +2 m/s 動くときの年最大風速の分布。右: 同じ水準 z=41.7 m/s の年超過確率 p_t。定常なら水平線 1/50 のままだが、傾向が入ると年ごとに変わる" src="fig/10d_nonstationary_gev.png" /><figcaption>図 10.10 左: 位置パラメータ μ(t) が 100 年で +2 m/s 動くときの年最大風速の分布。右: 同じ水準 z=41.7 m/s の年超過確率 p_t。定常なら水平線 1/50 のままだが、傾向が入ると年ごとに変わる</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.13 左: 位置パラメータ μ(t) が 100 年で +2 m/s 動くときの年最大風速の分布。右: 同じ水準 z=41.7 m/s の年超過確率 p_t。定常なら水平線 1/50 のままだが、傾向が入ると年ごとに変わる" src="fig/10d_nonstationary_gev.png" /><figcaption>図 10.13 左: 位置パラメータ μ(t) が 100 年で +2 m/s 動くときの年最大風速の分布。右: 同じ水準 z=41.7 m/s の年超過確率 p_t。定常なら水平線 1/50 のままだが、傾向が入ると年ごとに変わる</figcaption></figure>
 <p>以下、一貫して<strong>年最大風速</strong> (m/s) を例にとる。定常時は Gumbel、位置 $\mu_0 = 30$、尺度 $\sigma = 3$ とする。このとき 50 年再現レベルは $z_{50} = 30 - 3\log(-\log 0.98) = 41.71$ m/s である。傾向の強さは <strong>100 年あたりの $\mu$ の上昇量</strong> $\Delta$ (m/s) で表す。</p>
 <h3 id="c10-10-15-2">10.15.2 共変量で GEV を非定常にする</h3>
 <p>10.15.1 項で「定常の仮定が崩れている」ことが分かった。<strong>では、どう直すか。</strong> GEV のパラメータを時間の関数にする、というのが最も素直な拡張である。</p>
@@ -23169,7 +23433,7 @@ $\mu$ に符号の制約がないからである。</p>
 </blockquote>
 <p><strong>証明の要点.</strong> (1) $p_s \ge p_1$ より $\prod_{s<t}(1-p_s) \le (1-p_1)^{t-1}$。両辺を $t$ について足す。(2) $\sum_{t\le N}p_t \ge Np_1$ なので $N \ge 1/p_1$ なら和は 1 以上。(3) $1 - x \le e^{-x}$ より $P(T > N) = \prod_{t \le N}(1-p_t) \le \exp(-\sum_{t\le N}p_t)$。$N = N_{\mathrm{ENE}}$ では指数の肩が $-1$ 以下なので $P(T > N_{\mathrm{ENE}}) \le e^{-1}$。$\square$</p>
 <p>(3) は気持ちのよい結果である。<strong>「期待超過回数が 1 になる年数」という定義を採るかぎり、非定常であってもその年数までに 6 割強の確率で超過が起きている</strong>ことが、分布の形によらず保証される。定常のときの 63% がそのまま下界として生き残る。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.11 左: 水準 z=41.7 m/s を固定したときの 3 通りの「再現期間」。傾向 Δ が強まるほど 3 本は離れていく。右: (b) と (c) の食い違いの大きさ" src="fig/10d_return_period_split.png" /><figcaption>図 10.11 左: 水準 z=41.7 m/s を固定したときの 3 通りの「再現期間」。傾向 Δ が強まるほど 3 本は離れていく。右: (b) と (c) の食い違いの大きさ</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.14 左: 水準 z=41.7 m/s を固定したときの 3 通りの「再現期間」。傾向 Δ が強まるほど 3 本は離れていく。右: (b) と (c) の食い違いの大きさ" src="fig/10d_return_period_split.png" /><figcaption>図 10.14 左: 水準 z=41.7 m/s を固定したときの 3 通りの「再現期間」。傾向 Δ が強まるほど 3 本は離れていく。右: (b) と (c) の食い違いの大きさ</figcaption></figure>
 <p>数値で見ると次のようになる (水準は $z_{50} = 41.71$ m/s に固定したまま)。</p>
 <table>
 <thead>
@@ -23266,7 +23530,7 @@ $p_t$ が小さいだけでは足りない。</p>
 <p>$$\prod_{t = t_0}^{t_0 + L - 1} G_t(z^*) = 1 - r$$</p>
 <p>を $z^*$ について解く。定常なら $G(z^*)^L = 1-r$ となり、2.13.1 の「$L$ 年最大値の分布は $G^L$」に一致する。</p>
 </blockquote>
-<figure><img loading="lazy" decoding="async" alt="図 10.12 左: 定常 50 年再現レベルを供用期間 L 年のあいだに超える確率。傾向が入ると 50 年時点で 0.636 → 0.697 → 0.760 と上がる。右: 耐用期間 50 年で目標リスク r を満たす設計水準" src="fig/10d_design_life.png" /><figcaption>図 10.12 左: 定常 50 年再現レベルを供用期間 L 年のあいだに超える確率。傾向が入ると 50 年時点で 0.636 → 0.697 → 0.760 と上がる。右: 耐用期間 50 年で目標リスク r を満たす設計水準</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.15 左: 定常 50 年再現レベルを供用期間 L 年のあいだに超える確率。傾向が入ると 50 年時点で 0.636 → 0.697 → 0.760 と上がる。右: 耐用期間 50 年で目標リスク r を満たす設計水準" src="fig/10d_design_life.png" /><figcaption>図 10.15 左: 定常 50 年再現レベルを供用期間 L 年のあいだに超える確率。傾向が入ると 50 年時点で 0.636 → 0.697 → 0.760 と上がる。右: 耐用期間 50 年で目標リスク r を満たす設計水準</figcaption></figure>
 <table>
 <thead>
 <tr>
@@ -23308,7 +23572,7 @@ $p_t$ が小さいだけでは足りない。</p>
 <p>$$D = 2\{\ell(\hat\mu_0, \hat\mu_1, \hat\sigma, \hat\xi) - \ell(\hat\mu_0, \hat\sigma, \hat\xi)\} \;\xrightarrow{\;H_0\;}\; \chi^2_1$$</p>
 <p>を使い、$D > 3.841$ なら 5% 水準で有意とする。AIC $= -2\ell + 2k$ で比べるなら、パラメータ 1 個の追加は $D > 2$ に相当するので、尤度比検定より緩い基準である。再現レベルの信頼区間はデルタ法よりプロファイル尤度で作る方がよい (10.10.2) が、これは非定常でも同じで、対象のパラメータを固定して残りで最大化する標準的な手続きが使える<sup id="c10-fnref:n6"><a class="footnote-ref" href="#c10-fn:n6">13</a></sup>。</p>
 <p>問題は検出力である。年最大風速の年々変動 $\sigma = 3$ m/s に対して、傾向による上昇は数十年でせいぜい 1〜2 m/s である。ノイズに対して信号が小さすぎる。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.13 左: 尤度比検定の検出力。記録 50 年では、その間に μ が 2 m/s 上がっていても 3 回に 1 回も検出できない。右: 50 年の記録から推定した上昇量のばらつき" src="fig/10d_power.png" /><figcaption>図 10.13 左: 尤度比検定の検出力。記録 50 年では、その間に μ が 2 m/s 上がっていても 3 回に 1 回も検出できない。右: 50 年の記録から推定した上昇量のばらつき</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.16 左: 尤度比検定の検出力。記録 50 年では、その間に μ が 2 m/s 上がっていても 3 回に 1 回も検出できない。右: 50 年の記録から推定した上昇量のばらつき" src="fig/10d_power.png" /><figcaption>図 10.16 左: 尤度比検定の検出力。記録 50 年では、その間に μ が 2 m/s 上がっていても 3 回に 1 回も検出できない。右: 50 年の記録から推定した上昇量のばらつき</figcaption></figure>
 <table>
 <thead>
 <tr>
@@ -23371,7 +23635,7 @@ $p_t$ が小さいだけでは足りない。</p>
 <p>10.15.5 項で検出力の限界が見えた。<strong>それでも設計値は出さなければならない。</strong> 50 年の記録から 100 年先を読む、という行為が何を仮定しているのかを直視する。</p>
 <p>10.10.2 では「40 年のデータで 500 年再現レベルを推定するのは $\xi$ に賭けることである」と書いた。非定常にすると、この賭けに<strong>時間方向の外挿</strong>が上乗せされる。パラメータが 1 つ増えるので分散が増え、その増えた分散が、データの範囲外へ延ばす操作によって増幅される。</p>
 <p>具体的に確かめてみる。真のモデルを $\Delta = 4$ m/s/100年 の非定常 Gumbel とし、50 年の記録を観測したとして、<strong>今後 50 年のあいだの超過確率が 10% となる設計水準</strong> (真値 51.52 m/s) を推定する。定常モデルで推定する場合と、非定常モデルで推定する場合を比べる。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.14 50 年の記録から今後 50 年の設計水準を推定する (500 回)。定常モデルは系統的に低く出るが幅は狭い。非定常モデルは中心は合うが幅が広い" src="fig/10d_uncertainty.png" /><figcaption>図 10.14 50 年の記録から今後 50 年の設計水準を推定する (500 回)。定常モデルは系統的に低く出るが幅は狭い。非定常モデルは中心は合うが幅が広い</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.17 50 年の記録から今後 50 年の設計水準を推定する (500 回)。定常モデルは系統的に低く出るが幅は狭い。非定常モデルは中心は合うが幅が広い" src="fig/10d_uncertainty.png" /><figcaption>図 10.17 50 年の記録から今後 50 年の設計水準を推定する (500 回)。定常モデルは系統的に低く出るが幅は狭い。非定常モデルは中心は合うが幅が広い</figcaption></figure>
 <table>
 <thead>
 <tr>
@@ -23399,7 +23663,7 @@ $p_t$ が小さいだけでは足りない。</p>
 </tr>
 </tbody>
 </table>
-<p>典型的な<strong>バイアスと分散の取引</strong>である。非定常モデルはバイアスを 1/4 に減らすが、標準偏差を 2 割増やす。この設定では RMSE で非定常がわずかに勝つ。しかし傾向が半分 ($\Delta = 2$) になると定常モデルの方が RMSE で勝ち (2.56 対 2.70)、逆転点はこの設定でおよそ $\Delta = 3$ m/s/100年 にある (演習 6)。<strong>非定常モデルは常に正しいのではなく、傾向が十分に大きいときだけ得をする</strong>。そしてその「十分に大きい」かどうかは、10.15.5 で見たとおり、50 年の記録からは自信をもって判定できない。$\Delta = 3$ は 50 年間で $\mu$ が 1.5 m/s 上がることに相当し、図 10.13 によればその大きさの傾向の検出力は 2 割に届かない。<strong>非定常にすべきかどうかを、非定常にすべきかどうかのデータから決めることはできない</strong>のである。</p>
+<p>典型的な<strong>バイアスと分散の取引</strong>である。非定常モデルはバイアスを 1/4 に減らすが、標準偏差を 2 割増やす。この設定では RMSE で非定常がわずかに勝つ。しかし傾向が半分 ($\Delta = 2$) になると定常モデルの方が RMSE で勝ち (2.56 対 2.70)、逆転点はこの設定でおよそ $\Delta = 3$ m/s/100年 にある (演習 6)。<strong>非定常モデルは常に正しいのではなく、傾向が十分に大きいときだけ得をする</strong>。そしてその「十分に大きい」かどうかは、10.15.5 で見たとおり、50 年の記録からは自信をもって判定できない。$\Delta = 3$ は 50 年間で $\mu$ が 1.5 m/s 上がることに相当し、図 10.16 によればその大きさの傾向の検出力は 2 割に届かない。<strong>非定常にすべきかどうかを、非定常にすべきかどうかのデータから決めることはできない</strong>のである。</p>
 <p>さらに根本的な制約がある。外挿は、データの外側の振る舞いについて<strong>構造的な仮定</strong>を置いてはじめて可能になる。極値統計が外挿の道具として使えるのは、$n\{1-F(a_nx+b_n)\}$ の極限という漸近的な裏づけ (定理 10.9、定理 10.11) が「裾の形」を指定してくれるからである<sup id="c10-fnref2:n5"><a class="footnote-ref" href="#c10-fn:n5">12</a></sup>。だが時間方向にはそれに相当する定理がない。$\mu(t)$ が線形だという仮定は、統計学から出てくるものではなく、分析者が置いたものである。気候予測が本質的に外挿である<sup id="c10-fnref2:n2"><a class="footnote-ref" href="#c10-fn:n2">9</a></sup> というのはこの意味であり、モデルの水平解像度を上げると小規模な過程や極端現象の表現が改善しうることから、その頑健性を確かめる多モデル協調実験が組まれている<sup id="c10-fnref:n8"><a class="footnote-ref" href="#c10-fn:n8">15</a></sup> のも、外挿の裏づけを物理側から補おうとする試みだと読める。</p>
 <p>閾値の扱いにも同じ問題が及ぶ。POT では閾値 $u$ を固定して超過をとるが、分布が上へ動くなら閾値も動かさなければ超過数が年々増えてしまい、$\zeta_u(t)$ の非定常性と $\tilde\sigma_u(t)$ の非定常性が絡み合う。閾値の選択がそもそも目視判断であり (10.10.4)、L-モーメントを使った自動選択のように主観を減らす工夫が提案されている<sup id="c10-fnref:n9"><a class="footnote-ref" href="#c10-fn:n9">16</a></sup> 段階であることを思えば、<strong>非定常 POT では閾値を複数とって感度を必ず報告する</strong>以外に誠実なやり方はない。</p>
 <h3 id="c10-10-15-7">10.15.7 観測所の移転と気候変動は別物である</h3>
@@ -23409,7 +23673,7 @@ $p_t$ が小さいだけでは足りない。</p>
 <li><strong>傾向 (気候変動)</strong> は将来の問題である。記録期間中の変化を推定するだけでは足りず、<strong>耐用期間の終わりまで延ばして</strong>はじめて設計値になる</li>
 </ul>
 <p>同じ「有意な非定常性」でも、やるべきことが違う。では、データからこの 2 つを見分けられるだろうか。</p>
-<figure><img loading="lazy" decoding="async" alt="図 10.15 左: 2004 年に +4 m/s の段差がある系列。右: 46 年で +4 m/s の線形傾向がある系列。どちらにも線形傾向モデルと段差モデルの両方が当てはまり、どちらも有意になる" src="fig/10d_jump_vs_trend.png" /><figcaption>図 10.15 左: 2004 年に +4 m/s の段差がある系列。右: 46 年で +4 m/s の線形傾向がある系列。どちらにも線形傾向モデルと段差モデルの両方が当てはまり、どちらも有意になる</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 10.18 左: 2004 年に +4 m/s の段差がある系列。右: 46 年で +4 m/s の線形傾向がある系列。どちらにも線形傾向モデルと段差モデルの両方が当てはまり、どちらも有意になる" src="fig/10d_jump_vs_trend.png" /><figcaption>図 10.18 左: 2004 年に +4 m/s の段差がある系列。右: 46 年で +4 m/s の線形傾向がある系列。どちらにも線形傾向モデルと段差モデルの両方が当てはまり、どちらも有意になる</figcaption></figure>
 <table>
 <thead>
 <tr>
@@ -23510,7 +23774,7 @@ for xi in (-0.1, 0.1):       # 比較: 形状 ξ を動かすとどれだけ動�
     print(f&quot;  参考: ξ={xi:+.1f} の GEV なら 50 年再現レベルは {z:.2f} m/s&quot;)
 
 # 6) 傾向の検出力 (尤度比検定, 有意水準 5% → D &gt; 3.841)
-#    図 10.13 は 600 回。ここは 300 回なので数値は 2〜3% ずれる
+#    図 10.16 は 600 回。ここは 300 回なので数値は 2〜3% ずれる
 def gum_nll(par, z, x):
     a, b, c = par; s = np.exp(c); w = (z - a - b * x) / s
     return np.sum(c + w + np.exp(-w))
@@ -23578,6 +23842,54 @@ print(f&quot;AIC が真のモデルを選ぶ割合: 真が段差 {ok[0] / 300:.3
 <p>同論文は、これらの手法の<strong>理論的な基礎における根本的な違い</strong>を論じたうえで、実データに適用している<sup id="c10-fnref2:p2"><a class="footnote-ref" href="#c10-fn:p2">19</a></sup>。</p>
 <p><strong>教科書で普通に出てくるのは 2 の図的方法</strong>である。平均超過関数 (mean excess plot) が直線になり始める点、あるいは GP の形状母数 $\hat\xi$ が $u$ に対して安定する点を目で選ぶ。Beirlant ら (1996) は、Pareto 分位点プロットと回帰診断を使う裾指数推定を扱っている<sup id="c10-fnref:p3"><a class="footnote-ref" href="#c10-fn:p3">20</a></sup>。</p>
 <p><strong>だが「目で選ぶ」が問題の核心である。</strong> 同じ図を見ても人によって選ぶ点が違い、再現性がない。</p>
+<p><strong>閾値を動かして、何が起きるかを見る。</strong> 真の裾が $\mathrm{GPD}(\xi = 0.2,\ \sigma = 4)$ で閾値 25 を超える部分に現れ、それより下は別の分布 (指数) である、という人工データを作る。</p>
+<figure><img loading="lazy" decoding="async" alt="図 10.19 左: 閾値ごとの $\hat\xi$ と ±1.96 SE の帯。右: 超過した観測の数と標準誤差" src="fig/10d_pot_threshold.png" /><figcaption>図 10.19 左: 閾値ごとの $\hat\xi$ と ±1.96 SE の帯。右: 超過した観測の数と標準誤差</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>$u$</th>
+<th style="text-align: right;">超過数 $n_u$</th>
+<th style="text-align: right;">$\hat\xi$</th>
+<th style="text-align: right;">SE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$15$</td>
+<td style="text-align: right;">$25737$</td>
+<td style="text-align: right;">$-0.085$</td>
+<td style="text-align: right;">$0.006$</td>
+</tr>
+<tr>
+<td>$20$</td>
+<td style="text-align: right;">$23086$</td>
+<td style="text-align: right;">$-0.061$</td>
+<td style="text-align: right;">$0.006$</td>
+</tr>
+<tr>
+<td>$25$</td>
+<td style="text-align: right;">$21706$</td>
+<td style="text-align: right;">$\mathbf{+0.196}$</td>
+<td style="text-align: right;">$0.008$</td>
+</tr>
+<tr>
+<td>$30$</td>
+<td style="text-align: right;">$7464$</td>
+<td style="text-align: right;">$+0.178$</td>
+<td style="text-align: right;">$0.014$</td>
+</tr>
+<tr>
+<td>$40$</td>
+<td style="text-align: right;">$1489$</td>
+<td style="text-align: right;">$+0.181$</td>
+<td style="text-align: right;">$0.031$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$u = 25$ を境に $\hat\xi$ の符号が変わる。</strong> それより下では $-0.09 \sim -0.06$ と「裾が有界」に見え、それ以上では $+0.18$ 前後で安定する。<strong>低すぎる閾値は、裾でない部分を混ぜて偏りを生む。</strong></p>
+<p><strong>しかも偏っているほうが SE は小さい。</strong> $u=15$ の SE は $0.006$、$u=40$ は $0.031$ である。<strong>「推定が安定している」と「正しい」は別</strong>で、SE だけを見て閾値を選ぶと必ず低すぎる側に倒れる。</p>
+<p><strong>だから安定性プロットを見る。</strong> 判断は「SE が小さい $u$」ではなく、<strong>「$\hat\xi$ が $u$ に対して平らになり始める最も低い $u$」</strong>である。上の例なら $u = 25$ で、そこが偏りと分散の釣り合う点になる。</p>
+<p><strong>実データでは真値が分からないので、次の 3 つを併用する。</strong> (i) 平均超過関数 (mean residual life) が直線になり始める点、(ii) 上の安定性プロット、(iii) 複数の $u$ で推定して<strong>結論 (再現期間の値など) が変わらないか</strong>を確かめる。<strong>(iii) がいちばん実務的である</strong> — 閾値を $25$ と $30$ で変えても 100 年再現値が 5% しか変わらないなら、閾値の選び方は結論に効いていない。</p>
 <h3 id="c10-自動化の試み">自動化の試み</h3>
 <p>Silva Lomba &amp; Fraga Alves (2019) は、この主観性を排除する方向に踏み込んでいる。要旨によれば、既存の選択手法は「<strong>固有の主観性</strong>あるいは<strong>高い計算強度</strong>という繰り返し現れる課題に直面している」。彼らはこれに対し、<strong>時間効率と主観的判断の排除を狙った、真に自動化された閾値検出法</strong>を提案する。方法は<strong>L モーメント</strong>の確立された理論に基づく、と述べられている<sup id="c10-fnref2:p1"><a class="footnote-ref" href="#c10-fn:p1">18</a></sup>。</p>
 <p>L モーメントは順序統計量の線形結合で作るモーメントで、通常のモーメントより<strong>裾の影響を受けにくく、少数の標本で安定する</strong>。Hosking (1987) は一般化 Pareto 分布の母数・分位点推定を扱っており<sup id="c10-fnref:p4"><a class="footnote-ref" href="#c10-fn:p4">21</a></sup>、L モーメント法の基礎にあたる。</p>
@@ -23617,6 +23929,46 @@ print(f&quot;AIC が真のモデルを選ぶ割合: 真が段差 {ok[0] / 300:.3
 <p>多変量極値理論と手法は、$d$ 次元確率変数の分布の<strong>同時裾</strong>の特徴づけ・推定・外挿に関わる。既存のアプローチは、<strong>変数のすべての成分が同じ速さで大きくなる</strong>という極限の議論に基づいている。この極限のアプローチは、<strong>すべての変数の極値がともに起こりそうにないとき</strong>、あるいは<strong>成分の一部だけが極端であるような同時分布の台の領域に関心があるとき</strong>には不適切である。実務上、これは既存手法を <strong>$d$ が典型的に 2 または 3</strong> の応用に制限する。</p>
 </blockquote>
 <p><strong>これが実務で効く指摘である。</strong> 「風と波が同時に極端」だけでなく「風は極端だが波は普通」という場面も設計では重要なのに、古典的な枠組みはそこを扱えない。Heffernan &amp; Tawn は $d$ 次元確率変数の同時分布の漸近的な形についての仮定のもとで、<strong>条件付きアプローチ</strong>を提案している<sup id="c10-fnref2:w2"><a class="footnote-ref" href="#c10-fn:w2">25</a></sup>。「ある成分が極端であるという条件のもとで、他の成分がどう振る舞うか」を直接モデル化する形である。</p>
+<p><strong>「相関が同じでも裾の挙動は違う」を数で見る。</strong> 相関 $0.7$ の 2 変数を、多変量正規と $t$ コピュラ ($\nu = 4$) の 2 通りで作り、<strong>両方が同時に $u$ 分位点を超える確率</strong>を条件付き確率として測る。</p>
+<p>$$\chi(u) = P\big(Y > F_Y^{-1}(u) \mid X > F_X^{-1}(u)\big)$$</p>
+<figure><img loading="lazy" decoding="async" alt="図 10.20 左: $\chi(u)$ を $u$ の関数として。多変量正規は 0 へ向かい、$t$ コピュラは 0.39 に収束する。右: 4000 点の散布図と、両方が 98% 分位点を超える領域" src="fig/10d_tail_dependence.png" /><figcaption>図 10.20 左: $\chi(u)$ を $u$ の関数として。多変量正規は 0 へ向かい、$t$ コピュラは 0.39 に収束する。右: 4000 点の散布図と、両方が 98% 分位点を超える領域</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>$u$</th>
+<th style="text-align: right;">多変量正規</th>
+<th style="text-align: right;">$t$ コピュラ ($\nu=4$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$0.90$</td>
+<td style="text-align: right;">$0.468$</td>
+<td style="text-align: right;">$0.518$</td>
+</tr>
+<tr>
+<td>$0.95$</td>
+<td style="text-align: right;">$0.392$</td>
+<td style="text-align: right;">$0.476$</td>
+</tr>
+<tr>
+<td>$0.99$</td>
+<td style="text-align: right;">$0.267$</td>
+<td style="text-align: right;">$0.426$</td>
+</tr>
+<tr>
+<td>$0.999$</td>
+<td style="text-align: right;">$\mathbf{0.160}$</td>
+<td style="text-align: right;">$\mathbf{0.402}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>左の列は 0 へ向かい、右の列は $0.39$ に落ち着く。</strong> 理論値はそれぞれ $\chi = 0$ と</p>
+<p>$$\chi = 2\,t_{\nu+1}\!\left(-\sqrt{\frac{(\nu+1)(1-\rho)}{1+\rho}}\right) = 0.391$$</p>
+<p>で、$u = 0.999$ の実測 $0.402$ がほぼ到達している。</p>
+<p><strong>多変量正規は「どんなに相関が高くても、極端な事象は独立に近づく」と言っている。</strong> $\rho = 0.99$ でも $\chi = 0$ である。これは<strong>裾独立</strong>と呼ばれ、多変量正規を仮定した瞬間に押し付けられる性質である。</p>
+<p><strong>設計で効くのはまさにこの差である。</strong> 「強風と高潮が同時に来る確率」「隣接する 2 部材が同時に降伏する確率」を多変量正規で見積もると、$1000$ 年に 1 度の水準で <strong>2.5 倍の過小評価</strong>になる ($0.160$ 対 $0.402$)。しかも手元のデータで相関を検算しても、相関は合っているので気づけない (7.3 節でも同じ話をした)。</p>
+<p><strong>確かめ方は $\chi(u)$ を描くことである。</strong> 観測データから $u$ を上げながら $\chi(u)$ を推定し、<strong>0 へ向かうか、正の値に落ち着くか</strong>を見る。落ち着くなら裾従属があり、多変量正規は使えない。</p>
 <h3 id="c10-空間へ広げる">空間へ広げる</h3>
 <p>橋梁群、堤防線、広域の降雨といった<strong>空間的に広がった対象</strong>では、地点間の依存を明示的に扱う必要がある。Davison ら (2012) は空間極値のモデル化を比較している。同稿によれば<sup id="c10-fnref:w3"><a class="footnote-ref" href="#c10-fn:w3">26</a></sup>:</p>
 <blockquote>
@@ -24131,7 +24483,7 @@ res = optimize.minimize(neg_pl, np.zeros(2), args=(t, d, X), method=&quot;BFGS&q
 </tr>
 </tbody>
 </table>
-<p>比例ハザードなら差は $\beta_2$ で一定のはずだが (本文 10.6.3 節の 1.)、$-1.52$ から $+0.54$ へ単調に増え、$t = 10$ 付近で符号が変わる。2 本の曲線は<strong>交差する</strong> — 図 10.3 右そのものである。この標本の Cox 推定は $\hat\beta = (0.662,\ 0.121)$、SE $(0.031,\ 0.058)$ で、$\hat\beta_2$ の信頼区間 $[0.007, 0.235]$ は $0$ をわずかに外れる。「有意にハザード比 1.13 倍」という報告は、この場合<strong>完全な誤読</strong>である。</p>
+<p>比例ハザードなら差は $\beta_2$ で一定のはずだが (本文 10.6.3 節の 1.)、$-1.52$ から $+0.54$ へ単調に増え、$t = 10$ 付近で符号が変わる。2 本の曲線は<strong>交差する</strong> — 図 10.5 右そのものである。この標本の Cox 推定は $\hat\beta = (0.662,\ 0.121)$、SE $(0.031,\ 0.058)$ で、$\hat\beta_2$ の信頼区間 $[0.007, 0.235]$ は $0$ をわずかに外れる。「有意にハザード比 1.13 倍」という報告は、この場合<strong>完全な誤読</strong>である。</p>
 <p><strong>答え</strong>: 部分尤度は多変量でも後ろ向き累積和で同じように書け、比例ハザードが正しければ $\hat\beta \to (0.708, -0.508)$ と真値を回復する。群ごとに形状 $k$ を変えると $\hat\beta_2 = 0.147$ という「時間平均されたハザード比」が出るだけで、真の $\log\mathrm{HR}$ は $-1.36 \sim +1.93$ と大きく振れる。他方の共変量 $\hat\beta_1$ も 0.70 から 0.66 へ縮む。log-log プロットでは 2 群の曲線が交差し、比例性の破れがはっきり見える。</p>
 <p><strong>設計実務での読み方</strong>: 疲労試験で「表面処理は寿命を改善するか」を Cox で評価するとき、処理によって<strong>ばらつきの形 ($k$)</strong> まで変わる場合 (例: 処理で初期欠陥が除かれて $k$ が上がる) は、ハザード比が一定にならない。上の例では「早期は処理群が有利、後期は不利」なのに、Cox は $\mathrm{HR} = 1.16$ という平均値しか返さない。設計で必要なのは平均ハザード比ではなく<strong>低確率側の分位点</strong>なので、この場面では Weibull / 対数正規の AFT (10.7 節) を当てて群ごとに $k$ と $\lambda$ を推定し、$B_{10}$ を比較するほうが正しい。判断の手順は、(i) 群ごとの KM で log-log プロットを描く、(ii) 平行でなければ Cox の HR を報告しない、(iii) パラメトリック AFT か層別 Cox に切り替える、である。</p>
 <hr />
@@ -30128,6 +30480,13 @@ rng.uniform(size=3)
 <li><strong>結果を報告するときは、種と生成器の種類の両方を書く。</strong> 「seed=42」だけでは、NumPy のバージョンが変われば別の数列になる</li>
 </ol>
 <p><strong>再現性は「同じ数が出ること」だけではない。</strong> 種を変えて数回回し、<strong>結論が変わらないことを確かめる</strong>のがより重要である。1 つの種でしか成り立たない結論は、乱数のゆらぎを見ているだけかもしれない。</p>
+<p><strong>悪い生成器は「見れば分かる」。</strong> 1960〜70 年代に広く使われた RANDU ($x_{n+1} = 65539\,x_n \bmod 2^{31}$) を、連続する 3 つの値を座標として 3 次元にプロットしてみる。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.1 左: RANDU の 3000 点。特定の角度から見ると 15 枚の平面にしか乗っていない。中: 現代の生成器 (PCG64) の同じプロット。右: $9u_n - 6u_{n+1} + u_{n+2}$ の分布" src="fig/13_randu.png" /><figcaption>図 13.1 左: RANDU の 3000 点。特定の角度から見ると 15 枚の平面にしか乗っていない。中: 現代の生成器 (PCG64) の同じプロット。右: $9u_n - 6u_{n+1} + u_{n+2}$ の分布</figcaption></figure>
+<p><strong>RANDU には $x_{n+2} = 6x_{n+1} - 9x_n \pmod{2^{31}}$ という関係がある。</strong> $65539 = 2^{16}+3$ なので $(2^{16}+3)^2 = 6(2^{16}+3) - 9 \pmod{2^{31}}$ が成り立つからである。したがって</p>
+<p>$$9u_n - 6u_{n+1} + u_{n+2} \quad \text{は必ず整数}$$</p>
+<p>になり、<strong>右の図のとおり値が 15 個しか現れない。</strong> 3 次元で見れば 15 枚の平面である。</p>
+<p><strong>1 次元・2 次元では何も見えない。</strong> ヒストグラムは平らだし、$(u_n, u_{n+1})$ の散布図も一様に見える。<strong>次元を上げて初めて壊れが露出する</strong>ので、「一様性の検定を通ったから大丈夫」とは言えない。</p>
+<p><strong>実務上の教訓は 2 つある。</strong> (i) 自分で線形合同法を実装しない。(ii) 多重積分やモンテカルロ法で使う乱数は、次元が上がるほど格子構造の害が大きい — 13.6 節の構造信頼性のように 10 変数以上を扱う場面では致命的になりうる。<strong>現代の生成器 (Mersenne Twister、PCG64) を使えばこの問題は起きない。</strong></p>
 <h2 id="c13-13-3">13.3 一様乱数から任意の分布へ</h2>
 <p>13.2 節で $\mathrm{U}(0,1)$ が手に入った。<strong>そこから先はすべて変換の問題である。</strong> 正規分布もワイブル分布も極値分布も、一様乱数を加工して作る。</p>
 <p>一様乱数 $U \sim \mathrm{U}(0,1)$ が手に入れば、任意の分布の乱数はそこから変換で作る。</p>
@@ -30156,7 +30515,7 @@ rng.uniform(size=3)
 X = -\frac{1}{\lambda}\ln(1 - U) \quad (\text{あるいは } -\lambda^{-1}\ln U、1-U も一様なので)
 $$</p>
 <p>Weibull 分布 $F(x) = 1 - \exp[-(x/\eta)^m]$ なら $X = \eta(-\ln U)^{1/m}$。材料強度の Weibull 分布 (第 3 章) の乱数はこれで作る。正規分布は $F^{-1}$ が閉じた式を持たないが、数値的な逆関数 (<code>scipy.stats.norm.ppf</code>) は高精度で、実は現代の実装の主流である。離散分布は $F$ が階段関数になるだけで、$U$ が入る段を探せばよい (累積確率の表を二分探索)。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.1 左: 逆関数法。縦軸に一様乱数 U を取り、分布関数を横に読んで X = F⁻¹(U) を得る。右: 棄却法。包絡 M·g(x) の下に一様に点を撒き、目標密度 f の下に落ちた点の x だけを採る" src="fig/13_inverse_rejection.png" /><figcaption>図 13.1 左: 逆関数法。縦軸に一様乱数 U を取り、分布関数を横に読んで X = F⁻¹(U) を得る。右: 棄却法。包絡 M·g(x) の下に一様に点を撒き、目標密度 f の下に落ちた点の x だけを採る</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 13.2 左: 逆関数法。縦軸に一様乱数 U を取り、分布関数を横に読んで X = F⁻¹(U) を得る。右: 棄却法。包絡 M·g(x) の下に一様に点を撒き、目標密度 f の下に落ちた点の x だけを採る" src="fig/13_inverse_rejection.png" /><figcaption>図 13.2 左: 逆関数法。縦軸に一様乱数 U を取り、分布関数を横に読んで X = F⁻¹(U) を得る。右: 棄却法。包絡 M·g(x) の下に一様に点を撒き、目標密度 f の下に落ちた点の x だけを採る</figcaption></figure>
 <h3 id="c13-13-3-2">13.3.2 棄却法</h3>
 <p>13.3.1 項は $F^{-1}$ が計算できる場合の話だった。<strong>分位関数が書けない分布のほうが多い。</strong> 密度さえ計算できれば使える方法がある。</p>
 <p>$F^{-1}$ が計算しにくく、密度 $f$ は計算できる (定数倍を除いてもよい) ときの方法。</p>
@@ -30185,7 +30544,7 @@ $$</p>
 <p><strong>6. 条件付き確率の定義で割る。</strong> 4 を 5 で割ると $M$ が約分で消える。</p>
 <p>$$P(Y \le x \mid A) = \frac{F(x)/M}{1/M} = F(x)$$</p>
 <p><strong>落とし穴。</strong> $M$ は「$f \le Mg$ を満たす定数」であって、最小である必要はない。しかし採択確率がちょうど $1/M$ なので、安全を見て $M$ を大きくとった分はそのまま計算量に跳ね返る。最良の $M$ は $\sup_x f(x)/g(x)$ で、これが有限でないとき — $g$ の裾が $f$ より軽いとき — は、そもそも包絡が作れず棄却法が使えない。</p></div></details>
-<p>図 13.1 右は Beta(2,4) を一様提案で作った例で、$M \approx 2.2$ なので 45% しか採れない。$M$ を小さくする (提案 $g$ を $f$ に似せる) のが棄却法の設計のすべてで、$M$ は定数倍を除いて $f$ を知っていれば十分な点がベイズ計算 (正規化定数が分からない事後分布) で効いてくる。多次元では $M$ が次元とともに指数的に増えるため実用にならず、MCMC (第 8 章) に道を譲る。</p>
+<p>図 13.2 右は Beta(2,4) を一様提案で作った例で、$M \approx 2.2$ なので 45% しか採れない。$M$ を小さくする (提案 $g$ を $f$ に似せる) のが棄却法の設計のすべてで、$M$ は定数倍を除いて $f$ を知っていれば十分な点がベイズ計算 (正規化定数が分からない事後分布) で効いてくる。多次元では $M$ が次元とともに指数的に増えるため実用にならず、MCMC (第 8 章) に道を譲る。</p>
 <h3 id="c13-13-3-3">13.3.3 Box–Muller 法の導出</h3>
 <p>正規分布は 13.3.1 項の逆関数法が使えない ($\Phi^{-1}$ に閉じた式が無い) 代表例である。<strong>2 個まとめて作ると、極座標に移るだけで厳密に作れる。</strong></p>
 <p>独立な標準正規乱数 2 個を、一様乱数 2 個から厳密に作る (Box &amp; Muller 1958)。</p>
@@ -30218,8 +30577,8 @@ $$</p>
 <p>右辺は平均 2 の指数分布の密度である。<strong>3 で出た余分な $r$ がここで吸収される</strong>から、指数分布になる。</p>
 <p><strong>7. もう一度逆関数法を当てる。</strong> 平均 2 の指数分布は 13.3.1 項の式で $\lambda = 1/2$ とすれば作れて、$-2\ln U_1$ である。よって $R = \sqrt{-2\ln U_1}$ となる。</p>
 <p><strong>落とし穴。</strong> 4 で独立が言えたのは、密度が「$r$ だけの関数」×「$\theta$ だけの関数」に分かれ、<strong>かつ定義域が長方形</strong> $[0,\infty) \times [0, 2\pi)$ だからである。密度が積の形でも、定義域で $r$ と $\theta$ が絡んでいれば独立にはならない。分解を見たら定義域も確かめる。</p></div></details>
-<p>図 13.2 は正方形上の一様点群が正規の点群に写る様子である。三角関数を避ける Marsaglia の極法 (単位円内に一様な点を棄却法で作り、$Z = X\sqrt{-2\ln S / S}$ とする) も同じ導出から出る。実装上の注意: $U_1 = 0$ で $\ln$ が発散するので、生成器が 0 を返し得るなら $1 - U_1$ を使う。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.2 Box–Muller 変換。一様な正方形上の点 (U₁, U₂) を R² = −2 ln U₁、Θ = 2πU₂ で極座標に写すと、2 次元標準正規の点群になる。右は Z₁ の周辺分布" src="fig/13_box_muller.png" /><figcaption>図 13.2 Box–Muller 変換。一様な正方形上の点 (U₁, U₂) を R² = −2 ln U₁、Θ = 2πU₂ で極座標に写すと、2 次元標準正規の点群になる。右は Z₁ の周辺分布</figcaption></figure>
+<p>図 13.3 は正方形上の一様点群が正規の点群に写る様子である。三角関数を避ける Marsaglia の極法 (単位円内に一様な点を棄却法で作り、$Z = X\sqrt{-2\ln S / S}$ とする) も同じ導出から出る。実装上の注意: $U_1 = 0$ で $\ln$ が発散するので、生成器が 0 を返し得るなら $1 - U_1$ を使う。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.3 Box–Muller 変換。一様な正方形上の点 (U₁, U₂) を R² = −2 ln U₁、Θ = 2πU₂ で極座標に写すと、2 次元標準正規の点群になる。右は Z₁ の周辺分布" src="fig/13_box_muller.png" /><figcaption>図 13.3 Box–Muller 変換。一様な正方形上の点 (U₁, U₂) を R² = −2 ln U₁、Θ = 2πU₂ で極座標に写すと、2 次元標準正規の点群になる。右は Z₁ の周辺分布</figcaption></figure>
 <h3 id="c13-13-3-4">13.3.4 その他の道具</h3>
 <p>13.3.1〜13.3.3 項の 3 つで大半は足りるが、<strong>特定の構造を持つ分布にはもっと簡単な作り方がある。</strong></p>
 <ul>
@@ -30273,15 +30632,15 @@ $$</p>
 <p>$$
 \hat I_n - I \approx N\!\left(0, \frac{\sigma_g^2}{n}\right),\qquad \sigma_g^2 = \mathrm{Var}_f[g(X)]
 $$</p>
-<p>つまり誤差は $\sigma_g / \sqrt{n}$ で、<strong>次元によらない</strong>。これがモンテカルロ法の最大の利点で、$d$ 次元の台形則が $n^{-2/d}$ でしか収束しないのと対照的である (次元が 5 を超えるとモンテカルロが勝つ)。同時に最大の欠点でもあり、精度を 1 桁上げるには $n$ を 100 倍にしなければならない (図 13.3 左)。$\sigma_g^2$ は標本分散 $s_g^2$ で推定でき、$\hat I_n \pm 1.96\, s_g / \sqrt{n}$ が信頼区間になる。推定値を報告するときは<strong>必ずこの標準誤差を添える</strong>。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.3 左: ∫₀¹ e^{−x²}dx のモンテカルロ推定の RMSE は n^{−1/2} に沿って減る。右: 破壊確率 p を素朴に数えるときの変動係数 √((1−p)/(np))。P_f = 10⁻⁴ を CoV 10% で求めるには n ≈ 10⁶ 回要る" src="fig/13_mc_error.png" /><figcaption>図 13.3 左: ∫₀¹ e^{−x²}dx のモンテカルロ推定の RMSE は n^{−1/2} に沿って減る。右: 破壊確率 p を素朴に数えるときの変動係数 √((1−p)/(np))。P_f = 10⁻⁴ を CoV 10% で求めるには n ≈ 10⁶ 回要る</figcaption></figure>
+<p>つまり誤差は $\sigma_g / \sqrt{n}$ で、<strong>次元によらない</strong>。これがモンテカルロ法の最大の利点で、$d$ 次元の台形則が $n^{-2/d}$ でしか収束しないのと対照的である (次元が 5 を超えるとモンテカルロが勝つ)。同時に最大の欠点でもあり、精度を 1 桁上げるには $n$ を 100 倍にしなければならない (図 13.4 左)。$\sigma_g^2$ は標本分散 $s_g^2$ で推定でき、$\hat I_n \pm 1.96\, s_g / \sqrt{n}$ が信頼区間になる。推定値を報告するときは<strong>必ずこの標準誤差を添える</strong>。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.4 左: ∫₀¹ e^{−x²}dx のモンテカルロ推定の RMSE は n^{−1/2} に沿って減る。右: 破壊確率 p を素朴に数えるときの変動係数 √((1−p)/(np))。P_f = 10⁻⁴ を CoV 10% で求めるには n ≈ 10⁶ 回要る" src="fig/13_mc_error.png" /><figcaption>図 13.4 左: ∫₀¹ e^{−x²}dx のモンテカルロ推定の RMSE は n^{−1/2} に沿って減る。右: 破壊確率 p を素朴に数えるときの変動係数 √((1−p)/(np))。P_f = 10⁻⁴ を CoV 10% で求めるには n ≈ 10⁶ 回要る</figcaption></figure>
 <h3 id="c13-13-4-2">13.4.2 稀事象の問題</h3>
 <p>13.4.1 項の $n^{-1/2}$ は、<strong>求める確率が小さいときに致命的になる。</strong> $P_f = 10^{-4}$ を 10% の精度で出すのに何回の解析が要るかを数える。</p>
 <p>$g = \mathbb{1}\{\text{破壊}\}$ とすると $I = P_f$、$\sigma_g^2 = P_f(1 - P_f)$ で、推定値の変動係数は</p>
 <p>$$
 \mathrm{CoV}(\hat P_f) = \sqrt{\frac{1 - P_f}{n P_f}} \approx \frac{1}{\sqrt{n P_f}}
 $$</p>
-<p>CoV を 10% にするには $n \approx 100 / P_f$ 回、すなわち $P_f = 10^{-4}$ なら $10^6$ 回 (図 13.3 右)。「破壊が平均 100 回観測されるまで回す」と覚えるとよい。構造信頼性でこれが問題になる理由は 13.6 節で述べる。以下の分散低減法はすべて、同じ $n$ で $\sigma_g^2$ を小さくする工夫である。</p>
+<p>CoV を 10% にするには $n \approx 100 / P_f$ 回、すなわち $P_f = 10^{-4}$ なら $10^6$ 回 (図 13.4 右)。「破壊が平均 100 回観測されるまで回す」と覚えるとよい。構造信頼性でこれが問題になる理由は 13.6 節で述べる。以下の分散低減法はすべて、同じ $n$ で $\sigma_g^2$ を小さくする工夫である。</p>
 <h3 id="c13-13-4-3">13.4.3 対照変量</h3>
 <p>13.4.2 項の問題への処方を 3 つ見ていく。1 つめは、<strong>答えが分かっている量を引き算して、ばらつきだけを減らす</strong>方法である。</p>
 <p>期待値 $E[h(X)] = \mu_h$ が既知の関数 $h$ (対照変量) を使い</p>
@@ -30329,8 +30688,8 @@ $$</p>
 <p>$$
 \mathrm{Var}_{g_{IS}}[g\,w] = \int \frac{g(x)^2 f(x)^2}{g_{IS}(x)}\,dx - I^2
 $$</p>
-<p>で、$g \ge 0$ のとき $g_{IS}^*(x) \propto g(x) f(x)$ とすれば被積分項が定数 $I$ になり分散 0 (理論上の最適提案。$I$ 自身を含むので実際には使えないが、「$g f$ に比例した形」が指針になる)。破壊確率なら $g_{IS}^* \propto \mathbb{1}\{\text{破壊}\} f$、つまり<strong>破壊域に集中した密度</strong>が最適で、実務ではこれを「破壊域で最も確率密度が高い点 (設計点) を中心にした正規分布」で近似する (図 13.4)。図 13.4 右で、同じ $n = 1000$ で素朴な MC が CoV 300% (破壊がほぼ観測されない) のところ、重点サンプリングは 5% 以下になっている。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.4 重点サンプリング。左: 破壊域 z &gt; β に標本が落ちるよう提案密度を右に寄せ、重み f/g で補正する。右: P_f ≈ 10⁻⁴ の推定精度の比較。同じ n で CoV は 2 桁改善する" src="fig/13_importance.png" /><figcaption>図 13.4 重点サンプリング。左: 破壊域 z &gt; β に標本が落ちるよう提案密度を右に寄せ、重み f/g で補正する。右: P_f ≈ 10⁻⁴ の推定精度の比較。同じ n で CoV は 2 桁改善する</figcaption></figure>
+<p>で、$g \ge 0$ のとき $g_{IS}^*(x) \propto g(x) f(x)$ とすれば被積分項が定数 $I$ になり分散 0 (理論上の最適提案。$I$ 自身を含むので実際には使えないが、「$g f$ に比例した形」が指針になる)。破壊確率なら $g_{IS}^* \propto \mathbb{1}\{\text{破壊}\} f$、つまり<strong>破壊域に集中した密度</strong>が最適で、実務ではこれを「破壊域で最も確率密度が高い点 (設計点) を中心にした正規分布」で近似する (図 13.5)。図 13.5 右で、同じ $n = 1000$ で素朴な MC が CoV 300% (破壊がほぼ観測されない) のところ、重点サンプリングは 5% 以下になっている。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.5 重点サンプリング。左: 破壊域 z &gt; β に標本が落ちるよう提案密度を右に寄せ、重み f/g で補正する。右: P_f ≈ 10⁻⁴ の推定精度の比較。同じ n で CoV は 2 桁改善する" src="fig/13_importance.png" /><figcaption>図 13.5 重点サンプリング。左: 破壊域 z &gt; β に標本が落ちるよう提案密度を右に寄せ、重み f/g で補正する。右: P_f ≈ 10⁻⁴ の推定精度の比較。同じ n で CoV は 2 桁改善する</figcaption></figure>
 <p>注意点: 重みの分散が有限でないと (提案の裾が $f$ より軽いとき) 推定量はまれに巨大な値をとって不安定になる。重みの最大値が全体の和に占める割合、あるいは有効標本数 $n_{eff} = (\sum w_i)^2 / \sum w_i^2$ を必ず監視する。裾確率の計算で最適提案を系列的に近似する研究<sup id="c13-fnref:4"><a class="footnote-ref" href="#c13-fn:4">4</a></sup>が今も続くのは、この不安定さのためである。</p>
 <details class="gap"><summary>行間: 重みはどこから来て、なぜ最適提案だと分散が 0 になるのか</summary><div class="gap-body"><p>この項は恒等式・不偏性・最適提案の 3 つを続けて出している。掛けて割るだけの操作と、分散が消える理由は別の話なので分ける。</p>
 <p><strong>記号の役割。</strong> ここは文字が重なっているので先に整理する。$f$ が本来の密度、$g_{IS}$ が提案密度、$g$ は積分したい<strong>関数</strong>で密度ではない。添字 $IS$ が付いていたら提案密度、付いていなければ被積分関数と読む。$w(x) = f(x)/g_{IS}(x)$ が重み、$X_1,\dots,X_n$ は $g_{IS}$ からの独立標本である。</p>
@@ -30402,7 +30761,7 @@ $$</p>
 > $$</p>
 <p>とする。$d$ 次元の点 $U_i = (U_{i1}, \dots, U_{id})$ は各座標の周辺で見ると、$n$ 個の区間にちょうど 1 点ずつ入る。</p>
 </blockquote>
-<p>図 13.5 の中央がその配置で、どの行・どの列にも 1 点しかない (ラテン方格の名の由来)。各 $U_{ij}$ の周辺分布は正確に $\mathrm{U}(0,1)$ なので $\hat I_{LHS} = \frac1n \sum g(F^{-1}(U_i))$ は不偏である。分散については</p>
+<p>図 13.6 の中央がその配置で、どの行・どの列にも 1 点しかない (ラテン方格の名の由来)。各 $U_{ij}$ の周辺分布は正確に $\mathrm{U}(0,1)$ なので $\hat I_{LHS} = \frac1n \sum g(F^{-1}(U_i))$ は不偏である。分散については</p>
 <blockquote>
 <p><strong>定理 13.4 (LHS の分散, McKay et al. 1979; Stein 1987)</strong> $g$ が<strong>加法的</strong> $g(x) = \sum_j g_j(x_j)$ なら LHS の分散は $O(n^{-2})$ 未満のオーダーで、一般の $g$ では</p>
 <p>$$
@@ -30410,7 +30769,7 @@ $$</p>
 > $$</p>
 <p>となる。ここで $g_{res} = g - \sum_j g_j$ は $g$ から最良加法近似を引いた残差である。</p>
 </blockquote>
-<p>証明の要点 (Stein 1987): $g$ を ANOVA 分解 $g = I + \sum_j g_j(x_j) + g_{res}(x)$ に分ける。LHS は各座標を 1 次元層化しているので加法部分 $\sum_j g_j$ の寄与は層化と同じく $O(n^{-1})$ より速く消え、残る分散は交互作用項 $g_{res}$ のみで決まる。したがって LHS は<strong>単純乱数より悪くなることはなく</strong> (Owen 1997 の $n/(n-1)$ 倍の上界)、応答が入力にほぼ加法的なら劇的に良くなる。図 13.5 右は $g = \sum_j x_j^2$ (完全に加法的) で、LHS の誤差が $n^{-1}$ で落ちる様子である。</p>
+<p>証明の要点 (Stein 1987): $g$ を ANOVA 分解 $g = I + \sum_j g_j(x_j) + g_{res}(x)$ に分ける。LHS は各座標を 1 次元層化しているので加法部分 $\sum_j g_j$ の寄与は層化と同じく $O(n^{-1})$ より速く消え、残る分散は交互作用項 $g_{res}$ のみで決まる。したがって LHS は<strong>単純乱数より悪くなることはなく</strong> (Owen 1997 の $n/(n-1)$ 倍の上界)、応答が入力にほぼ加法的なら劇的に良くなる。図 13.6 右は $g = \sum_j x_j^2$ (完全に加法的) で、LHS の誤差が $n^{-1}$ で落ちる様子である。</p>
 <details class="gap"><summary>行間: ANOVA 分解で「加法部分だけが消える」ところ</summary><div class="gap-body"><p>証明の要点は 2 行だが、<strong>関数を 3 つに割る</strong>という発想がすべてである。そこを開く。</p>
 <p><strong>1. 関数を 3 段に割る。</strong> 入力が独立一様 $x = (x_1,\dots,x_d)$ のとき、任意の $g$ は次の形に一意に分解できる:</p>
 <p>$$g(x) = \underbrace{I}_{\text{定数}} + \underbrace{\sum_j g_j(x_j)}_{\text{各座標だけの項}} + \underbrace{g_{\mathrm{res}}(x)}_{\text{交互作用}}$$</p>
@@ -30423,10 +30782,10 @@ $$</p>
 <p><strong>5. 交互作用項は層化されていない。</strong> $g_{\mathrm{res}}$ は座標の組合せに依存するので、1 次元層化では手が届かない。残る誤差は</p>
 <p>$$\mathrm{Var}(\hat I_{\mathrm{LHS}}) \approx \frac{\mathrm{Var}(g_{\mathrm{res}})}{n}$$</p>
 <p><strong>「加法部分がタダになり、交互作用だけが残る」</strong>というのが Stein の結論である。</p>
-<p><strong>6. だから極端な 2 つの場合がある。</strong> $g$ が完全に加法的なら $g_{\mathrm{res}} = 0$ で誤差は急速に落ちる (図 13.5 右)。逆に $g$ が交互作用だけでできていれば ($g = x_1x_2$ など)、LHS は単純乱数とほとんど変わらない。<strong>構造解析の応答は多くの場合ほぼ加法的</strong>なので、LHS が効きやすい。</p>
+<p><strong>6. だから極端な 2 つの場合がある。</strong> $g$ が完全に加法的なら $g_{\mathrm{res}} = 0$ で誤差は急速に落ちる (図 13.6 右)。逆に $g$ が交互作用だけでできていれば ($g = x_1x_2$ など)、LHS は単純乱数とほとんど変わらない。<strong>構造解析の応答は多くの場合ほぼ加法的</strong>なので、LHS が効きやすい。</p>
 <p><strong>7. 悪くならない保証。</strong> Owen (1997) は、どんな $g$ でも LHS の分散が単純乱数の $n/(n-1)$ 倍以下であることを示した。<strong>最悪でも 1 点ぶん損をするだけ</strong>なので、使わない理由がない。</p>
 <p><strong>落とし穴。</strong> LHS は<strong>周辺分布の層化</strong>しかしていない。入力に相関があるとき、独立にサンプリングしてから相関を入れると層化が崩れる。相関のある入力には、順位を並べ替える Iman–Conover 法など別の工夫が要る。</p></div></details>
-<figure><img loading="lazy" decoding="async" alt="図 13.5 Latin Hypercube Sampling。左: 単純乱数 20 点は偏る。中央: LHS は各行・各列に 1 点ずつで空間を均等に埋める。右: 加法的な応答 Σx_j² (d = 5) の平均推定で、LHS の誤差は単純乱数よりずっと速く減る" src="fig/13_lhs.png" /><figcaption>図 13.5 Latin Hypercube Sampling。左: 単純乱数 20 点は偏る。中央: LHS は各行・各列に 1 点ずつで空間を均等に埋める。右: 加法的な応答 Σx_j² (d = 5) の平均推定で、LHS の誤差は単純乱数よりずっと速く減る</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 13.6 Latin Hypercube Sampling。左: 単純乱数 20 点は偏る。中央: LHS は各行・各列に 1 点ずつで空間を均等に埋める。右: 加法的な応答 Σx_j² (d = 5) の平均推定で、LHS の誤差は単純乱数よりずっと速く減る" src="fig/13_lhs.png" /><figcaption>図 13.6 Latin Hypercube Sampling。左: 単純乱数 20 点は偏る。中央: LHS は各行・各列に 1 点ずつで空間を均等に埋める。右: 加法的な応答 Σx_j² (d = 5) の平均推定で、LHS の誤差は単純乱数よりずっと速く減る</figcaption></figure>
 <p>構造解析での使い方: 入力変数 (降伏強度、弾性係数、荷重、寸法) をそれぞれの分布 $F_j$ で LHS 化し $X_{ij} = F_j^{-1}(U_{ij})$ とする。相関のある入力には Iman &amp; Conover (1982) の順位相関誘導法で置換を組み替える。$n = 50 \sim 200$ 回の解析で応答の平均・分散・分布形を得るのが典型で、感度解析や代理モデル (Kriging、多項式カオス) の学習点にも使われる。ただし <strong>LHS は稀事象の確率推定には効かない</strong>: $P_f = 10^{-4}$ の破壊域に点が落ちる確率は単純乱数と同じだからである。そこは重点サンプリングの領分である。</p>
 <h2 id="c13-13-6">13.6 構造信頼性への接続: $P_f = 10^{-4}$ を数える</h2>
 <p>限界状態関数 $Z = R - S$ (耐力 $R$ − 荷重効果 $S$) に対し $P_f = P(Z < 0)$。設計規準が要求する信頼性指標 $\beta = 3.7$ (Eurocode の 50 年基準期間の目安) は $P_f = \Phi(-3.7) \approx 10^{-4}$ に相当する。有限要素解析 1 回で $Z$ を評価するとして、必要な回数を並べる。</p>
@@ -30466,7 +30825,45 @@ $$</p>
 </tr>
 </tbody>
 </table>
-<p>実務の流れは、FORM で設計点 $u^*$ と $\beta$ を求め (第 3 章の一次近似)、$u^*$ を中心とした標準正規 $N(u^*, I)$ を提案分布として重点サンプリングで $P_f$ を精密化する、である。図 13.4 の設定はまさにこれで、1 次元・線形の限界状態なら重み $w = \exp(-\beta z + \beta^2/2)$ の閉じた式が出る。国内でも構造設計に確率・統計的手法を持ち込む流れは 1980 年代から論じられている<sup id="c13-fnref:7"><a class="footnote-ref" href="#c13-fn:7">7</a></sup>。第 3 章で与えた $\beta$ の定義と、第 8 章のベイズ更新 (検査結果による $R$ の分布の更新) はこの数値計算の上で組み合わさる。</p>
+<p>実務の流れは、FORM で設計点 $u^*$ と $\beta$ を求め (第 3 章の一次近似)、$u^*$ を中心とした標準正規 $N(u^*, I)$ を提案分布として重点サンプリングで $P_f$ を精密化する、である。図 13.5 の設定はまさにこれで、1 次元・線形の限界状態なら重み $w = \exp(-\beta z + \beta^2/2)$ の閉じた式が出る。国内でも構造設計に確率・統計的手法を持ち込む流れは 1980 年代から論じられている<sup id="c13-fnref:7"><a class="footnote-ref" href="#c13-fn:7">7</a></sup>。第 3 章で与えた $\beta$ の定義と、第 8 章のベイズ更新 (検査結果による $R$ の分布の更新) はこの数値計算の上で組み合わさる。</p>
+<p><strong>上の表の「$10^6$」がどこから来るかを見ておく。</strong> $\hat P_f$ を $N$ 回の素朴なモンテカルロで求めると、$\hat P_f$ は二項分布に従うので変動係数は</p>
+<p>$$\mathrm{CoV}(\hat P_f) = \sqrt{\frac{1-P_f}{N\,P_f}}$$</p>
+<p>である。$\mathrm{CoV} = 10\%$ を目標にすると $N = (1-P_f)/(0.01\,P_f)$ になる。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.7 左: 目標精度ごとに要る解析回数。右: FEM 1 回の所要時間から換算した年数" src="fig/13_mc_sample_size.png" /><figcaption>図 13.7 左: 目標精度ごとに要る解析回数。右: FEM 1 回の所要時間から換算した年数</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>$\beta$</th>
+<th style="text-align: right;">$P_f$</th>
+<th style="text-align: right;">CoV 10% に要る $N$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$2.0$</td>
+<td style="text-align: right;">$2.3 \times 10^{-2}$</td>
+<td style="text-align: right;">$4.3 \times 10^{3}$</td>
+</tr>
+<tr>
+<td>$3.0$</td>
+<td style="text-align: right;">$1.4 \times 10^{-3}$</td>
+<td style="text-align: right;">$7.4 \times 10^{4}$</td>
+</tr>
+<tr>
+<td>$3.7$</td>
+<td style="text-align: right;">$1.1 \times 10^{-4}$</td>
+<td style="text-align: right;">$\mathbf{9.3 \times 10^{5}}$</td>
+</tr>
+<tr>
+<td>$4.5$</td>
+<td style="text-align: right;">$3.4 \times 10^{-6}$</td>
+<td style="text-align: right;">$2.9 \times 10^{7}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$P_f$ が 1 桁下がると $N$ も 1 桁増える。</strong> 精度を 2 倍にしたければ $N$ は 4 倍である。</p>
+<p><strong>右の図が実務的な意味を与える。</strong> 有限要素解析 1 回に 1 時間かかるなら、$\beta = 3.7$ で $9.3 \times 10^5$ 回は <strong>106 年</strong>である。$\beta = 4.5$ なら 3350 年。<strong>素朴なモンテカルロは、この領域では選択肢にならない。</strong></p>
+<p><strong>だから 13.4 節の重点サンプリングや FORM が要る。</strong> どちらも「破壊が起きるあたりを狙って計算を集中させる」という発想で、<strong>$P_f$ が小さいほど得が大きくなる</strong> (13.14 節で数を見る)。</p>
 <h2 id="c13-13-7">13.7 EM アルゴリズム</h2>
 <p>13.3〜13.6 節は乱数を使う計算だった。<strong>ここからは乱数を使わない数値計算に移る。</strong> 最初は、<strong>尤度に「見えない変数」が入っているときの最大化</strong>である。打ち切りデータ (10.3 節)、混合分布、欠測 (13.10 節) がすべてこの形をしている。</p>
 <h3 id="c13-13-7-1">13.7.1 問題設定</h3>
@@ -30546,8 +30943,8 @@ $$</p>
 <p>$$\Delta H = -\,\mathrm{KL}\big(p(Z \mid Y, \theta^{(t)})\,\|\,p(Z \mid Y, \theta^{(t+1)})\big)$$</p>
 <p>KL が非負なのは、$\ln$ が凹関数なので Jensen の不等式で期待値を対数の中へ入れられ、$E_t[p^{(t+1)}/p^{(t)}] = 1$ になるからである。よって $\Delta H \le 0$。</p>
 <p><strong>6. 合わせる。</strong> 3 の右辺は $\Delta Q \ge 0$ と $-\Delta H \ge 0$ の和だから非負である。</p>
-<p><strong>落とし穴。</strong> 増えると言っているのは尤度の値であって、$\theta$ が最大点へ近づくとは言っていない。単調な列が収束するのは尤度が上に有界だからで、その極限が停留点であることには別の条件が要る。図 13.6 右で初期値によって別の点に落ち着くのは、この証明が何も禁じていない振る舞いである。</p></div></details>
-<p>この証明は「$Q$ を最大化する」ことは要求しておらず、<strong>$Q$ を増やせば十分</strong>である (generalized EM)。また、$\ln p(Y \mid \theta) \ge Q(\theta \mid \theta^{(t)}) - H(\theta^{(t)} \mid \theta^{(t)})$ という下界を毎回作って持ち上げているとも読める (MM アルゴリズム、変分ベイズと同じ構図)。収束先は停留点であって大域的最大とは限らず (Wu 1983)、収束は線形 (一次) で、欠測が多いほど遅い。図 13.6 右で 2 つの初期値が別の対数尤度に落ち着くのがその例で、実務では初期値を複数試す。データが大きいときの反復コストを下げるため E ステップを部分的にしか行わない変種も提案されている<sup id="c13-fnref:5"><a class="footnote-ref" href="#c13-fn:5">5</a></sup>。</p>
+<p><strong>落とし穴。</strong> 増えると言っているのは尤度の値であって、$\theta$ が最大点へ近づくとは言っていない。単調な列が収束するのは尤度が上に有界だからで、その極限が停留点であることには別の条件が要る。図 13.8 右で初期値によって別の点に落ち着くのは、この証明が何も禁じていない振る舞いである。</p></div></details>
+<p>この証明は「$Q$ を最大化する」ことは要求しておらず、<strong>$Q$ を増やせば十分</strong>である (generalized EM)。また、$\ln p(Y \mid \theta) \ge Q(\theta \mid \theta^{(t)}) - H(\theta^{(t)} \mid \theta^{(t)})$ という下界を毎回作って持ち上げているとも読める (MM アルゴリズム、変分ベイズと同じ構図)。収束先は停留点であって大域的最大とは限らず (Wu 1983)、収束は線形 (一次) で、欠測が多いほど遅い。図 13.8 右で 2 つの初期値が別の対数尤度に落ち着くのがその例で、実務では初期値を複数試す。データが大きいときの反復コストを下げるため E ステップを部分的にしか行わない変種も提案されている<sup id="c13-fnref:5"><a class="footnote-ref" href="#c13-fn:5">5</a></sup>。</p>
 <h3 id="c13-13-7-3">13.7.3 混合正規への適用</h3>
 <p>13.7.2 項までの一般論を、最もよく使う例に当てる。<strong>E ステップが「各点がどの成分から来たかの確率」、M ステップが「重み付き平均と分散」</strong>という、きわめて直感的な形になる。</p>
 <p>$K$ 成分の混合正規 $p(y) = \sum_{k=1}^K \pi_k\,\phi(y \mid \mu_k, \sigma_k^2)$。潜在変数 $Z_i \in \{1, \dots, K\}$ を「$y_i$ がどの成分から来たか」とすると完全データ対数尤度は</p>
@@ -30562,8 +30959,8 @@ $$</p>
 <p>$$
 n_k = \sum_i \gamma_{ik},\qquad \pi_k = \frac{n_k}{n},\qquad \mu_k = \frac{1}{n_k}\sum_i \gamma_{ik}\,y_i,\qquad \sigma_k^2 = \frac{1}{n_k}\sum_i \gamma_{ik}\,(y_i - \mu_k)^2
 $$</p>
-<p>「ラベルが分かっていれば成分ごとに平均と分散をとるだけ」の計算を、ラベルの代わりに責任度で重み付けしている。図 13.6 左はその収束経過である。$K$-means はこの $\gamma_{ik}$ を 0/1 に丸め $\sigma_k$ を共通・固定した特殊形とみなせる。注意すべき退化: ある成分が 1 点だけを抱えると $\sigma_k \to 0$ で尤度が発散する。分散に下限を置くか、事前分布を入れる (MAP-EM) のが実務の対処である。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.6 混合正規への EM。左: 初期値から 3 反復、40 反復での当てはめ。右: 対数尤度は毎回単調に増える (定理 13.5) が、初期値が悪いと別の局所解に落ちる" src="fig/13_em_mixture.png" /><figcaption>図 13.6 混合正規への EM。左: 初期値から 3 反復、40 反復での当てはめ。右: 対数尤度は毎回単調に増える (定理 13.5) が、初期値が悪いと別の局所解に落ちる</figcaption></figure>
+<p>「ラベルが分かっていれば成分ごとに平均と分散をとるだけ」の計算を、ラベルの代わりに責任度で重み付けしている。図 13.8 左はその収束経過である。$K$-means はこの $\gamma_{ik}$ を 0/1 に丸め $\sigma_k$ を共通・固定した特殊形とみなせる。注意すべき退化: ある成分が 1 点だけを抱えると $\sigma_k \to 0$ で尤度が発散する。分散に下限を置くか、事前分布を入れる (MAP-EM) のが実務の対処である。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.8 混合正規への EM。左: 初期値から 3 反復、40 反復での当てはめ。右: 対数尤度は毎回単調に増える (定理 13.5) が、初期値が悪いと別の局所解に落ちる" src="fig/13_em_mixture.png" /><figcaption>図 13.8 混合正規への EM。左: 初期値から 3 反復、40 反復での当てはめ。右: 対数尤度は毎回単調に増える (定理 13.5) が、初期値が悪いと別の局所解に落ちる</figcaption></figure>
 <h3 id="c13-13-7-4">13.7.4 その他の応用</h3>
 <p>13.7.3 項の混合正規以外にも、<strong>「見えない変数を補えば簡単になる」</strong>構造は至るところにある。</p>
 <ul>
@@ -30726,6 +31123,38 @@ $$</p>
 </table>
 <p><strong>Wald は「どちらのパラメータで区間を作ったか」で答えが変わる</strong> ($[0.143, 0.609]$ と $[0.232, 0.989]$)。プロファイル尤度は<strong>変換に対して不変</strong>なので、$1/\lambda$ で直接作っても $\lambda$ から変換しても同じ区間になる。</p>
 <p>3.5.4 項で見た最尤推定量の不変性が、<strong>区間についても成り立つのはプロファイル尤度のほうだけ</strong>である。$n$ が小さいときや、分散のように境界 (0) の近くにあるパラメータでは、この差が実際に効く。</p>
+<p><strong>どの登り方を選ぶかで、回数が 2 桁変わる。</strong> Weibull 分布 (真の $k = 2.2$、$\lambda = 120$) から 60 本を取り、$(k, \lambda) = (1.0, 80)$ から最尤推定を始める。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.9 左: 負の対数尤度の等高線と、最急降下 (赤) と Newton 法 (青) の軌跡。右: 最適値との差の縮み方" src="fig/13_optimization.png" /><figcaption>図 13.9 左: 負の対数尤度の等高線と、最急降下 (赤) と Newton 法 (青) の軌跡。右: 最適値との差の縮み方</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th style="text-align: right;">回数</th>
+<th>到達した $(\hat k, \hat\lambda)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最急降下 (学習率 $10^{-4}$)</td>
+<td style="text-align: right;">200 回でも未収束</td>
+<td>$(1.35,\ 80.0)$</td>
+</tr>
+<tr>
+<td>Newton 法</td>
+<td style="text-align: right;">$\mathbf{7}$ 回</td>
+<td>$(2.306,\ 125.7)$</td>
+</tr>
+<tr>
+<td>Nelder–Mead (関数評価)</td>
+<td style="text-align: right;">95 回</td>
+<td>$(2.306,\ 125.7)$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最急降下は 200 回でも届かない。</strong> 左の等高線を見ると谷が細長く傾いており、<strong>勾配の向きが谷の底の向きと大きくずれている</strong>。学習率を上げれば発散し、下げれば進まない。</p>
+<p><strong>Newton 法は 7 回で終わる。</strong> ヘッセ行列を使って「谷の形」を考慮するので、細長さに影響されない。右の図で差が二乗ずつ縮んでいる (2 次収束) のが分かる。</p>
+<p><strong>Nelder–Mead は勾配を使わないぶん回数が要る (95 回)。</strong> ただし微分が書けない場合や、目的関数が滑らかでない場合には唯一の選択肢になる。</p>
+<p><strong>最尤推定でヘッセ行列を計算する意味はもう 1 つある。</strong> 収束点でのヘッセ行列が<strong>観測情報量</strong>そのもの (3.5 節) なので、<strong>最適化の副産物として標準誤差が手に入る</strong>。最急降下や Nelder–Mead を使うと、別途数値微分で計算し直すことになる。</p>
 <h2 id="c13-13-9">13.9 標本調査</h2>
 <p>13.2〜13.8 節は「データが手元にある」前提の計算だった。<strong>この節は、そのデータをどう集めるかの話である。</strong> 第 6 章の実験計画が「条件を自分で決められる」場合だったのに対し、ここは<strong>すでに存在する母集団から選び出す</strong>場合になる。</p>
 <h3 id="c13-13-9-1">13.9.1 有限母集団と単純無作為抽出</h3>
@@ -30823,8 +31252,8 @@ $$</p>
 <p>$$V_{\min} = \frac{1}{n}\Big(\sum_h W_hS_h\Big)^2$$</p>
 <p><strong>なぜ $S_h$ に比例で、$S_h^2$ ではないのか。</strong> 分散は $1/n_h$ で減るので、1 人を層 $h$ に追加したときの改善は $W_h^2S_h^2/n_h^2$ に比例する。<strong>この限界改善を全層で揃える</strong>のが最適で、揃える式が $n_h^2$ についての等式だから、平方根をとる段で二乗が外れる。比例配分 $n_h \propto W_h$ は、$S_h$ がどの層でも等しい特別な場合に当たる。</p>
 <p><strong>落とし穴。</strong> 3 は停留点を出しただけで、それが最小であることは別に言う必要がある。$V$ は各 $n_h > 0$ について凸 ($1/n_h$ が凸) なので、停留点が最小になる。また $n_h$ は整数でなければならず、$n_h \le N_h$ という制約もあるので、式が返す値をそのまま使えるとは限らない。</p></div></details>
-<p>最小分散は $\frac1n \left(\sum_h W_h S_h\right)^2$。<strong>ばらつきの大きい層に多く配分する</strong>のが要点で、費用 $c_h$ が層で違うなら $n_h \propto W_h S_h / \sqrt{c_h}$ に一般化される。図 13.7 は 3 層の母集団で、SRS → 比例配分 → Neyman 配分と推定量の標準偏差が縮む様子である。$S_h$ は未知なので前回調査や補助変数から見積もるが、少々間違えても比例配分よりは悪くならない程度に頑健である。建物調査で「構造種別 × 築年代」で層化するのは、この層内で耐震性能のばらつきが小さいからで、層化はまた各層の推定値を報告できる (小地域推定) 副次的利点も持つ。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.7 層化抽出。左: 3 層からなる母集団と n = 300 の配分 (Neyman 配分は分散の大きい第 3 層に厚い)。右: 3000 反復での推定量の分布。SRS → 比例 → Neyman の順に標準偏差が縮む" src="fig/13_stratified.png" /><figcaption>図 13.7 層化抽出。左: 3 層からなる母集団と n = 300 の配分 (Neyman 配分は分散の大きい第 3 層に厚い)。右: 3000 反復での推定量の分布。SRS → 比例 → Neyman の順に標準偏差が縮む</figcaption></figure>
+<p>最小分散は $\frac1n \left(\sum_h W_h S_h\right)^2$。<strong>ばらつきの大きい層に多く配分する</strong>のが要点で、費用 $c_h$ が層で違うなら $n_h \propto W_h S_h / \sqrt{c_h}$ に一般化される。図 13.10 は 3 層の母集団で、SRS → 比例配分 → Neyman 配分と推定量の標準偏差が縮む様子である。$S_h$ は未知なので前回調査や補助変数から見積もるが、少々間違えても比例配分よりは悪くならない程度に頑健である。建物調査で「構造種別 × 築年代」で層化するのは、この層内で耐震性能のばらつきが小さいからで、層化はまた各層の推定値を報告できる (小地域推定) 副次的利点も持つ。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.10 層化抽出。左: 3 層からなる母集団と n = 300 の配分 (Neyman 配分は分散の大きい第 3 層に厚い)。右: 3000 反復での推定量の分布。SRS → 比例 → Neyman の順に標準偏差が縮む" src="fig/13_stratified.png" /><figcaption>図 13.10 層化抽出。左: 3 層からなる母集団と n = 300 の配分 (Neyman 配分は分散の大きい第 3 層に厚い)。右: 3000 反復での推定量の分布。SRS → 比例 → Neyman の順に標準偏差が縮む</figcaption></figure>
 <p><strong>配分の仕方で何倍違うかを数で見る。</strong> 3 層、層の重み $W = (0.5,\,0.3,\,0.2)$、層内標準偏差 $S = (2,\,5,\,12)$、層の平均 $(30,\,40,\,55)$、総標本 $n = 200$ とすると</p>
 <table>
 <thead>
@@ -30877,8 +31306,8 @@ $$</p>
 <p>$$\mathrm{deff} = 1 + (m-1)\rho$$</p>
 <p><strong>両端で勘定を確かめる。</strong> $\rho = 0$ なら deff $= 1$ で、クラスター抽出でも SRS と同じ。$\rho = 1$ (クラスター内が全部同じ値) なら deff $= m$ で、有効標本数 $n/\mathrm{deff}$ はクラスターの数 $k$ そのものになる。中を何人調べても新しい情報が来ない、という読み方ができる。</p>
 <p><strong>落とし穴。</strong> $\rho$ が小さいから無害、とは言えない。効くのは $\rho$ ではなく積 $(m-1)\rho$ で、$\rho = 0.02$ でも $m = 100$ なら deff は約 3 である。<strong>クラスターを大きくする方が調査費用は安い</strong>ので、費用の都合で $m$ を増やすと有効標本数が静かに減っていく。</p></div></details>
-<p>図 13.8 のとおり、$\rho = 0.05$ という小さい相関でも $m = 20$ なら deff = 1.95 で標本の半分が無駄になる。$m = 50$ で $\rho = 0.1$ なら deff ≈ 6。<strong>クラスターは小さく多く</strong>が原則で、分散の推定にはクラスターを単位とした (クラスター間の) 分散を使わねばならず、個体を独立扱いした標準誤差は $\sqrt{\mathrm{deff}}$ 倍過小になる。第 6 章の反復測定・第 11 章のクラスター頑健標準誤差と同じ現象である。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.8 設計効果と級内相関。左: deff = 1 + (m − 1)ρ。ρ が小さくてもクラスターサイズ m が大きいと急増する。右: 数値実験 (m = 20、10 クラスター vs 同じ n = 200 の SRS) が理論に乗る" src="fig/13_deff_icc.png" /><figcaption>図 13.8 設計効果と級内相関。左: deff = 1 + (m − 1)ρ。ρ が小さくてもクラスターサイズ m が大きいと急増する。右: 数値実験 (m = 20、10 クラスター vs 同じ n = 200 の SRS) が理論に乗る</figcaption></figure>
+<p>図 13.11 のとおり、$\rho = 0.05$ という小さい相関でも $m = 20$ なら deff = 1.95 で標本の半分が無駄になる。$m = 50$ で $\rho = 0.1$ なら deff ≈ 6。<strong>クラスターは小さく多く</strong>が原則で、分散の推定にはクラスターを単位とした (クラスター間の) 分散を使わねばならず、個体を独立扱いした標準誤差は $\sqrt{\mathrm{deff}}$ 倍過小になる。第 6 章の反復測定・第 11 章のクラスター頑健標準誤差と同じ現象である。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.11 設計効果と級内相関。左: deff = 1 + (m − 1)ρ。ρ が小さくてもクラスターサイズ m が大きいと急増する。右: 数値実験 (m = 20、10 クラスター vs 同じ n = 200 の SRS) が理論に乗る" src="fig/13_deff_icc.png" /><figcaption>図 13.11 設計効果と級内相関。左: deff = 1 + (m − 1)ρ。ρ が小さくてもクラスターサイズ m が大きいと急増する。右: 数値実験 (m = 20、10 クラスター vs 同じ n = 200 の SRS) が理論に乗る</figcaption></figure>
 <h3 id="c13-13-9-4">13.9.4 系統抽出</h3>
 <p>13.9.1 項の単純無作為抽出は、現場で実施するのが意外に面倒である。<strong>一定間隔で抜く</strong>という簡便法には、思わぬ利点と危険がある。</p>
 <p>名簿から間隔 $k = N/n$ ごとに 1 個 (最初の位置だけ乱数) 抜く。実施が簡単で、名簿が有意義な順 (住所順・建築年順) に並んでいれば暗黙の層化になって SRS より良い。逆に名簿に周期があり $k$ と共鳴すると (集合住宅で各階の同じ位置の住戸ばかり) 破綻する。標本は 1 つのクラスターに相当するので<strong>分散が標本から不偏推定できない</strong>のが理論的な弱点で、実務では SRS の公式で代用するか、乱数開始点を複数にする (反復系統抽出)。</p>
@@ -30956,9 +31385,9 @@ $$</p>
 <p><strong>ここから実務的な結論が出る。</strong> 「平均を報告するのか、回帰係数を報告するのか」で、同じ欠測が問題になったりならなかったりする。<strong>欠測メカニズムだけを見て「危ない/安全」とは言えず、何を推定したいかと組み合わせて判断する</strong>ことになる。</p>
 <p>MNAR では傾きまで $-0.149$ 偏る。しかも<strong>MNAR であることはデータからは判定できない</strong> — 観測されなかった $y$ の値は、定義上どこにも無いからである。13.10.5 項の感度分析しか手が無い。</p>
 <h3 id="c13-13-10-2">13.10.2 リストワイズ削除のバイアス</h3>
-<p>欠測を含む行を全部捨てる (リストワイズ削除、complete-case 解析) のが既定の挙動である。MCAR なら不偏だが標本が減るだけ。MAR では<strong>偏る</strong> (図 13.9 の中央: $x$ が大きいほど $y$ が欠ける設定で、観測された $y$ の平均は真値より下にずれる)。ただし回帰係数の推定は、欠測が説明変数 $x$ にだけ依存する MAR なら complete-case でも不偏である (図の傾きが 0.8 のままなのはそのため。条件付き分布 $y \mid x$ が変わっていない)。MNAR では回帰も含めて偏る (図の右側)。</p>
+<p>欠測を含む行を全部捨てる (リストワイズ削除、complete-case 解析) のが既定の挙動である。MCAR なら不偏だが標本が減るだけ。MAR では<strong>偏る</strong> (図 13.12 の中央: $x$ が大きいほど $y$ が欠ける設定で、観測された $y$ の平均は真値より下にずれる)。ただし回帰係数の推定は、欠測が説明変数 $x$ にだけ依存する MAR なら complete-case でも不偏である (図の傾きが 0.8 のままなのはそのため。条件付き分布 $y \mid x$ が変わっていない)。MNAR では回帰も含めて偏る (図の右側)。</p>
 <p>「平均値で埋める」単一代入はさらに悪い: 分散を過小にし、相関を弱め、標準誤差を偽って小さくする。回帰の予測値で埋めるのも同様で、埋めた値には誤差がないふりをしている。</p>
-<figure><img loading="lazy" decoding="async" alt="図 13.9 欠測メカニズムとリストワイズ削除。MCAR では観測部分は無偏、MAR (x が大きいほど y が欠ける) では y の平均が偏るが回帰の傾きは保たれる、MNAR (y が大きいほど欠ける) では平均も傾きも偏る。右端: MAR に多重代入すると平均の推定が回復する" src="fig/13_missing.png" /><figcaption>図 13.9 欠測メカニズムとリストワイズ削除。MCAR では観測部分は無偏、MAR (x が大きいほど y が欠ける) では y の平均が偏るが回帰の傾きは保たれる、MNAR (y が大きいほど欠ける) では平均も傾きも偏る。右端: MAR に多重代入すると平均の推定が回復する</figcaption></figure>
+<figure><img loading="lazy" decoding="async" alt="図 13.12 欠測メカニズムとリストワイズ削除。MCAR では観測部分は無偏、MAR (x が大きいほど y が欠ける) では y の平均が偏るが回帰の傾きは保たれる、MNAR (y が大きいほど欠ける) では平均も傾きも偏る。右端: MAR に多重代入すると平均の推定が回復する" src="fig/13_missing.png" /><figcaption>図 13.12 欠測メカニズムとリストワイズ削除。MCAR では観測部分は無偏、MAR (x が大きいほど y が欠ける) では y の平均が偏るが回帰の傾きは保たれる、MNAR (y が大きいほど欠ける) では平均も傾きも偏る。右端: MAR に多重代入すると平均の推定が回復する</figcaption></figure>
 <h3 id="c13-13-10-3">13.10.3 多重代入</h3>
 <p>13.10.2 項で「削除は偏る」と分かった。<strong>埋めればよいのだが、1 つの値で埋めると今度は不確かさが消えてしまう。</strong> 複数回埋めて、そのばらつきを最終的な区間に反映させる。</p>
 <p>Rubin (1987) の<strong>多重代入</strong> (multiple imputation, MI) は、欠測値を「もっともらしい値の分布」から $M$ 回引いて $M$ 個の完全データセットを作り、それぞれ普通に解析して結果を統合する。埋めた値の不確かさを、$M$ 個のデータ間のばらつきとして持ち込むのが要点である。</p>
@@ -31014,7 +31443,7 @@ $$</p>
 <p>多変量のすべての変数に欠測があるとき、同時分布を 1 つ書くのは難しい。van Buuren &amp; Groothuis-Oudshoorn の <strong>MICE</strong> (multivariate imputation by chained equations) は、変数ごとに「他の全変数を説明変数とする条件付きモデル」を指定し、Gibbs サンプラーのように順に埋め直す<sup id="c13-fnref:1"><a class="footnote-ref" href="#c13-fn:1">1</a></sup>。</p>
 <ol>
 <li>各変数の欠測を仮の値 (観測値からの無作為抽出) で埋める</li>
-<li>変数 $j$ について、観測されている行で $Y_j \sim$ 他の変数 の回帰 (連続なら正規回帰、2 値ならロジスティック、順序ならプロビット等) を当て、<strong>パラメータを事後分布から引き</strong> (図 13.9 右端で $\hat\beta$ と $\sigma^2$ を揺らしたのはこれ)、欠測行を予測値 + 誤差で埋める</li>
+<li>変数 $j$ について、観測されている行で $Y_j \sim$ 他の変数 の回帰 (連続なら正規回帰、2 値ならロジスティック、順序ならプロビット等) を当て、<strong>パラメータを事後分布から引き</strong> (図 13.12 右端で $\hat\beta$ と $\sigma^2$ を揺らしたのはこれ)、欠測行を予測値 + 誤差で埋める</li>
 <li>$j = 1, \dots, p$ を回して 1 サイクル。10〜20 サイクル回して 1 つの完全データを得る</li>
 <li>これを $M$ 回独立に行い、Rubin の統合則で結ぶ</li>
 </ol>
@@ -31200,6 +31629,45 @@ print(f&quot;真の平均 {yf.mean():.3f}  complete-case {yo.mean():.3f}  MI {th
 <p>…そして真の限界状態関数の代わりに置かれる。適応的な手法によって元の関数とその代理モデルの近さを保証できたとしても、<strong>代理モデルに基づく $P_f$ の推定量の不偏性は保証できない</strong>。</p>
 </blockquote>
 <p>代理モデルの誤差がそのまま $P_f$ の誤差になり、しかもどちらに偏るか分からない。そこで Dubourg ら (2011) は、<strong>代理モデルを置き換えに使うのではなく、重点サンプリングの「賢い」提案密度を作るのに使う</strong>ことを提案した。真の関数の評価は重み付けの段階でのみ行うので、<strong>推定量は不偏のまま</strong>で、呼び出し回数だけが減る<sup id="c13-fnref2:q2"><a class="footnote-ref" href="#c13-fn:q2">9</a></sup>。</p>
+<p><strong>重点サンプリングの得がどれくらいかを、$\beta$ を変えて測る。</strong> $Z = R - S$ で $Z \sim N(\beta\sqrt2,\ 2)$、$P_f = \Phi(-\beta)$ という単純な設定で、$N = 10^5$ 回ずつ。重点分布は<strong>設計点 ($Z = 0$) に中心を移した</strong>ものを使う。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.13 左: 同じ $N$ での $\hat P_f$ の変動係数。右: 分散の縮小率" src="fig/13_importance_sampling.png" /><figcaption>図 13.13 左: 同じ $N$ での $\hat P_f$ の変動係数。右: 分散の縮小率</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>$\beta$</th>
+<th style="text-align: right;">$P_f$</th>
+<th style="text-align: right;">素朴な MC の CoV</th>
+<th style="text-align: right;">重点サンプリングの CoV</th>
+<th style="text-align: right;">分散の縮小率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$2.0$</td>
+<td style="text-align: right;">$2.3\times10^{-2}$</td>
+<td style="text-align: right;">$0.015$</td>
+<td style="text-align: right;">$0.0034$</td>
+<td style="text-align: right;">$18$ 倍</td>
+</tr>
+<tr>
+<td>$3.0$</td>
+<td style="text-align: right;">$1.4\times10^{-3}$</td>
+<td style="text-align: right;">$0.061$</td>
+<td style="text-align: right;">$0.0041$</td>
+<td style="text-align: right;">$217$ 倍</td>
+</tr>
+<tr>
+<td>$4.0$</td>
+<td style="text-align: right;">$3.2\times10^{-5}$</td>
+<td style="text-align: right;">$0.397$</td>
+<td style="text-align: right;">$0.0048$</td>
+<td style="text-align: right;">$\mathbf{6986}$ 倍</td>
+</tr>
+</tbody>
+</table>
+<p><strong>$\beta$ が上がるほど得が大きくなる。</strong> 素朴な MC の CoV は $\beta$ とともに急に悪化するのに、重点サンプリングの CoV は $0.003 \sim 0.005$ でほとんど動かない。</p>
+<p><strong>理由は「当たりの数」である。</strong> $\beta = 4$ なら素朴な MC は $10^5$ 回で 3 回しか破壊域に落ちない。3 個の標本から確率を推定しているのだから、精度が出るはずがない。重点サンプリングは<strong>半分が破壊域に落ちる</strong>ように分布を移しているので、$10^5$ 回ぶんの情報が全部効く。</p>
+<p><strong>ただし「設計点が分かっている」が前提である。</strong> 上の例では解析的に分かっていたが、実問題では FORM で先に見つける必要がある。<strong>破壊域が複数ある場合や、設計点を外した場合には、重点サンプリングはかえって悪くなる</strong> — 重みが極端な値を取り、分散が発散することさえある。安全のため、<strong>重みの最大値が全体の何割を占めるか</strong>を必ず確認する。</p>
 <h3 id="c13-数字で比べる">数字で比べる</h3>
 <p>Sudret (2012) は Waarts (2000) の系のモデル (4 つの限界状態関数の最小値、入力は独立な標準正規 2 変数) について、Dubourg (2011) による比較を表で示している<sup id="c13-fnref:q3"><a class="footnote-ref" href="#c13-fn:q3">10</a></sup>。</p>
 <table>
@@ -31321,6 +31789,44 @@ print(f&quot;真の平均 {yf.mean():.3f}  complete-case {yo.mean():.3f}  MI {th
 <li><strong>適応性がある</strong>と、信用できない領域に計算点を追加して、そこだけ精度を上げられる</li>
 </ul>
 <p>クリギングの予測分散がまさにこれを与える。<strong>予測分散が大きいところに次の点を打つ</strong>という規則 (あるいは限界状態面に近く、かつ分散が大きいところ) で、少ない呼び出し回数で必要な領域だけ精度を上げられる。13.14 節の表で「40 + 200 回」となっていたのは、この適応的な構成の結果である。</p>
+<p><strong>代理モデルの得を、解析回数で測る。</strong> 出力が $Y = \exp(0.3X_1 + 0.2X_2 - 0.1X_1X_2)$、入力が $X_i \sim N(0,1)$ という滑らかな非線形応答を考える。3 次の多項式カオス展開 (Hermite 基底、係数は最小二乗) と、素朴なモンテカルロを比べる。</p>
+<figure><img loading="lazy" decoding="async" alt="図 13.14 左: 出力の平均の推定値。右: 出力の標準偏差の推定値。どちらも横軸は解析の回数" src="fig/13_surrogate.png" /><figcaption>図 13.14 左: 出力の平均の推定値。右: 出力の標準偏差の推定値。どちらも横軸は解析の回数</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>解析回数 $N$</th>
+<th style="text-align: right;">多項式カオスの sd</th>
+<th style="text-align: right;">素朴な MC の sd</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$20$</td>
+<td style="text-align: right;">$\mathbf{0.365}$</td>
+<td style="text-align: right;">$0.286$</td>
+</tr>
+<tr>
+<td>$50$</td>
+<td style="text-align: right;">$0.365$</td>
+<td style="text-align: right;">$0.329$</td>
+</tr>
+<tr>
+<td>$200$</td>
+<td style="text-align: right;">$0.368$</td>
+<td style="text-align: right;">$0.350$</td>
+</tr>
+<tr>
+<td>$500$</td>
+<td style="text-align: right;">$0.366$</td>
+<td style="text-align: right;">$0.378$</td>
+</tr>
+</tbody>
+</table>
+<p>(真の標準偏差は $0.3663$、平均は $1.0666$。)</p>
+<p><strong>多項式カオスは 20 回で真値に届く。</strong> 素朴な MC は 500 回でもまだ $0.378$ と 3% ずれている。<strong>25 倍の差</strong>である。</p>
+<p><strong>なぜこんなに効くのか。</strong> 多項式カオスは「応答が滑らかな多項式で近似できる」という<strong>仮定を 1 つ足している</strong>。その仮定が当たっていれば、20 回の解析で係数を決めてしまえば、あとは<strong>係数から平均と分散が式で出る</strong> (Hermite 基底が直交しているため)。標本のばらつきを数える必要がない。</p>
+<p><strong>当たっていなければ、当然壊れる。</strong> 応答が不連続 (座屈、接触、破壊の発生) を含む場合、多項式で近似できないので係数が意味を持たなくなる。<strong>代理モデルを使うときは、必ず検証点を残して当てはまりを確かめる</strong> — 訓練に使っていない数十点で予測誤差を測るのが最低限の作法である。</p>
+<p><strong>13.6 節の $P_f$ には、そのまま使えない。</strong> 平均や分散は代理モデルでよく再現できても、<strong>裾の確率は代理モデルの誤差がそのまま効く</strong>。代理モデル + 重点サンプリング、あるいは適応的に破壊域付近に点を足す手法 (AK-MCS など) を組み合わせるのが標準である。</p>
 <h3 id="c13-不確かさを-2-種類に分ける">不確かさを 2 種類に分ける</h3>
 <p>代理モデルを使うと、不確かさが 2 つ重なる。Hüllermeier &amp; Waegeman (2021) は機械学習の文脈でこれを整理している。同稿は<strong>偶然的不確かさ (aleatoric)</strong> と<strong>認識的不確かさ (epistemic)</strong> を区別し、後者をどう定量化するかは「まったく自明でない」と述べている。直感的には認識的不確かさは分布の広がりに反映されるはずだが、<strong>エントロピーは良い選択ではない</strong> — 確率質量の再配分に対して不変だからである。同稿は、同じエントロピーを持つが情報の状態がまったく異なる 2 つの分布の例を挙げ、分散のほうが適しているがそれにも別の難点がある、としている<sup id="c13-fnref:r3"><a class="footnote-ref" href="#c13-fn:r3">13</a></sup>。</p>
 <p>構造の言葉に翻訳すると:</p>
@@ -32443,6 +32949,10 @@ for M in (2, 5, 20, 100, 10_000):
 <li>前処理の判断を変えると結論がどう変わるかを確かめる</li>
 </ol>
 <p>4 が肝心である。前処理は「正しい一つの答え」があるとは限らない。<strong>判断が結論をどれだけ動かすか</strong>を知っておくことが、実務では最も役に立つ。</p>
+<p><strong>この章で出会う汚れ方を、先に一望しておく。</strong> どれも 5 つの題材のどれかに現れる形である。</p>
+<figure><img loading="lazy" decoding="async" alt="図 14.1 ① 同じ量が違う単位で記録されている。② 値が入っていない欄がある。③ 試験を打ち切ったので「まだ壊れていない」としか分からない。④ 観測所の移設や測器の更新で系列に段差ができる。⑤ 季節変動が大きくて、その中の変化が見えない (いずれも説明用に作った別データで、演習データそのものではない)" src="fig/14_dirt_types.png" /><figcaption>図 14.1 ① 同じ量が違う単位で記録されている。② 値が入っていない欄がある。③ 試験を打ち切ったので「まだ壊れていない」としか分からない。④ 観測所の移設や測器の更新で系列に段差ができる。⑤ 季節変動が大きくて、その中の変化が見えない (いずれも説明用に作った別データで、演習データそのものではない)</figcaption></figure>
+<p><strong>5 つとも「手法の問題」ではなく「データの素性の問題」である。</strong> どれだけ高度な推定量を使っても、単位が混ざったままなら答えは出ない。<strong>この章が前処理に紙面を割くのはそのためである。</strong></p>
+<p><strong>そして 5 つとも、気づかなければそのまま通ってしまう。</strong> 単位が混ざった列も平均は計算できるし、打ち切りを無視しても標準偏差は出る。<strong>計算が止まらないことが、正しさの証拠にはならない。</strong></p>
 <h3 id="c14-データについて">データについて</h3>
 <p>データは <code>textbook/exercises/data/</code> にある。<strong>すべて合成データであり、実際の試験記録ではない</strong>。ただし汚れ方は現場にあるものを模してある。生成スクリプトは <code>exercises/make_data.py</code>、生成に使った真値は <code>exercises/真値.md</code> にある。<strong>解く前に真値を見ないこと。</strong></p>
 <pre><code class="language-python">import numpy as np, csv
@@ -32563,6 +33073,33 @@ rows = list(csv.DictReader((DATA / &quot;concrete_acceptance.csv&quot;).open(enc
 <li>解答 (14.99 節) は、自分の答えを出してから見ること。<strong>前処理の判断は一つに定まらない</strong>ので、解答と違っても間違いとは限らない。大事なのは判断の理由を書けることである</li>
 <li>真値 (<code>exercises/真値.md</code>) は最後に見る。自分の推定がどれだけ真値に近いかを確かめると、手法の精度が体感できる</li>
 </ul>
+<figure><img loading="lazy" decoding="async" alt="図 14.2 左: 題材ごとの進め方。右: 同じデータでも前処理の判断で報告する数が動く例 (説明用に作った別データ)" src="fig/14_workflow.png" /><figcaption>図 14.2 左: 題材ごとの進め方。右: 同じデータでも前処理の判断で報告する数が動く例 (説明用に作った別データ)</figcaption></figure>
+<p><strong>右の図が、この章で身につけてほしいことのすべてである。</strong> 30 本の測定値のうち低い 2 点をどう扱うかで、報告する特性値が</p>
+<table>
+<thead>
+<tr>
+<th>判断</th>
+<th style="text-align: right;">特性値 $\bar x - 1.645\,s$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>そのまま全部使う</td>
+<td style="text-align: right;">$28.12$</td>
+</tr>
+<tr>
+<td>低い 1 点だけ除く</td>
+<td style="text-align: right;">$29.04$</td>
+</tr>
+<tr>
+<td>低い 2 点を外れ値として除く</td>
+<td style="text-align: right;">$\mathbf{30.45}$</td>
+</tr>
+</tbody>
+</table>
+<p>と $2.3\,\mathrm{N/mm^2}$ 動く。<strong>設計基準強度が 30 なら、この例では判断ひとつで合否が入れ替わる。</strong></p>
+<p><strong>どれが「正解」かは、データだけからは決まらない。</strong> 低い 2 点に記録上の異常 (材齢違い、養生不良、単位の取り違え) が見つかれば除く理由がある。見つからなければ、それは母集団のばらつきの一部である。<strong>除く理由を書けるかどうかが判断の分かれ目</strong>で、「低いから」は理由にならない。</p>
+<p><strong>だから手順 4 (揺らす) を必ずやる。</strong> 「この判断なら合格、あの判断なら不合格」と分かっていれば、報告書に<strong>どちらの判断を採ったかと、その理由</strong>を書ける。逆に揺らしてみなければ、自分の結論がどれだけ脆いかも分からない。</p>
 <h2 id="c14-14-99">14.99 演習の解答 (題材 1〜3)</h2>
 <p>本文の課題を自力でやったあとに見ること。番号は各題材の課題番号に対応する。</p>
 <p>この章の解答は、他の章とは性格が違う。<strong>数値は実際に <code>exercises/data/</code> の CSV を読んで計算したもの</strong>だが、それ以上に重要なのは前処理の判断である。判断は一つに定まらないので、以下では「こう決めた」だけでなく、<strong>別の決め方をしたときに結論がどれだけ動くか</strong>を必ず数字で並べる。動かないなら判断は重要ではないし、大きく動くならそこが報告書に書くべき場所である。</p>
@@ -38399,7 +38936,7 @@ window.MathJax = {
 (function(){
 "use strict";
 const META = [{"num": "00", "label": "00", "title": "序章 統計学の全体像と学び方", "sections": [{"id": "c00-0-1", "title": "0.1 統計学とは何をする学問か", "lv": 2}, {"id": "c00-0-2", "title": "0.2 本書の章立て", "lv": 2}, {"id": "c00-0-3", "title": "0.3 数学的前提", "lv": 2}, {"id": "c00-0-4", "title": "0.4 学び方", "lv": 2}, {"id": "c00-0-5", "title": "0.5 記法", "lv": 2}], "stars": 0}, {"num": "01", "label": "01", "title": "第1章 記述統計", "sections": [{"id": "c01-1-1", "title": "1.1 この章の目的", "lv": 2}, {"id": "c01-1-2", "title": "1.2 データの種類と尺度", "lv": 2}, {"id": "c01-1-3", "title": "1.3 度数分布とヒストグラム", "lv": 2}, {"id": "c01-1-3-1", "title": "1.3.1 度数分布表", "lv": 3}, {"id": "c01-1-3-2", "title": "1.3.2 階級幅の選び方", "lv": 3}, {"id": "c01-1-3-3", "title": "1.3.3 その他の図", "lv": 3}, {"id": "c01-1-4", "title": "1.4 位置の要約統計量", "lv": 2}, {"id": "c01-1-4-1", "title": "1.4.1 算術平均", "lv": 3}, {"id": "c01-1-4-2", "title": "1.4.2 中央値", "lv": 3}, {"id": "c01-1-4-3", "title": "1.4.3 最頻値、刈り込み平均、その他の平均", "lv": 3}, {"id": "c01-1-4-4", "title": "1.4.4 平均と中央値の関係", "lv": 3}, {"id": "c01-1-5", "title": "1.5 散らばりの要約統計量", "lv": 2}, {"id": "c01-1-5-1", "title": "1.5.1 分散と標準偏差", "lv": 3}, {"id": "c01-1-5-2", "title": "1.5.2 範囲・四分位範囲 — 順位で測る", "lv": 3}, {"id": "c01-1-5-3", "title": "1.5.3 平均絶対偏差・MAD — 二乗をやめる", "lv": 3}, {"id": "c01-1-5-4", "title": "1.5.4 変動係数", "lv": 3}, {"id": "c01-1-6", "title": "1.6 分布の形", "lv": 2}, {"id": "c01-1-6-1", "title": "1.6.1 モーメント", "lv": 3}, {"id": "c01-1-6-2", "title": "1.6.2 箱ひげ図と外れ値", "lv": 3}, {"id": "c01-1-6-3", "title": "1.6.3 標準化とチェビシェフの不等式", "lv": 3}, {"id": "c01-1-7", "title": "1.7 2 変数の記述: 共分散と相関", "lv": 2}, {"id": "c01-1-7-1", "title": "1.7.1 共分散とピアソン相関係数", "lv": 3}, {"id": "c01-1-7-2", "title": "1.7.2 Anscombe の四つ組", "lv": 3}, {"id": "c01-1-7-3", "title": "1.7.3 順位相関", "lv": 3}, {"id": "c01-1-7-4", "title": "1.7.4 分割表 (名義尺度同士)", "lv": 3}, {"id": "c01-1-8", "title": "1.8 頑健性の考え方", "lv": 2}, {"id": "c01-1-9", "title": "1.9 変換", "lv": 2}, {"id": "c01-1-10", "title": "1.10 Python で確かめる", "lv": 2}, {"id": "c01-1-11", "title": "1.11 演習", "lv": 2}, {"id": "c01-1-12", "title": "1.12 参考文献", "lv": 2}, {"id": "c01-1-13", "title": "1.13 発展 ★2: M 推定と影響関数 — 頑健性を式にする", "lv": 2}, {"id": "c01-1-13-1", "title": "1.13.1 M 推定: 平均と中央値を 1 つの式にまとめる", "lv": 3}, {"id": "c01-1-13-2", "title": "1.13.2 影響関数: 1 点の汚染が推定値を動かす量", "lv": 3}, {"id": "c01-1-13-3", "title": "1.13.3 漸近分散と相対効率 — 頑健性の代償", "lv": 3}, {"id": "c01-1-13-4", "title": "1.13.4 効率と破綻点は本当にトレードオフか", "lv": 3}, {"id": "c01-1-13-5", "title": "1.13.5 有限標本での破綻点は漸近値と違う", "lv": 3}, {"id": "c01-1-13-6", "title": "1.13.6 Python で確かめる", "lv": 3}, {"id": "c01-1-13-7", "title": "1.13.7 演習", "lv": 3}, {"id": "c01-1-14", "title": "1.14 発展 ★2: ヒストグラムからカーネル密度推定へ", "lv": 2}, {"id": "c01-1-14-1", "title": "1.14.1 カーネル密度推定", "lv": 3}, {"id": "c01-1-14-2", "title": "1.14.2 バイアスと分散の分解、そして $n^{-1/5}$", "lv": 3}, {"id": "c01-1-14-3", "title": "1.14.3 帯域幅をデータから選ぶ", "lv": 3}, {"id": "c01-1-14-4", "title": "1.14.4 Python で確かめる", "lv": 3}, {"id": "c01-1-14-5", "title": "1.14.5 演習", "lv": 3}, {"id": "c01-1-99", "title": "1.99 演習の解答", "lv": 2}, {"id": "c01-1-11-2", "title": "1.11 演習 (本文 1.11 節)", "lv": 3}, {"id": "c01-1-13-7-2", "title": "1.13.7 演習 (発展 1.13 節: M 推定と影響関数)", "lv": 3}, {"id": "c01-1-14-5-2", "title": "1.14.5 演習 (発展 1.14 節: カーネル密度推定)", "lv": 3}, {"id": "c01-1-100", "title": "1.100 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "02", "label": "02", "title": "第2章 確率論の基礎", "sections": [{"id": "c02-2-1", "title": "2.1 この章の目的", "lv": 2}, {"id": "c02-2-2", "title": "2.2 確率空間と公理", "lv": 2}, {"id": "c02-2-2-1", "title": "2.2.1 標本空間と事象", "lv": 3}, {"id": "c02-2-2-2", "title": "2.2.2 Kolmogorov の公理", "lv": 3}, {"id": "c02-2-2-3", "title": "2.2.3 確率の解釈", "lv": 3}, {"id": "c02-2-3", "title": "2.3 条件付き確率・独立・ベイズの定理", "lv": 2}, {"id": "c02-2-3-1", "title": "2.3.1 条件付き確率", "lv": 3}, {"id": "c02-2-3-2", "title": "2.3.2 全確率の公式とベイズの定理", "lv": 3}, {"id": "c02-2-3-3", "title": "2.3.3 独立", "lv": 3}, {"id": "c02-2-4", "title": "2.4 確率変数と分布", "lv": 2}, {"id": "c02-2-4-1", "title": "2.4.1 確率変数と分布関数", "lv": 3}, {"id": "c02-2-4-2", "title": "2.4.2 離散と連続", "lv": 3}, {"id": "c02-2-4-3", "title": "2.4.3 分位関数", "lv": 3}, {"id": "c02-2-5", "title": "2.5 期待値・分散・母関数", "lv": 2}, {"id": "c02-2-5-1", "title": "2.5.1 期待値", "lv": 3}, {"id": "c02-2-5-2", "title": "2.5.2 分散とモーメント", "lv": 3}, {"id": "c02-2-5-3", "title": "2.5.3 モーメント母関数と特性関数", "lv": 3}, {"id": "c02-2-6", "title": "2.6 主要な分布", "lv": 2}, {"id": "c02-2-6-1", "title": "2.6.1 一覧", "lv": 3}, {"id": "c02-2-6-2", "title": "2.6.2 離散分布", "lv": 3}, {"id": "c02-2-6-3", "title": "2.6.3 連続分布", "lv": 3}, {"id": "c02-2-6-4", "title": "2.6.4 分布間の関係", "lv": 3}, {"id": "c02-2-7", "title": "2.7 多変量分布", "lv": 2}, {"id": "c02-2-7-1", "title": "2.7.1 同時分布・周辺分布・条件付き分布", "lv": 3}, {"id": "c02-2-7-2", "title": "2.7.2 共分散と相関", "lv": 3}, {"id": "c02-2-7-3", "title": "2.7.3 条件付き期待値と全分散の公式", "lv": 3}, {"id": "c02-2-7-4", "title": "2.7.4 多変量正規分布", "lv": 3}, {"id": "c02-2-8", "title": "2.8 変数変換とデルタ法", "lv": 2}, {"id": "c02-2-8-1", "title": "2.8.1 1 変数の変換", "lv": 3}, {"id": "c02-2-8-2", "title": "2.8.2 デルタ法", "lv": 3}, {"id": "c02-2-9", "title": "2.9 不等式", "lv": 2}, {"id": "c02-2-10", "title": "2.10 大数の法則", "lv": 2}, {"id": "c02-2-10-1", "title": "2.10.1 収束の種類", "lv": 3}, {"id": "c02-2-10-2", "title": "2.10.2 弱法則と強法則", "lv": 3}, {"id": "c02-2-11", "title": "2.11 中心極限定理", "lv": 2}, {"id": "c02-2-11-1", "title": "2.11.1 主張", "lv": 3}, {"id": "c02-2-11-2", "title": "2.11.2 特性関数による証明", "lv": 3}, {"id": "c02-2-11-3", "title": "2.11.3 収束の速さ: Berry–Esseen の定理", "lv": 3}, {"id": "c02-2-11-4", "title": "2.11.4 統計への帰結", "lv": 3}, {"id": "c02-2-12", "title": "2.12 極値の漸近: 最大値はどこへ収束するか", "lv": 2}, {"id": "c02-2-12-1", "title": "2.12.1 最大値の分布", "lv": 3}, {"id": "c02-2-12-2", "title": "2.12.2 Fisher–Tippett–Gnedenko の定理", "lv": 3}, {"id": "c02-2-12-3", "title": "2.12.3 中心極限定理との対比と第 10 章への橋", "lv": 3}, {"id": "c02-2-13", "title": "2.13 構造工学への接続", "lv": 2}, {"id": "c02-2-13-1", "title": "2.13.1 荷重の年最大値と Gumbel 分布", "lv": 3}, {"id": "c02-2-13-2", "title": "2.13.2 材料強度と対数正規分布", "lv": 3}, {"id": "c02-2-13-3", "title": "2.13.3 信頼性指標 $\\beta$ と破壊確率", "lv": 3}, {"id": "c02-2-14", "title": "2.14 Python で確かめる", "lv": 2}, {"id": "c02-2-15", "title": "2.15 演習", "lv": 2}, {"id": "c02-2-16", "title": "2.16 参考文献", "lv": 2}, {"id": "c02-2-17", "title": "2.17 補遺A: 数え上げ — 確率を計算する前に必要なもの", "lv": 2}, {"id": "c02-2-17-1", "title": "2.17.1 素朴な確率と「同様に確からしい」", "lv": 3}, {"id": "c02-2-17-2", "title": "2.17.2 乗法原理", "lv": 3}, {"id": "c02-2-17-3", "title": "2.17.3 標本抽出の 4 類型", "lv": 3}, {"id": "c02-2-17-4", "title": "2.17.4 二項係数と重複の調整", "lv": 3}, {"id": "c02-2-17-5", "title": "2.17.5 物語による証明 — 同じものを二通りに数える", "lv": 3}, {"id": "c02-2-17-6", "title": "2.17.6 包除原理と一致問題", "lv": 3}, {"id": "c02-2-17-7", "title": "2.17.7 Python で確かめる (数え上げ)", "lv": 3}, {"id": "c02-2-18", "title": "2.18 補遺B: 条件づけを使いこなす", "lv": 2}, {"id": "c02-2-18-1", "title": "2.18.1 ベイズのオッズ形式", "lv": 3}, {"id": "c02-2-18-2", "title": "2.18.2 検察官の誤謬 — $P(A \\mid B)$ と $P(B \\mid A)$ の取り違え", "lv": 3}, {"id": "c02-2-18-3", "title": "2.18.3 条件付き独立 — 独立とは別物であること", "lv": 3}, {"id": "c02-2-18-4", "title": "2.18.4 モンティ・ホール問題", "lv": 3}, {"id": "c02-2-18-5", "title": "2.18.5 Python で確かめる (条件づけ)", "lv": 3}, {"id": "c02-2-18-6", "title": "2.18.6 発展 ★3: 中心極限定理はどれくらい速く効くのか — Berry–Esseen と Edgeworth", "lv": 2}, {"id": "c02-近づく速さを押さえる-Berry-Esseen-の不等式", "title": "近づく速さを押さえる — Berry–Esseen の不等式", "lv": 3}, {"id": "c02-誤差の中身を書き下す-Edgeworth-展開", "title": "誤差の中身を書き下す — Edgeworth 展開", "lv": 3}, {"id": "c02-工学で効く場面", "title": "工学で効く場面", "lv": 3}, {"id": "c02-2-18-7", "title": "2.18.7 発展 ★3: 集中不等式 — Chebyshev から Hoeffding・Bernstein へ", "lv": 2}, {"id": "c02-仮定を強めると-裾が速く減る", "title": "仮定を強めると、裾が速く減る", "lv": 3}, {"id": "c02-Hoeffding-の不等式は-最適-である", "title": "Hoeffding の不等式は「最適」である", "lv": 3}, {"id": "c02-有界性を外す-sub-Gaussian-と-sub-expo", "title": "有界性を外す — sub-Gaussian と sub-exponential", "lv": 3}, {"id": "c02-二次形式へ-Hanson-Wright", "title": "二次形式へ — Hanson–Wright", "lv": 3}, {"id": "c02-裾がもっと重いとき-sub-Weibull", "title": "裾がもっと重いとき — sub-Weibull", "lv": 3}, {"id": "c02-工学で使うとき", "title": "工学で使うとき", "lv": 3}, {"id": "c02-2-19", "title": "2.19 補遺の演習", "lv": 2}, {"id": "c02-2-20", "title": "2.20 補遺の参考文献", "lv": 2}, {"id": "c02-2-99", "title": "2.99 演習の解答", "lv": 2}, {"id": "c02-2-15-2", "title": "2.15 演習 (本文 2.15 節)", "lv": 3}, {"id": "c02-2-19-2", "title": "2.19 演習 (補遺 2.19 節)", "lv": 3}], "stars": 2}, {"num": "03", "label": "03", "title": "第3章 推定", "sections": [{"id": "c03-3-1", "title": "3.1 この章の目的", "lv": 2}, {"id": "c03-3-2", "title": "3.2 母集団・標本・統計量", "lv": 2}, {"id": "c03-3-2-1", "title": "3.2.1 用語", "lv": 3}, {"id": "c03-3-2-2", "title": "3.2.2 標本平均の標本分布", "lv": 3}, {"id": "c03-3-2-3", "title": "3.2.3 正規母集団: $\\chi^2$ 分布と $t$ 分布", "lv": 3}, {"id": "c03-3-3", "title": "3.3 点推定の評価", "lv": 2}, {"id": "c03-3-3-1", "title": "3.3.1 不偏性・一致性・有効性", "lv": 3}, {"id": "c03-3-3-2", "title": "3.3.2 平均二乗誤差", "lv": 3}, {"id": "c03-3-4", "title": "3.4 モーメント法", "lv": 2}, {"id": "c03-3-5", "title": "3.5 最尤法", "lv": 2}, {"id": "c03-3-5-1", "title": "3.5.1 尤度と最尤推定量", "lv": 3}, {"id": "c03-3-5-2", "title": "3.5.2 スコアと Fisher 情報量", "lv": 3}, {"id": "c03-3-5-3", "title": "3.5.3 最尤推定量の漸近正規性", "lv": 3}, {"id": "c03-3-5-4", "title": "3.5.4 不変性", "lv": 3}, {"id": "c03-3-6", "title": "3.6 Cramér–Rao の下限", "lv": 2}, {"id": "c03-3-7", "title": "3.7 十分統計量と Rao–Blackwell の定理", "lv": 2}, {"id": "c03-3-8", "title": "3.8 区間推定", "lv": 2}, {"id": "c03-3-8-1", "title": "3.8.1 信頼区間とピボット法", "lv": 3}, {"id": "c03-3-8-2", "title": "3.8.2 正規母集団の $\\mu$ と $\\sigma^2$", "lv": 3}, {"id": "c03-3-8-3", "title": "3.8.3 被覆確率の意味", "lv": 3}, {"id": "c03-3-8-4", "title": "3.8.4 二項比率: Wald・Wilson・Clopper–Pearson", "lv": 3}, {"id": "c03-3-8-5", "title": "3.8.5 デルタ法による区間", "lv": 3}, {"id": "c03-3-9", "title": "3.9 ブートストラップ", "lv": 2}, {"id": "c03-3-9-1", "title": "3.9.1 原理", "lv": 3}, {"id": "c03-3-9-2", "title": "3.9.2 3 つの区間", "lv": 3}, {"id": "c03-3-9-3", "title": "3.9.3 被覆の数値実験と限界", "lv": 3}, {"id": "c03-3-10", "title": "3.10 バイアス補正とジャックナイフ", "lv": 2}, {"id": "c03-3-11", "title": "3.11 構造工学への接続: 材料強度の特性値", "lv": 2}, {"id": "c03-3-12", "title": "3.12 Python で確かめる", "lv": 2}, {"id": "c03-3-13", "title": "3.13 演習", "lv": 2}, {"id": "c03-3-14", "title": "3.14 参考文献", "lv": 2}, {"id": "c03-3-15", "title": "3.15 発展 ★2: 二項比率の区間推定 — なぜ Wald は破綻するか", "lv": 2}, {"id": "c03-3-15-1", "title": "3.15.1 Wald 区間とその素朴な導出", "lv": 3}, {"id": "c03-3-15-2", "title": "3.15.2 何が起きるか — 厳密に数えて確かめる", "lv": 3}, {"id": "c03-3-15-3", "title": "3.15.3 二つの病気: 離散性と、標準誤差の置き換え", "lv": 3}, {"id": "c03-3-15-4", "title": "3.15.4 Wilson 区間 — 置き換えをしない", "lv": 3}, {"id": "c03-3-15-5", "title": "3.15.5 どれを使うか", "lv": 3}, {"id": "c03-3-15-6", "title": "3.15.6 不良が 1 件も出なかったとき — 3 の法則", "lv": 3}, {"id": "c03-3-15-7", "title": "3.15.7 Python で確かめる", "lv": 3}, {"id": "c03-3-15-8", "title": "3.15.8 演習", "lv": 3}, {"id": "c03-3-15-9", "title": "3.15.9 参考文献", "lv": 3}, {"id": "c03-3-16", "title": "3.16 発展 ★3: ブートストラップはいつ効き、いつ壊れるか", "lv": 2}, {"id": "c03-効く理由は-連続性-である", "title": "効く理由は「連続性」である", "lv": 3}, {"id": "c03-壊れる場面は整理されている", "title": "壊れる場面は整理されている", "lv": 3}, {"id": "c03-手当て-1-m-out-of-n-ブートストラップ", "title": "手当て 1: $m$ out of $n$ ブートストラップ", "lv": 3}, {"id": "c03-手当て-2-Studentize-して高次の精度を稼ぐ", "title": "手当て 2: Studentize して高次の精度を稼ぐ", "lv": 3}, {"id": "c03-実務のチェックリスト", "title": "実務のチェックリスト", "lv": 3}, {"id": "c03-3-99", "title": "3.99 演習の解答", "lv": 2}, {"id": "c03-3-13-2", "title": "3.13 演習 (本文 3.13 節)", "lv": 3}, {"id": "c03-3-15-8-2", "title": "3.15.8 演習 (発展 3.15 節)", "lv": 3}, {"id": "c03-3-100", "title": "3.100 解答の数値を確かめるコード", "lv": 2}, {"id": "c03-2026-09-21-の実行で見つかった食い違い", "title": "2026-09-21 の実行で見つかった食い違い", "lv": 3}], "stars": 2}, {"num": "04", "label": "04", "title": "第4章 仮説検定", "sections": [{"id": "c04-4-1", "title": "4.1 この章の目的", "lv": 2}, {"id": "c04-4-2", "title": "4.2 検定の枠組み", "lv": 2}, {"id": "c04-4-2-1", "title": "4.2.1 帰無仮説と対立仮説", "lv": 3}, {"id": "c04-4-2-2", "title": "4.2.2 二種類の過誤、有意水準、検出力", "lv": 3}, {"id": "c04-4-2-3", "title": "4.2.3 検定統計量、棄却域、片側と両側", "lv": 3}, {"id": "c04-4-2-4", "title": "4.2.4 Neyman–Pearson の補題", "lv": 3}, {"id": "c04-4-2-5", "title": "4.2.5 尤度比検定・Wald 検定・スコア検定", "lv": 3}, {"id": "c04-4-3", "title": "4.3 p 値", "lv": 2}, {"id": "c04-4-3-1", "title": "4.3.1 定義と帰無分布での一様性", "lv": 3}, {"id": "c04-4-3-2", "title": "4.3.2 正しい解釈と誤用: ASA 声明", "lv": 3}, {"id": "c04-4-3-3", "title": "4.3.3 検定と信頼区間の双対性", "lv": 3}, {"id": "c04-4-4", "title": "4.4 平均の検定: z 検定と t 検定", "lv": 2}, {"id": "c04-4-4-1", "title": "4.4.1 一標本", "lv": 3}, {"id": "c04-4-4-2", "title": "4.4.2 対応のある二標本", "lv": 3}, {"id": "c04-4-4-3", "title": "4.4.3 独立二標本: Welch の t 検定", "lv": 3}, {"id": "c04-4-5", "title": "4.5 分散の検定: χ² 検定と F 検定", "lv": 2}, {"id": "c04-4-5-1", "title": "4.5.1 一標本の分散: χ² 検定", "lv": 3}, {"id": "c04-4-5-2", "title": "4.5.2 二標本の分散比: F 検定", "lv": 3}, {"id": "c04-4-6", "title": "4.6 比率の検定", "lv": 2}, {"id": "c04-4-7", "title": "4.7 分割表の χ² 検定", "lv": 2}, {"id": "c04-4-7-1", "title": "4.7.1 適合度検定と自由度の理由", "lv": 3}, {"id": "c04-4-7-2", "title": "4.7.2 独立性の検定", "lv": 3}, {"id": "c04-4-8", "title": "4.8 正規性の検定", "lv": 2}, {"id": "c04-4-9", "title": "4.9 ノンパラメトリック検定", "lv": 2}, {"id": "c04-4-9-1", "title": "4.9.1 符号検定", "lv": 3}, {"id": "c04-4-9-2", "title": "4.9.2 Wilcoxon 符号順位検定", "lv": 3}, {"id": "c04-4-9-3", "title": "4.9.3 Mann–Whitney (Wilcoxon 順位和) 検定", "lv": 3}, {"id": "c04-4-9-4", "title": "4.9.4 Kruskal–Wallis 検定", "lv": 3}, {"id": "c04-4-9-5", "title": "4.9.5 並べ替え検定", "lv": 3}, {"id": "c04-4-10", "title": "4.10 検出力分析と標本サイズ設計", "lv": 2}, {"id": "c04-4-10-1", "title": "4.10.1 検出力の計算", "lv": 3}, {"id": "c04-4-10-2", "title": "4.10.2 標本サイズの設計", "lv": 3}, {"id": "c04-4-11", "title": "4.11 効果量と信頼区間", "lv": 2}, {"id": "c04-4-11-1", "title": "4.11.1 Cohen の d", "lv": 3}, {"id": "c04-4-11-2", "title": "4.11.2 効果量と p 値・信頼区間の関係", "lv": 3}, {"id": "c04-4-12", "title": "4.12 多重比較", "lv": 2}, {"id": "c04-4-12-1", "title": "4.12.1 問題: 検定を重ねると偽陽性が増える", "lv": 3}, {"id": "c04-4-12-2", "title": "4.12.2 Bonferroni と Holm: FWER の制御", "lv": 3}, {"id": "c04-4-12-3", "title": "4.12.3 Benjamini–Hochberg: FDR の制御", "lv": 3}, {"id": "c04-4-13", "title": "4.13 再現性問題", "lv": 2}, {"id": "c04-4-13-1", "title": "4.13.1 p-hacking", "lv": 3}, {"id": "c04-4-13-2", "title": "4.13.2 出版バイアスと再現率", "lv": 3}, {"id": "c04-4-14", "title": "4.14 構造工学への接続", "lv": 2}, {"id": "c04-4-15", "title": "4.15 Python で確かめる", "lv": 2}, {"id": "c04-4-16", "title": "4.16 演習", "lv": 2}, {"id": "c04-4-17", "title": "4.17 参考文献", "lv": 2}, {"id": "c04-4-18", "title": "4.18 発展 ★2: p 値論争のその後 — 0.005 提案・同等性検定・事前登録", "lv": 2}, {"id": "c04-4-18-1", "title": "4.18.1 出発点: p 値の分布を知る", "lv": 3}, {"id": "c04-4-18-2", "title": "4.18.2 なぜ「p &lt; 0.05 なら 5% しか間違えない」が誤りなのか", "lv": 3}, {"id": "c04-4-18-3", "title": "4.18.3 処方箋その 1: 有意水準を 0.005 に下げる", "lv": 3}, {"id": "c04-4-18-4", "title": "4.18.4 処方箋その 2: 「差がない」を示したいときは同等性検定", "lv": 3}, {"id": "c04-4-18-5", "title": "4.18.5 処方箋その 3: 事前登録 — 自由度を先に縛る", "lv": 3}, {"id": "c04-4-18-6", "title": "4.18.6 「有意だった」結果はどれくらい再現するか", "lv": 3}, {"id": "c04-4-18-7", "title": "4.18.7 まとめ: 何をすればよいか", "lv": 3}, {"id": "c04-4-18-8", "title": "4.18.8 Python で確かめる", "lv": 3}, {"id": "c04-4-18-9", "title": "4.18.9 演習", "lv": 3}, {"id": "c04-4-19", "title": "4.19 発展 ★3: FDR の理論 — 依存下の Benjamini–Yekutieli と e-value", "lv": 2}, {"id": "c04-4-19-1", "title": "4.19.1 何を怖がっているのか", "lv": 3}, {"id": "c04-4-19-2", "title": "4.19.2 検定数が増えるとどれだけ違うのか", "lv": 3}, {"id": "c04-4-19-3", "title": "4.19.3 探索か確証かを先に宣言する", "lv": 3}, {"id": "c04-4-20", "title": "4.20 BH の保証はどこから来るか — 独立と PRDS", "lv": 2}, {"id": "c04-4-20-1", "title": "4.20.1 なぜ直線 $iq/m$ なのか", "lv": 3}, {"id": "c04-4-20-2", "title": "4.20.2 PRDS — 正の回帰従属", "lv": 3}, {"id": "c04-4-20-3", "title": "4.20.3 $m_0$ を推定して取り返す", "lv": 3}, {"id": "c04-4-21", "title": "4.21 依存が崩れると何が起きるか — Benjamini–Yekutieli", "lv": 2}, {"id": "c04-4-21-1", "title": "4.21.1 現実的な正の相関: 平均は守られ、実現値は暴れる", "lv": 3}, {"id": "c04-4-21-2", "title": "4.21.2 BY の補正 — そして BH の最悪値", "lv": 3}, {"id": "c04-4-21-3", "title": "4.21.3 上限は本当に届くのか", "lv": 3}, {"id": "c04-4-21-4", "title": "4.21.4 BY は払いすぎている", "lv": 3}, {"id": "c04-4-21-5", "title": "4.21.5 どの依存なら大丈夫で、どの依存が危ないか", "lv": 3}, {"id": "c04-4-22", "title": "4.22 e 値による多重検定 — 任意の依存に耐える仕組み", "lv": 2}, {"id": "c04-4-22-1", "title": "4.22.1 e 値とは何か", "lv": 3}, {"id": "c04-4-22-2", "title": "4.22.2 p 値との翻訳、そしてその代償", "lv": 3}, {"id": "c04-4-22-3", "title": "4.22.3 e-BH — 3 行で終わる証明", "lv": 3}, {"id": "c04-4-22-4", "title": "4.22.4 いくら得をするのか", "lv": 3}, {"id": "c04-4-22-5", "title": "4.22.5 e 値が自然に出てくる場面", "lv": 3}, {"id": "c04-4-23", "title": "4.23 現場でどう選ぶか", "lv": 2}, {"id": "c04-4-24", "title": "4.24 Python で確かめる", "lv": 2}, {"id": "c04-4-25", "title": "4.25 演習", "lv": 2}, {"id": "c04-4-26", "title": "4.26 参考文献", "lv": 2}, {"id": "c04-4-99", "title": "4.99 演習の解答", "lv": 2}, {"id": "c04-4-16-2", "title": "4.16 演習 (本文 4.16 節)", "lv": 3}, {"id": "c04-4-18-9-2", "title": "4.18.9 演習 (発展 4.18 節)", "lv": 3}, {"id": "c04-4-99-1", "title": "4.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "05", "label": "05", "title": "第5章 回帰分析", "sections": [{"id": "c05-5-1", "title": "5.1 この章の目的", "lv": 2}, {"id": "c05-5-2", "title": "5.2 単回帰", "lv": 2}, {"id": "c05-5-2-1", "title": "5.2.1 モデル", "lv": 3}, {"id": "c05-5-2-2", "title": "5.2.2 最小二乗法の導出", "lv": 3}, {"id": "c05-5-2-3", "title": "5.2.3 残差の性質", "lv": 3}, {"id": "c05-5-2-4", "title": "5.2.4 分散分解と決定係数", "lv": 3}, {"id": "c05-5-3", "title": "5.3 重回帰の行列表現", "lv": 2}, {"id": "c05-5-3-1", "title": "5.3.1 正規方程式", "lv": 3}, {"id": "c05-5-3-2", "title": "5.3.2 ハット行列と射影の幾何", "lv": 3}, {"id": "c05-5-3-3", "title": "5.3.3 自由度と誤差分散の推定", "lv": 3}, {"id": "c05-5-4", "title": "5.4 Gauss–Markov 定理", "lv": 2}, {"id": "c05-5-5", "title": "5.5 係数の分布と推測", "lv": 2}, {"id": "c05-5-5-1", "title": "5.5.1 正規誤差のもとでの分布", "lv": 3}, {"id": "c05-5-5-2", "title": "5.5.2 t 検定と信頼区間", "lv": 3}, {"id": "c05-5-5-3", "title": "5.5.3 F 検定 (複数係数の同時検定)", "lv": 3}, {"id": "c05-5-5-4", "title": "5.5.4 平均応答の信頼区間と予測区間", "lv": 3}, {"id": "c05-5-6", "title": "5.6 多重共線性", "lv": 2}, {"id": "c05-5-7", "title": "5.7 モデル診断", "lv": 2}, {"id": "c05-5-7-1", "title": "5.7.1 残差の標準化", "lv": 3}, {"id": "c05-5-7-2", "title": "5.7.2 残差プロットと QQ プロット", "lv": 3}, {"id": "c05-5-7-3", "title": "5.7.3 レバレッジ・外れ値・影響点", "lv": 3}, {"id": "c05-5-7-4", "title": "5.7.4 不均一分散", "lv": 3}, {"id": "c05-5-8", "title": "5.8 変数選択", "lv": 2}, {"id": "c05-5-8-1", "title": "5.8.1 なぜ「当てはまりの良さ」で選んではいけないか", "lv": 3}, {"id": "c05-5-8-2", "title": "5.8.2 AIC と BIC の考え方", "lv": 3}, {"id": "c05-5-8-3", "title": "5.8.3 ステップワイズ法の問題", "lv": 3}, {"id": "c05-5-9", "title": "5.9 一般化線形モデル", "lv": 2}, {"id": "c05-5-9-1", "title": "5.9.1 動機と構成", "lv": 3}, {"id": "c05-5-9-2", "title": "5.9.2 IRLS による推定", "lv": 3}, {"id": "c05-5-9-3", "title": "5.9.3 ロジスティック回帰", "lv": 3}, {"id": "c05-5-9-4", "title": "5.9.4 ポアソン回帰", "lv": 3}, {"id": "c05-5-10", "title": "5.10 混合効果モデルの紹介", "lv": 2}, {"id": "c05-5-11", "title": "5.11 非線形回帰と多項式・スプラインの入口", "lv": 2}, {"id": "c05-5-11-1", "title": "5.11.1 「線形」の意味", "lv": 3}, {"id": "c05-5-11-2", "title": "5.11.2 非線形最小二乗", "lv": 3}, {"id": "c05-5-11-3", "title": "5.11.3 多項式とスプライン", "lv": 3}, {"id": "c05-5-12", "title": "5.12 Python で確かめる", "lv": 2}, {"id": "c05-5-13", "title": "5.13 演習", "lv": 2}, {"id": "c05-5-14", "title": "5.14 参考文献", "lv": 2}, {"id": "c05-5-15", "title": "5.15 発展 ★2: 頑健標準誤差とクラスター相関 — 不均一分散を見つけたあとで", "lv": 2}, {"id": "c05-5-15-1", "title": "5.15.1 何が壊れて、何が壊れないか", "lv": 3}, {"id": "c05-5-16", "title": "5.16 サンドイッチ推定量 — White から HC3 まで", "lv": 2}, {"id": "c05-5-16-1", "title": "5.16.1 中身だけを推定する", "lv": 3}, {"id": "c05-5-16-2", "title": "5.16.2 なぜ補正が要るか — HC1・HC2・HC3", "lv": 3}, {"id": "c05-5-16-3", "title": "5.16.3 どれを既定にするか", "lv": 3}, {"id": "c05-5-17", "title": "5.17 クラスター相関 — 観測が独立でないとき", "lv": 2}, {"id": "c05-5-17-1", "title": "5.17.1 現場で起きる形", "lv": 3}, {"id": "c05-5-17-2", "title": "5.17.2 どれだけ狂うか — Moulton 係数", "lv": 3}, {"id": "c05-5-17-3", "title": "5.17.3 クラスター頑健分散推定量", "lv": 3}, {"id": "c05-5-17-4", "title": "5.17.4 クラスター数が少ないと破綻する", "lv": 3}, {"id": "c05-5-17-5", "title": "5.17.5 どの水準でクラスターを切るか", "lv": 3}, {"id": "c05-5-18", "title": "5.18 「とりあえず頑健標準誤差」への疑い", "lv": 2}, {"id": "c05-5-18-1", "title": "5.18.1 不均一分散はモデルの誤設定の兆候かもしれない", "lv": 3}, {"id": "c05-5-18-2", "title": "5.18.2 頑健標準誤差は「何を推定しているか」を直さない", "lv": 3}, {"id": "c05-5-18-3", "title": "5.18.3 誤差の扱いで処理するか、モデルの構造で処理するか", "lv": 3}, {"id": "c05-5-18-4", "title": "5.18.4 手順のまとめ", "lv": 3}, {"id": "c05-5-19", "title": "5.19 Python で確かめる", "lv": 2}, {"id": "c05-5-20", "title": "5.20 演習", "lv": 2}, {"id": "c05-5-21", "title": "5.21 参考文献", "lv": 2}, {"id": "c05-5-22", "title": "5.22 発展 ★3: 変数選択のあとで区間を作ってよいか — 選択的推論", "lv": 2}, {"id": "c05-何が壊れているのか", "title": "何が壊れているのか", "lv": 3}, {"id": "c05-手当ての-3-つの系統", "title": "手当ての 3 つの系統", "lv": 3}, {"id": "c05-高次元での別の困難", "title": "高次元での別の困難", "lv": 3}, {"id": "c05-実務でどうするか", "title": "実務でどうするか", "lv": 3}, {"id": "c05-5-99", "title": "5.99 演習の解答", "lv": 2}, {"id": "c05-5-13-2", "title": "5.13 演習 (本文 5.13 節)", "lv": 3}, {"id": "c05-5-99-1", "title": "5.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "06", "label": "06", "title": "第6章 分散分析と実験計画法", "sections": [{"id": "c06-6-1", "title": "6.1 この章の目的", "lv": 2}, {"id": "c06-6-2", "title": "6.2 一元配置分散分析", "lv": 2}, {"id": "c06-6-2-1", "title": "6.2.1 モデルと記法", "lv": 3}, {"id": "c06-6-2-2", "title": "6.2.2 平方和の分解", "lv": 3}, {"id": "c06-6-2-3", "title": "6.2.3 期待平方和と F 統計量", "lv": 3}, {"id": "c06-6-2-4", "title": "6.2.4 回帰との等価性", "lv": 3}, {"id": "c06-6-3", "title": "6.3 多重比較", "lv": 2}, {"id": "c06-6-3-1", "title": "6.3.1 なぜ t 検定を繰り返してはいけないか", "lv": 3}, {"id": "c06-6-3-2", "title": "6.3.2 Bonferroni", "lv": 3}, {"id": "c06-6-3-3", "title": "6.3.3 Tukey の HSD", "lv": 3}, {"id": "c06-6-3-4", "title": "6.3.4 Dunnett と Scheffé", "lv": 3}, {"id": "c06-6-4", "title": "6.4 二元配置と交互作用", "lv": 2}, {"id": "c06-6-4-1", "title": "6.4.1 モデル", "lv": 3}, {"id": "c06-6-4-2", "title": "6.4.2 交互作用図の読み方", "lv": 3}, {"id": "c06-6-4-3", "title": "6.4.3 構造工学への接続: 配合設計の要因実験", "lv": 3}, {"id": "c06-6-5", "title": "6.5 乱塊法と分割法", "lv": 2}, {"id": "c06-6-5-1", "title": "6.5.1 乱塊法", "lv": 3}, {"id": "c06-6-5-2", "title": "6.5.2 分割法 (split-plot)", "lv": 3}, {"id": "c06-6-6", "title": "6.6 固定効果と変量効果", "lv": 2}, {"id": "c06-6-6-1", "title": "6.6.1 二つの見方", "lv": 3}, {"id": "c06-6-6-2", "title": "6.6.2 期待平均平方と分散成分の推定", "lv": 3}, {"id": "c06-6-6-3", "title": "6.6.3 構造工学への接続: 材料強度のばらつきの階層", "lv": 3}, {"id": "c06-6-7", "title": "6.7 実験計画の三原則", "lv": 2}, {"id": "c06-6-8", "title": "6.8 要因配置と $2^k$ 計画", "lv": 2}, {"id": "c06-6-8-1", "title": "6.8.1 $2^k$ 計画", "lv": 3}, {"id": "c06-6-8-2", "title": "6.8.2 効果の有意性判定", "lv": 3}, {"id": "c06-6-8-3", "title": "6.8.3 構造工学への接続: 溶接条件の最適化", "lv": 3}, {"id": "c06-6-9", "title": "6.9 一部実施計画と直交表", "lv": 2}, {"id": "c06-6-9-1", "title": "6.9.1 一部実施と交絡", "lv": 3}, {"id": "c06-6-9-2", "title": "6.9.2 直交表 L8・L9", "lv": 3}, {"id": "c06-6-9-3", "title": "6.9.3 田口メソッドと SN 比の位置づけ", "lv": 3}, {"id": "c06-6-10", "title": "6.10 応答曲面法の入口", "lv": 2}, {"id": "c06-6-11", "title": "6.11 検出力と反復数の設計", "lv": 2}, {"id": "c06-6-11-1", "title": "6.11.1 一元配置の検出力", "lv": 3}, {"id": "c06-6-11-2", "title": "6.11.2 反復数の目安", "lv": 3}, {"id": "c06-6-11-3", "title": "6.11.3 構造工学への接続: 材料試験の反復数設計", "lv": 3}, {"id": "c06-6-12", "title": "6.12 Python で確かめる", "lv": 2}, {"id": "c06-6-13", "title": "6.13 演習", "lv": 2}, {"id": "c06-6-14", "title": "6.14 参考文献", "lv": 2}, {"id": "c06-6-15", "title": "6.15 発展 ★3: 最適計画理論 — 「どこで測るか」を最適化する", "lv": 2}, {"id": "c06-基準は情報行列の関数である", "title": "基準は情報行列の関数である", "lv": 3}, {"id": "c06-非線形モデルでは-母数を知らないと計画できない", "title": "非線形モデルでは「母数を知らないと計画できない」", "lv": 3}, {"id": "c06-ベイズ-D-最適と事前分布の選択", "title": "ベイズ D-最適と事前分布の選択", "lv": 3}, {"id": "c06-計算機実験では適応的に点を足す", "title": "計算機実験では適応的に点を足す", "lv": 3}, {"id": "c06-田口メソッドとの関係", "title": "田口メソッドとの関係", "lv": 3}, {"id": "c06-実務での勧め", "title": "実務での勧め", "lv": 3}, {"id": "c06-6-16", "title": "6.16 発展 ★3: 逐次・適応的実験 — 途中で計画を変えてよいか", "lv": 2}, {"id": "c06-何が問題になるのか", "title": "何が問題になるのか", "lv": 3}, {"id": "c06-いつ止めてもよい検定-e-値", "title": "いつ止めてもよい検定 — e 値", "lv": 3}, {"id": "c06-次にどこを測るか-ベイズ最適化", "title": "次にどこを測るか — ベイズ最適化", "lv": 3}, {"id": "c06-構造分野での実例-フラジリティ曲線", "title": "構造分野での実例 — フラジリティ曲線", "lv": 3}, {"id": "c06-実務での注意", "title": "実務での注意", "lv": 3}, {"id": "c06-6-99", "title": "6.99 演習の解答", "lv": 2}, {"id": "c06-6-13-2", "title": "6.13 演習 (本文 6.13 節)", "lv": 3}, {"id": "c06-6-99-1", "title": "6.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "07", "label": "07", "title": "第7章 多変量解析", "sections": [{"id": "c07-7-1", "title": "7.1 この章の目的", "lv": 2}, {"id": "c07-7-2", "title": "7.2 多変量データの記述", "lv": 2}, {"id": "c07-7-2-1", "title": "7.2.1 データ行列・平均ベクトル・共分散行列", "lv": 3}, {"id": "c07-7-2-2", "title": "7.2.2 Mahalanobis 距離", "lv": 3}, {"id": "c07-7-3", "title": "7.3 多変量正規分布", "lv": 2}, {"id": "c07-7-4", "title": "7.4 主成分分析 (PCA)", "lv": 2}, {"id": "c07-7-4-1", "title": "7.4.1 分散最大化の定式化と固有値問題", "lv": 3}, {"id": "c07-7-4-2", "title": "7.4.2 寄与率とスクリープロット", "lv": 3}, {"id": "c07-7-4-3", "title": "7.4.3 標準化の要否", "lv": 3}, {"id": "c07-7-4-4", "title": "7.4.4 SVD との関係", "lv": 3}, {"id": "c07-7-4-5", "title": "7.4.5 主成分負荷量とバイプロット", "lv": 3}, {"id": "c07-7-5", "title": "7.5 因子分析", "lv": 2}, {"id": "c07-7-5-1", "title": "7.5.1 共通因子モデル", "lv": 3}, {"id": "c07-7-5-2", "title": "7.5.2 PCA との違い", "lv": 3}, {"id": "c07-7-5-3", "title": "7.5.3 回転の不定性と単純構造", "lv": 3}, {"id": "c07-7-6", "title": "7.6 クラスター分析", "lv": 2}, {"id": "c07-7-6-1", "title": "7.6.1 距離", "lv": 3}, {"id": "c07-7-6-2", "title": "7.6.2 階層的クラスタリング", "lv": 3}, {"id": "c07-7-6-3", "title": "7.6.3 k-means", "lv": 3}, {"id": "c07-7-7", "title": "7.7 判別分析", "lv": 2}, {"id": "c07-7-7-1", "title": "7.7.1 Fisher の線形判別", "lv": 3}, {"id": "c07-7-7-2", "title": "7.7.2 正規分布からの導出と二次判別", "lv": 3}, {"id": "c07-7-7-3", "title": "7.7.3 ロジスティック回帰との関係", "lv": 3}, {"id": "c07-7-8", "title": "7.8 正準相関分析 (紹介)", "lv": 2}, {"id": "c07-7-9", "title": "7.9 多次元尺度法 (紹介)", "lv": 2}, {"id": "c07-7-10", "title": "7.10 次元の呪い", "lv": 2}, {"id": "c07-7-11", "title": "7.11 構造工学への接続", "lv": 2}, {"id": "c07-7-11-1", "title": "7.11.1 多点計測の PCA と損傷検知", "lv": 3}, {"id": "c07-7-11-2", "title": "7.11.2 地震動指標のクラスタリング", "lv": 3}, {"id": "c07-7-12", "title": "7.12 Python で確かめる", "lv": 2}, {"id": "c07-7-13", "title": "7.13 演習", "lv": 2}, {"id": "c07-7-14", "title": "7.14 参考文献", "lv": 2}, {"id": "c07-7-15", "title": "7.15 発展 ★3: 高次元 PCA — 固有値は嘘をつく", "lv": 2}, {"id": "c07-何が起きているのか-Marchenko-Pastur", "title": "何が起きているのか — Marchenko–Pastur", "lv": 3}, {"id": "c07-最大固有値のゆらぎ-Tracy-Widom", "title": "最大固有値のゆらぎ — Tracy–Widom", "lv": 3}, {"id": "c07-スパイク模型と検出限界", "title": "スパイク模型と検出限界", "lv": 3}, {"id": "c07-モニタリングデータへの翻訳", "title": "モニタリングデータへの翻訳", "lv": 3}, {"id": "c07-7-16", "title": "7.16 発展 ★3: 非線形次元削減 (t-SNE・UMAP) の統計的な読み方", "lv": 2}, {"id": "c07-t-SNE-は何をしているのか", "title": "t-SNE は何をしているのか", "lv": 3}, {"id": "c07-だから図の読み方に制約がつく", "title": "だから図の読み方に制約がつく", "lv": 3}, {"id": "c07-表現学習という文脈", "title": "表現学習という文脈", "lv": 3}, {"id": "c07-次元削減は-何のために-で選ぶ", "title": "次元削減は「何のために」で選ぶ", "lv": 3}, {"id": "c07-モニタリングデータでの使い方", "title": "モニタリングデータでの使い方", "lv": 3}, {"id": "c07-7-99", "title": "7.99 演習の解答", "lv": 2}, {"id": "c07-7-13-2", "title": "7.13 演習 (本文 7.13 節)", "lv": 3}, {"id": "c07-7-99-1", "title": "7.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "08", "label": "08", "title": "第8章 ベイズ統計", "sections": [{"id": "c08-8-1", "title": "8.1 この章の目的", "lv": 2}, {"id": "c08-8-2", "title": "8.2 ベイズの定理と三つの分布", "lv": 2}, {"id": "c08-8-2-1", "title": "8.2.1 事前・尤度・事後", "lv": 3}, {"id": "c08-8-2-2", "title": "8.2.2 逐次更新", "lv": 3}, {"id": "c08-8-2-3", "title": "8.2.3 頻度論との対比: 何に確率が付くか", "lv": 3}, {"id": "c08-8-3", "title": "8.3 共役事前分布", "lv": 2}, {"id": "c08-8-3-1", "title": "8.3.1 ベータ–二項", "lv": 3}, {"id": "c08-8-3-2", "title": "8.3.2 ガンマ–ポアソン", "lv": 3}, {"id": "c08-8-3-3", "title": "8.3.3 正規–正規", "lv": 3}, {"id": "c08-8-4", "title": "8.4 事前分布の選び方", "lv": 2}, {"id": "c08-8-4-1", "title": "8.4.1 無情報事前分布と不変性の問題", "lv": 3}, {"id": "c08-8-4-2", "title": "8.4.2 Jeffreys 事前分布", "lv": 3}, {"id": "c08-8-4-3", "title": "8.4.3 弱情報事前分布 (実務の標準)", "lv": 3}, {"id": "c08-8-5", "title": "8.5 事後予測分布", "lv": 2}, {"id": "c08-8-5-1", "title": "8.5.1 事後予測チェック", "lv": 3}, {"id": "c08-8-6", "title": "8.6 点推定と損失関数", "lv": 2}, {"id": "c08-8-7", "title": "8.7 モデル比較", "lv": 2}, {"id": "c08-8-7-1", "title": "8.7.1 ベイズ因子", "lv": 3}, {"id": "c08-8-7-2", "title": "8.7.2 予測性能による比較: WAIC と LOO", "lv": 3}, {"id": "c08-8-8", "title": "8.8 階層モデル", "lv": 2}, {"id": "c08-8-8-1", "title": "8.8.1 部分プーリング", "lv": 3}, {"id": "c08-8-8-2", "title": "8.8.2 完全ベイズと経験ベイズ", "lv": 3}, {"id": "c08-8-9", "title": "8.9 事後分布の計算", "lv": 2}, {"id": "c08-8-9-1", "title": "8.9.1 グリッド近似", "lv": 3}, {"id": "c08-8-9-2", "title": "8.9.2 Markov 連鎖 Monte Carlo (MCMC)", "lv": 3}, {"id": "c08-8-9-3", "title": "8.9.3 収束診断", "lv": 3}, {"id": "c08-8-9-4", "title": "8.9.4 変分推論 (一言)", "lv": 3}, {"id": "c08-8-10", "title": "8.10 構造工学への接続", "lv": 2}, {"id": "c08-8-11", "title": "8.11 Python で確かめる", "lv": 2}, {"id": "c08-8-12", "title": "8.12 演習", "lv": 2}, {"id": "c08-8-13", "title": "8.13 参考文献", "lv": 2}, {"id": "c08-8-14", "title": "8.14 発展 ★2: 事前分布の選び方 — 弱情報事前分布と感度分析", "lv": 2}, {"id": "c08-8-14-1", "title": "8.14.1 「無情報」はどこで破れるか", "lv": 3}, {"id": "c08-8-14-2", "title": "8.14.2 弱情報事前分布 — 「何も言わない」ではなく「あり得ない値を排除する」", "lv": 3}, {"id": "c08-8-14-3", "title": "8.14.3 事前予測チェック — 事前分布をデータの言葉に翻訳する", "lv": 3}, {"id": "c08-8-14-4", "title": "8.14.4 分散パラメータの事前分布 — 階層モデルで最も敏感な場所", "lv": 3}, {"id": "c08-8-14-5", "title": "8.14.5 感度分析 — 何を動かし、どれだけ動いたら問題か", "lv": 3}, {"id": "c08-8-14-6", "title": "8.14.6 データがどれだけあれば事前は流されるか", "lv": 3}, {"id": "c08-8-14-7", "title": "8.14.7 構造設計の現場では — 供試体 5 本、記録 20 年", "lv": 3}, {"id": "c08-8-14-8", "title": "8.14.8 まとめ: 何をすればよいか", "lv": 3}, {"id": "c08-8-14-9", "title": "8.14.9 Python で確かめる", "lv": 3}, {"id": "c08-8-14-10", "title": "8.14.10 演習", "lv": 3}, {"id": "c08-8-15", "title": "8.15 発展 ★3: ベイズワークフロー — 「走った」と「信じてよい」の間", "lv": 2}, {"id": "c08-何を報告すべきか-報告ガイドライン", "title": "何を報告すべきか — 報告ガイドライン", "lv": 3}, {"id": "c08-事後予測検査と-データの二重使用", "title": "事後予測検査と「データの二重使用」", "lv": 3}, {"id": "c08-図で見る予測検査", "title": "図で見る予測検査", "lv": 3}, {"id": "c08-事前分布も検査の対象である", "title": "事前分布も検査の対象である", "lv": 3}, {"id": "c08-ワークフローとして並べると", "title": "ワークフローとして並べると", "lv": 3}, {"id": "c08-8-99", "title": "8.99 演習の解答", "lv": 2}, {"id": "c08-8-12-2", "title": "8.12 演習 (本文 8.12 節)", "lv": 3}, {"id": "c08-8-99-1", "title": "8.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "09", "label": "09", "title": "第9章 時系列解析", "sections": [{"id": "c09-9-1", "title": "9.1 この章の目的", "lv": 2}, {"id": "c09-9-2", "title": "9.2 時系列の成分", "lv": 2}, {"id": "c09-9-2-1", "title": "9.2.1 加法モデルと乗法モデル", "lv": 3}, {"id": "c09-9-2-2", "title": "9.2.2 移動平均によるトレンド推定", "lv": 3}, {"id": "c09-9-3", "title": "9.3 定常性", "lv": 2}, {"id": "c09-9-3-1", "title": "9.3.1 弱定常の定義", "lv": 3}, {"id": "c09-9-3-2", "title": "9.3.2 ランダムウォークと単位根", "lv": 3}, {"id": "c09-9-3-3", "title": "9.3.3 単位根検定 (Dickey–Fuller / ADF)", "lv": 3}, {"id": "c09-9-4", "title": "9.4 自己共分散と自己相関", "lv": 2}, {"id": "c09-9-4-1", "title": "9.4.1 定義と性質", "lv": 3}, {"id": "c09-9-4-2", "title": "9.4.2 ホワイトノイズ", "lv": 3}, {"id": "c09-9-4-3", "title": "9.4.3 標本自己相関と Bartlett の帯", "lv": 3}, {"id": "c09-9-4-4", "title": "9.4.4 偏自己相関 (PACF)", "lv": 3}, {"id": "c09-9-5", "title": "9.5 AR・MA・ARMA モデル", "lv": 2}, {"id": "c09-9-5-1", "title": "9.5.1 移動平均 MA(q)", "lv": 3}, {"id": "c09-9-5-2", "title": "9.5.2 可逆性", "lv": 3}, {"id": "c09-9-5-3", "title": "9.5.3 自己回帰 AR(p) と定常条件", "lv": 3}, {"id": "c09-9-5-4", "title": "9.5.4 Yule–Walker 方程式", "lv": 3}, {"id": "c09-9-5-5", "title": "9.5.5 ARMA(p, q) と次数の見分け方", "lv": 3}, {"id": "c09-9-6", "title": "9.6 ARIMA と差分、季節 ARIMA", "lv": 2}, {"id": "c09-9-6-1", "title": "9.6.1 差分と ARIMA(p, d, q)", "lv": 3}, {"id": "c09-9-6-2", "title": "9.6.2 季節 ARIMA", "lv": 3}, {"id": "c09-9-7", "title": "9.7 Box–Jenkins 法とモデル選択", "lv": 2}, {"id": "c09-9-7-1", "title": "9.7.1 同定・推定・診断", "lv": 3}, {"id": "c09-9-7-2", "title": "9.7.2 AIC によるモデル選択", "lv": 3}, {"id": "c09-9-8", "title": "9.8 予測と予測区間", "lv": 2}, {"id": "c09-9-8-1", "title": "9.8.1 最小平均二乗誤差予測", "lv": 3}, {"id": "c09-9-8-2", "title": "9.8.2 予測区間", "lv": 3}, {"id": "c09-9-9", "title": "9.9 状態空間モデルとカルマンフィルタ", "lv": 2}, {"id": "c09-9-9-1", "title": "9.9.1 線形ガウス状態空間モデル", "lv": 3}, {"id": "c09-9-9-2", "title": "9.9.2 カルマンフィルタ", "lv": 3}, {"id": "c09-9-9-3", "title": "9.9.3 局所レベルモデル", "lv": 3}, {"id": "c09-9-10", "title": "9.10 スペクトル解析", "lv": 2}, {"id": "c09-9-10-1", "title": "9.10.1 スペクトル密度と Wiener–Khinchin の関係", "lv": 3}, {"id": "c09-9-10-2", "title": "9.10.2 ペリオドグラム", "lv": 3}, {"id": "c09-9-11", "title": "9.11 GARCH の紹介", "lv": 2}, {"id": "c09-9-12", "title": "9.12 見せかけの回帰", "lv": 2}, {"id": "c09-9-12-1", "title": "9.12.1 Granger–Newbold の実験", "lv": 3}, {"id": "c09-9-12-2", "title": "9.12.2 なぜ起きるか", "lv": 3}, {"id": "c09-9-13", "title": "9.13 構造工学への接続", "lv": 2}, {"id": "c09-9-14", "title": "9.14 Python で確かめる", "lv": 2}, {"id": "c09-9-15", "title": "9.15 演習", "lv": 2}, {"id": "c09-9-16", "title": "9.16 参考文献", "lv": 2}, {"id": "c09-9-17", "title": "9.17 発展 ★3: 単位根と共和分 — 見せかけの回帰の先にあるもの", "lv": 2}, {"id": "c09-差分は問題を消すが-情報も消す", "title": "差分は問題を消すが、情報も消す", "lv": 3}, {"id": "c09-共和分-差が定常になる組合せ", "title": "共和分 — 差が定常になる組合せ", "lv": 3}, {"id": "c09-推定の効率を上げる工夫", "title": "推定の効率を上げる工夫", "lv": 3}, {"id": "c09-構造変化との区別", "title": "構造変化との区別", "lv": 3}, {"id": "c09-モニタリングデータでの手順", "title": "モニタリングデータでの手順", "lv": 3}, {"id": "c09-9-18", "title": "9.18 発展 ★3: 予測をどう評価するか — スコアリングルールと予測分布", "lv": 2}, {"id": "c09-何を最大化すべきか-較正と鋭さ", "title": "何を最大化すべきか — 較正と鋭さ", "lv": 3}, {"id": "c09-適正なスコアとは何か", "title": "適正なスコアとは何か", "lv": 3}, {"id": "c09-二値予測での具体例", "title": "二値予測での具体例", "lv": 3}, {"id": "c09-連続変数では-CRPS", "title": "連続変数では CRPS", "lv": 3}, {"id": "c09-構造-モニタリングでの使いどころ", "title": "構造・モニタリングでの使いどころ", "lv": 3}, {"id": "c09-9-99", "title": "9.99 演習の解答", "lv": 2}, {"id": "c09-9-15-2", "title": "9.15 演習 (本文 9.15 節)", "lv": 3}, {"id": "c09-9-99-1", "title": "9.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "10", "label": "10", "title": "第10章 生存時間解析・信頼性・極値統計", "sections": [{"id": "c10-10-1", "title": "10.1 この章の目的", "lv": 2}, {"id": "c10-10-2", "title": "10.2 生存関数・ハザード・累積ハザード", "lv": 2}, {"id": "c10-10-2-1", "title": "10.2.1 定義", "lv": 3}, {"id": "c10-10-2-2", "title": "10.2.2 4 つの関数の関係", "lv": 3}, {"id": "c10-10-2-3", "title": "10.2.3 代表的な分布", "lv": 3}, {"id": "c10-10-3", "title": "10.3 打ち切りと尤度", "lv": 2}, {"id": "c10-10-3-1", "title": "10.3.1 打ち切りの種類", "lv": 3}, {"id": "c10-10-3-2", "title": "10.3.2 打ち切りを含む尤度", "lv": 3}, {"id": "c10-10-4", "title": "10.4 Kaplan–Meier 推定量", "lv": 2}, {"id": "c10-10-4-1", "title": "10.4.1 導出", "lv": 3}, {"id": "c10-10-4-2", "title": "10.4.2 Greenwood の分散", "lv": 3}, {"id": "c10-10-4-3", "title": "10.4.3 Nelson–Aalen 推定量", "lv": 3}, {"id": "c10-10-5", "title": "10.5 ログランク検定", "lv": 2}, {"id": "c10-10-6", "title": "10.6 Cox 比例ハザードモデル", "lv": 2}, {"id": "c10-10-6-1", "title": "10.6.1 モデル", "lv": 3}, {"id": "c10-10-6-2", "title": "10.6.2 部分尤度", "lv": 3}, {"id": "c10-10-6-3", "title": "10.6.3 比例性の検証", "lv": 3}, {"id": "c10-10-7", "title": "10.7 パラメトリック生存モデルと AFT", "lv": 2}, {"id": "c10-10-7-1", "title": "10.7.1 パラメトリック回帰", "lv": 3}, {"id": "c10-10-7-2", "title": "10.7.2 加速寿命モデル (AFT)", "lv": 3}, {"id": "c10-10-7-3", "title": "10.7.3 どれを使うか", "lv": 3}, {"id": "c10-10-8", "title": "10.8 信頼性工学", "lv": 2}, {"id": "c10-10-8-1", "title": "10.8.1 バスタブ曲線と Weibull", "lv": 3}, {"id": "c10-10-8-2", "title": "10.8.2 MTTF・MTBF・B10 寿命", "lv": 3}, {"id": "c10-10-8-3", "title": "10.8.3 Weibull 確率紙", "lv": 3}, {"id": "c10-10-8-4", "title": "10.8.4 直列系・並列系・$k$-out-of-$n$", "lv": 3}, {"id": "c10-10-9", "title": "10.9 極値統計 I: 最大値の極限分布", "lv": 2}, {"id": "c10-10-9-1", "title": "10.9.1 問題設定", "lv": 3}, {"id": "c10-10-9-2", "title": "10.9.2 Fisher–Tippett–Gnedenko の定理", "lv": 3}, {"id": "c10-10-9-3", "title": "10.9.3 どの分布がどの型に引き寄せられるか", "lv": 3}, {"id": "c10-10-10", "title": "10.10 極値統計 II: 年最大値法・再現期間・POT", "lv": 2}, {"id": "c10-10-10-1", "title": "10.10.1 年最大値法と再現期間", "lv": 3}, {"id": "c10-10-10-2", "title": "10.10.2 推定法", "lv": 3}, {"id": "c10-10-10-3", "title": "10.10.3 POT と一般化パレート分布", "lv": 3}, {"id": "c10-10-10-4", "title": "10.10.4 閾値の選択", "lv": 3}, {"id": "c10-10-10-5", "title": "10.10.5 POT による再現レベル", "lv": 3}, {"id": "c10-10-10-6", "title": "10.10.6 定常性の仮定", "lv": 3}, {"id": "c10-10-11", "title": "10.11 構造信頼性", "lv": 2}, {"id": "c10-10-11-1", "title": "10.11.1 基本問題 $g = R - S$", "lv": 3}, {"id": "c10-10-11-2", "title": "10.11.2 安全率との関係", "lv": 3}, {"id": "c10-10-11-3", "title": "10.11.3 FORM の概要", "lv": 3}, {"id": "c10-10-11-4", "title": "10.11.4 部分係数との関係", "lv": 3}, {"id": "c10-10-11-5", "title": "10.11.5 この章の 3 つの話題の接続", "lv": 3}, {"id": "c10-10-12", "title": "10.12 Python で確かめる", "lv": 2}, {"id": "c10-10-13", "title": "10.13 演習", "lv": 2}, {"id": "c10-10-14", "title": "10.14 参考文献", "lv": 2}, {"id": "c10-10-15", "title": "10.15 発展 ★3: 非定常極値 — 気候変動下の再現期待値", "lv": 2}, {"id": "c10-10-15-1", "title": "10.15.1 定常性はどこで効いていたか", "lv": 3}, {"id": "c10-10-15-2", "title": "10.15.2 共変量で GEV を非定常にする", "lv": 3}, {"id": "c10-10-15-3", "title": "10.15.3 再現期間が一意でなくなる — この節の山", "lv": 3}, {"id": "c10-10-15-4", "title": "10.15.4 設計にどう読み替えるか", "lv": 3}, {"id": "c10-10-15-5", "title": "10.15.5 傾向は見えるか — 検出力の問題", "lv": 3}, {"id": "c10-10-15-6", "title": "10.15.6 50 年の記録から非定常に外挿するということ", "lv": 3}, {"id": "c10-10-15-7", "title": "10.15.7 観測所の移転と気候変動は別物である", "lv": 3}, {"id": "c10-10-15-8", "title": "10.15.8 まとめ: 何をすればよいか", "lv": 3}, {"id": "c10-10-15-9", "title": "10.15.9 Python で確かめる", "lv": 3}, {"id": "c10-10-15-10", "title": "10.15.10 演習", "lv": 3}, {"id": "c10-10-16", "title": "10.16 発展 ★3: POT の閾値選択 — 恣意性をどう減らすか", "lv": 2}, {"id": "c10-なぜ閾値の選択が難しいのか", "title": "なぜ閾値の選択が難しいのか", "lv": 3}, {"id": "c10-既存の方法は-3-系統ある", "title": "既存の方法は 3 系統ある", "lv": 3}, {"id": "c10-自動化の試み", "title": "自動化の試み", "lv": 3}, {"id": "c10-日本語の文献から", "title": "日本語の文献から", "lv": 3}, {"id": "c10-実務での勧め", "title": "実務での勧め", "lv": 3}, {"id": "c10-10-17", "title": "10.17 発展 ★3: 多変量極値と空間依存 — 同時に起きる危険をどう評価するか", "lv": 2}, {"id": "c10-尾部依存という概念", "title": "尾部依存という概念", "lv": 3}, {"id": "c10-理論の骨格-安定裾依存関数", "title": "理論の骨格 — 安定裾依存関数", "lv": 3}, {"id": "c10-古典的な枠組みの限界", "title": "古典的な枠組みの限界", "lv": 3}, {"id": "c10-空間へ広げる", "title": "空間へ広げる", "lv": 3}, {"id": "c10-実務での勧め-2", "title": "実務での勧め", "lv": 3}, {"id": "c10-10-99", "title": "10.99 演習の解答", "lv": 2}, {"id": "c10-10-13-2", "title": "10.13 演習 (本文 10.13 節)", "lv": 3}, {"id": "c10-10-99-1", "title": "10.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 3}, {"num": "11", "label": "11", "title": "第11章 因果推論", "sections": [{"id": "c11-11-1", "title": "11.1 この章の目的", "lv": 2}, {"id": "c11-11-2", "title": "11.2 相関と因果が食い違う 4 つの理由", "lv": 2}, {"id": "c11-11-2-1", "title": "11.2.1 Simpson のパラドックス", "lv": 3}, {"id": "c11-11-3", "title": "11.3 潜在結果の枠組み", "lv": 2}, {"id": "c11-11-3-1", "title": "11.3.1 個体因果効果と根本問題", "lv": 3}, {"id": "c11-11-3-2", "title": "11.3.2 SUTVA", "lv": 3}, {"id": "c11-11-3-3", "title": "11.3.3 素朴な比較が何を推定しているか", "lv": 3}, {"id": "c11-11-4", "title": "11.4 無作為化はなぜ効くか", "lv": 2}, {"id": "c11-11-5", "title": "11.5 DAG による識別", "lv": 2}, {"id": "c11-11-5-1", "title": "11.5.1 有向非巡回グラフと d 分離", "lv": 3}, {"id": "c11-11-5-2", "title": "11.5.2 バックドア基準", "lv": 3}, {"id": "c11-11-5-3", "title": "11.5.3 合流点で調整すると何が起こるか", "lv": 3}, {"id": "c11-11-5-4", "title": "11.5.4 潜在結果との対応", "lv": 3}, {"id": "c11-11-6", "title": "11.6 回帰による調整とその限界", "lv": 2}, {"id": "c11-11-7", "title": "11.7 傾向スコア", "lv": 2}, {"id": "c11-11-7-1", "title": "11.7.1 バランシングスコア", "lv": 3}, {"id": "c11-11-7-2", "title": "11.7.2 推定と使い方", "lv": 3}, {"id": "c11-11-7-3", "title": "11.7.3 バランス診断と共通サポート", "lv": 3}, {"id": "c11-11-7-4", "title": "11.7.4 二重頑健推定", "lv": 3}, {"id": "c11-11-7-5", "title": "11.7.5 構造工学への接続: 耐震補強の効果検証", "lv": 3}, {"id": "c11-11-8", "title": "11.8 操作変数法", "lv": 2}, {"id": "c11-11-8-1", "title": "11.8.1 3 条件と 2SLS", "lv": 3}, {"id": "c11-11-8-2", "title": "11.8.2 弱操作変数", "lv": 3}, {"id": "c11-11-8-3", "title": "11.8.3 LATE", "lv": 3}, {"id": "c11-11-9", "title": "11.9 差の差と回帰不連続", "lv": 2}, {"id": "c11-11-9-1", "title": "11.9.1 差の差 (DID)", "lv": 3}, {"id": "c11-11-9-2", "title": "11.9.2 回帰不連続デザイン (RDD)", "lv": 3}, {"id": "c11-11-10", "title": "11.10 感度分析", "lv": 2}, {"id": "c11-11-11", "title": "11.11 Python で確かめる", "lv": 2}, {"id": "c11-11-12", "title": "11.12 演習", "lv": 2}, {"id": "c11-11-13", "title": "11.13 参考文献", "lv": 2}, {"id": "c11-11-14", "title": "11.14 発展 ★3: 二重機械学習 — 機械学習を因果推論に使うときの落とし穴", "lv": 2}, {"id": "c11-なぜ素朴なプラグインが壊れるのか", "title": "なぜ素朴なプラグインが壊れるのか", "lv": 3}, {"id": "c11-直し方は-2-つの成分に分かれる", "title": "直し方は 2 つの成分に分かれる", "lv": 3}, {"id": "c11-何が変わるのか-表にすると", "title": "何が変わるのか、表にすると", "lv": 3}, {"id": "c11-効果の異質性へ", "title": "効果の異質性へ", "lv": 3}, {"id": "c11-工学で使うときの注意", "title": "工学で使うときの注意", "lv": 3}, {"id": "c11-11-15", "title": "11.15 発展 ★3: 未観測交絡をどう扱うか — 感度分析と部分識別", "lv": 2}, {"id": "c11-考え方の出発点", "title": "考え方の出発点", "lv": 3}, {"id": "c11-系統-1-交絡のモデルを置いて解く-Lin-1998", "title": "系統 1: 交絡のモデルを置いて解く (Lin 1998)", "lv": 3}, {"id": "c11-系統-2-1-つの数に要約する-E-値", "title": "系統 2: 1 つの数に要約する — E 値", "lv": 3}, {"id": "c11-系統-3-仮定を緩めて区間を出す-部分識別", "title": "系統 3: 仮定を緩めて区間を出す (部分識別)", "lv": 3}, {"id": "c11-どの系統をどう使い分けるか", "title": "どの系統をどう使い分けるか", "lv": 3}, {"id": "c11-構造分野での使いどころ", "title": "構造分野での使いどころ", "lv": 3}, {"id": "c11-11-99", "title": "11.99 演習の解答", "lv": 2}, {"id": "c11-11-12-2", "title": "11.12 演習 (本文 11.12 節)", "lv": 3}, {"id": "c11-11-99-1", "title": "11.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "12", "label": "12", "title": "第12章 統計的機械学習", "sections": [{"id": "c12-12-1", "title": "12.1 この章の目的", "lv": 2}, {"id": "c12-12-2", "title": "12.2 予測と推論", "lv": 2}, {"id": "c12-12-2-1", "title": "12.2.1 2 つの目的", "lv": 3}, {"id": "c12-12-2-2", "title": "12.2.2 教師あり学習の枠組み", "lv": 3}, {"id": "c12-12-3", "title": "12.3 バイアス–分散分解と過学習", "lv": 2}, {"id": "c12-12-3-1", "title": "12.3.1 分解の導出", "lv": 3}, {"id": "c12-12-3-2", "title": "12.3.2 過学習と汎化", "lv": 3}, {"id": "c12-12-3-3", "title": "12.3.3 訓練誤差と汎化誤差の差の期待値", "lv": 3}, {"id": "c12-12-4", "title": "12.4 交差検証", "lv": 2}, {"id": "c12-12-4-1", "title": "12.4.1 ホールドアウトと k-fold", "lv": 3}, {"id": "c12-12-4-2", "title": "12.4.2 LOO の近道公式", "lv": 3}, {"id": "c12-12-4-3", "title": "12.4.3 情報リーク", "lv": 3}, {"id": "c12-12-5", "title": "12.5 正則化", "lv": 2}, {"id": "c12-12-5-1", "title": "12.5.1 罰則付き最小二乗", "lv": 3}, {"id": "c12-12-5-2", "title": "12.5.2 Ridge 回帰の閉形式", "lv": 3}, {"id": "c12-12-5-3", "title": "12.5.3 Lasso とスパース性", "lv": 3}, {"id": "c12-12-5-4", "title": "12.5.4 Elastic Net", "lv": 3}, {"id": "c12-12-5-5", "title": "12.5.5 λ の選択", "lv": 3}, {"id": "c12-12-6", "title": "12.6 k 近傍法", "lv": 2}, {"id": "c12-12-7", "title": "12.7 決定木", "lv": 2}, {"id": "c12-12-7-1", "title": "12.7.1 CART の再帰分割", "lv": 3}, {"id": "c12-12-7-2", "title": "12.7.2 剪定と木の性質", "lv": 3}, {"id": "c12-12-8", "title": "12.8 アンサンブル学習", "lv": 2}, {"id": "c12-12-8-1", "title": "12.8.1 バギングと分散減少", "lv": 3}, {"id": "c12-12-8-2", "title": "12.8.2 ランダムフォレスト", "lv": 3}, {"id": "c12-12-8-3", "title": "12.8.3 勾配ブースティング", "lv": 3}, {"id": "c12-12-9", "title": "12.9 サポートベクトルマシン", "lv": 2}, {"id": "c12-12-9-1", "title": "12.9.1 マージン最大化", "lv": 3}, {"id": "c12-12-9-2", "title": "12.9.2 カーネルトリック", "lv": 3}, {"id": "c12-12-10", "title": "12.10 ガウス過程回帰", "lv": 2}, {"id": "c12-12-10-1", "title": "12.10.1 関数の上の事前分布", "lv": 3}, {"id": "c12-12-10-2", "title": "12.10.2 事後分布", "lv": 3}, {"id": "c12-12-10-3", "title": "12.10.3 ベイズ線形回帰との関係", "lv": 3}, {"id": "c12-12-10-4", "title": "12.10.4 構造工学への接続: 耐力予測、外挿、少データ", "lv": 3}, {"id": "c12-12-11", "title": "12.11 評価指標", "lv": 2}, {"id": "c12-12-11-1", "title": "12.11.1 回帰の指標", "lv": 3}, {"id": "c12-12-11-2", "title": "12.11.2 混同行列と ROC", "lv": 3}, {"id": "c12-12-11-3", "title": "12.11.3 較正", "lv": 3}, {"id": "c12-12-12", "title": "12.12 統計的学習理論の入口", "lv": 2}, {"id": "c12-12-12-1", "title": "12.12.1 なぜ有限のデータから学べるか", "lv": 3}, {"id": "c12-12-12-2", "title": "12.12.2 VC 次元", "lv": 3}, {"id": "c12-12-13", "title": "12.13 解釈性", "lv": 2}, {"id": "c12-12-13-1", "title": "12.13.1 置換重要度", "lv": 3}, {"id": "c12-12-13-2", "title": "12.13.2 部分依存", "lv": 3}, {"id": "c12-12-14", "title": "12.14 本章のまとめ", "lv": 2}, {"id": "c12-12-15", "title": "12.15 Python で確かめる", "lv": 2}, {"id": "c12-12-16", "title": "12.16 演習", "lv": 2}, {"id": "c12-12-17", "title": "12.17 参考文献", "lv": 2}, {"id": "c12-12-18", "title": "12.18 発展 ★3: 共形予測 — 分布を仮定しない予測区間", "lv": 2}, {"id": "c12-12-18-1", "title": "12.18.1 何を仮定し、何を仮定しないか", "lv": 3}, {"id": "c12-12-18-2", "title": "12.18.2 交換可能性 — i.i.d. より弱い仮定", "lv": 3}, {"id": "c12-12-19", "title": "12.19 分割共形予測", "lv": 2}, {"id": "c12-12-19-1", "title": "12.19.1 手続き", "lv": 3}, {"id": "c12-12-19-2", "title": "12.19.2 なぜ $\\lceil (n+1)(1-\\alpha)\\rceil$ 番目なのか", "lv": 3}, {"id": "c12-12-19-3", "title": "12.19.3 妥当性は無料だが、効率は無料でない", "lv": 3}, {"id": "c12-12-20", "title": "12.20 周辺被覆と条件付き被覆 — この節の山", "lv": 2}, {"id": "c12-12-20-1", "title": "12.20.1 「全体で 90%」と「$x$ ごとに 90%」", "lv": 3}, {"id": "c12-12-20-2", "title": "12.20.2 なぜ条件付き被覆は (ただでは) 得られないか", "lv": 3}, {"id": "c12-12-20-3", "title": "12.20.3 適応的な区間 — 正規化スコアと CQR", "lv": 3}, {"id": "c12-12-20-4", "title": "12.20.4 材料強度・余寿命の予測に使うということ", "lv": 3}, {"id": "c12-12-21", "title": "12.21 交換可能性が壊れるとき", "lv": 2}, {"id": "c12-12-21-1", "title": "12.21.1 分布シフト", "lv": 3}, {"id": "c12-12-21-2", "title": "12.21.2 時系列", "lv": 3}, {"id": "c12-12-21-3", "title": "12.21.3 使う前に確かめること", "lv": 3}, {"id": "c12-12-22", "title": "12.22 Python で確かめる", "lv": 2}, {"id": "c12-12-23", "title": "12.23 演習", "lv": 2}, {"id": "c12-12-24", "title": "12.24 参考文献", "lv": 2}, {"id": "c12-12-25", "title": "12.25 発展 ★3: 二重降下 — 母数を増やしすぎると誤差が下がる、という話", "lv": 2}, {"id": "c12-何が観測されるのか", "title": "何が観測されるのか", "lv": 3}, {"id": "c12-領域は-3-つに分かれる", "title": "領域は 3 つに分かれる", "lv": 3}, {"id": "c12-実務にとっての結論は-正則化せよ", "title": "実務にとっての結論は「正則化せよ」", "lv": 3}, {"id": "c12-Ridge-そのものへの批判も忘れない", "title": "Ridge そのものへの批判も忘れない", "lv": 3}, {"id": "c12-構造分野で意識すべきこと", "title": "構造分野で意識すべきこと", "lv": 3}, {"id": "c12-12-99", "title": "12.99 演習の解答", "lv": 2}, {"id": "c12-12-16-2", "title": "12.16 演習 (本文 12.16 節)", "lv": 3}, {"id": "c12-12-99-1", "title": "12.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "13", "label": "13", "title": "第13章 計算統計と標本調査", "sections": [{"id": "c13-13-1", "title": "13.1 この章の目的", "lv": 2}, {"id": "c13-13-2", "title": "13.2 疑似乱数", "lv": 2}, {"id": "c13-13-2-1", "title": "13.2.1 疑似乱数とは何か", "lv": 3}, {"id": "c13-13-2-2", "title": "13.2.2 線形合同法 (LCG)", "lv": 3}, {"id": "c13-13-2-3", "title": "13.2.3 Mersenne Twister", "lv": 3}, {"id": "c13-13-2-4", "title": "13.2.4 PCG と現代の既定", "lv": 3}, {"id": "c13-13-2-5", "title": "13.2.5 種の管理", "lv": 3}, {"id": "c13-13-3", "title": "13.3 一様乱数から任意の分布へ", "lv": 2}, {"id": "c13-13-3-1", "title": "13.3.1 逆関数法", "lv": 3}, {"id": "c13-13-3-2", "title": "13.3.2 棄却法", "lv": 3}, {"id": "c13-13-3-3", "title": "13.3.3 Box–Muller 法の導出", "lv": 3}, {"id": "c13-13-3-4", "title": "13.3.4 その他の道具", "lv": 3}, {"id": "c13-13-4", "title": "13.4 モンテカルロ積分", "lv": 2}, {"id": "c13-13-4-1", "title": "13.4.1 基本定理と $n^{-1/2}$", "lv": 3}, {"id": "c13-13-4-2", "title": "13.4.2 稀事象の問題", "lv": 3}, {"id": "c13-13-4-3", "title": "13.4.3 対照変量", "lv": 3}, {"id": "c13-13-4-4", "title": "13.4.4 重点サンプリング", "lv": 3}, {"id": "c13-13-4-5", "title": "13.4.5 層化サンプリング", "lv": 3}, {"id": "c13-13-5", "title": "13.5 Latin Hypercube Sampling", "lv": 2}, {"id": "c13-13-6", "title": "13.6 構造信頼性への接続: $P_f = 10^{-4}$ を数える", "lv": 2}, {"id": "c13-13-7", "title": "13.7 EM アルゴリズム", "lv": 2}, {"id": "c13-13-7-1", "title": "13.7.1 問題設定", "lv": 3}, {"id": "c13-13-7-2", "title": "13.7.2 単調増加の証明", "lv": 3}, {"id": "c13-13-7-3", "title": "13.7.3 混合正規への適用", "lv": 3}, {"id": "c13-13-7-4", "title": "13.7.4 その他の応用", "lv": 3}, {"id": "c13-13-8", "title": "13.8 数値最適化と最尤推定", "lv": 2}, {"id": "c13-13-8-1", "title": "13.8.1 Newton 法と Fisher スコアリング", "lv": 3}, {"id": "c13-13-8-2", "title": "13.8.2 準 Newton 法と導関数不要法", "lv": 3}, {"id": "c13-13-8-3", "title": "13.8.3 プロファイル尤度と信頼区間", "lv": 3}, {"id": "c13-13-9", "title": "13.9 標本調査", "lv": 2}, {"id": "c13-13-9-1", "title": "13.9.1 有限母集団と単純無作為抽出", "lv": 3}, {"id": "c13-13-9-2", "title": "13.9.2 層化抽出", "lv": 3}, {"id": "c13-13-9-3", "title": "13.9.3 クラスター抽出と多段抽出", "lv": 3}, {"id": "c13-13-9-4", "title": "13.9.4 系統抽出", "lv": 3}, {"id": "c13-13-9-5", "title": "13.9.5 非標本誤差", "lv": 3}, {"id": "c13-13-9-6", "title": "13.9.6 標本サイズの設計", "lv": 3}, {"id": "c13-13-10", "title": "13.10 欠測データ", "lv": 2}, {"id": "c13-13-10-1", "title": "13.10.1 欠測メカニズム", "lv": 3}, {"id": "c13-13-10-2", "title": "13.10.2 リストワイズ削除のバイアス", "lv": 3}, {"id": "c13-13-10-3", "title": "13.10.3 多重代入", "lv": 3}, {"id": "c13-13-10-4", "title": "13.10.4 MICE (連鎖方程式)", "lv": 3}, {"id": "c13-13-10-5", "title": "13.10.5 逆確率重み付けと MNAR", "lv": 3}, {"id": "c13-13-11", "title": "13.11 Python で確かめる", "lv": 2}, {"id": "c13-13-12", "title": "13.12 演習", "lv": 2}, {"id": "c13-13-13", "title": "13.13 参考文献", "lv": 2}, {"id": "c13-13-14", "title": "13.14 発展 ★3: 稀事象シミュレーション — $10^{-4}$ の確率をどう数えるか", "lv": 2}, {"id": "c13-素朴な-Monte-Carlo-が効かない理由", "title": "素朴な Monte Carlo が効かない理由", "lv": 3}, {"id": "c13-手法-1-部分集合法-subset-simulation", "title": "手法 1: 部分集合法 (subset simulation)", "lv": 3}, {"id": "c13-手法-2-重点サンプリング", "title": "手法 2: 重点サンプリング", "lv": 3}, {"id": "c13-手法-3-代理モデルを-賢い提案分布-に使う", "title": "手法 3: 代理モデルを「賢い提案分布」に使う", "lv": 3}, {"id": "c13-数字で比べる", "title": "数字で比べる", "lv": 3}, {"id": "c13-選び方の目安", "title": "選び方の目安", "lv": 3}, {"id": "c13-13-15", "title": "13.15 発展 ★3: 代理モデルと不確かさの伝播 — 多項式カオスとクリギング", "lv": 2}, {"id": "c13-何をする道具なのか", "title": "何をする道具なのか", "lv": 3}, {"id": "c13-代理モデルは-3-つに分かれる", "title": "代理モデルは 3 つに分かれる", "lv": 3}, {"id": "c13--誤差推定と適応性-がなぜ決定的なのか", "title": "「誤差推定と適応性」がなぜ決定的なのか", "lv": 3}, {"id": "c13-不確かさを-2-種類に分ける", "title": "不確かさを 2 種類に分ける", "lv": 3}, {"id": "c13-モデル形式の不確かさ-いちばん大きくていちばん無視される", "title": "モデル形式の不確かさ — いちばん大きくていちばん無視される", "lv": 3}, {"id": "c13-実務の勧め", "title": "実務の勧め", "lv": 3}, {"id": "c13-13-99", "title": "13.99 演習の解答", "lv": 2}, {"id": "c13-13-12-2", "title": "13.12 演習 (本文 13.12 節)", "lv": 3}, {"id": "c13-13-99-1", "title": "13.99.1 解答の数値を確かめるコード", "lv": 2}], "stars": 2}, {"num": "14", "label": "14", "title": "第14章 実データ演習 — 汚れたデータで手を動かす", "sections": [{"id": "c14-14-1", "title": "14.1 この章の目的", "lv": 2}, {"id": "c14-データについて", "title": "データについて", "lv": 3}, {"id": "c14-14-2", "title": "14.2 題材 1: コンクリート受入検査 — 特性値をいくつと報告するか", "lv": 2}, {"id": "c14-課題", "title": "課題", "lv": 3}, {"id": "c14-14-3", "title": "14.3 題材 2: 配合と強度の回帰 — 1 点で結論が変わる", "lv": 2}, {"id": "c14-課題-2", "title": "課題", "lv": 3}, {"id": "c14-14-4", "title": "14.4 題材 3: 疲労試験 — 打ち切りを無視するとどうなるか", "lv": 2}, {"id": "c14-課題-3", "title": "課題", "lv": 3}, {"id": "c14-14-5", "title": "14.5 題材 4: 年最大風速 — 観測の連続性を疑う", "lv": 2}, {"id": "c14-課題-4", "title": "課題", "lv": 3}, {"id": "c14-14-6", "title": "14.6 題材 5: 構造モニタリング — 季節変動に埋もれた損傷", "lv": 2}, {"id": "c14-課題-5", "title": "課題", "lv": 3}, {"id": "c14-14-7", "title": "14.7 この章の進め方", "lv": 2}, {"id": "c14-14-99", "title": "14.99 演習の解答 (題材 1〜3)", "lv": 2}, {"id": "c14-14-2-2", "title": "14.2 題材 1 の解答", "lv": 3}, {"id": "c14-14-3-2", "title": "14.3 題材 2 の解答", "lv": 3}, {"id": "c14-14-4-2", "title": "14.4 題材 3 の解答", "lv": 3}, {"id": "c14-14-99-1", "title": "14.99.1 解答の数値を確かめるコード (題材 1〜3)", "lv": 2}, {"id": "c14-14-99-2", "title": "14.99 演習の解答 (題材 4〜5)", "lv": 2}, {"id": "c14-14-5-2", "title": "14.5 題材 4 の解答", "lv": 3}, {"id": "c14-14-6-2", "title": "14.6 題材 5 の解答", "lv": 3}, {"id": "c14-14-99-2-2", "title": "14.99.2 解答の数値を確かめるコード (題材 4〜5)", "lv": 2}], "stars": 0}, {"num": "15", "label": "付", "title": "付録 A 英和用語集", "sections": [{"id": "c15-第1章-記述統計", "title": "第1章 記述統計", "lv": 2}, {"id": "c15-第2章-確率論の基礎-補遺-2-17-2-20-を含む", "title": "第2章 確率論の基礎 (補遺 2.17〜2.20 を含む)", "lv": 2}, {"id": "c15-第3章-推定-発展-3-15-を含む", "title": "第3章 推定 (発展 3.15 を含む)", "lv": 2}, {"id": "c15-第4章-仮説検定-発展-4-18-を含む", "title": "第4章 仮説検定 (発展 4.18 を含む)", "lv": 2}, {"id": "c15-第5章-回帰分析", "title": "第5章 回帰分析", "lv": 2}, {"id": "c15-第6章-分散分析と実験計画法", "title": "第6章 分散分析と実験計画法", "lv": 2}, {"id": "c15-第7章-多変量解析", "title": "第7章 多変量解析", "lv": 2}, {"id": "c15-第8章-ベイズ統計", "title": "第8章 ベイズ統計", "lv": 2}, {"id": "c15-第9章-時系列解析", "title": "第9章 時系列解析", "lv": 2}, {"id": "c15-第10章-生存時間解析-信頼性-極値統計", "title": "第10章 生存時間解析・信頼性・極値統計", "lv": 2}, {"id": "c15-第11章-因果推論", "title": "第11章 因果推論", "lv": 2}, {"id": "c15-第12章-統計的機械学習", "title": "第12章 統計的機械学習", "lv": 2}, {"id": "c15-第13章-計算統計と標本調査", "title": "第13章 計算統計と標本調査", "lv": 2}, {"id": "c15-第14章-実データ演習", "title": "第14章 実データ演習", "lv": 2}, {"id": "c15-英語表記を確かめられなかった語", "title": "英語表記を確かめられなかった語", "lv": 2}, {"id": "c15-この付録の作り方-再現手順", "title": "この付録の作り方 (再現手順)", "lv": 2}], "stars": 0}];
-const DARKFIGS = new Set(["01_anscombe.png", "01_boxplot_iqr.png", "01_contingency.png", "01_correlation.png", "01_hist_bins.png", "01_iqr_normal.png", "01_log_transform.png", "01_mean_median.png", "01_rank_corr.png", "01_robustness.png", "01_scales.png", "01_spread_breakdown.png", "01d_influence.png", "01d_kde_bandwidth.png", "01d_mise.png", "01d_tradeoff.png", "02_berry_esseen.png", "02_binom_approx.png", "02_bivariate_normal.png", "02_cdf_types.png", "02_clt.png", "02_conditional.png", "02_delta_method.png", "02_distributions.png", "02_lln.png", "02_lognormal_tail.png", "02_lotus_jensen.png", "02_max_degenerate.png", "02_relations.png", "02_reliability.png", "02_sample_space.png", "02_var_decomposition.png", "02c_bijective.png", "02c_concentration.png", "02c_derangement.png", "02c_edgeworth.png", "02c_monty.png", "02c_ppv.png", "02c_sampling.png", "03_bias_mse.png", "03_binomial_coverage.png", "03_bootstrap.png", "03_characteristic_value.png", "03_ci_coverage.png", "03_cramer_rao.png", "03_fisher_asymp.png", "03_fit_comparison.png", "03_jackknife.png", "03_likelihood.png", "03_rao_blackwell.png", "03_sampling_dist.png", "03d_bootstrap_fail.png", "03d_coverage_methods.png", "03d_coverage_vs_n.png", "03d_coverage_wald_wilson.png", "03d_interval_shape.png", "03d_zero_events.png", "04_acceptance.png", "04_alpha_beta.png", "04_chisq_gof.png", "04_effect_size.png", "04_multiple_fwer.png", "04_permutation.png", "04_phacking.png", "04_power_curve.png", "04_proportion.png", "04_pvalue_uniform.png", "04_qqplot.png", "04_rejection_regions.png", "04_variance_test.png", "04_welch_vs_pooled.png", "04d_alpha_sample_size.png", "04d_false_discovery.png", "04d_phacking.png", "04d_pvalue_dist.png", "04d_replication.png", "04d_tost.png", "04e_bh_dependence.png", "04e_choose.png", "04e_ebh.png", "04e_fdp_spread.png", "04e_fwer_vs_fdr.png", "04e_prds.png", "04e_thresholds.png", "04e_worst_case.png", "05_aic_poly.png", "05_ci_pi.png", "05_gauss_markov.png", "05_leverage_cook.png", "05_logistic.png", "05_ls_geometry.png", "05_mixed_effects.png", "05_multicollinearity.png", "05_poisson.png", "05_projection_leverage.png", "05_residual_patterns.png", "05_sn_curve.png", "05d_cluster_coverage.png", "05d_few_clusters_t.png", "05d_hc_variants.png", "05d_hetero_unbiased.png", "05d_misspecified.png", "05d_moulton.png", "05d_selective.png", "06_cube_2k.png", "06_d_optimal.png", "06_f_dist.png", "06_interaction.png", "06_power_n.png", "06_random_effects.png", "06_randomization.png", "06_rcbd.png", "06_sequential.png", "06_ss_decomposition.png", "06_tukey_hsd.png", "07_biplot.png", "07_cca.png", "07_curse.png", "07_dendrogram.png", "07_factor_rotation.png", "07_fisher.png", "07_mahalanobis.png", "07_mds.png", "07_mp_spike.png", "07_mvn_conditional.png", "07_pca_axes.png", "07_scree.png", "07_tail_dependence.png", "07_tsne_distance.png", "07_tsne_params.png", "08_bayes_factor.png", "08_conjugate_weight.png", "08_credible_vs_confidence.png", "08_hierarchical_shrinkage.png", "08_mh_trace.png", "08_ppc.png", "08_prior_lik_post.png", "08_sequential_beta.png", "08d_characteristic_value.png", "08d_flat_not_flat.png", "08d_improper_posterior.png", "08d_prior_predictive.png", "08d_prior_washout.png", "08d_sensitivity_grid.png", "08d_variance_priors.png", "09_acf_band.png", "09_aic_pitfall.png", "09_ar1_acf.png", "09_decomposition.png", "09_forecast.png", "09_garch.png", "09_kalman.png", "09_ma_pacf.png", "09_periodogram.png", "09_randomwalk_diff.png", "09_scoring.png", "09_shm_detrend.png", "09_spurious.png", "09_stationarity.png", "09_unitroot_break.png", "10_beta_geometry.png", "10_cox_loglog.png", "10_gev.png", "10_km_logrank.png", "10_pot_threshold.png", "10_return_level.png", "10_survival_hazard.png", "10_weibull_paper.png", "10_weibull_shape.png", "10d_design_life.png", "10d_jump_vs_trend.png", "10d_nonstationary_gev.png", "10d_power.png", "10d_return_period_split.png", "10d_uncertainty.png", "11_balance_love.png", "11_collider_experiment.png", "11_dags.png", "11_decomposition.png", "11_did.png", "11_dml_bias.png", "11_estimand_weights.png", "11_evalue.png", "11_fundamental_problem.png", "11_iv.png", "11_late_types.png", "11_partial_identification.png", "11_ps_overlap_ipw.png", "11_rct_vs_obs.png", "11_rdd.png", "11_sensitivity_contour.png", "11_simpson.png", "12_bagging_var.png", "12_bias_variance.png", "12_cv_split.png", "12_double_descent.png", "12_gp_posterior.png", "12_infer_vs_predict.png", "12_interpret.png", "12_knn.png", "12_overfit_poly.png", "12_reg_path.png", "12_ridge_lasso_geom.png", "12_roc_calibration.png", "12_svm_margin.png", "12_tree_forest.png", "12_vc.png", "12d_adaptive.png", "12d_conditional_gap.png", "12d_rank_coverage.png", "12d_shift_limit.png", "12d_split_scheme.png", "12d_why_conformal.png", "13_box_muller.png", "13_deff_icc.png", "13_em_mixture.png", "13_importance.png", "13_inverse_rejection.png", "13_lhs.png", "13_mc_error.png", "13_missing.png", "13_stratified.png"] || []);   // 暗い版がある図
+const DARKFIGS = new Set(["01_anscombe.png", "01_boxplot_iqr.png", "01_contingency.png", "01_correlation.png", "01_hist_bins.png", "01_iqr_normal.png", "01_log_transform.png", "01_mean_median.png", "01_rank_corr.png", "01_robustness.png", "01_scales.png", "01_spread_breakdown.png", "01d_influence.png", "01d_kde_bandwidth.png", "01d_mise.png", "01d_tradeoff.png", "02_berry_esseen.png", "02_binom_approx.png", "02_bivariate_normal.png", "02_cdf_types.png", "02_clt.png", "02_conditional.png", "02_delta_method.png", "02_distributions.png", "02_lln.png", "02_lognormal_tail.png", "02_lotus_jensen.png", "02_max_degenerate.png", "02_relations.png", "02_reliability.png", "02_sample_space.png", "02_var_decomposition.png", "02c_bijective.png", "02c_concentration.png", "02c_derangement.png", "02c_edgeworth.png", "02c_monty.png", "02c_ppv.png", "02c_sampling.png", "03_bias_mse.png", "03_binomial_coverage.png", "03_bootstrap.png", "03_characteristic_value.png", "03_ci_coverage.png", "03_cramer_rao.png", "03_fisher_asymp.png", "03_fit_comparison.png", "03_jackknife.png", "03_likelihood.png", "03_rao_blackwell.png", "03_sampling_dist.png", "03d_bootstrap_fail.png", "03d_coverage_methods.png", "03d_coverage_vs_n.png", "03d_coverage_wald_wilson.png", "03d_interval_shape.png", "03d_zero_events.png", "04_acceptance.png", "04_alpha_beta.png", "04_chisq_gof.png", "04_effect_size.png", "04_multiple_fwer.png", "04_permutation.png", "04_phacking.png", "04_power_curve.png", "04_proportion.png", "04_pvalue_uniform.png", "04_qqplot.png", "04_rejection_regions.png", "04_variance_test.png", "04_welch_vs_pooled.png", "04d_alpha_sample_size.png", "04d_false_discovery.png", "04d_phacking.png", "04d_pvalue_dist.png", "04d_replication.png", "04d_tost.png", "04e_bh_dependence.png", "04e_choose.png", "04e_ebh.png", "04e_fdp_spread.png", "04e_fwer_vs_fdr.png", "04e_prds.png", "04e_thresholds.png", "04e_worst_case.png", "05_aic_poly.png", "05_ci_pi.png", "05_gauss_markov.png", "05_leverage_cook.png", "05_logistic.png", "05_ls_geometry.png", "05_mixed_effects.png", "05_multicollinearity.png", "05_poisson.png", "05_projection_leverage.png", "05_residual_patterns.png", "05_sn_curve.png", "05d_cluster_coverage.png", "05d_few_clusters_t.png", "05d_hc_variants.png", "05d_hetero_unbiased.png", "05d_misspecified.png", "05d_moulton.png", "05d_selective.png", "06_cube_2k.png", "06_d_optimal.png", "06_f_dist.png", "06_interaction.png", "06_power_n.png", "06_random_effects.png", "06_randomization.png", "06_rcbd.png", "06_sequential.png", "06_ss_decomposition.png", "06_tukey_hsd.png", "07_biplot.png", "07_cca.png", "07_curse.png", "07_dendrogram.png", "07_factor_rotation.png", "07_fisher.png", "07_mahalanobis.png", "07_mds.png", "07_mp_spike.png", "07_mvn_conditional.png", "07_pca_axes.png", "07_scree.png", "07_tail_dependence.png", "07_tsne_distance.png", "07_tsne_params.png", "08_bayes_factor.png", "08_characteristic_value.png", "08_conjugate_weight.png", "08_credible_vs_confidence.png", "08_hierarchical_shrinkage.png", "08_loss_estimate.png", "08_mh_trace.png", "08_ppc.png", "08_prior_influence.png", "08_prior_lik_post.png", "08_rhat.png", "08_sequential_beta.png", "08d_characteristic_value.png", "08d_flat_not_flat.png", "08d_improper_posterior.png", "08d_prior_predictive.png", "08d_prior_washout.png", "08d_sensitivity_grid.png", "08d_variance_priors.png", "09_acf_band.png", "09_aic_pitfall.png", "09_ar1_acf.png", "09_decomposition.png", "09_forecast.png", "09_garch.png", "09_kalman.png", "09_ma_pacf.png", "09_periodogram.png", "09_randomwalk_diff.png", "09_scoring.png", "09_shm_detrend.png", "09_spurious.png", "09_stationarity.png", "09_unitroot_break.png", "10_aft_ph.png", "10_beta_geometry.png", "10_censoring_bias.png", "10_cox_loglog.png", "10_gev.png", "10_km_logrank.png", "10_logrank.png", "10_pot_threshold.png", "10_return_level.png", "10_survival_hazard.png", "10_weibull_paper.png", "10_weibull_shape.png", "10d_design_life.png", "10d_jump_vs_trend.png", "10d_nonstationary_gev.png", "10d_pot_threshold.png", "10d_power.png", "10d_return_period_split.png", "10d_tail_dependence.png", "10d_uncertainty.png", "11_balance_love.png", "11_collider_experiment.png", "11_dags.png", "11_decomposition.png", "11_did.png", "11_dml_bias.png", "11_estimand_weights.png", "11_evalue.png", "11_fundamental_problem.png", "11_iv.png", "11_late_types.png", "11_partial_identification.png", "11_ps_overlap_ipw.png", "11_rct_vs_obs.png", "11_rdd.png", "11_sensitivity_contour.png", "11_simpson.png", "12_bagging_var.png", "12_bias_variance.png", "12_cv_split.png", "12_double_descent.png", "12_gp_posterior.png", "12_infer_vs_predict.png", "12_interpret.png", "12_knn.png", "12_overfit_poly.png", "12_reg_path.png", "12_ridge_lasso_geom.png", "12_roc_calibration.png", "12_svm_margin.png", "12_tree_forest.png", "12_vc.png", "12d_adaptive.png", "12d_conditional_gap.png", "12d_rank_coverage.png", "12d_shift_limit.png", "12d_split_scheme.png", "12d_why_conformal.png", "13_box_muller.png", "13_deff_icc.png", "13_em_mixture.png", "13_importance.png", "13_importance_sampling.png", "13_inverse_rejection.png", "13_lhs.png", "13_mc_error.png", "13_mc_sample_size.png", "13_missing.png", "13_optimization.png", "13_randu.png", "13_stratified.png", "13_surrogate.png", "14_dirt_types.png", "14_workflow.png"] || []);   // 暗い版がある図
 const view = document.getElementById('view');
 const tlist = document.getElementById('tlist');
 const toc = document.getElementById('toc');
