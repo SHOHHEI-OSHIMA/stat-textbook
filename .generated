@@ -251,6 +251,11 @@ textbook/fig/13_optimization.png
 textbook/fig/13_randu.png
 textbook/fig/13_stratified.png
 textbook/fig/13_surrogate.png
+textbook/fig/14_ans_acceptance.png
+textbook/fig/14_ans_fatigue.png
+textbook/fig/14_ans_monitoring.png
+textbook/fig/14_ans_regression.png
+textbook/fig/14_ans_wind.png
 textbook/fig/14_dirt_types.png
 textbook/fig/14_workflow.png
 textbook/fig/dark/01_anscombe.png
@@ -490,6 +495,11 @@ textbook/fig/dark/13_optimization.png
 textbook/fig/dark/13_randu.png
 textbook/fig/dark/13_stratified.png
 textbook/fig/dark/13_surrogate.png
+textbook/fig/dark/14_ans_acceptance.png
+textbook/fig/dark/14_ans_fatigue.png
+textbook/fig/dark/14_ans_monitoring.png
+textbook/fig/dark/14_ans_regression.png
+textbook/fig/dark/14_ans_wind.png
 textbook/fig/dark/14_dirt_types.png
 textbook/fig/dark/14_workflow.png
 textbook/index.html
