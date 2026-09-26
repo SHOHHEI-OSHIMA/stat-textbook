@@ -505,3 +505,6 @@ textbook/fig/dark/14_ans_wind.png
 textbook/fig/dark/14_dirt_types.png
 textbook/fig/dark/14_workflow.png
 textbook/index.html
+vendor/pdfjs/LICENSE
+vendor/pdfjs/pdf.min.js
+vendor/pdfjs/pdf.worker.min.js
